@@ -1,0 +1,90 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{isabelle,isabellesym}
+
+\usepackage{textcomp}
+
+% further packages required for unusual symbols (see also isabellesym.sty)
+% use only when needed
+\usepackage{amssymb}                  % for \<leadsto>, \<box>, \<diamond>,
+                                       % \<sqsupset>, \<mho>, \<Join>, 
+                                       % \<lhd>, \<lesssim>, \<greatersim>,
+                                       % \<lessapprox>, \<greaterapprox>,
+                                       % \<triangleq>, \<yen>, \<lozenge>
+%\usepackage[greek,english]{babel}     % greek for \<euro>,
+                                       % english for \<guillemotleft>, 
+                                       %             \<guillemotright>
+                                       % default language = last
+%\usepackage[latin1]{inputenc}         % for \<onesuperior>, \<onequarter>,
+                                       % \<twosuperior>, \<onehalf>,
+                                       % \<threesuperior>, \<threequarters>,
+                                       % \<degree>
+%\usepackage[only,bigsqcap]{stmaryrd}  % for \<Sqinter>
+%\usepackage{eufrak}                   % for \<AA> ... \<ZZ>, \<aa> ... \<zz>
+                                       % (only needed if amssymb not used)
+%\usepackage{textcomp}                 % for \<cent>, \<currency>
+
+% this should be the last package used
+\usepackage{pdfsetup}
+
+% urls in roman style, theory text in math-similar italics
+\urlstyle{rm}
+\isabellestyle{tt}
+%\newcommand{\isasymcdot}{\isamath{\cdot}}
+\newcommand{\isasymlsq}{\isamath{\leq}}
+\newcommand{\isasymzlq}{\isamath{\leq}}
+\newcommand{\isasymls}{<}
+\newcommand{\isasymra}{+}
+\newcommand{\isasymza}{+}
+\newcommand{\isasymsad}{+}
+\newcommand{\isasymltr}{+}
+\newcommand{\isasymrtr}{+}
+\newcommand{\isasymzmu}{\isamath{\cdot}}
+\newcommand{\isasymrm}{-}
+\newcommand{\isasymzm}{-}
+\newcommand{\isasymrs}{-}
+\newcommand{\isasymzs}{-}
+\newcommand{\isasymfm}{-}
+\newcommand{\isasymsm}{-}
+\newcommand{\isasymfp}{+}
+\newcommand{\isasymfd}{/}
+\newcommand{\isasympr}{\isamath{\prod}}
+\newcommand{\isasymrmu}{\isamath{\cdot}}
+\newcommand{\isasymssum}{\isamath{\sum}}
+
+%MMIsar notation
+\newcommand{\isasymcaddset}{+}
+\newcommand{\isasymca}{+}
+\newcommand{\isasymcmulset}{\isamath{\cdot}}
+\newcommand{\isasymcs}{-}
+\newcommand{\isasymcn}{-}
+\newcommand{\isasymcdiv}{/}
+\newcommand{\isasymcpnf}{\isamath{+\infty}}
+\newcommand{\isasymcmnf}{\isamath{-\infty}}
+\newcommand{\isasymlsr}{\isamath{<_{\mathbb{R}}}}
+\newcommand{\isasymlsrset}{\isamath{<_{\mathbb{R}}}}
+\newcommand{\isasymcltrrset}{<}
+
+
+\begin{document}
+
+\title{IsarMathLib}
+\author{S\l awomir Ko\l ody\'{n}ski, Daniel de la Concepci\'{o}n S\'{a}ez}
+\maketitle
+
+\begin{abstract}
+This is the proof document of the IsarMathLib project version 1.9.8. 
+IsarMathLib is a library of formalized mathematics for Isabelle2019 (ZF logic). 
+ 
+\end{abstract}
+
+\tableofcontents
+
+\parindent 0pt\parskip 0.5ex
+
+% include generated text of all theories
+\input{session}
+
+\bibliographystyle{plain}
+\bibliography{root}
+
+\end{document}
