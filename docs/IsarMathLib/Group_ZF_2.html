@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Group_ZF_2 (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Group_ZF_2</h1>
+
+<span class="command">theory</span> <span class="name">Group_ZF_2</span><br/>
+<span class="keyword">imports</span> <a href="AbelianGroup_ZF.html"><span class="name">AbelianGroup_ZF</span></a> <a href="EquivClass1.html"><span class="name">EquivClass1</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar (ZF logic).
+
+    Copyright (C) 2005, 2006  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
+AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Groups 2&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Group_ZF_2</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>AbelianGroup_ZF</span><span> </span><span>func_ZF</span><span> </span><span>EquivClass1</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory continues Group\_ZF.thy and considers lifting the group 
+  structure to function spaces and projecting the group structure to 
+  quotient spaces, in particular the quotient qroup.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Lifting groups to function spaces&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If we have a monoid (group) $G$ than we get a monoid (group) 
+  structure on a space of functions valued in 
+  in $G$ by defining $(f\cdot g)(x) := f(x)\cdot g(x)$. 
+  We call this process &#39;&#39;lifting the monoid (group) to function space&#39;&#39;.
+  This section formalizes this lifting.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The lifted operation is an operation on the function space.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>monoid0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L0A</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = f {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F : (X&#8594;G)&#215;(X&#8594;G)&#8594;(X&#8594;G)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>monoidAsssum</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f : G&#215;G&#8594;G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAmonoid_def</span><span> </span><span>IsAssociative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func_ZF_1_L3</span><span> </span><span>group0_1_L3B</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The result of the lifted operation is in the function space.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>monoid0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L0</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;F = f {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;s:X&#8594;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r:X&#8594;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; s,r&#10217; : X&#8594;G&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F : (X&#8594;G)&#215;(X&#8594;G)&#8594;(X&#8594;G)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_1_L0A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>apply_funtype</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The lifted monoid operation has a neutral element, namely
+  the constant function with the neutral element as the value.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>monoid0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = f {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;E = ConstantFunction(X,TheNeutralElement(G,f))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;E : X&#8594;G &#8743; (&#8704;s&#8712;X&#8594;G. F`&#10216; E,s&#10217; = s &#8743; F`&#10216; s,E&#10217; = s)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;E : X&#8594;G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>unit_is_neutral</span><span> </span><span>func1_3_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;s&#8712;X&#8594;G. F`&#10216; E,s&#10217; = s &#8743; F`&#10216; s,E&#10217; = s&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>    </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>s</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;s:X&#8594;G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>monoidAsssum</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T2</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;f : G&#215;G&#8594;G&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAmonoid_def</span><span> </span><span>IsAssociative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A3</span><span> </span><span>A1</span><span> </span><span>T1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; E,s&#10217; : X&#8594;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; s,E&#10217; : X&#8594;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s : X&#8594;G&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_1_L0</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>T2</span><span> </span><span>A1</span><span> </span><span>T1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;X. (F`&#10216; E,s&#10217;)`(x) = s`(x)&quot;</span></span></span><span>
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;X. (F`&#10216; s,E&#10217;)`(x) = s`(x)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func_ZF_1_L4</span><span> </span><span>group0_1_L3B</span><span> </span><span>func1_3_L2</span><span> 
+</span><span>	</span><span>apply_type</span><span> </span><span>unit_is_neutral</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; E,s&#10217; = s &#8743; F`&#10216; s,E&#10217; = s&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fun_extension_iff</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Monoids can be lifted to a function space.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>monoid0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_T1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = f {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>monoidAsssum</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;F {is associative on} (X&#8594;G)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAmonoid_def</span><span> </span><span>func_ZF_2_L4</span><span> </span><span>group0_1_L3B</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707; E &#8712; X&#8594;G. &#8704;s &#8712; X&#8594;G. F`&#10216; E,s&#10217; = s &#8743; F`&#10216; s,E&#10217; = s&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAmonoid_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The constant function with the neutral element as the value is the
+  neutral element of the lifted monoid.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Group_ZF_2_1_L2</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(G,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = f {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;E = ConstantFunction(X,TheNeutralElement(G,f))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;E = TheNeutralElement(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>     </span><span>T1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;monoid0(G,f)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>T2</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;monoid0(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0_def</span><span> </span><span>monoid0.Group_ZF_2_1_T1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>T1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;E : X&#8594;G &#8743; (&#8704;s&#8712;X&#8594;G. F`&#10216; E,s&#10217; = s &#8743; F`&#10216; s,E&#10217; = s)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0.Group_ZF_2_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0.group0_1_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The lifted operation acts on the functions in a natural way defined
+  by the monoid operation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>monoid0</span><span class="delimiter">)</span><span> </span><span>lifted_val</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = f {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s:X&#8594;G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;r:X&#8594;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(F`&#10216;s,r&#10217;)`(x) = s`(x) &#8853; r`(x)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoidAsssum</span><span> </span><span>assms</span><span> </span><span>IsAmonoid_def</span><span> </span><span>IsAssociative_def</span><span>
+</span><span>      </span><span>group0_1_L3B</span><span> </span><span>func_ZF_1_L4</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The lifted operation acts on the functions in a natural way defined
+  by the group operation. This is the same as &#8249;lifted_val&#8250;, but
+  in the &#8249;group0&#8250; context.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L3</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = P {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s:X&#8594;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r:X&#8594;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(F`&#10216;s,r&#10217;)`(x) = s`(x)&#8901;r`(x)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>group0_2_L1</span><span> </span><span>monoid0.lifted_val</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In the group0 context we can apply theorems proven in monoid0 context
+  to the lifted monoid.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L4</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = P {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;monoid0(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_L1</span><span> </span><span>monoid0.Group_ZF_2_1_T1</span><span> </span><span>monoid0_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The compostion of a function $f:X\rightarrow G$ with the group inverse
+  is a right inverse for the lifted group.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L5</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = P {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s : X&#8594;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;i = GroupInv(G,P) O s&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;i: X&#8594;G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; s,i&#10217; = TheNeutralElement(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?E</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ConstantFunction(X,&#120813;)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?E : X&#8594;G&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_L2</span><span> </span><span>func1_3_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; s,i&#10217; :  X&#8594;G&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_T2</span><span> </span><span>comp_fun</span><span> 
+</span><span>      </span><span>Group_ZF_2_1_L4</span><span> </span><span>monoid0.group0_1_L1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;X. (F`&#10216; s,i&#10217;)`(x) = ?E`(x)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_T2</span><span> </span><span>comp_fun</span><span> </span><span>Group_ZF_2_1_L3</span><span> 
+</span><span>      </span><span>comp_fun_apply</span><span> </span><span>apply_funtype</span><span> </span><span>group0_2_L6</span><span> </span><span>func1_3_L2</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?E = TheNeutralElement(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAgroup_def</span><span> </span><span>Group_ZF_2_1_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; s,i&#10217; = TheNeutralElement(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fun_extension_iff</span><span> </span><span>IsAgroup_def</span><span> </span><span>Group_ZF_2_1_L2</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;i: X&#8594;G&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_T2</span><span> </span><span>comp_fun</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Groups can be lifted to the function space.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_T2</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = P {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_L1</span><span> </span><span>monoid0.Group_ZF_2_1_T1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;s&#8712;X&#8594;G. &#8707;i&#8712;X&#8594;G. F`&#10216; s,i&#10217; = TheNeutralElement(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>    </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>s</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s : X&#8594;G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?i</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;GroupInv(G,P) O s&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?i:X&#8594;G&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_T2</span><span> </span><span>comp_fun</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; s,?i&#10217; = TheNeutralElement(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_1_L5</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>fast</span><span>
+</span><span>   </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;i&#8712;X&#8594;G. F`&#10216; s,i&#10217; = TheNeutralElement(X&#8594;G,F)&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAgroup_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;What is the group inverse for the lifted group?&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L6</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = P {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;s&#8712;(X&#8594;G). GroupInv(X&#8594;G,F)`(s) = GroupInv(G,P) O s&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;group0(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_def</span><span> </span><span>Group_ZF_2_1_T2</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;s&#8712;X&#8594;G. GroupInv(G,P) O s : X&#8594;G &#8743; 
+    F`&#10216; s,GroupInv(G,P) O s&#10217; = TheNeutralElement(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_1_L5</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;s&#8712;(X&#8594;G).  GroupInv(G,P) O s = GroupInv(X&#8594;G,F)`(s)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>group0.group0_2_L9A</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;What is the value of the group inverse for the lifted group?&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">corollary</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>lift_gr_inv_val</span><span class="delimiter">:</span><span>  
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = P {lifted to function space over} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;s : X&#8594;G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(GroupInv(X&#8594;G,F)`(s))`(x) = (s`(x))&#175;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>groupAssum</span><span> </span><span>assms</span><span> </span><span>Group_ZF_2_1_L6</span><span> </span><span>group0_2_T2</span><span> </span><span>comp_fun_apply</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;What is the group inverse in a subgroup of the lifted group?&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L6A</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = P {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAsubgroup(H,F)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g = restrict(F,H&#215;H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8712;H&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;GroupInv(H,g)`(s) = GroupInv(G,P) O s&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;group0(X&#8594;G,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_def</span><span> </span><span>Group_ZF_2_1_T2</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;GroupInv(H,g)`(s) = GroupInv(X&#8594;G,F)`(s)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0.group0_3_T1</span><span> </span><span>restrict</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>T1</span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A4</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;GroupInv(X&#8594;G,F)`(s) = GroupInv(G,P) O s&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0.group0_3_L2</span><span> </span><span>Group_ZF_2_1_L6</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a group is abelian, then its lift to a function space is also 
+  abelian.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_1_L7</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = P {lifted to function space over} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P {is commutative on} G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F {is commutative on} (X&#8594;G)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;F {is commutative on} (X&#8594;range(P))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group_oper_assocA</span><span> </span><span>func_ZF_2_L2</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;range(P) = G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_L1</span><span> </span><span>monoid0.group0_1_L3B</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Equivalence relations on groups&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The goal of this section is to establish that (under some conditions) 
+  given an equivalence
+  relation on a group or (monoid )we can project the group (monoid)
+  structure on the quotient and obtain another group.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The neutral element class is neutral in the projection.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>monoid0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_2_L1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(r,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = ProjFun2(G,r,f)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;e = TheNeutralElement(G,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{e} &#8712; G//r &#8743; 
+  (&#8704;c &#8712; G//r. F`&#10216; r``{e},c&#10217; = c &#8743;  F`&#10216; c,r``{e}&#10217; = c)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A4</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;r``{e} &#8712; G//r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>unit_is_neutral</span><span> </span><span>quotientI</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;c &#8712; G//r. F`&#10216; r``{e},c&#10217; = c &#8743;  F`&#10216; c,r``{e}&#10217; = c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>    </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>c</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;c &#8712; G//r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>g</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>D1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;g&#8712;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c = r``{g}&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>quotient_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span>D1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; r``{e},c&#10217; = c &#8743;  F`&#10216; c,r``{e}&#10217; = c&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>unit_is_neutral</span><span> </span><span>EquivClass_1_L10</span><span> </span><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(*group0_1_L3*)</span></span></span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The projected structure is a monoid.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>monoid0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_2_T1</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(r,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = ProjFun2(G,r,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(G//r,F)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?E</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{TheNeutralElement(G,f)}&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?E &#8712; G//r &#8743; (&#8704;c&#8712;G//r. F`&#10216; ?E,c&#10217; = c &#8743; F`&#10216; c,?E&#10217; = c)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;E&#8712;G//r. &#8704; c&#8712;G//r. F`&#10216; E,c&#10217; = c &#8743; F`&#10216; c,E&#10217; = c&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>monoidAsssum</span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAmonoid_def</span><span> </span><span>EquivClass_2_T2</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The class of the neutral element is the neutral element of the
+  projected monoid.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Group_ZF_2_2_L1</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(G,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(r,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = ProjFun2(G,r,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;e = TheNeutralElement(G,f)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot; r``{e} = TheNeutralElement(G//r,F)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span>T1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;monoid0(G,f)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>T2</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;monoid0(G//r,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0_def</span><span> </span><span>monoid0.Group_ZF_2_2_T1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>T1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span>A5</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{e} &#8712; G//r &#8743; 
+    (&#8704;c &#8712; G//r. F`&#10216; r``{e},c&#10217; = c &#8743;  F`&#10216; c,r``{e}&#10217; = c)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0.Group_ZF_2_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0.group0_1_L4</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The projected operation can be defined in terms of the group operation
+  on representants in a natural way.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_2_L2</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(r,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = ProjFun2(G,r,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216; r``{a},r``{b}&#10217; = r``{a&#8901;b}&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>EquivClass_1_L10</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The class of the inverse is a right inverse of the class.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_2_L3</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(r,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = ProjFun2(G,r,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216;r``{a},r``{a&#175;}&#10217; = TheNeutralElement(G//r,F)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216;r``{a},r``{a&#175;}&#10217; = r``{&#120813;}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>inverse_in_group</span><span> </span><span>Group_ZF_2_2_L2</span><span> </span><span>group0_2_L6</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>groupAssum</span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAgroup_def</span><span> </span><span>Group_ZF_2_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The group structure can be projected to the quotient space.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_3_T2</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(r,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(G//r,ProjFun2(G,r,P))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?F</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ProjFun2(G,r,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?E</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;TheNeutralElement(G//r,?F)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(G//r,?F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAgroup_def</span><span> </span><span>monoid0_def</span><span> </span><span>monoid0.Group_ZF_2_2_T1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;c&#8712;G//r. &#8707;b&#8712;G//r. ?F`&#10216; c,b&#10217; = ?E&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>    </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>c</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c &#8712; G//r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>g</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>D1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g&#8712;G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c = r``{g}&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>quotient_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?b</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{g&#175;}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>D1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?b &#8712; G//r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>inverse_in_group</span><span> </span><span>quotientI</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>D1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;?F`&#10216; c,?b&#10217; = ?E&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_2_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;b&#8712;G//r. ?F`&#10216; c,b&#10217; = ?E&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAgroup_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The group inverse (in the projected group) of a class is the class
+  of the inverse.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_2_L4</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(r,P)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = ProjFun2(G,r,P)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a&#175;} = GroupInv(G//r,F)`(r``{a})&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;group0(G//r,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_T2</span><span> </span><span>group0_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A4</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a} &#8712; G//r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a&#175;} &#8712; G//r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>inverse_in_group</span><span> </span><span>quotientI</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>     </span><span class="string"><span class="delete"><span class="delete">&quot;F`&#10216;r``{a},r``{a&#175;}&#10217; = TheNeutralElement(G//r,F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_2_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>group0.group0_2_L9</span><span class="delimiter">)</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Normal subgroups and quotient groups&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If $H$ is a subgroup of $G$, then for every $a\in G$
+  we can cosider the sets $\{a\cdot h. h \in H\}$ 
+  and $\{ h\cdot a. h \in H\}$ (called a left and right &#39;&#39;coset of H&#39;&#39;, resp.)
+  These sets sometimes form a group, called the &#39;&#39;quotient group&#39;&#39;.
+  This section discusses the notion of quotient groups.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A normal subgorup $N$ of a group $G$ is such that $aba^{-1}$ belongs to 
+  $N$ if $a\in G, b\in N$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,N) &#8801; IsAsubgroup(N,P) &#8743; 
+  (&#8704;n&#8712;N.&#8704;g&#8712;G. P`&#10216;  P`&#10216;  g,n &#10217;,GroupInv(G,P)`(g) &#10217; &#8712; N)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Having a group and a normal subgroup $N$ 
+  we can create another group
+  consisting of eqivalence classes of the relation 
+  $a\sim b \equiv a\cdot b^{-1} \in N$.  We will refer to this relation
+  as the quotient group relation. The classes of this relation are in 
+  fact cosets of subgroup $H$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupRel(G,P,H) &#8801; 
+  {&#10216; a,b&#10217; &#8712; G&#215;G. P`&#10216; a, GroupInv(G,P)`(b)&#10217; &#8712; H}&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Next we define the operation in the quotient group as the
+  projection of the group operation on the classses of the
+  quotient group relation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupOp(G,P,H) &#8801; ProjFun2(G,QuotientGroupRel(G,P,H ),P)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of a normal subgroup in a more readable notation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L0</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g&#8712;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n&#8712;H&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g&#8901;n&#8901;g&#175; &#8712; H&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsAnormalSubgroup_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The quotient group relation is reflexive.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAsubgroup(H,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(G,QuotientGroupRel(G,P,H))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span>  </span><span>group0_2_L6</span><span> </span><span>group0_3_L5</span><span> 
+</span><span>    </span><span>QuotientGroupRel_def</span><span> </span><span>refl_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The quotient group relation is symmetric.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L2</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;IsAsubgroup(H,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;sym(QuotientGroupRel(G,P,H))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span>  
+</span><span>    </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>a</span><span> </span><span>b</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,b&#10217; &#8712; QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#8901;b&#175;)&#175; &#8712; H&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>QuotientGroupRel_def</span><span> </span><span>group0_3_T3A</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#8901;b&#175;)&#175; =  b&#8901;a&#175;&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>QuotientGroupRel_def</span><span> </span><span>group0_2_L12</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8901;a&#175; &#8712; H&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; b,a&#10217; &#8712; QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>QuotientGroupRel_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>symI</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The quotient group relation is transistive.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L3A</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAsubgroup(H,P)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,b&#10217; &#8712; QuotientGroupRel(G,P,H)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; b,c&#10217; &#8712; QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,c&#10217; &#8712; QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?r</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>QuotientGroupRel_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#8901;b&#175;)&#8901;(b&#8901;c&#175;) &#8712; H&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span>  </span><span>QuotientGroupRel_def</span><span> </span><span>group0_3_L6</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>T1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; = (a&#8901;b&#175;)&#8901;(b&#8901;c&#175;)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_2_L14A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; &#8712; H&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>QuotientGroupRel_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The quotient group relation is an equivalence relation. Note
+  we do not need the subgroup to be normal for this to be true.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L3</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;IsAsubgroup(H,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,QuotientGroupRel(G,P,H))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?r</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>     </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b c. (&#10216;a, b&#10217; &#8712; ?r  &#8743;  &#10216;b, c&#10217; &#8712; ?r &#10230; &#10216;a, c&#10217; &#8712; ?r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_4_L3A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(?r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Fol1_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_4_L1</span><span> </span><span>Group_ZF_2_4_L2</span><span> 
+</span><span>      </span><span>QuotientGroupRel_def</span><span> </span><span>equiv_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma states the essential condition for congruency of 
+  the group operation with respect to the quotient group relation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L4</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;a1,a2&#10217; &#8712; QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;b1,b2&#10217; &#8712; QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;a1&#8901;b1, a2&#8901;b2&#10217; &#8712; QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;a1&#8712;G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a2&#8712;G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b1&#8712;G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b2&#8712;G&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;a1&#8901;b1 &#8712; G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a2&#8901;b2 &#8712; G&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;b1&#8901;b2&#175; &#8712; H&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a1&#8901;a2&#175; &#8712; H&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>QuotientGroupRel_def</span><span> </span><span>group0_2_L1</span><span> </span><span>monoid0.group0_1_L1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span>
+</span><span>    </span><span>IsAnormalSubgroup_def</span><span> </span><span>group0_3_L6</span><span> </span><span>group0_2_L15</span><span>
+</span><span>    </span><span>QuotientGroupRel_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If the subgroup is normal, the group operation is congruent 
+  with respect to the quotient group relation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Group_ZF_2_4_L5A</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(G,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(QuotientGroupRel(G,P,H),P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>group0_def</span><span> </span><span>group0.Group_ZF_2_4_L4</span><span> </span><span>Congruent2_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The quotient group is indeed a group.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>Group_ZF_2_4_T1</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(G,P)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span>   
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(G//QuotientGroupRel(G,P,H),QuotientGroupOp(G,P,H))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>group0_def</span><span> </span><span>group0.Group_ZF_2_4_L3</span><span> </span><span>IsAnormalSubgroup_def</span><span>
+</span><span>    </span><span>Group_ZF_2_4_L5A</span><span> </span><span>group0.Group_ZF_3_T2</span><span> </span><span>QuotientGroupOp_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The class (coset) of the neutral element is the neutral
+  element of the quotient group.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Group_ZF_2_4_L5B</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(G,P)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r = QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;e = TheNeutralElement(G,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot; r``{e} = TheNeutralElement(G//r,QuotientGroupOp(G,P,H))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsAnormalSubgroup_def</span><span> </span><span>group0_def</span><span>
+</span><span>    </span><span>IsAgroup_def</span><span> </span><span>group0.Group_ZF_2_4_L3</span><span> </span><span>Group_ZF_2_4_L5A</span><span>
+</span><span>    </span><span>QuotientGroupOp_def</span><span> </span><span>Group_ZF_2_2_L1</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A group element is equivalent to the neutral element iff it is in the
+  subgroup we divide the group by.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L5C</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;a,&#120813;&#10217; &#8712; QuotientGroupRel(G,P,H) &#10231; a&#8712;H&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>QuotientGroupRel_def</span><span> </span><span>group_inv_of_one</span><span> </span><span>group0_2_L2</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A group element is in $H$ iff its class is the neutral element of
+  $G/H$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L5D</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r = QuotientGroupRel(G,P,H)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;TheNeutralElement(G//r,QuotientGroupOp(G,P,H)) = e&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a} = e &#10231; &#10216;a,&#120813;&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a} = e&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>groupAssum</span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;r``{&#120813;} = r``{a}&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_4_L5B</span><span> </span><span>IsAnormalSubgroup_def</span><span> </span><span>Group_ZF_2_4_L3</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;&#120813;,a&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>eq_equiv_class</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>I</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;a,&#120813;&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>equiv_is_sym</span><span class="delimiter">)</span><span>
+</span><span class="keyword1"><span class="command">next</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;a,&#120813;&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAnormalSubgroup_def</span><span> </span><span>Group_ZF_2_4_L3</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a} = r``{&#120813;}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>equiv_class_eq</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>groupAssum</span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a} = e&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_2_4_L5B</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The class of $a\in G$ is the neutral 
+  element of the quotient $G/H$ iff $a\in H$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L5E</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r = QuotientGroupRel(G,P,H)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;TheNeutralElement(G//r,QuotientGroupOp(G,P,H)) = e&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a} = e &#10231; a&#8712;H&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Group_ZF_2_4_L5C</span><span>  </span><span>Group_ZF_2_4_L5D</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Essential condition to show that every subgroup of an abelian group 
+  is normal.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L5</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P {is commutative on} G&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAsubgroup(H,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g&#8712;G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;h&#8712;H&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g&#8901;h&#8901;g&#175; &#8712; H&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;h&#8712;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g&#175; &#8712; G&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_3_L2</span><span> </span><span>inverse_in_group</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g&#8901;h&#8901;g&#175; = g&#175;&#8901;g&#8901;h&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_4_L4A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span>T1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span>
+</span><span>    </span><span>group0_2_L6</span><span> </span><span>group0_2_L2</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Every subgroup of an abelian group is normal. Moreover, the quotient
+  group is also abelian.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Group_ZF_2_4_L6</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(G,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P {is commutative on} G&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAsubgroup(H,P)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupOp(G,P,H) {is commutative on} (G//QuotientGroupRel(G,P,H))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span>
+</span><span>    </span><span>group0_def</span><span> </span><span>IsAnormalSubgroup_def</span><span> </span><span>group0.Group_ZF_2_4_L5</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?r</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupRel(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span>T1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(G,?r)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(?r,P)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_def</span><span> </span><span>group0.Group_ZF_2_4_L3</span><span> </span><span>Group_ZF_2_4_L5A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupOp(G,P,H) {is commutative on} (G//QuotientGroupRel(G,P,H))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>EquivClass_2_T1</span><span> </span><span>QuotientGroupOp_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The group inverse (in the quotient group) of a class (coset) is the class
+  of the inverse.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>Group_ZF_2_4_L7</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnormalSubgroup(G,P,H)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r = QuotientGroupRel(G,P,H)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = QuotientGroupOp(G,P,H)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{a&#175;} = GroupInv(G//r,F)`(r``{a})&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>groupAssum</span><span> </span><span>assms</span><span> </span><span>IsAnormalSubgroup_def</span><span> </span><span>Group_ZF_2_4_L3</span><span> 
+</span><span>    </span><span>Group_ZF_2_4_L5A</span><span> </span><span>QuotientGroupOp_def</span><span> </span><span>Group_ZF_2_2_L4</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Function spaces as monoids&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;On every space of functions $\{f : X\rightarrow X\}$ 
+  we can define a natural 
+  monoid structure with composition as the operation. This section explores 
+  this fact.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma states that composition has a neutral element, 
+  namely the identity function on $X$ 
+  (the one that maps $x\in X$ into itself).&#8250;</span></span></span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Group_ZF_2_5_L1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = Composition(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;I&#8712;(X&#8594;X). &#8704;f&#8712;(X&#8594;X). F`&#10216; I,f&#10217; = f &#8743; F`&#10216; f,I&#10217; = f&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?I</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;id(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?I &#8712; X&#8594;X &#8743; (&#8704;f&#8712;(X&#8594;X). F`&#10216; ?I,f&#10217; = f &#8743; F`&#10216; f,?I&#10217; = f)&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>id_type</span><span> </span><span>func_ZF_6_L1A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The space of functions that map a set $X$ into 
+  itsef is a monoid with composition as operation and the identity function
+  as the neutral element.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Group_ZF_2_5_L2</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(X&#8594;X,Composition(X))&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;id(X) = TheNeutralElement(X&#8594;X,Composition(X))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?I</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;id(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?F</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Composition(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(X&#8594;X,Composition(X))&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func_ZF_5_L5</span><span> </span><span>Group_ZF_2_5_L1</span><span> </span><span>IsAmonoid_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>  
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;monoid0(X&#8594;X,?F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?I &#8712; X&#8594;X &#8743; (&#8704;f&#8712;(X&#8594;X). ?F`&#10216; ?I,f&#10217; = f &#8743; ?F`&#10216; f,?I&#10217; = f)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>id_type</span><span> </span><span>func_ZF_6_L1A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?I = TheNeutralElement(X&#8594;X,?F)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0.group0_1_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Order_ZF (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Order_ZF</h1>
+
+<span class="command">theory</span> <span class="name">Order_ZF</span><br/>
+<span class="keyword">imports</span> <a href="Fol1.html"><span class="name">Fol1</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(*   This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005 - 2008  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Order relations - introduction&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Order_ZF</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Fol1</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory file considers various notion related to order. We redefine
+  the notions of a total order, linear order and partial order to have the 
+  same terminology as Wikipedia (I found it very consistent across different 
+  areas of math). We also define and study the notions of intervals and bounded
+  sets. We show the inclusion relations between the intervals with endpoints
+  being in certain order. We also show that union of bounded sets are bounded. 
+  This allows to show in &#8249;Finite_ZF.thy&#8250; that finite sets are bounded.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definitions&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we formulate the definitions related to order 
+  relations.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A relation $r$ is &#39;&#39;total&#39;&#39; on a set $X$ if for all elements 
+  $a,b$ of $X$ we have $a$ is in relation with $b$ or $b$ is in relation
+  with $a$. An example is the $\leq $ relation on numbers.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span>IsTotal</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infixl</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{is total on}&quot;</span></span></span><span> </span><span>65</span><span class="delimiter">)</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X &#8801; (&#8704;a&#8712;X.&#8704;b&#8712;X. &#10216; a,b&#10217; &#8712; r &#8744; &#10216; b,a&#10217; &#8712; r)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A relation $r$ is a partial order on $X$ if it is reflexive on $X$
+  (i.e. $\langle x,x \rangle$ for every $x\in X$), antisymmetric 
+  (if $\langle x, y\rangle \in r $ and $\langle y, x\rangle \in r $, then
+  $x=y$) and transitive $\langle x, y\rangle \in r $ and 
+  $\langle y, z\rangle \in r $ implies $\langle x, z\rangle \in r $). 
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsPartOrder(X,r) &#8801; (refl(X,r) &#8743; antisym(r) &#8743; trans(r))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We define a linear order as a binary relation that is antisymmetric, 
+  transitive and total. Note that this terminology is different than the
+  one used the standard Order.thy file.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsLinOrder(X,r) &#8801; ( antisym(r) &#8743; trans(r) &#8743; (r {is total on} X))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A set is bounded above if there is that is an upper
+  bound for it,  i.e. there are some $u$ such that 
+  $\langle x, u\rangle \in r$ for all $x\in A$. 
+  In addition, the empty set is defined as bounded.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A,r) &#8801; ( A=0 &#8744; (&#8707;u. &#8704;x&#8712;A. &#10216; x,u&#10217; &#8712; r))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We define sets bounded below analogously.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A,r) &#8801; (A=0 &#8744; (&#8707;l. &#8704;x&#8712;A. &#10216; l,x&#10217; &#8712; r))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A set is bounded if it is bounded below and above.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded(A,r) &#8801; (IsBoundedAbove(A,r) &#8743; IsBoundedBelow(A,r))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The notation for the definition of an interval may be mysterious for some
+  readers, see lemma &#8249;Order_ZF_2_L1&#8250; for more intuitive notation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,a,b) &#8801; r``{a} &#8745; r-``{b}&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We also define the maximum (the greater of) two elemnts 
+  in the obvious way.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;GreaterOf(r,a,b) &#8801; (if &#10216; a,b&#10217; &#8712; r then b else a)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The definition a a minimum (the smaller of) two elements.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;SmallerOf(r,a,b) &#8801; (if &#10216; a,b&#10217; &#8712; r then a else b)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We say that a set has a maximum if it has an element that is 
+  not smaller that any other one. We show that
+  under some conditions this element of the set is unique (if exists).&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;HasAmaximum(r,A) &#8801; &#8707;M&#8712;A.&#8704;x&#8712;A. &#10216; x,M&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A similar definition what it means that a set has a minimum.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;HasAminimum(r,A) &#8801; &#8707;m&#8712;A.&#8704;x&#8712;A. &#10216; m,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of the maximum of a set.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Maximum(r,A) &#8801; THE M. M&#8712;A &#8743; (&#8704;x&#8712;A. &#10216; x,M&#10217; &#8712; r)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of a minimum of a set.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Minimum(r,A) &#8801; THE m. m&#8712;A &#8743; (&#8704;x&#8712;A. &#10216; m,x&#10217; &#8712; r)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The supremum of a set $A$ is defined as the minimum of the set of
+  upper bounds, i.e. the set 
+  $\{u.\forall_{a\in A} \langle a,u\rangle \in r\}=\bigcap_{a\in A} r\{a\}$. 
+   Recall that in Isabelle/ZF
+  &#8249;r-``(A)&#8250; denotes the inverse image of the set $A$ by relation $r$
+  (i.e. &#8249;r-``(A)&#8250;=$\{ x: \langle x,y\rangle\in r$ for some $y\in A\}$).&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Supremum(r,A) &#8801; Minimum(r,&#8898;a&#8712;A. r``{a})&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Infimum is defined analogously.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Infimum(r,A) &#8801; Maximum(r,&#8898;a&#8712;A. r-``{a})&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We define a relation to be complete if every nonempty bounded
+  above set has a supremum.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span>IsComplete</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;_ {is complete}&quot;</span></span></span><span class="delimiter">)</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;r {is complete} &#8801; 
+  &#8704;A. IsBoundedAbove(A,r) &#8743; A&#8800;0 &#10230; HasAminimum(r,&#8898;a&#8712;A. r``{a})&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The essential condition to show that a total relation is reflexive.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_1_L1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;a,a&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsTotal_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A total relation is reflexive.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>total_is_refl</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(X,r)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Order_ZF_1_L1</span><span> </span><span>refl_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A linear order is partial order.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_1_L2</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsLinOrder(X,r)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsPartOrder(X,r)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsLinOrder_def</span><span> </span><span>IsPartOrder_def</span><span> </span><span>refl_def</span><span> </span><span>Order_ZF_1_L1</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Partial order that is total is linear.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_1_L3</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsPartOrder(X,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsLinOrder(X,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsPartOrder_def</span><span> </span><span>IsLinOrder_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Relation that is total on a set is total on any subset.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_1_L4</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8838;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsTotal_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A linear relation is linear on any subset.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>ord_linear_subset</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsLinOrder(X,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8838;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsLinOrder(A,r)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsLinOrder_def</span><span> </span><span>Order_ZF_1_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If the relation is total, then every set is a union of those elements
+  that are nongreater than a given one and nonsmaller than a given one.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_1_L5</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8838;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A = {x&#8712;A. &#10216;x,a&#10217; &#8712; r} &#8746; {x&#8712;A. &#10216;a,x&#10217; &#8712; r}&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsTotal_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A technical fact about reflexive relations.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>refl_add_point</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(X,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8838; B &#8746; {x}&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8838; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;B. &#10216;y,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;A. &#10216;a,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>refl_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Intervals&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we discuss intervals.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma explains the notation of the definition of an interval.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; Interval(r,a,b) &#10231; &#10216; a,x&#10217; &#8712; r &#8743; &#10216; x,b&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Interval_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Since there are some problems with applying the above lemma 
+  (seems that simp and auto don&#39;t handle equivalence very well), we
+  split &#8249;Order_ZF_2_L1&#8250; into two lemmas.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L1A</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; Interval(r,a,b)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,x&#10217; &#8712; r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,b&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span>  </span><span>Order_ZF_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#8249;Order_ZF_2_L1&#8250;, implication from right to left.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L1B</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,x&#10217; &#8712; r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,b&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; Interval(r,a,b)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Order_ZF_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If the relation is reflexive, the endpoints belong to the interval.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L2</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(X,r)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,b&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; Interval(r,a,b)&quot;</span></span></span><span>  
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; Interval(r,a,b)&quot;</span></span></span><span>  
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>refl_def</span><span> </span><span>Order_ZF_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Under the assumptions of &#8249;Order_ZF_2_L2&#8250;, the interval is 
+  nonempty.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L2A</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(X,r)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,b&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,a,b) &#8800; 0&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; Interval(r,a,b)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_2_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,a,b) &#8800; 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If $a,b,c,d$ are in this order, then $[b,c]\subseteq [a,d]$. We
+  only need trasitivity for this to be true.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L3</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,b&#10217;&#8712;r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; b,c&#10217;&#8712;r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; c,d&#10217;&#8712;r&quot;</span></span></span><span>
+</span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,b,c) &#8838; Interval(r,a,d)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; Interval(r, b, c)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">note</span></span><span> </span><span>A1</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,b&#10217; &#8712; r &#8743; &#10216; b,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_2_L1A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Fol1_L3</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">note</span></span><span> </span><span>A1</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,c&#10217; &#8712; r &#8743; &#10216; c,d&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_2_L1A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,d&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Fol1_L3</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; Interval(r,a,d)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_2_L1B</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For reflexive and antisymmetric relations the interval with equal 
+  endpoints consists only of that endpoint.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L4</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(X,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;antisym(r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,a,a) = {a}&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,a&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>refl_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{a} &#8838; Interval(r,a,a)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_2_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,a,a) &#8838; {a}&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_2_L1A</span><span> </span><span>Fol1_L4</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>fast</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For transitive relations the endpoints have to be in the relation for
+  the interval to be nonempty.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L5</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,b&#10217; &#8713; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,a,b) = 0&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,a,b)&#8800;0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>x</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; Interval(r,a,b)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>False</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_2_L1A</span><span> </span><span>Fol1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>fast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a relation is defined on a set, then intervals are subsets of that
+  set.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L6</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Interval(r,a,b) &#8838; X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Interval_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Bounded sets&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we consider properties of bounded sets.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For reflexive relations singletons are bounded.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(X,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded({a},r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>refl_def</span><span> </span><span>IsBoundedAbove_def</span><span> </span><span>IsBoundedBelow_def</span><span>
+</span><span>    </span><span>IsBounded_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Sets that are bounded above are contained in the domain of 
+  the relation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L1A</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8838;X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsBoundedAbove_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Sets that are bounded below are contained in the domain of 
+  the relation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L1B</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8838;X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsBoundedBelow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For a total relation, the greater of two elements, 
+  as defined above, is indeed greater of any of the two.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L2</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8712;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,GreaterOf(r,x,y)&#10217; &#8712; r&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;y,GreaterOf(r,x,y)&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;SmallerOf(r,x,y),x&#10217; &#8712; r&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;SmallerOf(r,x,y),y&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsTotal_def</span><span> </span><span>Order_ZF_1_L1</span><span> </span><span>GreaterOf_def</span><span> </span><span>SmallerOf_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If $A$ is bounded above by $u$, $B$ is bounded above by $w$,
+  then $A\cup B$ is bounded above by the greater of $u,w$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L2B</span><span class="delimiter">:</span><span>  
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;u&#8712;X&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;w&#8712;X&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#10216; x,u&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;B. &#10216; x,w&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A&#8746;B. &#10216;x,GreaterOf(r,u,w)&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?v</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;GreaterOf(r,u,w)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; u,?v&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>T2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; w,?v&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_3_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A&#8746;B&quot;</span></span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,?v&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A4</span><span> </span><span>T1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,u&#10217; &#8712; r &#8743; &#10216; u,?v&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,?v&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Fol1_L3</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8713;A&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A5</span><span> </span><span>A4</span><span> </span><span>T2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,w&#10217; &#8712; r &#8743; &#10216; w,?v&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,?v&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Fol1_L3</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For total and transitive relation the union of two sets bounded 
+  above is bounded above.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L3</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A,r)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(B,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A&#8746;B,r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A=0 &#8744; B=0&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A&#8746;B,r)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#172; (A = 0 &#8744; B = 0)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8800;0&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B&#8800;0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>u</span><span> </span><span>w</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>D1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#10216; x,u&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;B. &#10216; x,w&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedAbove_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?U</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;GreaterOf(r,u,w)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>T1</span><span> </span><span>A4</span><span> </span><span>D1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;u&#8712;X&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;w&#8712;X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>D1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A&#8746;B.&#10216; x,?U&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_3_L2B</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A&#8746;B,r)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedAbove_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For total and transitive relations if a set $A$ is bounded above then 
+  $A\cup \{a\}$ is bounded above.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L4</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A&#8746;{a},r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(X,r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>total_is_refl</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span>
+</span><span>    </span><span>Order_ZF_3_L1</span><span> </span><span>IsBounded_def</span><span> </span><span>Order_ZF_3_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If $A$ is bounded below by $l$, $B$ is bounded below by $m$,
+  then $A\cup B$ is bounded below by the smaller of $u,w$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L5B</span><span class="delimiter">:</span><span>  
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;l&#8712;X&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m&#8712;X&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#10216; l,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;B. &#10216; m,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A&#8746;B. &#10216;SmallerOf(r,l,m),x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?k</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;SmallerOf(r,l,m)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; ?k,l&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>T2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; ?k,m&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_3_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A&#8746;B&quot;</span></span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;?k,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A4</span><span> </span><span>T1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; ?k,l&#10217; &#8712; r &#8743; &#10216; l,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;?k,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Fol1_L3</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8713;A&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A5</span><span> </span><span>A4</span><span> </span><span>T2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; ?k,m&#10217; &#8712; r &#8743; &#10216; m,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;?k,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Fol1_L3</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For total and transitive relation the union of two sets bounded 
+  below is bounded below.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L6</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A,r)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(B,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A&#8746;B,r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A=0 &#8744; B=0&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#172; (A = 0 &#8744; B = 0)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8800;0&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B&#8800;0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>l</span><span> </span><span>m</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>D1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#10216; l,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;B. &#10216; m,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedBelow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?L</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;SmallerOf(r,l,m)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>T1</span><span> </span><span>A4</span><span> </span><span>D1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;l&#8712;X&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m&#8712;X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>D1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A&#8746;B.&#10216; ?L,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_3_L5B</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A&#8746;B,r)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedBelow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For total and transitive relations if a set $A$ is bounded below then 
+  $A\cup \{a\}$ is bounded below.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L7</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A&#8746;{a},r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;refl(X,r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>total_is_refl</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span>
+</span><span>    </span><span>Order_ZF_3_L1</span><span> </span><span>IsBounded_def</span><span> </span><span>Order_ZF_3_L6</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For total and transitive relations unions of two bounded sets are 
+  bounded.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>Order_ZF_3_T1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded(A,r)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded(B,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded(A&#8746;B,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Order_ZF_3_L3</span><span> </span><span>Order_ZF_3_L6</span><span> </span><span>Order_ZF_3_L7</span><span> </span><span>IsBounded_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For total and transitive relations if a set $A$ is bounded then 
+  $A\cup \{a\}$ is bounded.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L8</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded(A,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded(A&#8746;{a},r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>total_is_refl</span><span> </span><span>Order_ZF_3_L1</span><span> </span><span>Order_ZF_3_T1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A sufficient condition for a set to be bounded below.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L9</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;A. &#10216;l,a&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A,r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;l. &#8704;x&#8712;A. &#10216;l,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A,r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedBelow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A sufficient condition for a set to be bounded above.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L10</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;A. &#10216;a,u&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A,r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;u. &#8704;x&#8712;A. &#10216;x,u&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A,r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedAbove_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Intervals are bounded.&#8250;</span></span></span><span>
+</span><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(*proof that uses Order_ZF_3_L9 and Order_ZF_3_L10 and is not shorter *)</span></span></span></span></span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L11</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(Interval(r,a,b),r)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(Interval(r,a,b),r)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded(Interval(r,a,b),r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; Interval(r,a,b)&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,b&#10217; &#8712; r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,x&#10217; &#8712; r&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_2_L1A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;u. &#8704;x&#8712;Interval(r,a,b). &#10216; x,u&#10217; &#8712; r&quot;</span></span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;l. &#8704;x&#8712;Interval(r,a,b). &#10216; l,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(Interval(r,a,b),r)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(Interval(r,a,b),r)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded(Interval(r,a,b),r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedAbove_def</span><span> </span><span>IsBoundedBelow_def</span><span> </span><span>IsBounded_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A subset of a set that is bounded below is bounded below.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L12</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B&#8838;A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(B,r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A = 0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(B,r)&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedBelow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8800; 0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;l. &#8704;x&#8712;A. &#10216;l,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedBelow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;l.&#8704;x&#8712;B. &#10216;l,x&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(B,r)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedBelow_def</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(B,r)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A subset of a set that is bounded above is bounded above.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L13</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A,r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B&#8838;A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(B,r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A = 0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(B,r)&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedAbove_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8800; 0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;u. &#8704;x&#8712;A. &#10216;x,u&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedAbove_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;u.&#8704;x&#8712;B. &#10216;x,u&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(B,r)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedAbove_def</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(B,r)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If for every element of $X$ we can find one in $A$ 
+  that is greater, then the $A$ can not be bounded above.
+  Works for relations that are total, transitive and antisymmetric,
+  (i.e. for linear order relations).&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L14</span><span class="delimiter">:</span><span>  
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r {is total on} X&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans(r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;antisym(r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r &#8838; X&#215;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;X&#8800;0&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A6</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;X. &#8707;a&#8712;A. x&#8800;a &#8743; &#10216;x,a&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#172;IsBoundedAbove(A,r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A5</span><span> </span><span>A6</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8800;0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove(A,r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>u</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>II</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#10216; x,u&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBounded_def</span><span> </span><span>IsBoundedAbove_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A4</span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;u&#8712;X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A6</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>b</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>III</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;u&#8800;b&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;u,b&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;b,u&#10217; &#8712; r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;u,b&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b=u&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Fol1_L4</span><span class="delimiter">)</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>III</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>False</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#172;IsBoundedAbove(A,r)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The set of elements in a set $A$ that are nongreater than 
+  a given element is bounded above.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L15</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedAbove({x&#8712;A. &#10216;x,a&#10217; &#8712; r},r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedAbove_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If $A$ is bounded below, then the set of elements in a set $A$ 
+  that are nongreater than a given element is bounded.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_3_L16</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow(A,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded({x&#8712;A. &#10216;x,a&#10217; &#8712; r},r)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A=0&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded({x&#8712;A. &#10216;x,a&#10217; &#8712; r},r)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedBelow_def</span><span> </span><span>IsBoundedAbove_def</span><span> </span><span>IsBounded_def</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8800;0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>l</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#10216;l,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsBoundedBelow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;{x&#8712;A. &#10216;x,a&#10217; &#8712; r}. &#10216;l,y&#10217; &#8712; r&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBoundedBelow({x&#8712;A. &#10216;x,a&#10217; &#8712; r},r)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Order_ZF_3_L9</span><span class="delimiter">)</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsBounded({x&#8712;A. &#10216;x,a&#10217; &#8712; r},r)&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Order_ZF_3_L15</span><span> </span><span>IsBounded_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

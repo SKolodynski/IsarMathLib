@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Theory IntDiv_ZF (Isabelle2007: November 2007)</title>
+<link rel="stylesheet" type="text/css" href="isabelle.css">
+</head>
+
+<body>
+<div class="head"><h1>Theory IntDiv_ZF</h1>
+
+
+<p><a href="index.html">Up</a> to index of Isabelle/ZF/IsarMathLib</p>
+<span class="command">theory</span> <span class="name">IntDiv_ZF</span><br>
+<span class="keyword">imports</span> <a href="Int_ZF_1.html"><span class="name">Int_ZF_1</span></a> <a href="../IntDiv.html"><span class="name">IntDiv</span></a><br>
+<span class="keyword">begin</span><br>
+
+</div>
+<hr>
+<div class="source">
+<pre>(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005, 2006  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)
+
+header {*\isaheader{IntDiv\_ZF.thy}*}
+
+theory IntDiv_ZF imports Int_ZF_1 IntDiv
+
+begin
+
+text{*This theory translates some results form the Isabelle's 
+  @{text "IntDiv.thy"} theory to the notation used by IsarMathLib.*}
+
+section{*Quotient and reminder*}
+
+text{*For any integers $m,n$ , $n&gt;0$ there are unique integers $q,p$
+  such that $0\leq p &lt; n$ and $m = n\cdot q + p$. Number $p$ in this 
+  decompsition is usually called $m$ mod $n$. Standard Isabelle denotes numbers
+  $q,p$ as @{text "m zdiv n"} and @{text "m zmod n"}, resp., 
+  and we will use the same notation. *}
+
+text{*The next lemma is sometimes called the "quotient-reminder theorem".*}
+
+lemma (in int0) IntDiv_ZF_1_L1: assumes "m&isin;\&lt;int&gt;"  "n&isin;\&lt;int&gt;"
+  shows "m = n&middot;(m zdiv n) \&lt;ra&gt; (m zmod n)"
+  using prems Int_ZF_1_L2 raw_zmod_zdiv_equality
+  by simp;
+
+text{*If $n&gt;0$ then @{text "m zmod n"} is between $0$ and $n-1$.*}
+
+lemma (in int0) IntDiv_ZF_1_L2: 
+  assumes A1: "m&isin;\&lt;int&gt;" and A2: "\&lt;zero&gt;\&lt;lsq&gt;n"  "n&ne;\&lt;zero&gt;"
+  shows 
+  "\&lt;zero&gt; \&lt;lsq&gt; m zmod n"  
+  "m zmod n \&lt;lsq&gt; n"    "m zmod n &ne; n" 
+  "m zmod n \&lt;lsq&gt; n\&lt;rs&gt;\&lt;one&gt;"
+proof -
+  from A2 have T: "n &isin; \&lt;int&gt;"
+    using Int_ZF_2_L1A by simp;
+  from A2 have "#0 $&lt; n" using Int_ZF_2_L9 Int_ZF_1_L8 
+    by auto;
+  with T show 
+    "\&lt;zero&gt; \&lt;lsq&gt; m zmod n"  
+    "m zmod n \&lt;lsq&gt; n"  
+    "m zmod n &ne; n" 
+    using pos_mod Int_ZF_1_L8 Int_ZF_1_L8A zmod_type 
+      Int_ZF_2_L1 Int_ZF_2_L9AA 
+    by auto;
+  then show "m zmod n \&lt;lsq&gt; n\&lt;rs&gt;\&lt;one&gt;"
+    using Int_ZF_4_L1B by auto;
+qed;
+
+text{*$(m\cdot k)$ div $k = m$.*}
+
+lemma (in int0) IntDiv_ZF_1_L3: 
+  assumes "m&isin;\&lt;int&gt;"  "k&isin;\&lt;int&gt;"  and "k&ne;\&lt;zero&gt;"
+  shows 
+  "(m&middot;k) zdiv k = m"
+  "(k&middot;m) zdiv k = m"
+  using prems zdiv_zmult_self1 zdiv_zmult_self2 
+    Int_ZF_1_L8 Int_ZF_1_L2 by auto;
+
+text{*The next lemma essentially translates @{text "zdiv_mono1"} from 
+  standard Isabelle to our notation.*}
+
+lemma (in int0) IntDiv_ZF_1_L4: 
+  assumes A1: "m \&lt;lsq&gt; k" and A2: "\&lt;zero&gt;\&lt;lsq&gt;n"  "n&ne;\&lt;zero&gt;"
+  shows "m zdiv n \&lt;lsq&gt;  k zdiv n"
+proof -
+  from A2 have "#0 \&lt;lsq&gt; n"  "#0 &ne; n"
+    using Int_ZF_1_L8 by auto;
+  with A1 have 
+    "m zdiv n $&le; k zdiv n"
+    "m zdiv n &isin; \&lt;int&gt;"    "m zdiv k &isin; \&lt;int&gt;"
+    using Int_ZF_2_L1A Int_ZF_2_L9 zdiv_mono1
+    by auto;
+  then show "(m zdiv n) \&lt;lsq&gt; (k zdiv n)"
+    using Int_ZF_2_L1 by simp;
+qed;
+
+text{*A quotient-reminder theorem about integers greater than a given 
+  product.*}
+
+lemma (in int0) IntDiv_ZF_1_L5:
+  assumes A1: "n &isin; \&lt;int&gt;<sub>+</sub>" and A2: "n \&lt;lsq&gt; k" and A3: "k&middot;n \&lt;lsq&gt; m" 
+  shows 
+  "m = n&middot;(m zdiv n) \&lt;ra&gt; (m zmod n)"
+  "m = (m zdiv n)&middot;n \&lt;ra&gt; (m zmod n)"
+  "(m zmod n) &isin; \&lt;zero&gt;..(n\&lt;rs&gt;\&lt;one&gt;)"
+  "k \&lt;lsq&gt; (m zdiv n)"  
+  "m zdiv n &isin; \&lt;int&gt;<sub>+</sub>"
+proof -
+  from A2 A3 have T: 
+    "m&isin;\&lt;int&gt;"  "n&isin;\&lt;int&gt;"  "k&isin;\&lt;int&gt;"  "m zdiv n &isin; \&lt;int&gt;"  
+    using Int_ZF_2_L1A by auto;
+   then show "m = n&middot;(m zdiv n) \&lt;ra&gt; (m zmod n)"
+     using IntDiv_ZF_1_L1 by simp;
+   with T show "m = (m zdiv n)&middot;n \&lt;ra&gt; (m zmod n)"
+     using Int_ZF_1_L4 by simp;
+    from A1 have I: "\&lt;zero&gt;\&lt;lsq&gt;n"  "n&ne;\&lt;zero&gt;"
+     using PositiveSet_def by auto;
+   with T show "(m zmod n) &isin; \&lt;zero&gt;..(n\&lt;rs&gt;\&lt;one&gt;)"
+    using IntDiv_ZF_1_L2 Order_ZF_2_L1
+    by simp;
+  from A3 I have "(k&middot;n zdiv n) \&lt;lsq&gt; (m zdiv n)"
+    using IntDiv_ZF_1_L4 by simp;
+  with I T show "k \&lt;lsq&gt; (m zdiv n)"
+    using IntDiv_ZF_1_L3 by simp;
+  with A1 A2 show "m zdiv n &isin; \&lt;int&gt;<sub>+</sub>"
+    using Int_ZF_1_5_L7 by blast;
+qed;
+
+  
+end</pre>
+</div>
+<hr>
+<div class="theorems">
+
+
+<h2>Quotient and reminder</h2>
+
+<p><span class="command">lemma</span> <span class="name">IntDiv_ZF_1_L1:</span>
+<pre>  <span class="term">[| <span class="var">m</span> &isin; \&lt;int&gt;; <span class="var">n</span> &isin; \&lt;int&gt; |] ==&gt; <span class="var">m</span> = <span class="var">n</span> &middot; (<span class="var">m</span> <span class="const">zdiv</span> <span class="var">n</span>) \&lt;ra&gt; <span class="var">m</span> <span class="const">zmod</span> <span class="var">n</span></span></pre></p>
+
+<p><span class="command">lemma</span> <span class="name">IntDiv_ZF_1_L2:</span>
+<pre>  <span class="term">[| <span class="var">m</span> &isin; \&lt;int&gt;; \&lt;zero&gt; \&lt;lsq&gt; <span class="var">n</span>; <span class="var">n</span> <span class="const">&ne;</span> \&lt;zero&gt; |] ==&gt; \&lt;zero&gt; \&lt;lsq&gt; <span class="var">m</span> <span class="const">zmod</span> <span class="var">n</span></span></pre>
+<pre>  <span class="term">[| <span class="var">m</span> &isin; \&lt;int&gt;; \&lt;zero&gt; \&lt;lsq&gt; <span class="var">n</span>; <span class="var">n</span> <span class="const">&ne;</span> \&lt;zero&gt; |] ==&gt; <span class="var">m</span> <span class="const">zmod</span> <span class="var">n</span> \&lt;lsq&gt; <span class="var">n</span></span></pre>
+<pre>  <span class="term">[| <span class="var">m</span> &isin; \&lt;int&gt;; \&lt;zero&gt; \&lt;lsq&gt; <span class="var">n</span>; <span class="var">n</span> <span class="const">&ne;</span> \&lt;zero&gt; |] ==&gt; <span class="var">m</span> <span class="const">zmod</span> <span class="var">n</span> <span class="const">&ne;</span> <span class="var">n</span></span></pre>
+<pre>  <span class="term">[| <span class="var">m</span> &isin; \&lt;int&gt;; \&lt;zero&gt; \&lt;lsq&gt; <span class="var">n</span>; <span class="var">n</span> <span class="const">&ne;</span> \&lt;zero&gt; |]
+  ==&gt; <span class="var">m</span> <span class="const">zmod</span> <span class="var">n</span> \&lt;lsq&gt; <span class="var">n</span> \&lt;rs&gt; \&lt;one&gt;</span></pre></p>
+
+<p><span class="command">lemma</span> <span class="name">IntDiv_ZF_1_L3:</span>
+<pre>  <span class="term">[| <span class="var">m</span> &isin; \&lt;int&gt;; <span class="var">k</span> &isin; \&lt;int&gt;; <span class="var">k</span> <span class="const">&ne;</span> \&lt;zero&gt; |] ==&gt; <span class="var">m</span> &middot; <span class="var">k</span> <span class="const">zdiv</span> <span class="var">k</span> = <span class="var">m</span></span></pre>
+<pre>  <span class="term">[| <span class="var">m</span> &isin; \&lt;int&gt;; <span class="var">k</span> &isin; \&lt;int&gt;; <span class="var">k</span> <span class="const">&ne;</span> \&lt;zero&gt; |] ==&gt; <span class="var">k</span> &middot; <span class="var">m</span> <span class="const">zdiv</span> <span class="var">k</span> = <span class="var">m</span></span></pre></p>
+
+<p><span class="command">lemma</span> <span class="name">IntDiv_ZF_1_L4:</span>
+<pre>  <span class="term">[| <span class="var">m</span> \&lt;lsq&gt; <span class="var">k</span>; \&lt;zero&gt; \&lt;lsq&gt; <span class="var">n</span>; <span class="var">n</span> <span class="const">&ne;</span> \&lt;zero&gt; |] ==&gt; <span class="var">m</span> <span class="const">zdiv</span> <span class="var">n</span> \&lt;lsq&gt; <span class="var">k</span> <span class="const">zdiv</span> <span class="var">n</span></span></pre></p>
+
+<p><span class="command">lemma</span> <span class="name">IntDiv_ZF_1_L5:</span>
+<pre>  <span class="term">[| <span class="var">n</span> &isin; \&lt;int&gt;<sub>+</sub>; <span class="var">n</span> \&lt;lsq&gt; <span class="var">k</span>; <span class="var">k</span> &middot; <span class="var">n</span> \&lt;lsq&gt; <span class="var">m</span> |]
+  ==&gt; <span class="var">m</span> = <span class="var">n</span> &middot; (<span class="var">m</span> <span class="const">zdiv</span> <span class="var">n</span>) \&lt;ra&gt; <span class="var">m</span> <span class="const">zmod</span> <span class="var">n</span></span></pre>
+<pre>  <span class="term">[| <span class="var">n</span> &isin; \&lt;int&gt;<sub>+</sub>; <span class="var">n</span> \&lt;lsq&gt; <span class="var">k</span>; <span class="var">k</span> &middot; <span class="var">n</span> \&lt;lsq&gt; <span class="var">m</span> |]
+  ==&gt; <span class="var">m</span> = <span class="var">m</span> <span class="const">zdiv</span> <span class="var">n</span> &middot; <span class="var">n</span> \&lt;ra&gt; <span class="var">m</span> <span class="const">zmod</span> <span class="var">n</span></span></pre>
+<pre>  <span class="term">[| <span class="var">n</span> &isin; \&lt;int&gt;<sub>+</sub>; <span class="var">n</span> \&lt;lsq&gt; <span class="var">k</span>; <span class="var">k</span> &middot; <span class="var">n</span> \&lt;lsq&gt; <span class="var">m</span> |]
+  ==&gt; <span class="var">m</span> <span class="const">zmod</span> <span class="var">n</span> &isin; \&lt;zero&gt; .. (<span class="var">n</span> \&lt;rs&gt; \&lt;one&gt;)</span></pre>
+<pre>  <span class="term">[| <span class="var">n</span> &isin; \&lt;int&gt;<sub>+</sub>; <span class="var">n</span> \&lt;lsq&gt; <span class="var">k</span>; <span class="var">k</span> &middot; <span class="var">n</span> \&lt;lsq&gt; <span class="var">m</span> |] ==&gt; <span class="var">k</span> \&lt;lsq&gt; <span class="var">m</span> <span class="const">zdiv</span> <span class="var">n</span></span></pre>
+<pre>  <span class="term">[| <span class="var">n</span> &isin; \&lt;int&gt;<sub>+</sub>; <span class="var">n</span> \&lt;lsq&gt; <span class="var">k</span>; <span class="var">k</span> &middot; <span class="var">n</span> \&lt;lsq&gt; <span class="var">m</span> |] ==&gt; <span class="var">m</span> <span class="const">zdiv</span> <span class="var">n</span> &isin; \&lt;int&gt;<sub>+</sub></span></pre></p>
+
+</div>
+</body>
+</html>

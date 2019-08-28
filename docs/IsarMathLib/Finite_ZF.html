@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Finite_ZF (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Finite_ZF</h1>
+
+<span class="command">theory</span> <span class="name">Finite_ZF</span><br/>
+<span class="keyword">imports</span> <a href="ZF1.html"><span class="name">ZF1</span></a> <a href="Nat_ZF_IML.html"><span class="name">Nat_ZF_IML</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2008  Slawomir Kolodynski
+
+    This program is free software Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES LOSS OF USE, DATA, OR PROFITS OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Finite sets - introduction&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Finite_ZF</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>ZF1</span><span> </span><span>Nat_ZF_IML</span><span> </span><span>ZF.Cardinal</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Standard Isabelle Finite.thy contains a very useful 
+  notion of finite powerset: the set of finite subsets of a given set.
+  The definition, however, is specific to Isabelle and based on the notion
+  of &quot;datatype&quot;, obviously not something that belongs to ZF set theory.
+  This theory file devolopes the notion of finite powerset similarly as
+  in Finite.thy, but based on standard library&#39;s 
+  Cardinal.thy. This theory file is intended to 
+  replace IsarMathLib&#39;s &#8249;Finite1&#8250; and &#8249;Finite_ZF_1&#8250; theories
+  that are currently derived from the &quot;datatype&quot; approach.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition and basic properties of finite powerset&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The goal of this section is to prove an induction theorem about
+  finite powersets: if the empty set has some property and this property is 
+  preserved by adding a single element of a set, 
+  then this property is true for all finite subsets of this set.&#8250;</span></span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We defined the finite powerset &#8249;FinPow(X)&#8250; as those elements 
+  of the powerset that are finite.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;FinPow(X) &#8801; {A &#8712; Pow(X). Finite(A)}&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The cardinality of an element of finite powerset is a natural number.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>card_fin_is_nat</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8776; |A|&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>FinPow_def</span><span> </span><span>Finite_def</span><span> </span><span>cardinal_cong</span><span> </span><span>nat_into_Card</span><span> 
+</span><span>    </span><span>Card_cardinal_eq</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A reformulation of &#8249;card_fin_is_nat&#8250;: for a finit
+  set $A$ there is a bijection between $|A|$ and $A$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>fin_bij_card</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;b. b &#8712; bij(|A|, A)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| &#8776; A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_fin_is_nat</span><span> </span><span>eqpoll_sym</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>eqpoll_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a set has the same number of elements as $n \in \mathbb{N}$, 
+  then its cardinality is $n$. Recall that in set theory a natural number
+  $n$ is a set that has $n$ elements.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>card_card</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8776; n&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| = n&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>cardinal_cong</span><span> </span><span>nat_into_Card</span><span> </span><span>Card_cardinal_eq</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If we add a point to a finite set, the cardinality 
+  increases by one. To understand the second assertion
+  $| A \cup \{ a\}| = |A| \cup \{ |A|\} $ recall that
+  the cardinality $|A|$ of $A$ is a natural number
+  and for natural numbers we have $n+1 = n \cup \{ n\}$. 
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>card_fin_add_one</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; X-A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;|A &#8746; {a}| = succ( |A| )&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;|A &#8746; {a}| = |A| &#8746; {|A|}&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;cons(a,A) &#8776; cons( |A|, |A| )&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_fin_is_nat</span><span> </span><span>mem_not_refl</span><span> </span><span>cons_eqpoll_cong</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;cons(a,A) = A &#8746; {a}&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>consdef</span><span class="delimiter">)</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;cons( |A|, |A| ) = |A| &#8746; {|A|}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>consdef</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8746;{a} &#8776; succ( |A| )&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>succ_explained</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;|A &#8746; {a}| = succ( |A| )&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A &#8746; {a}| = |A| &#8746; {|A|}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_fin_is_nat</span><span> </span><span>card_card</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can decompose the finite powerset into collection of
+  sets of the same natural cardinalities.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>finpow_decomp</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FinPow(X) = (&#8899;n &#8712; nat. {A &#8712; Pow(X). A &#8776; n})&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Finite_def</span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Finite powerset is the union of sets of cardinality
+  bounded by natural numbers.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>finpow_union_card_nat</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FinPow(X) = (&#8899;n &#8712; nat. {A &#8712; Pow(X). A &#8818; n})&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FinPow(X) &#8838; (&#8899;n &#8712; nat. {A &#8712; Pow(X). A &#8818; n})&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>finpow_decomp</span><span> </span><span>FinPow_def</span><span> </span><span>eqpoll_imp_lepoll</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899;n &#8712; nat. {A &#8712; Pow(X). A &#8818; n}) &#8838; FinPow(X)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>lepoll_nat_imp_Finite</span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A different form of &#8249;finpow_union_card_nat&#8250; (see above) -
+  a subset that has not more elements than a given natural number 
+  is in the finite powerset.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>lepoll_nat_in_finpow</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8838; X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8818; n&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>finpow_union_card_nat</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Natural numbers are finite subsets of the set of natural numbers.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>nat_finpow_nat</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; FinPow(nat)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>nat_into_Finite</span><span> </span><span>nat_subset_nat</span><span> </span><span>FinPow_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A finite subset is a finite subset of itself.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>fin_finpow_self</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(A)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If we remove an element and put it back we get the set back.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>rem_add_eq</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(A-{a}) &#8746; {a} = A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Induction for finite powerset. This is smilar to the
+  standard Isabelle&#39;s &#8249;Fin_induct&#8250;.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>FinPow_induct</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(0)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;A &#8712; FinPow(X). P(A) &#10230; (&#8704;a&#8712;X. P(A &#8746; {a}))&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(B)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>n</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;B&#8712;Pow(X). B &#8818; 0 &#10230; P(B)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>lepoll_0_is_0</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704; k &#8712; nat. 
+      (&#8704;B &#8712; Pow(X). (B &#8818; k &#10230; P(B))) &#10230; 
+      (&#8704;B &#8712; Pow(X). (B &#8818; succ(k) &#10230; P(B)))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>k</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k &#8712; nat&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704; B &#8712; Pow(X). (B &#8818; k &#10230; P(B))&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>B</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A6</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8712; Pow(X)&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8818; succ(k)&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(B)&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B = 0 &#10230; P(B)&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B = 0&quot;</span></span></span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8818; 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>lepoll_0_iff</span><span>
+</span><span>		</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>I</span><span> </span><span>A6</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(B)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> 
+</span><span>	    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B = 0 &#10230; P(B)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B&#8800;0 &#10230; P(B)&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8800; 0&quot;</span></span></span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>a</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>II</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;B&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?A</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B - {a}&quot;</span></span></span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A6</span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?A &#8838; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?A &#8818; k&quot;</span></span></span><span> 
+</span><span>		</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Diff_sing_lepoll</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A4</span><span> </span><span>A5</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(?A)&quot;</span></span></span><span> 
+</span><span>		</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>lepoll_nat_in_finpow</span><span> </span><span>finpow_decomp</span><span> 
+</span><span>		</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span>A6</span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot; P(?A &#8746; {a})&quot;</span></span></span><span>
+</span><span>		</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?A &#8746; {a} = B&quot;</span></span></span><span>
+</span><span>		</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(B)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> 
+</span><span>	    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B&#8800;0 &#10230; P(B)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(B)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;B &#8712; Pow(X). (B &#8818; n &#10230; P(B))&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>ind_on_nat</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;n &#8712; nat. &#8704;B &#8712; Pow(X). (B &#8818; n &#10230; P(B))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(B)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>finpow_union_card_nat</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A subset of a finites subset is a finite subset.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>subset_finpow</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8838; A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>FinPow_def</span><span> </span><span>subset_Finite</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If we subtract anything from a finite set, 
+  the resulting set is finite.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>diff_finpow</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A-B &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>subset_finpow</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If we remove a point from a finites subset,
+  we get a finite subset.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">corollary</span></span><span> </span><span>fin_rem_point_fin</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A - {a} &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>diff_finpow</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Cardinality of a nonempty finite set is a successsor
+  of some natural number.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>card_non_empty_succ</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8800; 0&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;n &#8712; nat. |A| = succ(n)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>a</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?B</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A - {a}&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a &#8712; A&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?B &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; X - ?B&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>FinPow_def</span><span> </span><span>fin_rem_point_fin</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|?B &#8746; {a}| = succ( |?B| )&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_fin_add_one</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a &#8712; A&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;?B &#8712; FinPow(X)&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;A = ?B &#8746; {a}&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|?B| &#8712; nat&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_fin_is_nat</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;n &#8712; nat. |A| = succ(n)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Nonempty set has non-zero cardinality. This is probably
+  true without the assumption that the set is finite, but
+  I couldn&#39;t derive it from standard Isabelle theorems.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>card_non_empty_non_zero</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8800; 0&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| &#8800; 0&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>n</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| = succ(n)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_non_empty_succ</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| &#8800; 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>succ_not_0</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Another variation on the induction theme:
+  If we can show something holds for the empty set and
+  if it holds for all finite sets with 
+  at most $k$ elements then it holds for all 
+  finite sets with at most $k+1$
+  elements, the it holds for all finite sets.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>FinPow_card_ind</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(0)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k&#8712;nat.
+  (&#8704;A &#8712; FinPow(X). A &#8818; k &#10230; P(A)) &#10230;
+  (&#8704;A &#8712; FinPow(X). A &#8818; succ(k) &#10230; P(A))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712;  FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(A)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712;  FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8818; |A|&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_fin_is_nat</span><span> </span><span>eqpoll_imp_lepoll</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;n &#8712; nat. (&#8704;A &#8712; FinPow(X).
+    A &#8818; n &#10230; P(A))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>    </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>n</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;A &#8712; FinPow(X). A &#8818; 0 &#10230; P(A)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>lepoll_0_is_0</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span>A2</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span>
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;A &#8712; FinPow(X). A &#8818; n &#10230; P(A)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>ind_on_nat</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(A)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>  
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Another type of induction (or, maybe recursion).
+  The induction step  we try to find a point in the set that
+  if we remove it, the fact that the property holds for the 
+  smaller set implies that the property holds for the whole set. 
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>FinPow_ind_rem_one</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(0)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704; A &#8712; FinPow(X). A &#8800; 0 &#10230; (&#8707;a&#8712;A. P(A-{a}) &#10230; P(A))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8712;  FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(B)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">note</span></span><span> </span><span>A1</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k&#8712;nat.
+  (&#8704;B &#8712; FinPow(X). B &#8818; k &#10230; P(B)) &#10230;
+  (&#8704;C &#8712; FinPow(X). C &#8818; succ(k) &#10230; P(C))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>k</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k &#8712; nat&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;B &#8712; FinPow(X). B &#8818; k &#10230; P(B)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;C &#8712; FinPow(X). C &#8818; succ(k) &#10230; P(C)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>C</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;C &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;C &#8818; succ(k)&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">note</span></span><span> </span><span>A1</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;C &#8800; 0&quot;</span></span></span><span>
+</span><span>	    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;C &#8712; FinPow(X)&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>a</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span>
+</span><span>	      </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;C&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(C-{a}) &#10230; P(C)&quot;</span></span></span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A4</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;C &#8712; FinPow(X)&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;C &#8818; succ(k)&#8250;</span></span></span><span>
+</span><span>	    </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(C)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Diff_sing_lepoll</span><span> </span><span>fin_rem_point_fin</span><span>
+</span><span>	      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(C)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span>A3</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(B)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>FinPow_card_ind</span><span class="delimiter">)</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Yet another induction theorem. This is similar, but 
+  slightly more complicated than &#8249;FinPow_ind_rem_one&#8250;.
+  The difference is in the treatment of the empty set to allow 
+  to show properties that are not true for empty set.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>FinPow_rem_ind</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;A &#8712; FinPow(X). 
+  A = 0 &#8744; (&#8707;a&#8712;A. A = {a} &#8744; P(A-{a}) &#10230; P(A))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712;  FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8800;0&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(A)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;0 = 0 &#8744; P(0)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k&#8712;nat.
+    (&#8704;B &#8712; FinPow(X). B &#8818; k &#10230; (B=0 &#8744; P(B))) &#10230;
+    (&#8704;A &#8712; FinPow(X). A &#8818; succ(k) &#10230; (A=0 &#8744; P(A)))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>k</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k &#8712; nat&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;B &#8712; FinPow(X). B &#8818; k &#10230; (B=0 &#8744; P(B))&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;A &#8712; FinPow(X). A &#8818; succ(k) &#10230; (A=0 &#8744; P(A))&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>A</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8818; succ(k)&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8800;0&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A &#8712; FinPow(X)&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A&#8800;0&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>a</span><span> 
+</span><span>	    </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A = {a} &#8744; P(A-{a}) &#10230; P(A)&quot;</span></span></span><span>
+</span><span>	    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?B</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A-{a}&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A4</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A &#8712; FinPow(X)&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A &#8818; succ(k)&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8712;A&#8250;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?B = 0 &#8744; P(?B)&quot;</span></span></span><span> 
+</span><span>	    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Diff_sing_lepoll</span><span> </span><span>fin_rem_point_fin</span><span>
+</span><span>	    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8712;A&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A = {a} &#8744; P(A-{a}) &#10230; P(A)&#8250;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(A)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span>  </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">qed</span></span><span>	  
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span>A2</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A=0 &#8744; P(A)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>FinPow_card_ind</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(A)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a family of sets is closed with respect to taking intersections
+  of two sets then it is closed with respect to taking intersections 
+  of any nonempty finite collection.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>inter_two_inter_fin</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;V&#8712;T. &#8704;W&#8712;T. V &#8745; W &#8712; T&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;N &#8800; 0&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;N &#8712; FinPow(T)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8898;N &#8712; T)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;0 = 0 &#8744; (&#8898;0 &#8712; T)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;M &#8712; FinPow(T). (M = 0 &#8744; &#8898;M &#8712; T) &#10230; 
+    (&#8704;W &#8712; T. M&#8746;{W} = 0 &#8744; &#8898;(M &#8746; {W}) &#8712; T)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>M</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M &#8712; FinPow(T)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M = 0 &#8744; &#8898;M &#8712; T&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M = 0&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;W &#8712; T. M&#8746;{W} = 0 &#8744; &#8898;(M &#8746; {W}) &#8712; T&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M &#8800; 0&quot;</span></span></span><span> 
+</span><span>	</span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A4</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8898;M &#8712; T&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>W</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;W &#8712; T&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;M &#8800; 0&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8898;(M &#8746; {W}) = (&#8898;M) &#8745; W&quot;</span></span></span><span> 
+</span><span>	    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#8898;M &#8712; T&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;W &#8712; T&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8898;(M &#8746; {W}) &#8712; T&quot;</span></span></span><span>
+</span><span>	    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;W &#8712; T. M&#8746;{W} = 0 &#8744; &#8898;(M &#8746; {W}) &#8712; T&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;W &#8712; T. M&#8746;{W} = 0 &#8744; &#8898;(M &#8746; {W}) &#8712; T&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;N &#8712; FinPow(T)&#8250;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;N = 0 &#8744; (&#8898;N &#8712; T)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>FinPow_induct</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8898;N &#8712; T)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a family of sets contains the empty set and
+  is closed with respect to taking unions
+  of two sets then it is closed with respect to taking unions 
+  of any finite collection.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>union_two_union_fin</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;0 &#8712; C&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;A&#8712;C. &#8704;B&#8712;C. A&#8746;B &#8712; C&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;N &#8712; FinPow(C)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;N &#8712; C&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;0 &#8712; C&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;0 &#8712; C&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;M &#8712; FinPow(C). &#8899;M &#8712; C &#10230; (&#8704;A&#8712;C. &#8899;(M &#8746; {A}) &#8712; C)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>M</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M &#8712; FinPow(C)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;M &#8712; C&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>A</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8712;C&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;(M &#8746; {A}) = (&#8899;M) &#8746; A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#8899;M &#8712; C&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A&#8712;C&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;(M &#8746; {A}) &#8712; C&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;N &#8712; FinPow(C)&#8250;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;N &#8712; C&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>FinPow_induct</span><span class="delimiter">)</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Empty set is in finite power set.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>empty_in_finpow</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;0 &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Singleton is in the finite powerset.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>singleton_in_finpow</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; X&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{x} &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Union of two finite subsets is a finite subset.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>union_finpow</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8746; B &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Union of finite number of finite sets is finite.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>fin_union_finpow</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M &#8712; FinPow(FinPow(X))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;M &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>empty_in_finpow</span><span> </span><span>union_finpow</span><span> </span><span>union_two_union_fin</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(*text{*A subset of a finites subset is a finite subset.*}
+
+lemma subset_finpow: assumes &quot;A &#8712; FinPow(X)&quot; and &quot;B &#8838; A&quot;
+  shows &quot;B &#8712; FinPow(X)&quot;
+  using assms FinPow_def subset_Finite by auto;*)</span></span></span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a set is finite after removing one element, then it is finite.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>rem_point_fin_fin</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A - {x} &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(A - {x}) &#8746; {x} &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>singleton_in_finpow</span><span> </span><span>union_finpow</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8838; (A - {x}) &#8746; {x}&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>FinPow_def</span><span> </span><span>subset_Finite</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span> 
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;An image of a finite set is finite.&#8250;</span></span></span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>fin_image_fin</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;V&#8712;B. K(V)&#8712;C&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;N &#8712; FinPow(B)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{K(V). V&#8712;N} &#8712; FinPow(C)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{K(V). V&#8712;0} &#8712; FinPow(C)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>FinPow_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;A &#8712; FinPow(B). 
+    {K(V). V&#8712;A} &#8712; FinPow(C) &#10230; (&#8704;a&#8712;B. {K(V). V &#8712; (A &#8746; {a})} &#8712; FinPow(C))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>A</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(B)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">assume</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;{K(V). V&#8712;A} &#8712; FinPow(C)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>a</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;B&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">have</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;{K(V). V &#8712; (A &#8746; {a})} &#8712; FinPow(C)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{K(V). V &#8712; (A &#8746; {a})} = {K(V). V&#8712;A} &#8746; {K(a)}&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;{K(V). V&#8712;A} &#8712; FinPow(C)&#8250;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#8704;V&#8712;B. K(V) &#8712; C&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8712;B&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{K(a)} &#8712;  FinPow(C)&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>singleton_in_finpow</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>union_finpow</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;N &#8712; FinPow(B)&#8250;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{K(V). V&#8712;N} &#8712; FinPow(C)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>FinPow_induct</span><span class="delimiter">)</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Union of a finite indexed family of finite sets is finite.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>union_fin_list_fin</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k &#8712; n. N(k) &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;{N(k). k &#8712; n} &#8712;  FinPow(FinPow(X))&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899;k &#8712; n. N(k)) &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; FinPow(n)&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>nat_finpow_nat</span><span> </span><span>fin_finpow_self</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{N(k). k &#8712; n} &#8712;  FinPow(FinPow(X))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>fin_image_fin</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899;k &#8712; n. N(k)) &#8712; FinPow(X)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fin_union_finpow</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

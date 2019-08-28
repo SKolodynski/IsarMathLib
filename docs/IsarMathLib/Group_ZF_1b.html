@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Group_ZF_1b (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Group_ZF_1b</h1>
+
+<span class="command">theory</span> <span class="name">Group_ZF_1b</span><br/>
+<span class="keyword">imports</span> <a href="Group_ZF.html"><span class="name">Group_ZF</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics written for Isabelle/Isar.
+
+    Copyright (C) 2005, 2006  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Groups - and alternative definition&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Group_ZF_1b</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Group_ZF</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In a typical textbook a group is defined as a set $G$ with an 
+  associative operation such that two conditions hold:
+
+  A: there is an element $e\in G$ such that for all 
+  $g\in G$ we have $e\cdot g = g$ and $g\cdot e =g$. We call this element a 
+  &quot;unit&quot; or a &quot;neutral element&quot; of the group.
+  
+  B: for every $a\in G$ there exists a $b\in G$ such that $a\cdot b = e$, 
+  where $e$ is the element of $G$ whose existence is guaranteed by A.
+
+  The validity of this definition is rather dubious to me, as condition 
+  A does not define any specific element $e$ that can be referred to in 
+  condition B - it merely states that a set of such units
+  $e$ is not empty. Of course it does work in the end as we can prove that
+  the set of such neutral elements has exactly one element, but still the definition
+  by itself is not valid. You just can&#39;t reference a variable bound by a quantifier
+  outside of the scope of that quantifier.
+  
+  One way around this is to first use condition A to define
+  the notion of a monoid, then prove the uniqueness of $e$ and then use the 
+  condition B to define groups. 
+
+  Another way is to write conditions A and B together as follows:
+  
+  $\exists_{e \in G} \ (\forall_{g \in G} \ e\cdot g = g \wedge g\cdot e = g) 
+  \wedge (\forall_{a\in G}\exists_{b\in G}\  a\cdot b = e).$
+
+  This is rather ugly.
+
+  What I want to talk about is an amusing way to define groups directly 
+  without any reference to the neutral elements. Namely, we can define 
+  a group as a non-empty set $G$ with an associative operation &quot;$\cdot $&quot; 
+  such that 
+  
+  C: for every $a,b\in G$ the equations $a\cdot x = b$ and 
+  $y\cdot a = b$ can be solved in $G$.
+  
+  This theory file aims at proving the equivalence of this 
+  alternative definition with the usual definition of the group, as 
+  formulated in &#8249;Group_ZF.thy&#8250;. The informal proofs come from an Aug. 14, 2005
+  post by buli on the matematyka.org forum.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;An alternative definition of group&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;First we will define notation for writing about groups.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We will use the multiplicative notation for the group operation. To do this, we
+  define a context (locale) that tells Isabelle
+  to interpret $a\cdot b$ as the value of function $P$ on the pair 
+  $\langle a,b \rangle$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">locale</span></span><span> </span><span>group2</span><span> </span><span class="delimiter">=</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>P</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>dot</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infixl</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8901;&quot;</span></span></span><span> </span><span>70</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>dot_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8901; b &#8801; P`&#10216;a,b&#10217;&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next theorem states that a set $G$ with an associative operation 
+  that satisfies condition C is a group, as defined in IsarMathLib
+  &#8249;Group_ZF&#8250; theory.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group2</span><span class="delimiter">)</span><span> </span><span>altgroup_is_group</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;G&#8800;0&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P {is associative on} G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;G.&#8704;b&#8712;G. &#8707;x&#8712;G. a&#8901;x = b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;G.&#8704;b&#8712;G. &#8707;y&#8712;G. y&#8901;a = b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(G,P)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>a</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>x</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;x = a&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A4</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8712;G&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>y</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8712;G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8901;a = a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;b&#8712;G. b = b&#8901;x &#8743; b = y&#8901;b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>    </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>b</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;G&quot;</span></span></span><span>
+</span><span>     </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A4</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8712;G&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>y<span class="hidden">&#8681;</span><sub>b</sub></span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y<span class="hidden">&#8681;</span><sub>b</sub>&#8712;G&quot;</span></span></span><span>  
+</span><span>      </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y<span class="hidden">&#8681;</span><sub>b</sub>&#8901;a = b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A3</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8712;G&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;b&#8712;G&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>x<span class="hidden">&#8681;</span><sub>b</sub></span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x<span class="hidden">&#8681;</span><sub>b</sub>&#8712;G&quot;</span></span></span><span>  
+</span><span>      </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;x<span class="hidden">&#8681;</span><sub>b</sub> = b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8901;x = a&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y&#8901;a = a&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y<span class="hidden">&#8681;</span><sub>b</sub>&#8901;a = b&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8901;x<span class="hidden">&#8681;</span><sub>b</sub> = b&#8250;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b = y<span class="hidden">&#8681;</span><sub>b</sub>&#8901;(a&#8901;x)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b = (y&#8901;a)&#8901;x<span class="hidden">&#8681;</span><sub>b</sub>&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8712;G&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x&#8712;G&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y&#8712;G&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x<span class="hidden">&#8681;</span><sub>b</sub>&#8712;G&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y<span class="hidden">&#8681;</span><sub>b</sub>&#8712;G&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;(y&#8901;a)&#8901;x<span class="hidden">&#8681;</span><sub>b</sub> = y&#8901;(a&#8901;x<span class="hidden">&#8681;</span><sub>b</sub>)&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;y<span class="hidden">&#8681;</span><sub>b</sub>&#8901;(a&#8901;x) = (y<span class="hidden">&#8681;</span><sub>b</sub>&#8901;a)&#8901;x&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAssociative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y<span class="hidden">&#8681;</span><sub>b</sub>&#8901;a = b&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8901;x<span class="hidden">&#8681;</span><sub>b</sub> = b&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;(y<span class="hidden">&#8681;</span><sub>b</sub>&#8901;a)&#8901;x = b&#8901;x&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8901;(a&#8901;x<span class="hidden">&#8681;</span><sub>b</sub>) = y&#8901;b&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b = b&#8901;x &#8743; b = y&#8901;b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x = y&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x&#8712;G&#8250;</span></span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x = y&#8901;x&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>  
+</span><span>    </span><span class="keyword1"><span class="command">also</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y&#8712;G&#8250;</span></span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8901;x = y&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">finally</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x = y&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;b&#8712;G. b&#8901;x = b &#8743; x&#8901;b = b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x&#8712;G&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(G,P)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAmonoid_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(G,P)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0_def</span><span> </span><span>monoid0.unit_is_neutral</span><span> </span><span>IsAgroup_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The converse of &#8249;altgroup_is_group&#8250;: 
+  in every (classically defined) group condition C holds.  
+  In informal mathematics we can say &quot;Obviously
+  condition C holds in any group.&quot; In formalized mathematics the word &quot;obviously&quot; 
+  is not in the language. The next theorem is proven in the context called
+  &#8249;group0&#8250; defined in the theory &#8249;Group_ZF.thy&#8250;. Similarly to the
+  &#8249;group2&#8250; that context defines $a\cdot b$ as $P\langle a,b\rangle$ 
+  It also defines notation related to the group inverse and 
+  adds an assumption that the pair $(G,P)$ is a group 
+  to all its theorems. This is why in the next theorem we don&#39;t 
+  explicitely assume that $(G,P)$ is a group - this assumption 
+  is implicit in the context.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group0</span><span class="delimiter">)</span><span> </span><span>group_is_altgroup</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;G.&#8704;b&#8712;G. &#8707;x&#8712;G. a&#8901;x = b&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;G.&#8704;b&#8712;G. &#8707;y&#8712;G. y&#8901;a = b&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>a</span><span> </span><span>b</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?x</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175;&#8901; b&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?y</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8901;a&#175;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a&#8712;G&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;b&#8712;G&#8250;</span></span></span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;?x &#8712; G&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;?y &#8712; G&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;?x = b&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;?y&#8901;a = b&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>inverse_in_group</span><span> </span><span>group_op_closed</span><span> </span><span>inv_cancel_two</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;x&#8712;G. a&#8901;x = b&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;y&#8712;G. y&#8901;a = b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> 
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;G.&#8704;b&#8712;G. &#8707;x&#8712;G. a&#8901;x = b&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;G.&#8704;b&#8712;G. &#8707;y&#8712;G. y&#8901;a = b&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span><span>  
+</span></pre>
+
+</div>
+</body>
+</html>

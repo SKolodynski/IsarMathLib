@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Metamath_Interface (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Metamath_Interface</h1>
+
+<span class="command">theory</span> <span class="name">Metamath_Interface</span><br/>
+<span class="keyword">imports</span> <a href="Complex_ZF.html"><span class="name">Complex_ZF</span></a> <a href="MMI_prelude.html"><span class="name">MMI_prelude</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+This file is a part of IsarMathLib - 
+a library of formalized mathematics for Isabelle/Isar.
+
+Copyright (C) 2006  Slawomir Kolodynski
+
+This program is free software; Redistribution and use in source and binary forms, 
+with or without modification, are permitted provided that the 
+following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Metamath interface&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Metamath_Interface</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Complex_ZF</span><span> </span><span>MMI_prelude</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory contains some lemmas that make it possible to use 
+  the theorems translated from Metamath in a the &#8249;complex0&#8250; 
+  context.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;MMisar0 and complex0 contexts.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In the section we show a lemma that the assumptions in 
+   &#8249;complex0&#8250; context imply the assumptions of the &#8249;MMIsar0&#8250;
+   context. The &#8249;Metamath_sampler&#8250; theory provides examples 
+   how this lemma can be used.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma states that we can use 
+  the theorems proven in the &#8249;MMIsar0&#8250; context in
+  the &#8249;complex0&#8250; context. Unfortunately we have to 
+  use low level Isabelle methods &quot;rule&quot; and &quot;unfold&quot; in the proof, simp
+  and blast fail on the order axioms.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>complex0</span><span class="delimiter">)</span><span> </span><span>MMIsar_valid</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;MMIsar0(&#8477;,&#8450;,&#120813;,&#120812;,&#120258;,CplxAdd(R,A),CplxMul(R,A,M),
+  StrictVersion(CplxROrder(R,A,r)))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?real</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8477;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?complex</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8450;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?zero</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?one</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?iunit</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120258;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?caddset</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;CplxAdd(R,A)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?cmulset</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;CplxMul(R,A,M)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?lessrrel</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;StrictVersion(CplxROrder(R,A,r))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;a b. a &#8712; ?real &#8743; b &#8712; ?real &#10230;
+    &#10216;a, b&#10217; &#8712; ?lessrrel &#10231; &#172; (a = b &#8744; &#10216;b, a&#10217; &#8712; ?lessrrel))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span>
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230; (a \&lt;lsr&gt; b &#10231; &#172;(a=b &#8744; b \&lt;lsr&gt; a))&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>pre_axlttri</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>a</span><span> </span><span>b</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; ?real &#8743; b &#8712; ?real&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(a \&lt;lsr&gt; b &#10231; &#172;(a=b &#8744; b \&lt;lsr&gt; a))&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">hence</span></span><span>
+</span><span>	</span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;a, b&#10217; &#8712; ?lessrrel &#10231; &#172; (a = b &#8744; &#10216;b, a&#10217; &#8712; ?lessrrel)&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;a b. a &#8712; ?real &#8743; b &#8712; ?real &#10230;
+	(&#10216;a, b&#10217; &#8712; ?lessrrel &#10231; &#172; (a = b &#8744; &#10216;b, a&#10217; &#8712; ?lessrrel)))&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;a b c.
+    a &#8712; ?real &#8743; b &#8712; ?real &#8743; c &#8712; ?real &#10230;
+    &#10216;a, b&#10217; &#8712; ?lessrrel &#8743; &#10216;b, c&#10217; &#8712; ?lessrrel &#10230; &#10216;a, c&#10217; &#8712; ?lessrrel)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>II</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b c.  a &#8712; &#8477; &#8743; b &#8712; &#8477; &#8743; c &#8712; &#8477; &#10230; 
+      ((a \&lt;lsr&gt; b &#8743; b \&lt;lsr&gt; c) &#10230; a \&lt;lsr&gt; c)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>pre_axlttrn</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>a</span><span> </span><span>b</span><span> </span><span>c</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; ?real &#8743; b &#8712; ?real &#8743; c &#8712; ?real&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(a \&lt;lsr&gt; b &#8743; b \&lt;lsr&gt; c) &#10230; a \&lt;lsr&gt; c&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">hence</span></span><span> 	
+</span><span>	</span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;a, b&#10217; &#8712; ?lessrrel &#8743; &#10216;b, c&#10217; &#8712; ?lessrrel &#10230; &#10216;a, c&#10217; &#8712; ?lessrrel&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;a b c.
+	a &#8712; ?real &#8743; b &#8712; ?real &#8743; c &#8712; ?real &#10230;
+	&#10216;a, b&#10217; &#8712; ?lessrrel &#8743; &#10216;b, c&#10217; &#8712; ?lessrrel &#10230; &#10216;a, c&#10217; &#8712; ?lessrrel)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;A B C.
+    A &#8712; ?real &#8743; B &#8712; ?real &#8743; C &#8712; ?real &#10230;
+    &#10216;A, B&#10217; &#8712; ?lessrrel &#10230;
+    &#10216;?caddset ` &#10216;C, A&#10217;, ?caddset ` &#10216;C, B&#10217;&#10217; &#8712; ?lessrrel)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>pre_axltadd</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;A B. A &#8712; ?real &#8743; B &#8712; ?real &#10230;
+    &#10216;?zero, A&#10217; &#8712; ?lessrrel &#8743; &#10216;?zero, B&#10217; &#8712; ?lessrrel &#10230;
+    &#10216;?zero, ?cmulset ` &#10216;A, B&#10217;&#10217; &#8712; ?lessrrel)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>pre_axmulgt0</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;S. S &#8838; ?real &#8743; S &#8800; 0 &#8743; (&#8707;x&#8712;?real. &#8704;y&#8712;S. &#10216;y, x&#10217; &#8712; ?lessrrel) &#10230;
+    (&#8707;x&#8712;?real.
+    (&#8704;y&#8712;S. &#10216;x, y&#10217; &#8713; ?lessrrel) &#8743;
+    (&#8704;y&#8712;?real. &#10216;y, x&#10217; &#8712; ?lessrrel &#10230; (&#8707;z&#8712;S. &#10216;y, z&#10217; &#8712; ?lessrrel))))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>pre_axsup</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8477; &#8838; &#8450;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axresscn</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; &#8800; &#120812;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ax1ne0</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8450; isASet&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot; CplxAdd(R,A) : &#8450; &#215; &#8450; &#8594; &#8450;&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axaddopr</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;CplxMul(R,A,M) : &#8450; &#215; &#8450; &#8594; &#8450;&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axmulopr</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230; a&#8901; b = b &#8901; a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axmulcom</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230;
+          ?cmulset ` &#10216;a, b&#10217; = ?cmulset ` &#10216;b, a&#10217;
+    )&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230; a \&lt;ca&gt; b &#8712; &#8450;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axaddcl</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230; 
+          ?caddset ` &#10216;a, b&#10217; &#8712; &#8450;
+      )&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230; a &#8901; b &#8712; &#8450;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axmulcl</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230; 
+    ?cmulset ` &#10216;a, b&#10217; &#8712; &#8450; )&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b C. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; C &#8712; &#8450; &#10230; 
+    a &#8901; (b \&lt;ca&gt; C) = a &#8901; b \&lt;ca&gt; a &#8901; C&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axdistr</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b C.
+         a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; C &#8712; &#8450; &#10230;
+         ?cmulset ` &#10216;a, ?caddset ` &#10216;b, C&#10217;&#10217; =
+         ?caddset `
+         &#10216;?cmulset ` &#10216;a, b&#10217;, ?cmulset ` &#10216;a, C&#10217;&#10217;&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230;
+         a \&lt;ca&gt; b = b \&lt;ca&gt; a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axaddcom</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b.
+          a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230;
+          ?caddset ` &#10216;a, b&#10217; = ?caddset ` &#10216;b, a&#10217;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b C. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; C &#8712; &#8450; &#10230;
+      a \&lt;ca&gt; b \&lt;ca&gt; C = a \&lt;ca&gt; (b \&lt;ca&gt; C)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axaddass</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b C.
+          a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; C &#8712; &#8450; &#10230;
+          ?caddset ` &#10216;?caddset ` &#10216;a, b&#10217;, C&#10217; =
+          ?caddset ` &#10216;a, ?caddset ` &#10216;b, C&#10217;&#10217;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b c. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; c &#8712; &#8450; &#10230; a&#8901;b&#8901;c = a&#8901;(b&#8901;c)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axmulass</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b C.
+          a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; C &#8712; &#8450; &#10230;
+          ?cmulset ` &#10216;?cmulset ` &#10216;a, b&#10217;, C&#10217; =
+          ?cmulset ` &#10216;a, ?cmulset ` &#10216;b, C&#10217;&#10217;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; &#8712; &#8477;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ax1re</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120258;&#8901;&#120258; \&lt;ca&gt; &#120813; = &#120812;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axi2m1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?caddset ` &#10216;?cmulset ` &#10216;&#120258;, &#120258;&#10217;, &#120813;&#10217; = &#120812;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8450; &#10230; a \&lt;ca&gt; &#120812; = a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ax0id</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8450; &#10230; ?caddset ` &#10216;a, &#120812;&#10217; = a&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120258; &#8712; &#8450;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axicn</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8450; &#10230; (&#8707;x&#8712;&#8450;. a \&lt;ca&gt; x = &#120812;)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axnegex</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8450; &#10230; 
+    (&#8707;x&#8712;&#8450;. ?caddset ` &#10216;a, x&#10217; = &#120812;)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8450; &#8743; a &#8800; &#120812; &#10230; (&#8707;x&#8712;&#8450;. a &#8901; x = &#120813;)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axrecex</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8450; &#8743; a &#8800; &#120812; &#10230; 
+      ( &#8707;x&#8712;&#8450;. ?cmulset ` &#10216;a, x&#10217; = &#120813; )&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8450; &#10230; a&#8901;&#120813; = a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ax1id</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot; &#8704;a. a &#8712; &#8450; &#10230; 
+        ?cmulset ` &#10216;a, &#120813;&#10217; = a&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230; a \&lt;ca&gt; b &#8712; &#8477;&quot;</span></span></span><span>
+</span><span>   </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axaddrcl</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230; 
+     ?caddset ` &#10216;a, b&#10217; &#8712; &#8477;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230; a &#8901; b &#8712; &#8477;&quot;</span></span></span><span>
+</span><span>   </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axmulrcl</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a b. a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230; 
+     ?cmulset ` &#10216;a, b&#10217; &#8712; &#8477;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8477; &#10230; (&#8707;x&#8712;&#8477;. a \&lt;ca&gt; x = &#120812;)&quot;</span></span></span><span>
+</span><span>   </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axrnegex</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8477; &#10230; 
+   ( &#8707;x&#8712;&#8477;. ?caddset ` &#10216;a, x&#10217; = &#120812; )&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8477; &#8743; a&#8800;&#120812; &#10230; (&#8707;x&#8712;&#8477;. a &#8901; x = &#120813;)&quot;</span></span></span><span>
+</span><span>   </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>axrrecex</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a. a &#8712; &#8477; &#8743; a &#8800; &#120812; &#10230; 
+   ( &#8707;x&#8712;&#8477;. ?cmulset ` &#10216;a, x&#10217; = &#120813;)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span class="string"><span class="delete"><span class="delete">&quot;(
+   (
+      (
+         ( &#8704;a b.
+           a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230;
+           &#10216;a, b&#10217; &#8712; ?lessrrel &#10231;
+           &#172; (a = b &#8744; &#10216;b, a&#10217; &#8712; ?lessrrel)
+         ) &#8743;
+       
+         ( &#8704;a b C.
+           a &#8712; &#8477; &#8743; b &#8712; &#8477; &#8743; C &#8712; &#8477; &#10230;
+           &#10216;a, b&#10217; &#8712; ?lessrrel &#8743;
+           &#10216;b, C&#10217; &#8712; ?lessrrel &#10230;
+           &#10216;a, C&#10217; &#8712; ?lessrrel
+         ) &#8743;
+       
+         (&#8704;a b C.
+           a &#8712; &#8477; &#8743; b &#8712; &#8477; &#8743; C &#8712; &#8477; &#10230;
+           &#10216;a, b&#10217; &#8712; ?lessrrel &#10230;
+           &#10216;?caddset ` &#10216;C, a&#10217;, ?caddset ` &#10216;C, b&#10217;&#10217; &#8712;
+           ?lessrrel
+         )
+      ) &#8743;
+           
+      (
+         ( &#8704;a b.
+           a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230;
+           &#10216;&#120812;, a&#10217; &#8712; ?lessrrel &#8743;
+           &#10216;&#120812;, b&#10217; &#8712; ?lessrrel &#10230;
+           &#10216;&#120812;, ?cmulset ` &#10216;a, b&#10217;&#10217; &#8712;
+           ?lessrrel
+         ) &#8743;
+           
+         ( &#8704;S. S &#8838; &#8477; &#8743; S &#8800; 0 &#8743;
+             ( &#8707;x&#8712;&#8477;. &#8704;y&#8712;S. &#10216;y, x&#10217; &#8712; ?lessrrel
+             ) &#10230;
+             ( &#8707;x&#8712;&#8477;. 
+                ( &#8704;y&#8712;S. &#10216;x, y&#10217; &#8713; ?lessrrel
+                ) &#8743;
+                ( &#8704;y&#8712;&#8477;. &#10216;y, x&#10217; &#8712; ?lessrrel &#10230;
+                   ( &#8707;z&#8712;S. &#10216;y, z&#10217; &#8712; ?lessrrel
+                   )
+                )
+             )
+         )
+      ) &#8743;
+      
+      &#8477; &#8838; &#8450; &#8743; 
+      &#120813; &#8800; &#120812;
+   ) &#8743;
+      
+   ( &#8450; isASet &#8743; ?caddset &#8712; &#8450; &#215; &#8450; &#8594; &#8450; &#8743; 
+    ?cmulset &#8712; &#8450; &#215; &#8450; &#8594; &#8450;
+   ) &#8743;
+   
+   (
+      (&#8704;a b.
+          a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230;
+          ?cmulset ` &#10216;a, b&#10217; = ?cmulset ` &#10216;b, a&#10217;
+      ) &#8743;
+      
+      (&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230; 
+          ?caddset ` &#10216;a, b&#10217; &#8712; &#8450;
+      )
+     
+   ) &#8743;
+     
+   (&#8704;a b. a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230; 
+      ?cmulset ` &#10216;a, b&#10217; &#8712; &#8450;
+   ) &#8743;
+     
+   (&#8704;a b C.
+         a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; C &#8712; &#8450; &#10230;
+         ?cmulset ` &#10216;a, ?caddset ` &#10216;b, C&#10217;&#10217; =
+         ?caddset `
+         &#10216;?cmulset ` &#10216;a, b&#10217;, ?cmulset ` &#10216;a, C&#10217;&#10217;
+   )
+) &#8743;
+
+
+(
+   (
+      (&#8704;a b.
+          a &#8712; &#8450; &#8743; b &#8712; &#8450; &#10230;
+          ?caddset ` &#10216;a, b&#10217; = ?caddset ` &#10216;b, a&#10217;
+      ) &#8743;
+      
+      (&#8704;a b C.
+          a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; C &#8712; &#8450; &#10230;
+          ?caddset ` &#10216;?caddset ` &#10216;a, b&#10217;, C&#10217; =
+          ?caddset ` &#10216;a, ?caddset ` &#10216;b, C&#10217;&#10217;
+      ) &#8743;
+      
+      (&#8704;a b C.
+          a &#8712; &#8450; &#8743; b &#8712; &#8450; &#8743; C &#8712; &#8450; &#10230;
+          ?cmulset ` &#10216;?cmulset ` &#10216;a, b&#10217;, C&#10217; =
+          ?cmulset ` &#10216;a, ?cmulset ` &#10216;b, C&#10217;&#10217;
+      )
+   ) &#8743;
+   
+   
+   (&#120813; &#8712; &#8477; &#8743; 
+    ?caddset ` &#10216;?cmulset ` &#10216;&#120258;, &#120258;&#10217;, &#120813;&#10217; = &#120812;
+   ) &#8743;
+   
+   (&#8704;a. a &#8712; &#8450; &#10230; ?caddset ` &#10216;a, &#120812;&#10217; = a
+   ) &#8743;
+    
+   &#120258; &#8712; &#8450;
+) &#8743;
+   
+(
+   (&#8704;a. a &#8712; &#8450; &#10230; 
+      (&#8707;x&#8712;&#8450;. ?caddset ` &#10216;a, x&#10217; = &#120812;
+      )
+   ) &#8743;
+      
+   ( &#8704;a. a &#8712; &#8450; &#8743; a &#8800; &#120812; &#10230; 
+      ( &#8707;x&#8712;&#8450;. ?cmulset ` &#10216;a, x&#10217; = &#120813;
+      )
+   ) &#8743;
+   
+   ( &#8704;a. a &#8712; &#8450; &#10230; 
+        ?cmulset ` &#10216;a, &#120813;&#10217; = a
+   )
+) &#8743;
+   
+(
+   ( &#8704;a b. a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230; 
+     ?caddset ` &#10216;a, b&#10217; &#8712; &#8477;
+   ) &#8743;
+      
+   ( &#8704;a b. a &#8712; &#8477; &#8743; b &#8712; &#8477; &#10230; 
+     ?cmulset ` &#10216;a, b&#10217; &#8712; &#8477;
+   )
+) &#8743;
+    
+( &#8704;a. a &#8712; &#8477; &#10230; 
+   ( &#8707;x&#8712;&#8477;. ?caddset ` &#10216;a, x&#10217; = &#120812;
+   ) 
+) &#8743;
+   
+( &#8704;a. a &#8712; &#8477; &#8743; a &#8800; &#120812; &#10230; 
+   ( &#8707;x&#8712;&#8477;. ?cmulset ` &#10216;a, x&#10217; = &#120813;
+   )
+)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;MMIsar0(&#8477;,&#8450;,&#120813;,&#120812;,&#120258;,CplxAdd(R,A),CplxMul(R,A,M),
+  StrictVersion(CplxROrder(R,A,r)))&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>MMIsar0_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Real_ZF (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Real_ZF</h1>
+
+<span class="command">theory</span> <span class="name">Real_ZF</span><br/>
+<span class="keyword">imports</span> <a href="Int_ZF_IML.html"><span class="name">Int_ZF_IML</span></a> <a href="Ring_ZF_1.html"><span class="name">Ring_ZF_1</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(*
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005 - 2009  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+HIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Construction real numbers - the generic part&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Real_ZF</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Int_ZF_IML</span><span> </span><span>Ring_ZF_1</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The goal of the &#8249;Real_ZF&#8250; series of theory files is 
+  to provide a contruction of the set of 
+  real numbers. There are several ways to construct real numbers. 
+  Most common start from the rational numbers and use Dedekind cuts 
+  or Cauchy sequences. &#8249;Real_ZF_x.thy&#8250; series formalizes 
+  an alternative 
+  approach that constructs real numbers directly from the group of integers.
+  Our formalization is mostly based on \cite{Arthan2004}. 
+  Different variants of this contruction are also 
+  described in \cite{Campo2003} and \cite{Street2003}.
+  I recommend to read these papers, but for the impatient here is a short 
+  description: we take a set of maps $s : Z\rightarrow Z$ such that
+   the set $\{s(m+n)-s(m)-s(n)\}_{n,m \in Z}$ is finite 
+  ($Z$ means the integers here). We call these maps slopes. 
+  Slopes form a group with the natural addition
+  $(s+r)(n) = s(n)+r(n)$. The maps such that the set $s(Z)$ is finite 
+  (finite range functions) form a subgroup of slopes. 
+  The additive group of real numbers is defined as the 
+  quotient group of slopes by the (sub)group of finite range functions.
+  The multiplication is defined as the projection of the composition of slopes
+  into the resulting quotient (coset) space.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The definition of real numbers&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This section contains the construction of the ring of real numbers
+  as classes of slopes - integer almost homomorphisms. The real definitions
+  are in &#8249;Group_ZF_2&#8250; theory, here we just specialize the definitions
+  of almost homomorphisms, their equivalence and operations to the 
+  additive group of integers from the general case of abelian groups considered
+  in &#8249;Group_ZF_2&#8250;.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The set of slopes is defined as the set of almost homomorphisms
+  on the additive group of integers.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Slopes &#8801; AlmostHoms(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The first operation on slopes (pointwise addition) is a special case 
+  of the first operation on almost homomorphisms.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeOp1 &#8801; AlHomOp1(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The second operation on slopes (composition) is a special case 
+  of the second operation on almost homomorphisms.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeOp2 &#8801; AlHomOp2(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Bounded integer maps are functions from integers
+  to integers that have finite range. They play a role of 
+  zero in the set of real numbers we are constructing.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;BoundedIntMaps &#8801; FinRangeFunctions(int,int)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Bounded integer maps form a normal subgroup of slopes.
+  The equivalence relation on slopes is the (group) quotient 
+  relation defined by this subgroup.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeEquivalenceRel &#8801; QuotientGroupRel(Slopes,SlopeOp1,BoundedIntMaps)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The set of real numbers is the set of equivalence classes of
+  slopes.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;RealNumbers &#8801; Slopes//SlopeEquivalenceRel&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The addition on real numbers is defined as the projection of 
+  pointwise addition of slopes on the quotient. This means that
+  the additive group of real numbers is the quotient group: 
+  the group of slopes (with pointwise addition) defined by the
+  normal subgroup of bounded integer maps.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;RealAddition &#8801; ProjFun2(Slopes,SlopeEquivalenceRel,SlopeOp1)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Multiplication is defined as the projection of composition
+  of slopes on the quotient. The fact that it works is probably the
+  most surprising part of the construction.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;RealMultiplication &#8801; ProjFun2(Slopes,SlopeEquivalenceRel,SlopeOp2)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We first show that we can use theorems proven in some proof contexts
+  (locales). The locale &#8249;group1&#8250; requires assumption that we deal with
+  an abelian group. The next lemma allows to use all theorems proven 
+  in the context called &#8249;group1&#8250;.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Real_ZF_1_L1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;group1(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group1_axioms.intro</span><span> </span><span>group1_def</span><span> </span><span>Int_ZF_1_T2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Real numbers form a ring. This is a special case of the theorem
+  proven in &#8249;Ring_ZF_1.thy&#8250;, where we show the same in general for 
+  almost homomorphisms rather than slopes.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>Real_ZF_1_T1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAring(RealNumbers,RealAddition,RealMultiplication)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?AH</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlmostHoms(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?Op1</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlHomOp1(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?FR</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FinRangeFunctions(int,int)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?Op2</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlHomOp2(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?R</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupRel(?AH,?Op1,?FR)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?A</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ProjFun2(?AH,?R,?Op1)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?M</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ProjFun2(?AH,?R,?Op2)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAring(?AH//?R,?A,?M)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L1</span><span> </span><span>group1.Ring_ZF_1_1_T1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Slopes_def</span><span> </span><span>SlopeOp2_def</span><span> </span><span>SlopeOp1_def</span><span> 
+</span><span>    </span><span>BoundedIntMaps_def</span><span> </span><span>SlopeEquivalenceRel_def</span><span> </span><span>RealNumbers_def</span><span>
+</span><span>    </span><span>RealAddition_def</span><span> </span><span>RealMultiplication_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can use theorems proven in &#8249;group0&#8250; and &#8249;group1&#8250;
+  contexts applied to the group of real numbers.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Real_ZF_1_L2</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;group0(RealNumbers,RealAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;RealAddition {is commutative on} RealNumbers&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;group1(RealNumbers,RealAddition)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(RealNumbers,RealAddition)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;RealAddition {is commutative on} RealNumbers&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_T1</span><span> </span><span>IsAring_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;group0(RealNumbers,RealAddition)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;RealAddition {is commutative on} RealNumbers&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;group1(RealNumbers,RealAddition)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group1_axioms.intro</span><span> </span><span>group0_def</span><span> </span><span>group1_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Let&#39;s define some notation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">locale</span></span><span> </span><span>real0</span><span> </span><span class="delimiter">=</span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>real</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#8477;&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>real_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8477; &#8801; RealNumbers&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>ra</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infixl</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;ra&gt;&quot;</span></span></span><span> </span><span>69</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>ra_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;ra&gt; b &#8801; RealAddition`&#10216;a,b&#10217;&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>rminus</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;rm&gt; _&quot;</span></span></span><span> </span><span>72</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>rminus_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;rm&gt;a &#8801; GroupInv(&#8477;,RealAddition)`(a)&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>rsub</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infixl</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;rs&gt;&quot;</span></span></span><span> </span><span>69</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>rsub_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;rs&gt;b &#8801; a\&lt;ra&gt;(\&lt;rm&gt;b)&quot;</span></span></span><span>
+</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>rm</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infixl</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8901;&quot;</span></span></span><span> </span><span>70</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>rm_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b &#8801; RealMultiplication`&#10216;a,b&#10217;&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>rzero</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#120812;&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>rzero_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; &#8801; TheNeutralElement(RealNumbers,RealAddition)&quot;</span></span></span><span>
+</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>rone</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#120813;&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>rone_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; &#8801; TheNeutralElement(RealNumbers,RealMultiplication)&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>rtwo</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#120814;&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>rtwo_def</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120814;  &#8801; &#120813;\&lt;ra&gt;&#120813;&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>non_zero</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#8477;<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>non_zero_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8477;<span class="hidden">&#8681;</span><sub>0</sub> &#8801; &#8477;-{&#120812;}&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>inv</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;_&#175; &quot;</span></span></span><span> </span><span class="delimiter">[</span><span>90</span><span class="delimiter">]</span><span> </span><span>91</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>inv_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8801; GroupInv(&#8477;<span class="hidden">&#8681;</span><sub>0</sub>,restrict(RealMultiplication,&#8477;<span class="hidden">&#8681;</span><sub>0</sub>&#215;&#8477;<span class="hidden">&#8681;</span><sub>0</sub>))`(a)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In &#8249;real0&#8250; context all theorems proven in the &#8249;ring0&#8250;,
+  context are valid.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L3</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;ring0(&#8477;,RealAddition,RealMultiplication)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_T1</span><span> </span><span>ring0_def</span><span> </span><span>ring0.Ring_ZF_1_L1</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Lets try out our notation to see that zero and one are real numbers.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L4</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812;&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813;&#8712;&#8477;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L3</span><span> </span><span>ring0.Ring_ZF_1_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The lemma below lists some properties that
+  require one real number to state.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L5</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;&#8477;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;rm&gt;a) &#8712; &#8477;&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;rm&gt;(\&lt;rm&gt;a)) = a&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;ra&gt;&#120812; = a&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812;\&lt;ra&gt;a = a&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;&#120813; = a&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813;&#8901;a = a&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;rs&gt;a = &#120812;&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;rs&gt;&#120812; = a&quot;</span></span></span><span>  
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Real_ZF_1_L3</span><span> </span><span>ring0.Ring_ZF_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The lemma below lists some properties that
+  require two real numbers to state.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L6</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;&#8477;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;ra&gt;b &#8712; &#8477;&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;rs&gt;b &#8712; &#8477;&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b &#8712; &#8477;&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;ra&gt;b = b\&lt;ra&gt;a&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;rm&gt;a)&#8901;b = \&lt;rm&gt;(a&#8901;b)&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(\&lt;rm&gt;b) = \&lt;rm&gt;(a&#8901;b)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Real_ZF_1_L3</span><span> </span><span>ring0.Ring_ZF_1_L4</span><span> </span><span>ring0.Ring_ZF_1_L7</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Multiplication of reals is associative.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L6A</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;&#8477;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(b&#8901;c) = (a&#8901;b)&#8901;c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Real_ZF_1_L3</span><span> </span><span>ring0.Ring_ZF_1_L11</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Addition is distributive with respect to multiplication.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L7</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;&#8477;&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(b\&lt;ra&gt;c) = a&#8901;b \&lt;ra&gt; a&#8901;c&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(b\&lt;ra&gt;c)&#8901;a = b&#8901;a \&lt;ra&gt; c&#8901;a&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(b\&lt;rs&gt;c) = a&#8901;b \&lt;rs&gt; a&#8901;c&quot;</span></span></span><span>  
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(b\&lt;rs&gt;c)&#8901;a = b&#8901;a \&lt;rs&gt; c&#8901;a&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Real_ZF_1_L3</span><span> </span><span>ring0.ring_oper_distr</span><span>  </span><span>ring0.Ring_ZF_1_L8</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A simple rearrangement with four real numbers.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L7A</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;&#8477;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;d&#8712;&#8477;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;rs&gt;b \&lt;ra&gt; (c\&lt;rs&gt;d) = a\&lt;ra&gt;c\&lt;rs&gt;b\&lt;rs&gt;d&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Real_ZF_1_L2</span><span> </span><span>group0.group0_4_L8A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#8249;RealAddition&#8250; is defined as the projection of the
+  first operation on slopes (that is, slope addition) on the quotient 
+  (slopes divided by the &quot;almost equal&quot; relation. The next lemma plays with
+  definitions to show that this is the same as the operation induced on the 
+  appriopriate quotient group. The names &#8249;AH&#8250;, &#8249;Op1&#8250; 
+  and &#8249;FR&#8250; are used in &#8249;group1&#8250; context to denote almost 
+  homomorphisms, the first operation on &#8249;AH&#8250; and finite range 
+  functions resp.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Real_ZF_1_L8</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;AH = AlmostHoms(int,IntegerAddition)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Op1 = AlHomOp1(int,IntegerAddition)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;FR = FinRangeFunctions(int,int)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;RealAddition = QuotientGroupOp(AH,Op1,FR)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>RealAddition_def</span><span> </span><span>SlopeEquivalenceRel_def</span><span>
+</span><span>    </span><span>QuotientGroupOp_def</span><span> </span><span>Slopes_def</span><span> </span><span>SlopeOp1_def</span><span> </span><span>BoundedIntMaps_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The symbol &#8249;&#120812;&#8250; in the &#8249;real0&#8250; context is defined
+  as the neutral element of real addition. The next lemma shows that this
+  is the same as the neutral element of the appriopriate quotient group.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L9</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;AH = AlmostHoms(int,IntegerAddition)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Op1 = AlHomOp1(int,IntegerAddition)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;FR = FinRangeFunctions(int,int)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;r = QuotientGroupRel(AH,Op1,FR)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;TheNeutralElement(AH//r,QuotientGroupOp(AH,Op1,FR)) = &#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeEquivalenceRel = r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Slopes_def</span><span> </span><span>Real_ZF_1_L8</span><span> </span><span>RealNumbers_def</span><span>
+</span><span>    </span><span>SlopeEquivalenceRel_def</span><span> </span><span>SlopeOp1_def</span><span> </span><span>BoundedIntMaps_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Zero is the class of any finite range function.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L10</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s &#8712; Slopes&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeEquivalenceRel``{s} = &#120812; &#10231; s &#8712; BoundedIntMaps&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?AH</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlmostHoms(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?Op1</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlHomOp1(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?FR</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FinRangeFunctions(int,int)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?r</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupRel(?AH,?Op1,?FR)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?e</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;TheNeutralElement(?AH//?r,QuotientGroupOp(?AH,?Op1,?FR))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;group1(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8712;?AH&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L1</span><span> </span><span>Slopes_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?r``{s} = ?e &#10231; s &#8712; ?FR&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group1.Group_ZF_3_3_L5</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?r = SlopeEquivalenceRel&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?e = &#120812;&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?FR = BoundedIntMaps&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>SlopeEquivalenceRel_def</span><span> </span><span>Slopes_def</span><span> </span><span>SlopeOp1_def</span><span> 
+</span><span>      </span><span>BoundedIntMaps_def</span><span> </span><span>Real_ZF_1_L9</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We will need a couple of results from &#8249;Group_ZF_3.thy&#8250; 
+  The first two that state that the definition
+  of addition and multiplication of real numbers are consistent, 
+  that is the result 
+  does not depend on the choice of the slopes representing the numbers.
+  The second one implies that what we call &#8249;SlopeEquivalenceRel&#8250; 
+  is actually an equivalence relation on the set of slopes.
+  We also show that the neutral element of the multiplicative operation on
+  reals (in short number $1$) is the class of the identity function on 
+  integers.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Real_ZF_1_L11</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(SlopeEquivalenceRel,SlopeOp1)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(SlopeEquivalenceRel,SlopeOp2)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeEquivalenceRel &#8838; Slopes &#215; Slopes&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(Slopes, SlopeEquivalenceRel)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeEquivalenceRel``{id(int)} = 
+  TheNeutralElement(RealNumbers,RealMultiplication)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;BoundedIntMaps &#8838; Slopes&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?G</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;int&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?f</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IntegerAddition&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?AH</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlmostHoms(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?Op1</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlHomOp1(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?Op2</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlHomOp2(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?FR</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FinRangeFunctions(int,int)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?R</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;QuotientGroupRel(?AH,?Op1,?FR)&quot;</span></span></span><span>
+</span><span>   </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>     </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(?R,?Op1)&quot;</span></span></span><span>
+</span><span>     </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(?R,?Op2)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L1</span><span> </span><span>group1.Group_ZF_3_4_L13A</span><span> </span><span>group1.Group_ZF_3_3_L4</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(SlopeEquivalenceRel,SlopeOp1)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;Congruent2(SlopeEquivalenceRel,SlopeOp2)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>SlopeEquivalenceRel_def</span><span> </span><span>SlopeOp1_def</span><span> </span><span>Slopes_def</span><span> 
+</span><span>      </span><span>BoundedIntMaps_def</span><span> </span><span>SlopeOp2_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(?AH,?R)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L1</span><span> </span><span>group1.Group_ZF_3_3_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(Slopes,SlopeEquivalenceRel)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>BoundedIntMaps_def</span><span> </span><span>SlopeEquivalenceRel_def</span><span> </span><span>SlopeOp1_def</span><span> </span><span>Slopes_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeEquivalenceRel &#8838; Slopes &#215; Slopes&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>equiv_type</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?R``{id(int)} = TheNeutralElement(?AH//?R,ProjFun2(?AH,?R,?Op2))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L1</span><span> </span><span>group1.Group_ZF_3_4_T2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeEquivalenceRel``{id(int)} = 
+    TheNeutralElement(RealNumbers,RealMultiplication)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Slopes_def</span><span> </span><span>RealNumbers_def</span><span>
+</span><span>    </span><span>SlopeEquivalenceRel_def</span><span> </span><span>SlopeOp1_def</span><span> </span><span>BoundedIntMaps_def</span><span>
+</span><span>    </span><span>RealMultiplication_def</span><span> </span><span>SlopeOp2_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?FR &#8838; ?AH&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L1</span><span> </span><span>group1.Group_ZF_3_3_L1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;BoundedIntMaps &#8838; Slopes&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>BoundedIntMaps_def</span><span> </span><span>Slopes_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A one-side implication of the equivalence from &#8249;Real_ZF_1_L10&#8250;:
+  the class of a bounded integer map is the real zero.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L11A</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s &#8712; BoundedIntMaps&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;SlopeEquivalenceRel``{s} = &#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Real_ZF_1_L11</span><span> </span><span>Real_ZF_1_L10</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma is rephrases the result from &#8249;Group_ZF_3.thy&#8250;
+  that says that the negative (the group inverse with respect to real 
+  addition) of the class of a slope is the class of that slope 
+  composed with the integer additive group inverse. The result and proof is not
+  very readable as we use mostly generic set theory notation with long names 
+  here. &#8249;Real_ZF_1.thy&#8250; contains the same statement written in a more
+  readable notation: $[-s] = -[s]$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>real0</span><span class="delimiter">)</span><span> </span><span>Real_ZF_1_L12</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s &#8712; Slopes&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>Dr</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r = QuotientGroupRel(Slopes,SlopeOp1,BoundedIntMaps)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{GroupInv(int,IntegerAddition) O s} = \&lt;rm&gt;(r``{s})&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?G</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;int&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?f</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IntegerAddition&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?AH</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlmostHoms(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?Op1</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;AlHomOp1(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?FR</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FinRangeFunctions(int,int)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?F</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ProjFun2(Slopes,r,SlopeOp1)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>Dr</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;group1(?G, ?f)&quot;</span></span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;s &#8712; AlmostHoms(?G, ?f)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;r = QuotientGroupRel(
+    AlmostHoms(?G, ?f), AlHomOp1(?G, ?f), FinRangeFunctions(?G, ?G))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?F = ProjFun2(AlmostHoms(?G, ?f), r, AlHomOp1(?G, ?f))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L1</span><span> </span><span>Slopes_def</span><span> </span><span>SlopeOp1_def</span><span> </span><span>BoundedIntMaps_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;r``{GroupInv(?G, ?f) O s} =
+    GroupInv(AlmostHoms(?G, ?f) // r, ?F)`(r `` {s})&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group1.Group_ZF_3_3_L6</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>Dr</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>RealNumbers_def</span><span> </span><span>Slopes_def</span><span> </span><span>SlopeEquivalenceRel_def</span><span> </span><span>RealAddition_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Two classes are equal iff the slopes that represent them 
+  are almost equal.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Real_ZF_1_L13</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s &#8712; Slopes&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;p &#8712; Slopes&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r = SlopeEquivalenceRel&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``{s} = r``{p} &#10231; &#10216;s,p&#10217; &#8712;  r&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Real_ZF_1_L11</span><span> </span><span>eq_equiv_class</span><span> </span><span>equiv_class_eq</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Identity function on integers is a slope.
+  Thislemma  concludes the easy part of the construction that follows from
+  the fact that slope equivalence classes form a ring. It is easy to see
+  that multiplication of classes of almost homomorphisms is not 
+  commutative in general.
+  The remaining properties of real numbers, like commutativity of 
+  multiplication and the existence of multiplicative inverses have to be 
+  proven using properties of the group of integers, rather that in general
+  setting of abelian groups.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Real_ZF_1_L14</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;id(int) &#8712; Slopes&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;id(int) &#8712; AlmostHoms(int,IntegerAddition)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Real_ZF_1_L1</span><span> </span><span>group1.Group_ZF_3_4_L15</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Slopes_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

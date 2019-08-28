@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Order_ZF_1 (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Order_ZF_1</h1>
+
+<span class="command">theory</span> <span class="name">Order_ZF_1</span><br/>
+<span class="keyword">imports</span> <a href="../../ZF/ZF/Order.html"><span class="name">Order</span></a> <a href="ZF1.html"><span class="name">ZF1</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(*   This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005, 2006, 2007  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;More on order relations&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Order_ZF_1</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>ZF.Order</span><span> </span><span>ZF1</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In &#8249;Order_ZF&#8250; we define some notions related to order relations
+  based on the nonstrict orders ($\leq $ type). Some people however prefer to talk
+  about these notions in terms of the strict order relation ($&lt;$ type). 
+  This is the case for the standard Isabelle &#8249;Order.thy&#8250; and also for 
+  Metamath. In this theory file we repeat some developments from &#8249;Order_ZF&#8250;
+  using the strict order relation as a basis.This is mostly useful for Metamath 
+  translation, but is also of some general interest. The names of theorems are 
+  copied from Metamath.&#8250;</span></span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definitions and basic properties&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we introduce some definitions taken from Metamath and relate 
+  them to the ones used by the standard Isabelle &#8249;Order.thy&#8250;.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next definition is the strict version of the linear order.
+  What we write as &#8249;R Orders A&#8250; is written $R Ord A$ in Metamath.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>StrictOrder</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infix</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Orders&quot;</span></span></span><span> </span><span>65</span><span class="delimiter">)</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A &#8801; &#8704;x y z. (x&#8712;A &#8743; y&#8712;A &#8743; z&#8712;A) &#10230; 
+  (&#10216;x,y&#10217; &#8712; R &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)) &#8743; 
+  (&#10216;x,y&#10217; &#8712; R &#8743; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The definition of supremum for a (strict) linear order.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Sup(B,A,R) &#8801; 
+  &#8899; {x &#8712; A. (&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R) &#8743; 
+  (&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R &#10230; (&#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))}&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of infimum for a linear order. 
+  It is defined in terms of supremum.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Infim(B,A,R) &#8801; Sup(B,A,converse(R))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If relation $R$ orders a set $A$, (in Metamath sense) then $R$ 
+  is irreflexive, transitive and linear therefore is a total order on $A$ 
+  (in Isabelle sense).&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>orders_imp_tot_ord</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;irrefl(A,R)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;trans[A](R)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;part_ord(A,R)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;linear(A,R)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;tot_ord(A,R)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x y z. (x&#8712;A &#8743; y&#8712;A &#8743; z&#8712;A) &#10230; 
+    (&#10216;x,y&#10217; &#8712; R &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)) &#8743; 
+    (&#10216;x,y&#10217; &#8712; R &#8743; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>StrictOrder_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#10216;x,x&#10217; &#8713; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;irrefl(A,R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>irrefl_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#8704;y&#8712;A. &#8704;z&#8712;A. &#10216;x,y&#10217; &#8712; R &#10230; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans[A](R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>trans_on_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;part_ord(A,R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>part_ord_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#8704;y&#8712;A. &#10216;x,y&#10217; &#8712; R &#8744; x=y &#8744; &#10216;y,x&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;linear(A,R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>linear_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;tot_ord(A,R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>tot_ord_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A converse of &#8249;orders_imp_tot_ord&#8250;. Together with that
+  theorem this shows that Metamath&#39;s notion of an order relation is equivalent to
+  Isabelles &#8249;tot_ord&#8250; predicate.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>tot_ord_imp_orders</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;tot_ord(A,R)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;linear(A,R)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>  
+</span><span>    </span><span>II</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;irrefl(A,R)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>    </span><span>III</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;trans[A](R)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>    </span><span>IV</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;part_ord(A,R)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>tot_ord_def</span><span> </span><span>part_ord_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>IV</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;asym(R &#8745; A&#215;A)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>part_ord_Imp_asym</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>V</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x y. &#10216;x,y&#10217; &#8712; (R &#8745; A&#215;A) &#10230; &#172;(&#10216;y,x&#10217; &#8712; (R &#8745; A&#215;A))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>asym_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>VI</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#8704;y&#8712;A. &#10216;x,y&#10217; &#8712; R &#8744; x=y &#8744; &#10216;y,x&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>linear_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>III</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>VII</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#8704;y&#8712;A. &#8704;z&#8712;A. &#10216;x,y&#10217; &#8712; R &#10230; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>trans_on_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span>y</span><span> </span><span>z</span><span>
+</span><span>    </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>T</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8712;A&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;z&#8712;A&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,y&#10217; &#8712; R &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,y&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>V</span><span> </span><span>T</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#172;(&#10216;y,x&#10217; &#8712; R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>II</span><span> </span><span>T</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8800;y&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>irrefl_def</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">next</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>VI</span><span> </span><span>T</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,y&#10217; &#8712; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>VII</span><span> </span><span>T</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>      </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,y&#10217; &#8712; R &#8743; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#10216;x,y&#10217; &#8712; R &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)) &#8743; 
+      (&#10216;x,y&#10217; &#8712; R &#8743; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x y z. (x&#8712;A &#8743; y&#8712;A &#8743; z&#8712;A) &#10230; 
+      (&#10216;x,y&#10217; &#8712; R &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)) &#8743; 
+      (&#10216;x,y&#10217; &#8712; R &#8743; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>StrictOrder_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Properties of (strict) total orders&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we discuss the properties of strict order relations. 
+  This continues the development contained in the standard Isabelle&#39;s 
+  &#8249;Order.thy&#8250; with a view towards using the theorems 
+  translated from Metamath.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A relation orders a set iff the converse relation orders a set. Going
+  one way we can use the the lemma &#8249;tot_od_converse&#8250; from the standard 
+  Isabelle&#39;s &#8249;Order.thy&#8250;.The other way is a bit more complicated (note that
+  in Isabelle for &#8249;converse(converse(r)) = r&#8250; one needs $r$ to consist
+  of ordered pairs, which does not follow from the &#8249;StrictOrder&#8250; 
+  definition above).&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>cnvso</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A &#10231; converse(R) Orders A&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?r</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;converse(R)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;tot_ord(A,?r)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>orders_imp_tot_ord</span><span> </span><span>tot_ord_converse</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?r Orders A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>tot_ord_imp_orders</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">next</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?r</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;converse(R)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?r Orders A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x y z. (x&#8712;A &#8743; y&#8712;A &#8743; z&#8712;A) &#10230; 
+    (&#10216;x,y&#10217; &#8712; ?r &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; ?r)) &#8743; 
+    (&#10216;x,y&#10217; &#8712; ?r &#8743; &#10216;y,z&#10217; &#8712; ?r &#10230; &#10216;x,z&#10217; &#8712; ?r)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>StrictOrder_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span>y</span><span> </span><span>z</span><span>
+</span><span>    </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A &#8743; y&#8712;A &#8743; z&#8712;A&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>      </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;y,x&#10217; &#8712; ?r &#10231; &#172;(x=y &#8744; &#10216;x,y&#10217; &#8712; ?r)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>      </span><span>II</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;y,x&#10217; &#8712; ?r &#8743; &#10216;z,y&#10217; &#8712; ?r &#10230; &#10216;z,x&#10217; &#8712; ?r&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,y&#10217; &#8712; R &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,y&#10217; &#8712; R &#8743; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#10216;x,y&#10217; &#8712; R &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)) &#8743; 
+      (&#10216;x,y&#10217; &#8712; R &#8743; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x y z. (x&#8712;A &#8743; y&#8712;A &#8743; z&#8712;A) &#10230; 
+      (&#10216;x,y&#10217; &#8712; R &#10231; &#172;(x=y &#8744; &#10216;y,x&#10217; &#8712; R)) &#8743; 
+      (&#10216;x,y&#10217; &#8712; R &#8743; &#10216;y,z&#10217; &#8712; R &#10230; &#10216;x,z&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>StrictOrder_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Supremum is unique, if it exists.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>supeu</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R  &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>   </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;!x. x&#8712;A&#8743;(&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword3"><span class="command">show</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707; x. x&#8712;A&#8743;(&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">next</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x<span class="hidden">&#8681;</span><sub>1</sub></span><span> </span><span>x<span class="hidden">&#8681;</span><sub>2</sub></span><span>
+</span><span>  </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;x<span class="hidden">&#8681;</span><sub>1</sub> &#8712; A &#8743; (&#8704;y&#8712;B. &#10216;x<span class="hidden">&#8681;</span><sub>1</sub>,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,x<span class="hidden">&#8681;</span><sub>1</sub>&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;x<span class="hidden">&#8681;</span><sub>2</sub> &#8712; A &#8743; (&#8704;y&#8712;B. &#10216;x<span class="hidden">&#8681;</span><sub>2</sub>,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,x<span class="hidden">&#8681;</span><sub>2</sub>&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;linear(A,R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>orders_imp_tot_ord</span><span> </span><span>tot_ord_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;A. &#8704;y&#8712;A. &#10216;x,y&#10217; &#8712; R &#8744; x=y &#8744; &#10216;y,x&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>linear_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A5</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x<span class="hidden">&#8681;</span><sub>1</sub>,x<span class="hidden">&#8681;</span><sub>2</sub>&#10217; &#8712; R &#8744; x<span class="hidden">&#8681;</span><sub>1</sub>=x<span class="hidden">&#8681;</span><sub>2</sub> &#8744; &#10216;x<span class="hidden">&#8681;</span><sub>2</sub>,x<span class="hidden">&#8681;</span><sub>1</sub>&#10217; &#8712; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x<span class="hidden">&#8681;</span><sub>1</sub>,x<span class="hidden">&#8681;</span><sub>2</sub>&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A5</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>z</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;z&#8712;B&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x<span class="hidden">&#8681;</span><sub>1</sub>,z&#10217; &#8712; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A5</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>False</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x<span class="hidden">&#8681;</span><sub>2</sub>,x<span class="hidden">&#8681;</span><sub>1</sub>&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A5</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>z</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;z&#8712;B&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x<span class="hidden">&#8681;</span><sub>2</sub>,z&#10217; &#8712; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A5</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>False</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span>  </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x<span class="hidden">&#8681;</span><sub>1</sub> = x<span class="hidden">&#8681;</span><sub>2</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Supremum has expected properties if it exists.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>sup_props</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;x&#8712;A. (&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Sup(B,A,R) &#8712; A&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;B. &#10216;Sup(B,A,R),y&#10217; &#8713; R&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;A. &#10216;y,Sup(B,A,R)&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R )&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?S</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{x&#8712;A. (&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R ) ) }&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>x</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;!x. x&#8712;A&#8743;(&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>supeu</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;( &#8899;?S ) &#8712; A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>ZF1_1_L9</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Sup(B,A,R) &#8712; A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Sup_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>II</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8704;y&#8712;B. &#10216;&#8899;?S ,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,&#8899;?S&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>ZF1_1_L9</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;B. &#10216;&#8899;?S,y&#10217; &#8713; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>III</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899;?S) = Sup(B,A,R)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Sup_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;B. &#10216;Sup(B,A,R),y&#10217; &#8713; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>IV</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;A. &#10216;y,&#8899;?S&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>y</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8712;A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;y,Sup(B,A,R)&#10217; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>III</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;y,&#8899;?S&#10217; &#8712; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>IV</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;A. &#10216;y,Sup(B,A,R)&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R )&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Elements greater or equal than any element of $B$ are 
+  greater or equal than supremum of $B$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>supnub</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R Orders A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;x&#8712;A. (&#8704;y&#8712;B. &#10216;x,y&#10217; &#8713; R) &#8743; (&#8704;y&#8712;A. &#10216;y,x&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c &#8712; A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;z&#8712;B. &#10216;c,z&#10217; &#8713; R&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;c, Sup(B,A,R)&#10217; &#8713; R&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;A. &#10216;y,Sup(B,A,R)&#10217; &#8712; R &#10230; ( &#8707;z&#8712;B. &#10216;y,z&#10217; &#8712; R )&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>sup_props</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;c, Sup(B,A,R)&#10217; &#8713; R&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

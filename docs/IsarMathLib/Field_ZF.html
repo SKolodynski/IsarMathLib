@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Field_ZF (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Field_ZF</h1>
+
+<span class="command">theory</span> <span class="name">Field_ZF</span><br/>
+<span class="keyword">imports</span> <a href="Ring_ZF.html"><span class="name">Ring_ZF</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(*
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005, 2006  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Fields - introduction&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Field_ZF</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Ring_ZF</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory covers basic facts about fields.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition and basic properties&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we define what is a field and list the basic properties
+  of fields.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Field is a notrivial commutative ring such that all 
+  non-zero elements have an inverse. We define the notion of being a field as
+  a statement about three sets. The first set, denoted &#8249;K&#8250; is the 
+  carrier of the field. The second set, denoted &#8249;A&#8250; represents the 
+  additive operation on &#8249;K&#8250; (recall that in ZF set theory functions 
+  are sets). The third set &#8249;M&#8250; represents the multiplicative operation 
+  on &#8249;K&#8250;.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsAfield(K,A,M) &#8801; 
+  (IsAring(K,A,M) &#8743; (M {is commutative on} K) &#8743;
+  TheNeutralElement(K,A) &#8800; TheNeutralElement(K,M) &#8743; 
+  (&#8704;a&#8712;K. a&#8800;TheNeutralElement(K,A)&#10230;
+  (&#8707;b&#8712;K. M`&#10216;a,b&#10217; = TheNeutralElement(K,M))))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The &#8249;field0&#8250; context extends the &#8249;ring0&#8250;
+  context adding field-related assumptions and notation related to the 
+  multiplicative inverse.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">locale</span></span><span> </span><span>field0</span><span> </span><span class="delimiter">=</span><span> </span><span>ring0</span><span> </span><span>K</span><span> </span><span>A</span><span> </span><span>M</span><span> </span><span class="keyword2"><span class="keyword">for</span></span><span> </span><span>K</span><span> </span><span>A</span><span> </span><span>M</span><span> </span><span class="delimiter">+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>mult_commute</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M {is commutative on} K&quot;</span></span></span><span>
+</span><span>  
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>not_triv</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; &#8800; &#120813;&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>inv_exists</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;K. a&#8800;&#120812; &#10230; (&#8707;b&#8712;K. a&#8901;b = &#120813;)&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>non_zero</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>non_zero_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;K<span class="hidden">&#8681;</span><sub>0</sub> &#8801; K-{&#120812;}&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>inv</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;_&#175; &quot;</span></span></span><span> </span><span class="delimiter">[</span><span>96</span><span class="delimiter">]</span><span> </span><span>97</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>inv_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8801; GroupInv(K<span class="hidden">&#8681;</span><sub>0</sub>,restrict(M,K<span class="hidden">&#8681;</span><sub>0</sub>&#215;K<span class="hidden">&#8681;</span><sub>0</sub>))`(a)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma assures us that we are talking fields 
+  in the &#8249;field0&#8250; context.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_1_L1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAfield(K,A,M)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ringAssum</span><span> </span><span>mult_commute</span><span> </span><span>not_triv</span><span> </span><span>inv_exists</span><span> </span><span>IsAfield_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can use theorems proven in the &#8249;field0&#8250; context whenever we
+  talk about a field.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>field_field0</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAfield(K,A,M)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;field0(K,A,M)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsAfield_def</span><span> </span><span>field0_axioms.intro</span><span> </span><span>ring0_def</span><span> </span><span>field0_def</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Let&#39;s have an explicit statement that the multiplication
+  in fields is commutative.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>field_mult_comm</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;K&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b = b&#8901;a&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>mult_commute</span><span> </span><span>assms</span><span> </span><span>IsCommutative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Fields do not have zero divisors.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>field_has_no_zero_divs</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;HasNoZeroDivs(K,A,M)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>a</span><span> </span><span>b</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;K&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b = &#120812;&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>inv_exists</span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>c</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;K&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>II</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8901;c = &#120813;&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;c = &#120812;&#8901;c&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(b&#8901;c) = &#120812;&quot;</span></span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_L11</span><span> </span><span>Ring_ZF_1_L6</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a=&#120812; &quot;</span></span></span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> </span><span class="keyword1"><span class="command">}</span></span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;K.&#8704;b&#8712;K. a&#8901;b = &#120812; &#10230; a=&#120812; &#8744; b=&#120812;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>HasNoZeroDivs_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;$K_0$ (the set of nonzero field elements is closed with respect
+  to multiplication.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_1_L2</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;K<span class="hidden">&#8681;</span><sub>0</sub> {is closed under} M&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_L4</span><span> </span><span>field_has_no_zero_divs</span><span> </span><span>Ring_ZF_1_L12</span><span>
+</span><span>    </span><span>IsOpClosed_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Any nonzero element has a right inverse that is nonzero.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_1_L3</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;b&#8712;K<span class="hidden">&#8681;</span><sub>0</sub>. a&#8901;b = &#120813;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>inv_exists</span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>b</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;K&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b = &#120813;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>not_triv</span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;b&#8712;K<span class="hidden">&#8681;</span><sub>0</sub>. a&#8901;b = &#120813;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_L6</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If we remove zero, the field with multiplication
+  becomes a group and we can use all theorems proven in 
+  &#8249;group0&#8250; context.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_1_L4</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(K<span class="hidden">&#8681;</span><sub>0</sub>,restrict(M,K<span class="hidden">&#8681;</span><sub>0</sub>&#215;K<span class="hidden">&#8681;</span><sub>0</sub>))&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;group0(K<span class="hidden">&#8681;</span><sub>0</sub>,restrict(M,K<span class="hidden">&#8681;</span><sub>0</sub>&#215;K<span class="hidden">&#8681;</span><sub>0</sub>))&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; = TheNeutralElement(K<span class="hidden">&#8681;</span><sub>0</sub>,restrict(M,K<span class="hidden">&#8681;</span><sub>0</sub>&#215;K<span class="hidden">&#8681;</span><sub>0</sub>))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?f</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;restrict(M,K<span class="hidden">&#8681;</span><sub>0</sub>&#215;K<span class="hidden">&#8681;</span><sub>0</sub>)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;M {is associative on} K&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;K<span class="hidden">&#8681;</span><sub>0</sub> &#8838; K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;K<span class="hidden">&#8681;</span><sub>0</sub> {is closed under} M&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L1</span><span> </span><span>IsAfield_def</span><span> </span><span>IsAring_def</span><span> </span><span>IsAgroup_def</span><span> 
+</span><span>      </span><span>IsAmonoid_def</span><span> </span><span>Field_ZF_1_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?f {is associative on} K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func_ZF_4_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>not_triv</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813;&#8712;K<span class="hidden">&#8681;</span><sub>0</sub> &#8743; (&#8704;a&#8712;K<span class="hidden">&#8681;</span><sub>0</sub>. ?f`&#10216;&#120813;,a&#10217; = a &#8743;  ?f`&#10216;a,&#120813;&#10217; = a)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_L2</span><span> </span><span>Ring_ZF_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;n&#8712;K<span class="hidden">&#8681;</span><sub>0</sub>. &#8704;a&#8712;K<span class="hidden">&#8681;</span><sub>0</sub>. ?f`&#10216;n,a&#10217; = a &#8743;  ?f`&#10216;a,n&#10217; = a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>II</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmonoid(K<span class="hidden">&#8681;</span><sub>0</sub>,?f)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsAmonoid_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;monoid0(K<span class="hidden">&#8681;</span><sub>0</sub>,?f)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>monoid0_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span>I</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; = TheNeutralElement(K<span class="hidden">&#8681;</span><sub>0</sub>,?f)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>monoid0.group0_1_L4</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;K<span class="hidden">&#8681;</span><sub>0</sub>.&#8707;b&#8712;K<span class="hidden">&#8681;</span><sub>0</sub>. ?f`&#10216;a,b&#10217; =  TheNeutralElement(K<span class="hidden">&#8681;</span><sub>0</sub>,?f)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>II</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAgroup(K<span class="hidden">&#8681;</span><sub>0</sub>,?f)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>definition_of_group</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;group0(K<span class="hidden">&#8681;</span><sub>0</sub>,?f)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>group0_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The inverse of a nonzero field element is nonzero.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_1_L5</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8712; K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#175;)<span class="hidden">&#8679;</span><sup>2</sup> &#8712; K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8712; K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8800; &#120812;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8712; K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L4</span><span> </span><span>group0.inverse_in_group</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#175;)<span class="hidden">&#8679;</span><sup>2</sup> &#8712; K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8712; K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8800; &#120812;&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L2</span><span> </span><span>IsOpClosed_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The inverse is really the inverse.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_1_L6</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;a&#175; = &#120813;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175;&#8901;a = &#120813;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?f</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;restrict(M,K<span class="hidden">&#8681;</span><sub>0</sub>&#215;K<span class="hidden">&#8681;</span><sub>0</sub>)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;group0(K<span class="hidden">&#8681;</span><sub>0</sub>,?f)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?f`&#10216;a,GroupInv(K<span class="hidden">&#8681;</span><sub>0</sub>, ?f)`(a)&#10217; = TheNeutralElement(K<span class="hidden">&#8681;</span><sub>0</sub>,?f) &#8743;
+    ?f`&#10216;GroupInv(K<span class="hidden">&#8681;</span><sub>0</sub>,?f)`(a),a&#10217; = TheNeutralElement(K<span class="hidden">&#8681;</span><sub>0</sub>, ?f)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>group0.group0_2_L6</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;a&#175; = &#120813;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175;&#8901;a = &#120813;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L5</span><span> </span><span>Field_ZF_1_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A lemma with two field elements and cancelling.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_1_L7</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;K&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;b&#175; = a&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#175;&#8901;b = a&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Field_ZF_1_L5</span><span> </span><span>Ring_ZF_1_L11</span><span> </span><span>Field_ZF_1_L6</span><span> </span><span>Ring_ZF_1_L3</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Equations and identities&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This section deals with more specialized identities that are true in 
+  fields.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;$a/(a^2) = 1/a$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_2_L1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(a&#175;)<span class="hidden">&#8679;</span><sup>2</sup> = a&#175;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(a&#175;)<span class="hidden">&#8679;</span><sup>2</sup> = a&#8901;(a&#175;&#8901;a&#175;)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">also</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8230; =  (a&#8901;a&#175;)&#8901;a&#175;&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L5</span><span> </span><span>Ring_ZF_1_L11</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">also</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8230; = a&#175;&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L6</span><span> </span><span>Field_ZF_1_L5</span><span> </span><span>Ring_ZF_1_L3</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">finally</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(a&#175;)<span class="hidden">&#8679;</span><sup>2</sup> = a&#175;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If we multiply two different numbers by a nonzero number, the results 
+  will be different.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_2_L2</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;b&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; &#8800; b&#8901;c&#175;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>field_has_no_zero_divs</span><span> </span><span>Field_ZF_1_L5</span><span> </span><span>Ring_ZF_1_L12B</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can put a nonzero factor on the other side of non-identity 
+  (is this the best way to call it?) changing it to the inverse.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_2_L3</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8800;&#120812;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;K&quot;</span></span></span><span>   </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b &#8800; c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8800; c&#8901;b&#175;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;b&#175; &#8800; c&#8901;b&#175;&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span>  </span><span>Ring_ZF_1_L4</span><span> </span><span>Field_ZF_2_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8800; c&#8901;b&#175;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L7</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If if the inverse of $b$ is different than $a$, then the
+  inverse of $a$ is different than $b$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_2_L4</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;&#120812;&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; &#8800; a&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8800; b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Field_ZF_1_L4</span><span> </span><span>group0.group0_2_L11B</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;An identity with two field elements, one and an inverse.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_2_L5</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;K&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#120813; \&lt;ra&gt; a&#8901;b)&#8901;b&#175; = a \&lt;ra&gt; b&#175;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Ring_ZF_1_L4</span><span> </span><span>Field_ZF_1_L5</span><span> </span><span>Ring_ZF_1_L2</span><span> </span><span>ring_oper_distr</span><span> 
+</span><span>    </span><span>Field_ZF_1_L7</span><span> </span><span>Ring_ZF_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;An identity with three field elements, inverse and cancelling.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field0</span><span class="delimiter">)</span><span> </span><span>Field_ZF_2_L6</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8800;&#120812;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;K&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;(c&#8901;b&#175;) = a&#8901;c&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b &#8712; K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; &#8712; K&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_L4</span><span> </span><span>Field_ZF_1_L5</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>mult_commute</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;(c&#8901;b&#175;) = a&#8901;b&#8901;(b&#175;&#8901;c)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsCommutative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>T</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b &#8712; K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; &#8712; K&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;K&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;b&#175;&#8901;c = a&#8901;b&#8901;(b&#175;&#8901;c)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Ring_ZF_1_L11</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;(c&#8901;b&#175;) = a&#8901;b&#8901;b&#175;&#8901;c&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;(c&#8901;b&#175;) = a&#8901;c&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Field_ZF_1_L7</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;1/0=0&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In ZF if $f: X\rightarrow Y$ and $x\notin X$ we have $f(x)=\emptyset$.
+  Since $\emptyset$ (the empty set) in ZF is the same as zero of natural numbers we
+  can claim that $1/0=0$ in certain sense. In this section we prove a theorem that
+  makes makes it explicit.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next locale extends the &#8249;field0&#8250; locale to introduce notation
+  for division operation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">locale</span></span><span> </span><span>fieldd</span><span> </span><span class="delimiter">=</span><span> </span><span>field0</span><span> </span><span class="delimiter">+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>division</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>division_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;division &#8801; {&#10216;p,fst(p)&#8901;snd(p)&#175;&#10217;. p&#8712;K&#215;K<span class="hidden">&#8681;</span><sub>0</sub>}&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>fdiv</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infixl</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;fd&gt;&quot;</span></span></span><span> </span><span>95</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>fdiv_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x\&lt;fd&gt;y &#8801; division`&#10216;x,y&#10217;&quot;</span></span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Division is a function on $K\times K_0$ with values in $K$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>fieldd</span><span class="delimiter">)</span><span> </span><span>div_fun</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;division: K&#215;K<span class="hidden">&#8681;</span><sub>0</sub> &#8594; K&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;p &#8712; K&#215;K<span class="hidden">&#8681;</span><sub>0</sub>. fst(p)&#8901;snd(p)&#175; &#8712; K&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>    </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>p</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;p &#8712; K&#215;K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;fst(p) &#8712; K&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;snd(p) &#8712; K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;fst(p)&#8901;snd(p)&#175; &#8712; K&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_L4</span><span> </span><span>Field_ZF_1_L5</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#10216;p,fst(p)&#8901;snd(p)&#175;&#10217;. p&#8712;K&#215;K<span class="hidden">&#8681;</span><sub>0</sub>}: K&#215;K<span class="hidden">&#8681;</span><sub>0</sub> &#8594; K&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>ZF_fun_from_total</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;So, really $1/0=0$. The essential lemma is &#8249;apply_0&#8250; from standard
+  Isabelle&#39;s &#8249;func.thy&#8250;.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>fieldd</span><span class="delimiter">)</span><span> </span><span>one_over_zero</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813;\&lt;fd&gt;&#120812; = 0&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;domain(division) = K&#215;K<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>div_fun</span><span> </span><span>func1_1_L1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;&#120813;,&#120812;&#10217; &#8713; domain(division)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>apply_0</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

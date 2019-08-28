@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Ring_ZF_1 (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Ring_ZF_1</h1>
+
+<span class="command">theory</span> <span class="name">Ring_ZF_1</span><br/>
+<span class="keyword">imports</span> <a href="Ring_ZF.html"><span class="name">Ring_ZF</span></a> <a href="Group_ZF_3.html"><span class="name">Group_ZF_3</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005, 2006  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;More on rings&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Ring_ZF_1</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Ring_ZF</span><span> </span><span>Group_ZF_3</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory is devoted to the part of ring theory specific the 
+  construction of real numbers in the &#8249;Real_ZF_x&#8250; series of theories. 
+  The goal is to 
+  show that classes of almost homomorphisms form a ring.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The ring of classes of almost homomorphisms&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Almost homomorphisms do not form a ring as the regular homomorphisms 
+  do because the lifted group operation is not distributive with respect to 
+  composition -- we have $s\circ (r\cdot q) \neq s\circ r\cdot s\circ q$ in 
+  general. However, we do have 
+  $s\circ (r\cdot q) \approx s\circ r\cdot s\circ q$ in the sense of the 
+  equivalence relation defined by the group of finite range
+  functions (that is a normal subgroup of almost homomorphisms, 
+  if the group is abelian). This allows to define a natural ring structure 
+  on the classes of almost homomorphisms.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma provides a formula useful for proving that two sides 
+  of the distributive law equation for almost homomorphisms are almost 
+  equal.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group1</span><span class="delimiter">)</span><span> </span><span>Ring_ZF_1_1_L1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8712;AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r&#8712;AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;q&#8712;AH&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n&#8712;G&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;((s&#8728;(r&#8729;q))`(n))&#8901;(((s&#8728;r)&#8729;(s&#8728;q))`(n))&#175;= &#948;(s,&#10216; r`(n),q`(n)&#10217;)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;((r&#8729;q)&#8728;s)`(n) = ((r&#8728;s)&#8729;(q&#8728;s))`(n)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>isAbelian</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;r&#8729;q &#8712; AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8728;r &#8712; AH&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8728;q &#8712; AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(s&#8728;r)&#8729;(s&#8728;q) &#8712; AH&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;r&#8728;s &#8712; AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;q&#8728;s &#8712; AH&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(r&#8728;s)&#8729;(q&#8728;s) &#8712; AH&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_2_L15</span><span> </span><span>Group_ZF_3_4_T1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r`(n) &#8712; G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;q`(n) &#8712; G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s`(n) &#8712; G&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;s`(r`(n)) &#8712; G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s`(q`(n)) &#8712; G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#948;(s,&#10216; r`(n),q`(n)&#10217;) &#8712; G&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;s`(r`(n))&#8901;s`(q`(n)) &#8712; G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r`(s`(n)) &#8712; G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;q`(s`(n)) &#8712; G&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;r`(s`(n))&#8901;q`(s`(n)) &#8712; G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>AlmostHoms_def</span><span> </span><span>apply_funtype</span><span> </span><span>Group_ZF_3_2_L4B</span><span> 
+</span><span>    </span><span>group0_2_L1</span><span> </span><span>monoid0.group0_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T1</span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>isAbelian</span><span> </span><span class="keyword3"><span class="command">show</span></span><span>  
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;((s&#8728;(r&#8729;q))`(n))&#8901;(((s&#8728;r)&#8729;(s&#8728;q))`(n))&#175;= &#948;(s,&#10216; r`(n),q`(n)&#10217;)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;((r&#8729;q)&#8728;s)`(n) = ((r&#8728;s)&#8729;(q&#8728;s))`(n)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_2_L12</span><span> </span><span>Group_ZF_3_4_L2</span><span> </span><span>Group_ZF_3_4_L1</span><span> </span><span>group0_4_L6A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>  
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The sides of the distributive law equations for almost homomorphisms 
+  are almost equal.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group1</span><span class="delimiter">)</span><span> </span><span>Ring_ZF_1_1_L2</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8712;AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r&#8712;AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;q&#8712;AH&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8728;(r&#8729;q) &#8776; (s&#8728;r)&#8729;(s&#8728;q)&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(r&#8729;q)&#8728;s = (r&#8728;s)&#8729;(q&#8728;s)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;n&#8712;G. &#10216; r`(n),q`(n)&#10217; &#8712; G&#215;G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>AlmostHoms_def</span><span> </span><span>apply_funtype</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#948;(s,x). x &#8712; G&#215;G} &#8712; Fin(G)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>AlmostHoms_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#948;(s,&#10216; r`(n),q`(n)&#10217;). n&#8712;G} &#8712; Fin(G)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Finite1_L6B</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;{((s&#8728;(r&#8729;q))`(n))&#8901;(((s&#8728;r)&#8729;(s&#8728;q))`(n))&#175;. n &#8712; G} &#8712; Fin(G)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>isAbelian</span><span> </span><span>A1</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8728;(r&#8729;q) &#8712; AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(s&#8728;r)&#8729;(s&#8728;q) &#8712; AH&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_2_L15</span><span> </span><span>Group_ZF_3_4_T1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8728;(r&#8729;q) &#8776; (s&#8728;r)&#8729;(s&#8728;q)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_4_L12</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>groupAssum</span><span> </span><span>isAbelian</span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;(r&#8729;q)&#8728;s : G&#8594;G&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(r&#8728;s)&#8729;(q&#8728;s) : G&#8594;G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_2_L15</span><span> </span><span>Group_ZF_3_4_T1</span><span> </span><span>AlmostHoms_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;n&#8712;G. ((r&#8729;q)&#8728;s)`(n) = ((r&#8728;s)&#8729;(q&#8728;s))`(n)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(r&#8729;q)&#8728;s = (r&#8728;s)&#8729;(q&#8728;s)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fun_extension_iff</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The essential condition to show the distributivity for the 
+  operations defined on classes of almost homomorphisms.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group1</span><span class="delimiter">)</span><span> </span><span>Ring_ZF_1_1_L3</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R = QuotientGroupRel(AH,Op1,FR)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; AH//R&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; AH//R&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c &#8712; AH//R&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A = ProjFun2(AH,R,Op1)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M = ProjFun2(AH,R,Op2)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M`&#10216;a,A`&#10216; b,c&#10217;&#10217; = A`&#10216;M`&#10216; a,b&#10217;,M`&#10216; a,c&#10217;&#10217; &#8743; 
+  M`&#10216;A`&#10216; b,c&#10217;,a&#10217; = A`&#10216;M`&#10216; b,a&#10217;,M`&#10216; c,a&#10217;&#10217;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>s</span><span> </span><span>q</span><span> </span><span>r</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>D1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8712;AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r&#8712;AH&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;q&#8712;AH&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;a = R``{s}&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b = R``{q}&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c = R``{r}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>quotient_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;equiv(AH,R)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_3_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span>D1</span><span> </span><span>groupAssum</span><span> </span><span>isAbelian</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;M`&#10216;  a,A`&#10216; b,c&#10217; &#10217; = R``{s&#8728;(q&#8729;r)}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_3_L4</span><span> </span><span>EquivClass_1_L10</span><span>
+</span><span>    </span><span>Group_ZF_3_2_L15</span><span> </span><span>Group_ZF_3_4_L13A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">also</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R``{s&#8728;(q&#8729;r)} = R``{(s&#8728;q)&#8729;(s&#8728;r)}&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>T1</span><span> </span><span>D1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;equiv(AH,R)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;s&#8728;(q&#8729;r)&#8776;(s&#8728;q)&#8729;(s&#8728;r)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_1_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>equiv_class_eq</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">also</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>T1</span><span> </span><span>D1</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;R``{(s&#8728;q)&#8729;(s&#8728;r)} = A`&#10216;M`&#10216; a,b&#10217;,M`&#10216; a,c&#10217;&#10217;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_3_L4</span><span> </span><span>Group_ZF_3_4_T1</span><span> </span><span>EquivClass_1_L10</span><span>
+</span><span>    </span><span>Group_ZF_3_3_L3</span><span> </span><span>Group_ZF_3_4_L13A</span><span> </span><span>EquivClass_1_L10</span><span> </span><span>Group_ZF_3_4_T1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">finally</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M`&#10216;a,A`&#10216; b,c&#10217;&#10217; = A`&#10216;M`&#10216; a,b&#10217;,M`&#10216; a,c&#10217;&#10217;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span>T1</span><span> </span><span>D1</span><span> </span><span>groupAssum</span><span> </span><span>isAbelian</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;M`&#10216;A`&#10216; b,c&#10217;,a&#10217; = A`&#10216;M`&#10216; b,a&#10217;,M`&#10216; c,a&#10217;&#10217;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Group_ZF_3_3_L4</span><span> </span><span>EquivClass_1_L10</span><span> </span><span>Group_ZF_3_4_L13A</span><span> 
+</span><span>      </span><span>Group_ZF_3_2_L15</span><span> </span><span>Ring_ZF_1_1_L2</span><span> </span><span>Group_ZF_3_4_T1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The projection of the first group operation on almost homomorphisms
+  is distributive with respect to the second group operation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group1</span><span class="delimiter">)</span><span> </span><span>Ring_ZF_1_1_L4</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R = QuotientGroupRel(AH,Op1,FR)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A = ProjFun2(AH,R,Op1)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M = ProjFun2(AH,R,Op2)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsDistributive(AH//R,A,M)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;(AH//R).&#8704;b&#8712;(AH//R).&#8704;c&#8712;(AH//R).
+  M`&#10216;a,A`&#10216; b,c&#10217;&#10217; = A`&#10216;M`&#10216; a,b&#10217;, M`&#10216; a,c&#10217;&#10217; &#8743; 
+  M`&#10216;A`&#10216; b,c&#10217;, a&#10217; = A`&#10216;M`&#10216; b,a&#10217;,M`&#10216; c,a&#10217;&#10217;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsDistributive_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The classes of almost homomorphisms form a ring.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>group1</span><span class="delimiter">)</span><span> </span><span>Ring_ZF_1_1_T1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R = QuotientGroupRel(AH,Op1,FR)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A = ProjFun2(AH,R,Op1)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M = ProjFun2(AH,R,Op2)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAring(AH//R,A,M)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>QuotientGroupOp_def</span><span> </span><span>Group_ZF_3_3_T1</span><span> </span><span>Group_ZF_3_4_T2</span><span> 
+</span><span>    </span><span>Ring_ZF_1_1_L4</span><span> </span><span>IsAring_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span><span>   
+</span><span>   
+</span><span>   
+</span><span>  
+</span><span> </span></pre>
+
+</div>
+</body>
+</html>

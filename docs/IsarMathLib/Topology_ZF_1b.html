@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Topology_ZF_1b (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Topology_ZF_1b</h1>
+
+<span class="command">theory</span> <span class="name">Topology_ZF_1b</span><br/>
+<span class="keyword">imports</span> <a href="Topology_ZF_1.html"><span class="name">Topology_ZF_1</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005, 2006  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Topology 1b&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Topology_ZF_1b</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Topology_ZF_1</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;One of the facts demonstrated in every class on General Topology is that
+  in a $T_2$ (Hausdorff) topological space compact sets are closed. 
+  Formalizing the proof of this fact gave me an interesting insight 
+  into the role of the Axiom of Choice (AC) in many informal proofs.
+
+  A typical informal proof of this fact goes like this: we want to show 
+  that the complement of $K$ is open. To do this, 
+  choose an arbitrary point $y\in K^c$.
+  Since $X$ is $T_2$, for every point $x\in K$ we can find an 
+  open set $U_x$ such that $y\notin \overline{U_x}$. 
+  Obviously $\{U_x\}_{x\in K}$ covers $K$, so select a finite subcollection
+  that covers $K$, and so on. I had never realized that 
+  such reasoning requires the Axiom of Choice. 
+  Namely, suppose we have a lemma that states &quot;In $T_2$ spaces, 
+  if $x\neq y$, then there is an open set 
+  $U$ such that $x\in U$ and $y\notin \overline{U}$&quot; (like our 
+  lemma &#8249;T2_cl_open_sep&#8250; below). This only states that
+  the set of such open sets $U$ is not empty. To get the collection 
+  $\{U_x \}_{x\in K}$ in this proof we have to select one such set 
+  among many for every $x\in K$ and this is where we use the Axiom of Choice. 
+  Probably in 99/100 cases when an informal calculus proof states something like
+  $\forall \varepsilon \exists \delta_\varepsilon \cdots$ the proof uses AC.
+  Most of the time the use of AC in such proofs can be avoided. This is also 
+  the case for the fact that in a $T_2$ space compact sets are closed.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Compact sets are closed - no need for AC&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we show that in a $T_2$ topological 
+  space compact sets are closed.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;First we prove a lemma that in a $T_2$ space two points 
+  can be separated by the closure of an open set.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>topology0</span><span class="delimiter">)</span><span> </span><span>T2_cl_open_sep</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;T {is T<span class="hidden">&#8681;</span><sub>2</sub>}&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; &#8899;T&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;y &#8712; &#8899;T&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8800;y&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;U&#8712;T. (x&#8712;U &#8743; y &#8713; cl(U))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;U&#8712;T. &#8707;V&#8712;T. x&#8712;U &#8743; y&#8712;V &#8743; U&#8745;V=0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>isT2_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>U</span><span> </span><span>V</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;U&#8712;T&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;V&#8712;T&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;U&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8712;V&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;U&#8745;V=0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;U&#8712;T &#8743; x&#8712;U &#8743; y&#8712; V &#8743; cl(U) &#8745; V = 0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span>  </span><span>disj_open_cl_disj</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;U&#8712;T. (x&#8712;U &#8743; y &#8713; cl(U))&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;AC-free proof that in a Hausdorff space compact sets 
+  are closed. To understand the notation recall that in Isabelle/ZF
+  &#8249;Pow(A)&#8250; is the powerset (the set of subsets) of $A$ 
+  and &#8249;FinPow(A)&#8250; denotes the set of finite subsets of $A$ 
+  in IsarMathLib.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>topology0</span><span class="delimiter">)</span><span> </span><span>in_t2_compact_is_cl</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;T {is T<span class="hidden">&#8681;</span><sub>2</sub>}&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;K {is compact in} T&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;K {is closed in} T&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?X</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;T&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y &#8712; ?X - K. &#8707;U&#8712;T. y&#8712;U &#8743; U &#8838; ?X - K&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>y</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y &#8712; ?X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8713;K&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;U&#8712;T. y&#8712;U &#8743; U &#8838; ?X - K&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?B</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;x&#8712;K. {V&#8712;T. x&#8712;V &#8743; y &#8713; cl(V)}&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?B &#8712; Pow(T)&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;FinPow(?B) &#8838; Pow(?B)&quot;</span></span></span><span> 
+</span><span>	  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;K {is compact in} T&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y &#8712; ?X&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y&#8713;K&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>	  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;K. x &#8712; ?X &#8743; y &#8712; ?X &#8743; x&#8800;y&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsCompact_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">with</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;T {is T<span class="hidden">&#8681;</span><sub>2</sub>}&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;K. {V&#8712;T. x&#8712;V &#8743; y &#8713; cl(V)} &#8800; 0&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>T2_cl_open_sep</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;K &#8838; &#8899;?B&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">with</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;K {is compact in} T&#8250;</span></span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>	  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;N &#8712; FinPow(?B). K &#8838; &#8899;N&quot;</span></span></span><span> 
+</span><span>	  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsCompact_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>N</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;N &#8712; FinPow(?B)&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;K &#8838; &#8899;N&quot;</span></span></span><span> 
+</span><span>	  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">with</span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;N &#8838; ?B&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;V&#8712;N. V&#8712;?B&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?M</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{cl(V). V&#8712;N}&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?C</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{D &#8712; Pow(?X). D {is closed in} T}&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;N &#8712; FinPow(?B)&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;V&#8712;?B. cl(V) &#8712; ?C&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;N &#8712; FinPow(?B)&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>cl_is_closed</span><span> </span><span>IsClosed_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?M &#8712; FinPow(?C)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>fin_image_fin</span><span class="delimiter">)</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?X - &#8899;?M &#8712; T&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fin_union_cl_is_cl</span><span> </span><span>IsClosed_def</span><span> 
+</span><span>	  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y &#8712; ?X&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;y&#8713;K&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#8704;V&#8712;N. V&#8712;?B&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>	  </span><span class="string"><span class="delete"><span class="delete">&quot;y &#8712; ?X - &#8899;?M&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?X - &#8899;?M &#8838; ?X - K&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#8704;V&#8712;N. V&#8712;?B&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;N &#8838; &#8899;?M&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>cl_contains_set</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;K &#8838; &#8899;N&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?X - &#8899;?M &#8838; ?X - K&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;U. U&#8712;T &#8743; y &#8712; U &#8743; U &#8838; ?X - K&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>	</span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;U&#8712;T. y&#8712;U &#8743; U &#8838; ?X - K&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y &#8712; ?X - K. &#8707;U&#8712;T. y&#8712;U &#8743; U &#8838; ?X - K&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;K {is closed in} T&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>open_neigh_open</span><span> </span><span>IsCompact_def</span><span> </span><span>IsClosed_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

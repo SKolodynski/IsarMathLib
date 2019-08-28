@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory IntDiv_ZF_IML (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory IntDiv_ZF_IML</h1>
+
+<span class="command">theory</span> <span class="name">IntDiv_ZF_IML</span><br/>
+<span class="keyword">imports</span> <a href="Int_ZF_1.html"><span class="name">Int_ZF_1</span></a> <a href="../../ZF/ZF/IntDiv.html"><span class="name">IntDiv</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005, 2006  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Division on integers&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>IntDiv_ZF_IML</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Int_ZF_1</span><span> </span><span>ZF.IntDiv</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory translates some results form the Isabelle&#39;s 
+  &#8249;IntDiv.thy&#8250; theory to the notation used by IsarMathLib.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Quotient and reminder&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;For any integers $m,n$ , $n&gt;0$ there are unique integers $q,p$
+  such that $0\leq p &lt; n$ and $m = n\cdot q + p$. Number $p$ in this 
+  decompsition is usually called $m$ mod $n$. Standard Isabelle denotes numbers
+  $q,p$ as &#8249;m zdiv n&#8250; and &#8249;m zmod n&#8250;, resp., 
+  and we will use the same notation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma is sometimes called the &quot;quotient-reminder theorem&quot;.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>int0</span><span class="delimiter">)</span><span> </span><span>IntDiv_ZF_1_L1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m&#8712;&#8484;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;n&#8712;&#8484;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m = n&#8901;(m zdiv n) \&lt;ra&gt; (m zmod n)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>Int_ZF_1_L2</span><span> </span><span>raw_zmod_zdiv_equality</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If $n$ is greater than $0$ then &#8249;m zmod n&#8250; is between $0$ and $n-1$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>int0</span><span class="delimiter">)</span><span> </span><span>IntDiv_ZF_1_L2</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m&#8712;&#8484;&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812;\&lt;lsq&gt;n&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;n&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; \&lt;lsq&gt; m zmod n&quot;</span></span></span><span>  
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;m zmod n \&lt;lsq&gt; n&quot;</span></span></span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;m zmod n &#8800; n&quot;</span></span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;m zmod n \&lt;lsq&gt; n\&lt;rs&gt;&#120813;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; &#8484;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_2_L1A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;#0 $&lt; n&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_2_L9</span><span> </span><span>Int_ZF_1_L8</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; \&lt;lsq&gt; m zmod n&quot;</span></span></span><span>  
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;m zmod n \&lt;lsq&gt; n&quot;</span></span></span><span>  
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;m zmod n &#8800; n&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>pos_mod</span><span> </span><span>Int_ZF_1_L8</span><span> </span><span>Int_ZF_1_L8A</span><span> </span><span>zmod_type</span><span> 
+</span><span>      </span><span>Int_ZF_2_L1</span><span> </span><span>Int_ZF_2_L9AA</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m zmod n \&lt;lsq&gt; n\&lt;rs&gt;&#120813;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_4_L1B</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;$(m\cdot k)$ div $k = m$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>int0</span><span class="delimiter">)</span><span> </span><span>IntDiv_ZF_1_L3</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m&#8712;&#8484;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;k&#8712;&#8484;&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(m&#8901;k) zdiv k = m&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(k&#8901;m) zdiv k = m&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>zdiv_zmult_self1</span><span> </span><span>zdiv_zmult_self2</span><span> 
+</span><span>    </span><span>Int_ZF_1_L8</span><span> </span><span>Int_ZF_1_L2</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma essentially translates &#8249;zdiv_mono1&#8250; from 
+  standard Isabelle to our notation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>int0</span><span class="delimiter">)</span><span> </span><span>IntDiv_ZF_1_L4</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m \&lt;lsq&gt; k&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812;\&lt;lsq&gt;n&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;n&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m zdiv n \&lt;lsq&gt;  k zdiv n&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;#0 \&lt;lsq&gt; n&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;#0 &#8800; n&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_1_L8</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;m zdiv n $&#8804; k zdiv n&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;m zdiv n &#8712; &#8484;&quot;</span></span></span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;m zdiv k &#8712; &#8484;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_2_L1A</span><span> </span><span>Int_ZF_2_L9</span><span> </span><span>zdiv_mono1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(m zdiv n) \&lt;lsq&gt; (k zdiv n)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A quotient-reminder theorem about integers greater than a given 
+  product.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>int0</span><span class="delimiter">)</span><span> </span><span>IntDiv_ZF_1_L5</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; &#8484;<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n \&lt;lsq&gt; k&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k&#8901;n \&lt;lsq&gt; m&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;m = n&#8901;(m zdiv n) \&lt;ra&gt; (m zmod n)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;m = (m zdiv n)&#8901;n \&lt;ra&gt; (m zmod n)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(m zmod n) &#8712; &#120812;..(n\&lt;rs&gt;&#120813;)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;k \&lt;lsq&gt; (m zdiv n)&quot;</span></span></span><span>  
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;m zdiv n &#8712; &#8484;<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T</span><span class="delimiter">:</span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;m&#8712;&#8484;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;n&#8712;&#8484;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;k&#8712;&#8484;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;m zdiv n &#8712; &#8484;&quot;</span></span></span><span>  
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_2_L1A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>   </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m = n&#8901;(m zdiv n) \&lt;ra&gt; (m zmod n)&quot;</span></span></span><span>
+</span><span>     </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IntDiv_ZF_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>   </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m = (m zdiv n)&#8901;n \&lt;ra&gt; (m zmod n)&quot;</span></span></span><span>
+</span><span>     </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_1_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812;\&lt;lsq&gt;n&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;n&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>     </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>PositiveSet_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>   </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(m zmod n) &#8712; &#120812;..(n\&lt;rs&gt;&#120813;)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IntDiv_ZF_1_L2</span><span> </span><span>Order_ZF_2_L1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A3</span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(k&#8901;n zdiv n) \&lt;lsq&gt; (m zdiv n)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IntDiv_ZF_1_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>I</span><span> </span><span>T</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k \&lt;lsq&gt; (m zdiv n)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IntDiv_ZF_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;m zdiv n &#8712; &#8484;<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Int_ZF_1_5_L7</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span>  
+</span><span class="keyword2"><span class="keyword">end</span></span></pre>
+
+</div>
+</body>
+</html>

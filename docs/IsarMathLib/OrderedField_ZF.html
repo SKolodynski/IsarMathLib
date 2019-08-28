@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory OrderedField_ZF (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory OrderedField_ZF</h1>
+
+<span class="command">theory</span> <span class="name">OrderedField_ZF</span><br/>
+<span class="keyword">imports</span> <a href="OrderedRing_ZF.html"><span class="name">OrderedRing_ZF</span></a> <a href="Field_ZF.html"><span class="name">Field_ZF</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(*   This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2005, 2006  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Ordered fields&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>OrderedField_ZF</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>OrderedRing_ZF</span><span> </span><span>Field_ZF</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory covers basic facts about ordered fiels.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition and basic properties&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Here we define ordered fields and proove their basic properties.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Ordered field is a notrivial ordered ring such that all 
+  non-zero elements have an inverse. We define the notion of being a ordered 
+  field as
+  a statement about four sets. The first set, denoted &#8249;K&#8250; is the 
+  carrier of the field. The second set, denoted &#8249;A&#8250; represents the 
+  additive operation on &#8249;K&#8250; (recall that in ZF set theory functions 
+  are sets). The third set &#8249;M&#8250; represents the multiplicative operation 
+  on &#8249;K&#8250;. The fourth set &#8249;r&#8250; is the order 
+  relation on &#8249;K&#8250;.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnOrdField(K,A,M,r) &#8801; (IsAnOrdRing(K,A,M,r) &#8743;
+  (M {is commutative on} K) &#8743;
+  TheNeutralElement(K,A) &#8800; TheNeutralElement(K,M) &#8743;
+  (&#8704;a&#8712;K. a&#8800;TheNeutralElement(K,A)&#10230;
+  (&#8707;b&#8712;K. M`&#10216;a,b&#10217; = TheNeutralElement(K,M))))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next context (locale) defines notation used for ordered fields. 
+  We do that by extending the notation defined in the 
+  &#8249;ring1&#8250; context that is used for oredered rings and 
+  adding some assumptions to make sure we are 
+  talking about ordered fields in this context. 
+  We should rename the carrier from $R$ used in the &#8249;ring1&#8250; 
+  context to $K$, more appriopriate for fields. Theoretically the Isar locale
+  facility supports such renaming, but we experienced diffculties using
+  some lemmas from &#8249;ring1&#8250; locale after renaming. 
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">locale</span></span><span> </span><span>field1</span><span> </span><span class="delimiter">=</span><span> </span><span>ring1</span><span> </span><span class="delimiter">+</span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>mult_commute</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M {is commutative on} R&quot;</span></span></span><span>
+</span><span>  
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>not_triv</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; &#8800; &#120813;&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>inv_exists</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;R. a&#8800;&#120812; &#10230; (&#8707;b&#8712;R. a&#8901;b = &#120813;)&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>non_zero</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;R<span class="hidden">&#8681;</span><sub>0</sub>&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>non_zero_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R<span class="hidden">&#8681;</span><sub>0</sub> &#8801; R-{&#120812;}&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>inv</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;_&#175; &quot;</span></span></span><span> </span><span class="delimiter">[</span><span>96</span><span class="delimiter">]</span><span> </span><span>97</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>inv_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8801; GroupInv(R<span class="hidden">&#8681;</span><sub>0</sub>,restrict(M,R<span class="hidden">&#8681;</span><sub>0</sub>&#215;R<span class="hidden">&#8681;</span><sub>0</sub>))`(a)&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma assures us that we are talking fields 
+  in the &#8249;field1&#8250; context.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L1</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnOrdField(R,A,M,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_1_L1</span><span> </span><span>mult_commute</span><span> </span><span>not_triv</span><span> </span><span>inv_exists</span><span> </span><span>IsAnOrdField_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Ordered field is a field, of course.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>OrdField_ZF_1_L1A</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnOrdField(K,A,M,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAfield(K,A,M)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsAnOrdField_def</span><span> </span><span>IsAnOrdRing_def</span><span> </span><span>IsAfield_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Theorems proven in &#8249;field0&#8250; (about fields) context are valid
+  in the &#8249;field1&#8250; context (about ordered fields).&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L1B</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;field0(R,A,M)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L1</span><span> </span><span>OrdField_ZF_1_L1A</span><span> </span><span>field_field0</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can use theorems proven in the &#8249;field1&#8250; context whenever we
+  talk about an ordered field.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>OrdField_ZF_1_L2</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnOrdField(K,A,M,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;field1(K,A,M,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsAnOrdField_def</span><span> </span><span>OrdRing_ZF_1_L2</span><span> </span><span>ring1_def</span><span>
+</span><span>    </span><span>IsAnOrdField_def</span><span> </span><span>field1_axioms_def</span><span> </span><span>field1_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In ordered rings the existence of a right inverse for all positive
+  elements implies the existence of an inverse for all non zero elements.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>ring1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L3</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>. &#8707;b&#8712;R. a&#8901;b = &#120813;&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;b&#8712;R. c&#8901;b = &#120813;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;b&#8712;R. c&#8901;b = &#120813;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8713;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;rm&gt;c) &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_3_L2A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>b</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;rm&gt;c)&#8901;b = &#120813;&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;rm&gt;b) &#8712; R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8901;(\&lt;rm&gt;b) = &#120813;&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_1_L3</span><span> </span><span>Ring_ZF_1_L7</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;b&#8712;R. c&#8901;b = &#120813;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Ordered fields are easier to deal with, because it is sufficient 
+  to show the existence of an inverse for the set of positive elements.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>ring1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L4</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; &#8800; &#120813;&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;M {is commutative on} R&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;a&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>. &#8707;b&#8712;R. a&#8901;b = &#120813;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsAnOrdField(R,A,M,r)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>OrdRing_ZF_1_L1</span><span> </span><span>OrdField_ZF_1_L3</span><span> </span><span>IsAnOrdField_def</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The set of positive field elements is closed under multiplication.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L5</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R<span class="hidden">&#8681;</span><sub>+</sub> {is closed under} M&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.field_has_no_zero_divs</span><span> </span><span>OrdRing_ZF_3_L3</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The set of positive field elements is closed under multiplication:
+  the explicit version.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>pos_mul_closed</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; \&lt;ls&gt; a&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; \&lt;ls&gt; b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; \&lt;ls&gt; a&#8901;b&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_3_L14</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; \&lt;ls&gt; a&#8901;b&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L5</span><span> </span><span>IsOpClosed_def</span><span> </span><span>PositiveSet_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In fields square of a nonzero element is positive.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L6</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a<span class="hidden">&#8679;</span><sup>2</sup> &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.field_has_no_zero_divs</span><span>
+</span><span>    </span><span>OrdRing_ZF_3_L15</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma restates the fact &#8249;Field_ZF&#8250; that out notation
+  for the field inverse means what it is supposed to mean.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L7</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(a&#175;) = &#120813;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#175;)&#8901;a = &#120813;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.Field_ZF_1_L6</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A simple lemma about multiplication and cancelling of a positive field
+   element.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L7A</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;b&#175; = a&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#175;&#8901;b = a&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8800;&#120812;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>PositiveSet_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;b&#175; = a&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#175;&#8901;b = a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.Field_ZF_1_L7</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Some properties of the inverse of a positive element.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L8</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(a&#175;) = &#120813;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#175;)&#8901;a = &#120813;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;&#120812;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>PositiveSet_def</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(a&#175;)<span class="hidden">&#8679;</span><sup>2</sup> &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.Field_ZF_1_L5</span><span> </span><span>OrdField_ZF_1_L6</span><span>
+</span><span>      </span><span>OrdField_ZF_1_L5</span><span> </span><span>IsOpClosed_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>I</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.Field_ZF_2_L1</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>I</span><span> </span><span class="keyword3"><span class="command">show</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(a&#175;) = &#120813;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#175;)&#8901;a = &#120813;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L7</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If $a&lt;b$, then $(b-a)^{-1}$ is positive.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L9</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;ls&gt;b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(b\&lt;rs&gt;a)&#175; &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>  
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>OrdRing_ZF_1_L14</span><span> </span><span>OrdField_ZF_1_L8</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In ordered fields if at least one of $a,b$ is not zero, then
+  $a^2+b^2 &gt; 0$, in particular $a^2+b^2\neq 0$ and exists the 
+  (multiplicative) inverse of $a^2+b^2$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_1_L10</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8800; &#120812; &#8744; b &#8800; &#120812;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; \&lt;ls&gt; a<span class="hidden">&#8679;</span><sup>2</sup> \&lt;ra&gt; b<span class="hidden">&#8679;</span><sup>2</sup>&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;c&#8712;R. (a<span class="hidden">&#8679;</span><sup>2</sup> \&lt;ra&gt; b<span class="hidden">&#8679;</span><sup>2</sup>)&#8901;c = &#120813;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120812; \&lt;ls&gt; a<span class="hidden">&#8679;</span><sup>2</sup> \&lt;ra&gt; b<span class="hidden">&#8679;</span><sup>2</sup>&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.field_has_no_zero_divs</span><span> 
+</span><span>      </span><span>OrdRing_ZF_3_L19</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;(a<span class="hidden">&#8679;</span><sup>2</sup> \&lt;ra&gt; b<span class="hidden">&#8679;</span><sup>2</sup>)&#175; &#8712; R&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(a<span class="hidden">&#8679;</span><sup>2</sup> \&lt;ra&gt; b<span class="hidden">&#8679;</span><sup>2</sup>)&#8901;(a<span class="hidden">&#8679;</span><sup>2</sup> \&lt;ra&gt; b<span class="hidden">&#8679;</span><sup>2</sup>)&#175; = &#120813;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_1_L3</span><span> </span><span>PositiveSet_def</span><span> </span><span>OrdField_ZF_1_L8</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;c&#8712;R. (a<span class="hidden">&#8679;</span><sup>2</sup> \&lt;ra&gt; b<span class="hidden">&#8679;</span><sup>2</sup>)&#8901;c = &#120813;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Inequalities&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we develop tools to deal inequalities in fields.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can multiply strict inequality by a positive element.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L1</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;ls&gt;b&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c \&lt;ls&gt; b&#8901;c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.field_has_no_zero_divs</span><span>
+</span><span>    </span><span>OrdRing_ZF_3_L13</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A special case of &#8249;OrdField_ZF_2_L1&#8250; when we multiply
+  an inverse by an element.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L2</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; \&lt;ls&gt; b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; \&lt;ls&gt; b&#8901;a&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(a&#175;)&#8901;a \&lt;ls&gt; b&#8901;a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; \&lt;ls&gt; b&#8901;a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L8</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can multiply an inequality by the inverse of a positive element.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L3</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;lsq&gt;b&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;(c&#175;) \&lt;lsq&gt; b&#8901;(c&#175;)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>OrdField_ZF_1_L8</span><span> </span><span>OrdRing_ZF_1_L9A</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can multiply a strict inequality by a  positive element
+  or its inverse.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L4</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;ls&gt;b&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c \&lt;ls&gt; b&#8901;c&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8901;a \&lt;ls&gt; c&#8901;b&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; \&lt;ls&gt; b&#8901;c&#175;&quot;</span></span></span><span>
+</span><span>   </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.field_has_no_zero_divs</span><span>
+</span><span>    </span><span>OrdField_ZF_1_L8</span><span> </span><span>OrdRing_ZF_3_L13</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can put a positive factor on the other side of an inequality,
+  changing it to its inverse.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L5</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b \&lt;lsq&gt; c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a \&lt;lsq&gt; c&#8901;b&#175;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;b&#175; \&lt;lsq&gt; c&#8901;b&#175;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_2_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a \&lt;lsq&gt; c&#8901;b&#175;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L7A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can put a positive factor on the other side of an inequality,
+  changing it to its inverse, version with a product initially on the 
+  right hand side.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L5A</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a \&lt;lsq&gt; b&#8901;c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; \&lt;lsq&gt; b&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; \&lt;lsq&gt; b&#8901;c&#8901;c&#175;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_2_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; \&lt;lsq&gt; b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L7A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can put a positive factor on the other side of a strict
+  inequality, changing it to its inverse, version with a product
+  initially on the left hand side.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L6</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b \&lt;ls&gt; c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a \&lt;ls&gt; c&#8901;b&#175;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;b&#8901;b&#175; \&lt;ls&gt; c&#8901;b&#175;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_2_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a \&lt;ls&gt; c&#8901;b&#175;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L7A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We can put a positive factor on the other side of a strict
+  inequality, changing it to its inverse, version with a product
+  initially on the right hand side.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L6A</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a \&lt;ls&gt; b&#8901;c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; \&lt;ls&gt; b&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; \&lt;ls&gt; b&#8901;c&#8901;c&#175;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_2_L4</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8901;c&#175; \&lt;ls&gt; b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L7A</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Sometimes we can reverse an inequality by taking inverse
+  on both sides.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L7</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; \&lt;lsq&gt; b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; \&lt;lsq&gt; a&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L8</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span>  </span><span>OrdRing_ZF_3_L7</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L8</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175;&#8901;a&#175;&#8901;a \&lt;lsq&gt; b&#175;&#8901;b&#8901;a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_1_L9A</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>T</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; &#8712; R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8800;&#120812;&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8800;&#120812;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>PositiveSet_def</span><span> </span><span>OrdRing_ZF_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175;&#8901;a&#175;&#8901;a = b&#175;&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175;&#8901;b&#8901;a = a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.Field_ZF_1_L7</span><span> 
+</span><span>      </span><span>field0.Field_ZF_1_L6</span><span> </span><span>Ring_ZF_1_L3</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; \&lt;lsq&gt; a&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Sometimes we can reverse a strict inequality by taking inverse
+  on both sides.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L8</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; \&lt;ls&gt; b&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; \&lt;ls&gt; a&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a&#175; \&lt;lsq&gt;b&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L8</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_3_L7</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8800;&#120812;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>PositiveSet_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; &#8800; a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L1B</span><span> </span><span>field0.Field_ZF_2_L4</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b&#175; \&lt;ls&gt; a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_2_L7</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A technical lemma about solving a strict inequality with three
+  field elements and inverse of a difference.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>field1</span><span class="delimiter">)</span><span> </span><span>OrdField_ZF_2_L9</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a\&lt;ls&gt;b&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(b\&lt;rs&gt;a)&#175; \&lt;ls&gt; c&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; \&lt;ra&gt; a&#8901;c \&lt;ls&gt; b&#8901;c&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(b\&lt;rs&gt;a)&#175; &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;(b\&lt;rs&gt;a)&#175; \&lt;lsq&gt; c&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdField_ZF_1_L9</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c &#8712; R<span class="hidden">&#8681;</span><sub>+</sub>&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_3_L7</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T2</span><span class="delimiter">:</span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8712;R&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;c&#8800;&#120812;&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;c&#175; &#8712; R&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_1_L3</span><span> </span><span>OrdField_ZF_1_L8</span><span> </span><span>PositiveSet_def</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c&#175; \&lt;ra&gt; a \&lt;ls&gt; b\&lt;rs&gt;a \&lt;ra&gt; a&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>OrdRing_ZF_1_L14</span><span> </span><span>OrdField_ZF_2_L8</span><span> </span><span>ring_strict_ord_trans_inv</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T1</span><span> </span><span>T2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(c&#175; \&lt;ra&gt; a)&#8901;c \&lt;ls&gt; b&#8901;c&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Ring_ZF_2_L1A</span><span> </span><span>OrdField_ZF_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>T1</span><span> </span><span>T2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#120813; \&lt;ra&gt; a&#8901;c \&lt;ls&gt; b&#8901;c&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ring_oper_distr</span><span> </span><span>OrdField_ZF_1_L8</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of real numbers&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The only purpose of this section is to define what does it mean
+  to be a model of real numbers.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We define model of real numbers as any quadruple of sets $(K,A,M,r)$ 
+  such that $(K,A,M,r)$ is an ordered field and the order relation $r$
+  is complete, that is every set that is nonempty and bounded above in this 
+  relation has a supremum.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;IsAmodelOfReals(K,A,M,r) &#8801; IsAnOrdField(K,A,M,r) &#8743; (r {is complete})&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span></pre>
+
+</div>
+</body>
+</html>

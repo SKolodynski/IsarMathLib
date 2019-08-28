@@ -1,0 +1,30 @@
+<h2>Style Guide for Contributors to IsarMathLib</h2>
+
+<p>This document describes the coding style used by the IsarMathLib project.</p>
+
+<p>The primary objective of the coding style used by by the IsarMathLib project is readability. Any person familiar with the standard mathematical notation should be able to read and follow the proofs. With some effort from the coder, the Isar syntax can get very close to that goal. Here are the principles to follow, in the order of their importance:</p>
+
+<ol>
+<li><p>Use only the declarative Isar style, no proofs using the old Isabelle style will be allowed in IsarMathlib.</p></li>
+<li><p>Stay as close as you can to the natural language and standard mathematical notation. </p>
+
+<p>Most of the steps in the proofs can be written in a form similar to</p>
+
+<p>from (local facts) have (statement) using (theorems) by simp</p>
+
+<p>I am sure many proofs in IsarMathLib can be shortened by doing some (erule<em>tac a=a in wf</em>on_induct, assumption, +blast intro! and I am not making this up) magic. We think a couple of additional lines of proof are worth it if we can avoid this low level ugliness. 
+This also concerns naming of the notions you define. Whenever practical, try not to use keywords or names that are not words. If you define the set of integers, don't call them "int", call them Integers. If you define real numbers, don't call them "double". </p></li>
+<li><p>Write LaTeX comments.</p>
+
+<p>Comments should be written at the start of every theory file, every section, before every definition and theorem.
+The comments don't have to be very precise or long, but do need to provide some information. We hope that future proof browsers will allow to hyperlink the theorems referenced in the proof and show the comments. Also searching for theorems is easier to implement with the keywords in comments.
+However, creating an impression that the comments contain a paralel "informal proof" (an oxymoron) should be avoided.</p></li>
+<li><p>Use locales to define notation. </p>
+
+<p>In IsarMathLib locales are used to separate notation from notions. Mathematical notions are defined using the keyword "definition" on the global level. Locales define notation that is limited in scope. This allows to use different notation conventions in different contexts to describe the same underlying mathematical notions. For example we can use both multiplicative or additive notation for groups without introducing the notion of "additive" or "multiplicative" groups. </p></li>
+<li><p>In IsarMathLib only notation definitions in locales are added to the simplifier. I think this is a good compromise between making the life easier for the authors and providing "no mystery" proofs with explicit references.</p></li>
+<li><p>Use <code>\&lt;langle&gt;</code> and <code>\&lt;rangle&gt;</code> instead of "&lt;" and ">" in the ordered pair notation. </p></li>
+<li><p>Use <code>{&lt;x,E(x)&gt;.  x\&lt;in&gt;X}</code> style of defining sets representing functions rather than <code>{&lt;x,y&gt; \&lt;in&gt; X\&lt;times&gt;Y. y = E(x)}</code> style.</p></li>
+<li><p>In Isar "then have" and "hence" are synonymous. IsarMathLib adopts a convention that "hence" indicates a direct consequence of the previous fact, without a need for any additional explicit references. So, write <code>hence "a \&lt;in&gt; A" by simp</code>, but if you need a reference write <code>then have "a \&lt;in&gt; A" using theorem_10 by simp</code>. The same applies to the "then show" and "thus" synonyms.</p></li>
+<li><p>Be creative.  IsarMathLib coding style is not set in stone and for sure it can be improved.</p></li>
+</ol>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory CommutativeSemigroup_ZF (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory CommutativeSemigroup_ZF</h1>
+
+<span class="command">theory</span> <span class="name">CommutativeSemigroup_ZF</span><br/>
+<span class="keyword">imports</span> <a href="Semigroup_ZF.html"><span class="name">Semigroup_ZF</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2007-2009  Slawomir Kolodynski
+
+    This progr\rightarowam is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Commutative Semigroups&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>CommutativeSemigroup_ZF</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Semigroup_ZF</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In the &#8249;Semigroup&#8250; theory we introduced a notion 
+  of &#8249;SetFold(f,a,&#923;,r)&#8250; that represents the sum of 
+  values of some function $a$ valued in a semigroup
+  where the arguments of that function vary over some set $\Lambda$.
+  Using the additive notation something like this would be expressed
+  as $\sum_{x\in \Lambda} f(x)$ in informal mathematics. 
+  This theory considers an alternative to that notion that is more specific 
+  to commutative semigroups.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Sum of a function over a set&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The $r$ parameter in the definition of &#8249;SetFold(f,a,&#923;,r)&#8250;
+  (from &#8249;Semigroup_ZF&#8250;) represents a linear order relation 
+  on $\Lambda$ that is needed to indicate in what order we are summing 
+  the values $f(x)$.
+  If the semigroup operation is commutative the order does not matter
+  and the relation $r$ is not needed. In this section we define a notion 
+  of summing up values of some function $a : X \rightarrow G$
+  over a finite set of indices $\Gamma \subseteq X$, without using any
+  order relation on $X$.&#8250;</span></span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We define the sum of values of a function $a: X\rightarrow G$
+  over a set $\Lambda$ as the only element of the set of sums of lists 
+  that are bijections between the number of values in $\Lambda$ 
+  (which is a natural number $n = \{0,1, .. , n-1\}$ if $\Lambda$
+  is finite) and $\Lambda$. The notion of &#8249;Fold1(f,c)&#8250; 
+  is defined in &#8249;Semigroup_ZF&#8250; as the fold (sum) of the list
+  $c$ starting from the first element of that list. The intention
+  is to use the fact that since the result of summing up a list
+  does not depend on the order, the set 
+  &#8249;{Fold1(f,a O b). b &#8712; bij( |&#923;|, &#923;)}&#8250; is a singleton
+  and we can extract its only value by taking its union.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;CommSetFold(f,a,&#923;) = &#8899;{Fold1(f,a O b). b &#8712; bij(|&#923;|, &#923;)}&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;the next locale sets up notation for writing about summation in
+  commutative semigroups. We define two kinds of sums. One is the sum
+  of elements of a list (which are just functions defined on a natural number)
+  and the second one represents a more general notion the sum of values of
+  a semigroup valued function over some set of arguments. Since those two types of 
+  sums are different notions they are represented by different symbols.
+  However in the presentations they are both intended to be printed as $\sum $.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">locale</span></span><span> </span><span>commsemigr</span><span> </span><span class="delimiter">=</span><span>
+</span><span>  
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>G</span><span> </span><span>f</span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>csgassoc</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f {is associative on} G&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>csgcomm</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f {is commutative on} G&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>csgsum</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infixl</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;ra&gt;&quot;</span></span></span><span> </span><span>69</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>csgsum_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x \&lt;ra&gt; y &#8801; f`&#10216;x,y&#10217;&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>X</span><span> </span><span>a</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>csgaisfun</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a : X &#8594; G&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>csglistsum</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#8721; _&quot;</span></span></span><span> </span><span>70</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>csglistsum_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8721;k &#8801; Fold1(f,k)&quot;</span></span></span><span>
+</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>csgsetsum</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;ssum&gt;&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>csgsetsum_def</span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;ssum&gt;(A,h) &#8801; CommSetFold(f,h,A)&quot;</span></span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of a sum of function over a set in 
+  notation defined in the &#8249;commsemigr&#8250; locale.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>commsemigr</span><span class="delimiter">)</span><span> </span><span>CommSetFolddef</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;ssum&gt;(A,a)) = (&#8899;{&#8721;(a O b). b &#8712; bij(|A|, A)})&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>CommSetFold_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next lemma states that the result of a sum does not depend
+  on the order we calculate it. This is similar to lemma 
+  &#8249;prod_order_irr&#8250; in the &#8249;Semigroup&#8250; theory,
+  except that the &#8249;semigr1&#8250; locale assumes
+  that the domain of the function we sum up is linearly
+  ordered, while in &#8249;commsemigr&#8250; we don&#39;t have
+  this assumption.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>commsemigr</span><span class="delimiter">)</span><span> </span><span>sum_over_set_bij</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8800; 0&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; bij(|A|,A)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;ssum&gt;(A,a)) = (&#8721; (a O b))&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;c &#8712; bij(|A|,A). &#8704; d &#8712; bij(|A|,A). (&#8721;(a O c)) = (&#8721;(a O d))&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>c</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;c &#8712; bij(|A|,A)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>d</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;d &#8712; bij(|A|,A)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?r</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;InducedRelation(converse(c), Le)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;semigr1(G,f,A,?r,restrict(a, A))&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;semigr0(G,f)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>csgassoc</span><span> </span><span>semigr0_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;c &#8712; bij(|A|,A)&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsLinOrder(A,?r)&quot;</span></span></span><span> 
+</span><span>	  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>bij_converse_bij</span><span> </span><span>card_fin_is_nat</span><span> 
+</span><span>            </span><span>natord_lin_on_each_nat</span><span> </span><span>ind_rel_pres_lin</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;restrict(a, A) : A &#8594; G&quot;</span></span></span><span>
+</span><span>	  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>FinPow_def</span><span> </span><span>csgaisfun</span><span> </span><span>restrict_fun</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>semigr1_axioms.intro</span><span> </span><span>semigr1_def</span><span> 
+</span><span>	  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f {is commutative on} G&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>csgcomm</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712;  FinPow(A)&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8800; 0&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">note</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;c &#8712; bij(|A|,A)&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;d &#8712; bij(|A|,A)&#8250;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>	</span><span class="string"><span class="delete"><span class="delete">&quot;Fold1(f,restrict(a,A) O c) = Fold1(f,restrict(a,A) O d)&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>semigr1.prod_bij_same</span><span class="delimiter">)</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8721; (restrict(a,A) O c)) = (&#8721; (restrict(a,A) O d))&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;c &#8712; bij(|A|,A)&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;d &#8712; bij(|A|,A)&#8250;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>	</span><span class="string"><span class="delete"><span class="delete">&quot;restrict(a,A) O c = a O c&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;restrict(a,A) O d = a O d&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>bij_def</span><span> </span><span>surj_def</span><span> </span><span>csgaisfun</span><span> </span><span>FinPow_def</span><span> </span><span>comp_restrict</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8721;(a O c)) = (&#8721;(a O d))&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899;{&#8721;(a O b). b &#8712; bij(|A|, A)}) = (&#8721; (a O b))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>singleton_comprehension</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>CommSetFolddef</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The result of a sum is in the semigroup. Also, as the second
+  assertion we show that every semigroup valued function
+  generates a homomorphism between the finite subsets of a semigroup 
+  and the semigroup. Adding an element to a set coresponds to adding a 
+  value.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>commsemigr</span><span class="delimiter">)</span><span> </span><span>sum_over_set_add_point</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span>  </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8800; 0&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;ssum&gt;(A,a) &#8712; G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x &#8712; X-A. \&lt;ssum&gt;(A &#8746; {x},a) = (\&lt;ssum&gt;(A,a)) \&lt;ra&gt; a`(x)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>b</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b &#8712; bij(|A|,A)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fin_bij_card</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;ssum&gt;(A,a) = (&#8721; (a O b))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>sum_over_set_bij</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| &#8712; nat&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_fin_is_nat</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;semigr0(G,f)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>csgassoc</span><span> </span><span>semigr0_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>n</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;|A| = succ(n)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_non_empty_succ</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;b &#8712; bij(|A|,A)&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a O b : succ(n) &#8594; G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>bij_def</span><span> </span><span>inj_def</span><span> </span><span>FinPow_def</span><span> </span><span>comp_fun_subset</span><span> </span><span>csgaisfun</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fold1(f,a O b) &#8712; G&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>semigr0.prod_type</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;\&lt;ssum&gt;(A,a) = (&#8721; (a O b))&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;\&lt;ssum&gt;(A,a) &#8712; G&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; X-A&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(A &#8746; {x}) &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8746; {x} &#8800; 0&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>singleton_in_finpow</span><span> </span><span>union_finpow</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Append(b,x) &#8712; bij(|A &#8746; {x}|, A &#8746; {x})&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">note</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;|A| &#8712; nat&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;b &#8712; bij(|A|,A)&#8250;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x &#8712; X-A&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8713; A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Append(b,x) &#8712; bij(succ(|A|), A &#8746; {x})&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>bij_append_point</span><span class="delimiter">)</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x &#8712; X-A&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>card_fin_add_one</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;ssum&gt;(A &#8746; {x},a)) =  (&#8721; (a O Append(b,x)))&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>sum_over_set_bij</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">also</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8230; = (&#8721; Append(a O b, a`(x)))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">note</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;|A| &#8712; nat&#8250;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;b &#8712; bij(|A|, A)&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>	</span><span class="string"><span class="delete"><span class="delete">&quot;b : |A| &#8594; A&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8838; X&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>bij_def</span><span> </span><span>inj_def</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>FinPow_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;b : |A| &#8594; X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>func1_1_L1B</span><span class="delimiter">)</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x &#8712; X-A&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a : X &#8594; G&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>csgaisfun</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>list_compose_append</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">also</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8230; =  (\&lt;ssum&gt;(A,a)) \&lt;ra&gt; a`(x)&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">note</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;semigr0(G,f)&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;n &#8712; nat&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a O b : succ(n) &#8594; G&#8250;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x &#8712; X-A&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a`(x) &#8712; G&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>csgaisfun</span><span> </span><span>apply_funtype</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>	</span><span class="string"><span class="delete"><span class="delete">&quot;Fold1(f,Append(a O b, a`(x))) = f`&#10216;Fold1(f,a O b),a`(x)&#10217;&quot;</span></span></span><span>
+</span><span>	</span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>semigr0.prod_append</span><span class="delimiter">)</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;b &#8712; bij(|A|,A)&#8250;</span></span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
+</span><span>	</span><span class="keyword1"><span class="command">using</span></span><span> </span><span>sum_over_set_bij</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">finally</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(\&lt;ssum&gt;(A &#8746; {x},a)) = (\&lt;ssum&gt;(A,a)) \&lt;ra&gt; a`(x)&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x &#8712; X-A. \&lt;ssum&gt;(A &#8746; {x},a) = (\&lt;ssum&gt;(A,a)) \&lt;ra&gt; a`(x)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>  
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span></pre>
+
+</div>
+</body>
+</html>

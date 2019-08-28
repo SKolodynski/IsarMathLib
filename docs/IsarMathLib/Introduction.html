@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Introduction (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Introduction</h1>
+
+<span class="command">theory</span> <span class="name">Introduction</span><br/>
+<span class="keyword">imports</span> <a href="../../ZF/ZF/equalities.html"><span class="name">equalities</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2008-2014  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Introduction to the IsarMathLib project&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Introduction</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>ZF.equalities</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory does not contain any formalized mathematics used in 
+  other theories, but is an introduction to IsarMathLib project.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;How to read IsarMathLib proofs - a tutorial&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Isar (the Isabelle&#39;s formal proof language) was designed to be similar
+  to the standard language of mathematics. Any person able to read proofs in
+  a typical mathematical paper should be able to read and understand
+  Isar proofs without having to learn a special proof language. 
+  However, Isar is a formal proof language and as such it does contain a 
+  couple of constructs whose meaning is hard to guess. In this tutorial 
+  we will define a notion and prove an example theorem about that notion,
+  explaining Isar syntax along the way. This tutorial may also serve as a 
+  style guide for IsarMathLib contributors. Note that this tutorial
+  aims to help in reading the presentation of the Isar language that is used
+  in IsarMathLib proof document and HTML rendering on the 
+  FormalMath.org site, but does not teach how to write proofs that can be
+  verified by Isabelle. This presentation is different than the source 
+  processed by Isabelle (the concept that the source and presentation 
+  look different should be familiar to any LaTeX user). To learn
+  how to write Isar proofs one needs to study the source of this tutorial as well.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The first thing that mathematicians typically do is to define
+  notions. In Isar this is done with the &#8249;definition&#8250; keyword.
+  In our case we define a notion of two 
+  sets being disjoint. We will use the infix notation, i.e. the string
+  &#8249;{is disjoint with}&#8250; put between two sets to denote our notion 
+  of disjointness. 
+  The left side of the &#8249;&#8801;&#8250; symbol is the notion 
+  being defined, the right side says how we define it. In Isabelle &#8249;0&#8250;
+  is used to denote both zero (of natural numbers) and the empty set, which is
+  not surprising as those two things are the same in set theory.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span> 
+</span><span>  </span><span>AreDisjoint</span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infix</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{is disjoint with}&quot;</span></span></span><span> </span><span>90</span><span class="delimiter">)</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;A {is disjoint with} B &#8801; A &#8745; B = 0&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We are ready to prove a theorem. Here we show that the relation
+  of being disjoint is symmetric. We start with one of the keywords
+  &#39;&#39;theorem&#39;&#39;, &#39;&#39;lemma&#39;&#39; or &#39;&#39;corollary&#39;&#39;. In Isar they are synonymous.
+  Then we provide a name for the theorem. In standard mathematics 
+  theorems are numbered. In Isar we can do that too, but it is
+  considered better to give theorems meaningful names.
+  After the &#39;&#39;shows&#39;&#39; keyword we give the statement to show. The 
+  &#8249;&#10231;&#8250; symbol denotes the equivalence in Isabelle/ZF. Here
+  we want to show that &quot;A is disjoint with B iff and only if B is disjoint 
+  with A&quot;. To prove this fact we show two implications - the first one that 
+  &#8249;A {is disjoint with} B&#8250; implies &#8249;B {is disjoint with} A&#8250;
+  and then the converse one. Each of these implications is formulated
+  as a statement to be proved and then proved in 
+  a subproof like a mini-theorem.
+  Each subproof uses a proof block to show the implication. Proof blocks
+  are delimited with curly brackets in Isar. 
+  Proof block is one of the constructs that
+  does not exist in informal mathematics, so it may be confusing. 
+  When reading a proof containing a proof block I suggest to focus first 
+  on what is that we are proving in it. This can be done by looking
+  at the first line or two of the block and then at the last statement. 
+  In our case the block starts with 
+  &quot;assume &#8249;A {is disjoint with} B&#8250; and the last statement
+  is &quot;then have &#8249;B {is disjoint with} A&#8250;&quot;. It is a typical pattern 
+  when someone needs to prove an implication: one assumes the antecedent
+  and then shows that the consequent follows from this assumption.
+  Implications are denoted with the 
+  &#8249;&#10230;&#8250; symbol in Isabelle. 
+  After we prove both implications we collect them 
+  using the &#39;&#39;moreover&#39;&#39; construct. The keyword &#39;&#39;ultimately&#39;&#39;
+  indicates that what follows is the conclusion of the statements 
+  collected with &#39;&#39;moreover&#39;&#39;. The &#39;&#39;show&#39;&#39; keyword is like &#39;&#39;have&#39;&#39;,
+  except that it indicates that we have arrived at the claim of the 
+  theorem (or a subproof).
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>disjointness_symmetric</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A {is disjoint with} B &#10231; B {is disjoint with} A&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A {is disjoint with} B &#10230; B {is disjoint with} A&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A {is disjoint with} B&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8745; B = 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>AreDisjoint_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8745; A = 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;B {is disjoint with} A&quot;</span></span></span><span>
+</span><span>        </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>AreDisjoint_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B {is disjoint with} A &#10230; A {is disjoint with} B&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B {is disjoint with} A&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8745; A = 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>AreDisjoint_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8745; B = 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;A {is disjoint with} B&quot;</span></span></span><span>
+</span><span>        </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>AreDisjoint_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Overview of the project&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
+  The  &#8249;Fol1&#8250;, &#8249; ZF1&#8250; and &#8249;Nat_ZF_IML&#8250; theory 
+  files contain some background material that is needed for 
+  the remaining theories.
+
+  &#8249;Order_ZF&#8250; and &#8249;Order_ZF_1a&#8250; reformulate 
+  material from standard Isabelle&#39;s 
+  &#8249;Order&#8250; theory in terms of non-strict (less-or-equal) 
+  order relations.
+  &#8249;Order_ZF_1&#8250; on the other hand directly continues the &#8249;Order&#8250;
+  theory file using strict order relations (less and not equal). This is useful
+  for translating theorems from Metamath.
+
+  In &#8249;NatOrder_ZF&#8250; we prove that the usual order on natural numbers
+  is linear.
+  
+  The &#8249;func1&#8250; theory provides basic facts about functions.
+  &#8249;func_ZF&#8250; continues this development with more advanced
+  topics that relate to algebraic properties of binary operations, 
+  like lifting a binary operation to a function space,
+  associative, commutative and distributive operations and properties
+  of functions related to order relations. &#8249;func_ZF_1&#8250; is 
+  about properties of functions related to order relations.
+
+  The standard Isabelle&#39;s &#8249;Finite&#8250; theory defines the finite
+  powerset of a set as a certain &quot;datatype&quot; (?) with some recursive
+  properties. IsarMathLib&#39;s &#8249;Finite1&#8250; 
+  and  &#8249;Finite_ZF_1&#8250; theories develop more facts about this notion. 
+  These two theories are obsolete now. 
+  They will be gradually replaced by an approach based on set theory
+  rather than tools specific to Isabelle. This approach is presented
+  in &#8249;Finite_ZF&#8250; theory file.
+
+  In &#8249;FinOrd_ZF&#8250; we talk about ordered finite sets.
+
+  The &#8249;EquivClass1&#8250; theory file is a reformulation of 
+  the material in the standard
+  Isabelle&#39;s &#8249;EquivClass&#8250; theory in the spirit of ZF set theory.
+  
+  &#8249;FiniteSeq_ZF&#8250; discusses the notion of finite sequences 
+  (a.k.a. lists).
+
+  &#8249;InductiveSeq_ZF&#8250; provides the definition and properties of
+  (what is known in basic calculus as) sequences defined by induction, 
+  i. e. by a formula of the form $a_0 = x,\ a_{n+1} = f(a_n)$.
+
+  &#8249;Fold_ZF&#8250; shows how the familiar from functional 
+  programming notion of fold can be interpreted in set theory.
+
+  &#8249;Partitions_ZF&#8250; is about splitting a set into non-overlapping
+  subsets. This is a common trick in proofs.
+
+  &#8249;Semigroup_ZF&#8250; treats the expressions of the form 
+  $a_0\cdot a_1\cdot .. \cdot a_n$, (i.e. products of finite sequences), 
+  where &quot;$\cdot$&quot; is an associative binary operation.
+
+  &#8249;CommutativeSemigroup_ZF&#8250; is another take on a similar subject.
+  This time we consider the case when the operation is commutative
+  and the result of depends only on the set of elements we are
+  summing (additively speaking), but not the order.
+
+  The &#8249;Topology_ZF&#8250; series covers basics of general topology: 
+  interior, closure, boundary, compact sets, separation axioms and 
+  continuous functions.
+  
+  &#8249;Group_ZF&#8250;, &#8249;Group_ZF_1&#8250;, &#8249;Group_ZF_1b&#8250; 
+  and &#8249;Group_ZF_2&#8250;
+  provide basic facts of the group theory. &#8249;Group_ZF_3&#8250; 
+  considers the notion of almost homomorphisms that is nedeed for the 
+  real numbers construction in &#8249;Real_ZF&#8250;.
+
+  The &#8249;TopologicalGroup&#8250; connects the &#8249;Topology_ZF&#8250; and 
+  &#8249;Group_ZF&#8250; series and starts the subject of topological groups
+  with some basic definitions and facts.
+
+  In &#8249;DirectProduct_ZF&#8250; we define direct product of groups and show
+  some its basic properties.
+
+  The &#8249;OrderedGroup_ZF&#8250; theory treats ordered groups. 
+  This is a suprisingly large theory for such relatively obscure topic.
+  
+  &#8249;Ring_ZF&#8250; defines rings. &#8249;Ring_ZF_1&#8250; covers 
+  the properties of  rings that are specific to the real numbers construction 
+  in &#8249;Real_ZF&#8250;.
+
+  The &#8249;OrderedRing_ZF&#8250; theory looks at the consequences of adding
+  a linear order to the ring algebraic structure.
+  
+  &#8249;Field_ZF&#8250; and &#8249;OrderedField_ZF&#8250; contain basic facts
+  about (you guessed it) fields and ordered fields. 
+  
+  &#8249;Int_ZF_IML&#8250; theory considers the integers 
+  as a monoid (multiplication) and an abelian ordered group (addition). 
+  In &#8249;Int_ZF_1&#8250; we show that integers form a commutative ring.
+  &#8249;Int_ZF_2&#8250; contains some facts about slopes (almost homomorphisms 
+  on integers) needed for real numbers construction, 
+  used in &#8249;Real_ZF_1&#8250;.
+
+  In the &#8249;IntDiv_ZF_IML&#8250; theory we translate some properties of the 
+  integer quotient and reminder functions studied in the standard Isabelle&#39;s
+  &#8249;IntDiv_ZF&#8250; theory to the notation used in IsarMathLib.
+  
+  The &#8249;Real_ZF&#8250; and &#8249;Real_ZF_1&#8250; theories 
+  contain the construction of real numbers based on the paper \cite{Arthan2004}
+  by R. D. Arthan (not Cauchy sequences, not Dedekind sections). 
+  The heavy lifting
+  is done mostly in &#8249;Group_ZF_3&#8250;, &#8249;Ring_ZF_1&#8250; 
+  and &#8249;Int_ZF_2&#8250;. &#8249;Real_ZF&#8250; contains 
+  the part of the construction that can be done
+  starting from generic abelian groups (rather than additive group of integers).
+  This allows to show that real numbers form a ring. 
+  &#8249;Real_ZF_1&#8250; continues the construction using properties specific
+  to the integers and showing that real numbers constructed this way
+  form a complete ordered field.
+
+ &#8249;Cardinal_ZF&#8250; provides a couple of theorems about cardinals that are mostly used for studying  
+ properties of topological properties (yes, this is kind of meta). 
+ The main result (proven without AC) is that if two sets can be injectively mapped into an 
+ infinite cardinal, then so can be their union. 
+ There is also a definition of the Axiom of Choice specific for a given cardinal 
+ (so that the choice function exists for families of sets of given cardinality). 
+ Some properties are proven for such predicates, like that for finite families of sets the choice 
+ function always exists (in ZF) and that the axiom of choice for a larger cardinal implies 
+ one for a smaller cardinal.
+
+ &#8249;Group_ZF_4&#8250; considers conjugate of subgroup and defines simple groups. 
+ A nice theorem here is that endomorphisms of an abelian group form a ring. 
+ The first isomorphism theorem (a group homomorphism $h$ induces an isomorphism between the group 
+ divided by the kernel of $h$ and the image of $h$) is proven.
+
+ Turns out given a property of a topological space one can define a local version of a property in general. 
+ This is studied in the the &#8249;Topology_ZF_properties_2&#8250; theory and applied to local 
+ versions of the property of being finite or compact or Hausdorff 
+ (i.e. locally finite, locally compact, locally Hausdorff).
+ There are a couple of nice applications, like one-point compactification that allows to show 
+ that every locally compact Hausdorff space is regular. 
+ Also there are some results on the interplay between hereditability of a property and local properties.
+
+  For a given surjection $f : X\rightarrow Y$, where $X$ is a topological space one can consider the 
+  weakest topology on $Y$ which makes $f$ continuous, let&#39;s call it a quotient topology generated by $f$.  
+  The quotient topology generated by an equivalence relation r on X is actually a special case 
+  of this setup, where $f$ is the natural projection of $X$ on the quotient $X/r$. 
+  The properties of these two ways of getting new topologies are studied in &#8249;Topology_ZF_8&#8250; 
+  theory. The main result is that any quotient topology generated by a function is homeomorphic 
+  to a topology given by an equivalence relation, so these two approaches to quotient 
+  topologies are kind of equivalent.
+
+  As we all know, automorphisms of a topological space form a group. This fact is proven in &#8249;Topology_ZF_9&#8250; 
+  and the automorphism groups for co-cardinal, included-set, and excluded-set topologies are identified. 
+  For order topologies it is shown that order isomorphisms are homeomorphisms of the topology induced by the order. 
+  Properties preserved by continuous functions are studied and as an application it is shown 
+  for example that quotient topological spaces of compact (or connected) spaces are compact (or connected, resp.)
+ 
+  The &#8249;Topology_ZF_10&#8250; theory is about products of two topological spaces. 
+  It is proven that if two spaces are $T_0$ (or $T_1$, $T_2$, regular, connected) then their product is as well.
+
+  Given a total order on a set one can define a natural topology on it generated by taking the rays 
+  and intervals as the base. The  &#8249;Topology_ZF_11&#8250; theory studies relations between the order 
+  and various properties of generated topology. For example one can show that if the order topology 
+  is connected, then the order is complete (in the sense that for each set bounded from above the 
+  set of upper bounds has a minimum). For a given cardinal $\kappa$ we can consider 
+  generalized notion of $\kappa-separability$. Turns out $\kappa$-separability is related to (order) 
+  density of sets of cardinality $\kappa$ for order topologies.
+
+
+  Being a topological group imposes additional structure on the topology of the group, in particular 
+  its separation properties. In &#8249;Topological_Group_ZF_1.thy&#8250; theory it is shown that if 
+  a topology is $T_0$, then it must be $T_3$ , and that the topology in a topological group 
+  is always regular.
+
+  For a given normal subgroup of a topological group we can define a topology on the quotient 
+  group in a natural way. At the end of the &#8249;Topological_Group_ZF_2.thy&#8250; theory it is shown 
+  that such topology on the quotient group makes it a topological group.
+
+  The &#8249;Topological_Group_ZF_3.thy&#8250; theory studies the topologies on subgroups of a 
+  topological group. A couple of nice basic properties are shown, like that the closure of a 
+  subgroup is a subgroup, closure of a normal subgroup is normal and, a bit more surprising 
+  (to me) property that every locally-compact subgroup of a $T_0$ group is closed.
+
+  In &#8249;Complex_ZF&#8250; we construct complex numbers starting from
+  a complete ordered field (a model of real numbers). We also define 
+  the notation for writing about complex numbers and prove that the 
+  structure of complex numbers constructed there satisfies the axioms
+  of complex numbers used in Metamath.
+
+  &#8249;MMI_prelude&#8250; defines the &#8249;mmisar0&#8250; context in which 
+  most theorems translated from Metamath are proven. It also contains a 
+  chapter explaining how the translation works.
+
+  In the &#8249;Metamath_interface&#8250; theory we prove a theorem
+  that the &#8249;mmisar0&#8250; context is valid (can be used) 
+  in the &#8249;complex0&#8250; context. 
+  All theories using the translated results will import the
+  &#8249;Metamath_interface&#8250; theory. The &#8249;Metamath_sampler&#8250;
+  theory provides some examples of using the translated theorems
+  in the &#8249;complex0&#8250; context.
+
+  The theories &#8249;MMI_logic_and_sets&#8250;, &#8249;MMI_Complex&#8250;, 
+  &#8249;MMI_Complex_1&#8250; and &#8249;MMI_Complex_2&#8250;
+  contain the theorems imported from the
+  Metamath&#39;s set.mm database. As the translated proofs are rather verbose
+  these theories are not printed in this proof document.
+  The full list of translated facts can be found in the 
+  &#8249;Metamath_theorems.txt&#8250; file included in the 
+  IsarMathLib distribution.
+  The &#8249;MMI_examples&#8250; provides some theorems imported from Metamath
+  that are printed in this proof document as examples of how translated
+  proofs look like.
+&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory Fold_ZF (Isabelle2019: June 2019)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory Fold_ZF</h1>
+
+<span class="command">theory</span> <span class="name">Fold_ZF</span><br/>
+<span class="keyword">imports</span> <a href="InductiveSeq_ZF.html"><span class="name">InductiveSeq_ZF</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics for Isabelle/Isar.
+
+    Copyright (C) 2007  Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Folding in ZF&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>Fold_ZF</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>InductiveSeq_ZF</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Suppose we have a binary operation $P: X\times X \rightarrow X$ written
+  multiplicatively as $P\langle x, y \rangle= x\cdot y$. 
+  In informal mathematics we can take a sequence $\{ x_k \}_{k\in 0.. n}$
+  of elements of $X$ and consider the product 
+  $x_0\cdot x_1 \cdot .. \cdot x_n$. To do the same thing in formalized 
+  mathematics we have to define precisely what is meant by that 
+  &quot;$\cdot .. \cdot$&quot;. The definitition we want to use is based on the 
+  notion of sequence defined by induction discussed in 
+  &#8249;InductiveSeq_ZF&#8250;. We don&#39;t really want to derive the terminology
+  for this from the word &quot;product&quot; as that would tie it conceptually 
+  to the multiplicative notation. This would be awkward when we want to reuse
+  the same notions to talk about sums like $x_0 + x_1 + .. + x_n$. 
+  
+  In functional programming there is something called &quot;fold&quot;. 
+  Namely for a function $f$, initial point $a$ and list 
+  $\left[ b, c, d\right]$ 
+  the expression &#8249;fold(f, a, [b,c,d])&#8250; is defined to be 
+  &#8249;f(f(f(a,b),c),d)&#8250; (in Haskell something like this is called 
+  &#8249;foldl&#8250;). If we write $f$ in multiplicative notation we get
+  $a\cdot b \cdot c\cdot d$, so this is exactly what we need.
+  The notion of folds in functional programming 
+  is actually much more general that what we need here 
+  (not that I know anything about that). In this theory file we just make
+  a slight generalization and talk about folding a list with a binary
+  operation $f:X\times Y \rightarrow X$ with $X$ not necessarily the same as 
+  $Y$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Folding in ZF&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Suppose we have a binary operation $f : X\times Y \rightarrow X$. 
+  Then every $y\in Y$ defines a transformation of $X$ defined by
+  $T_y(x) = f\langle x,y\rangle$. In IsarMathLib such transformation is called
+  as &#8249;Fix2ndVar(f,y)&#8250;. Using this notion, 
+  given a function $f: X\times Y\rightarrow X$ and a sequence 
+  $y = \{y_k\}_{k\in N}$ of elements of $X$ 
+  we can get a sequence of transformations of $X$. 
+  This is defined in &#8249;Seq2TransSeq&#8250; below. 
+  Then we use that sequence of tranformations to define the sequence
+  of partial folds (called &#8249;FoldSeq&#8250;) by means of 
+  &#8249;InductiveSeqVarFN&#8250; (defined in &#8249;InductiveSeq_ZF&#8250; theory) 
+  which implements the inductive sequence determined by a starting point 
+  and a sequence of transformations. Finally, we define the fold of a 
+  sequence as the last element of the sequence of the partial folds.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition that specifies how to convert a sequence $a$ 
+  of elements of $Y$ into a sequence of transformations of $X$, given a binary operation
+  $f :X\times Y \rightarrow X$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Seq2TrSeq(f,a) &#8801; {&#10216;k,Fix2ndVar(f,a`(k))&#10217;. k &#8712; domain(a)}&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of a sequence of partial folds.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;FoldSeq(f,x,a) &#8801; 
+  InductiveSeqVarFN(x,fstdom(f),Seq2TrSeq(f,a),domain(a))&quot;</span></span></span><span> 
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of a fold.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,a) &#8801; Last(FoldSeq(f,x,a))&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If $X$ is a set with a binary operation $f:X\times Y \rightarrow X$ then 
+  &#8249;Seq2TransSeqN(f,a)&#8250; converts a sequence $a$ of elements of $Y$  
+  into the sequence of corresponding transformations of $X$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>seq2trans_seq_props</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a:n&#8594;Y&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;T = Seq2TrSeq(f,a)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;T : n &#8594; (X&#8594;X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k&#8712;n. &#8704;x&#8712;X. (T`(k))`(x) = f`&#10216;x,a`(k)&#10217;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;a:n&#8594;Y&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>D</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;domain(a) = n&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func1_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;T : n &#8594; (X&#8594;X)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>apply_funtype</span><span> </span><span>fix_2nd_var_fun</span><span> </span><span>ZF_fun_from_total</span><span> </span><span>Seq2TrSeq_def</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A4</span><span> </span><span>D</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k &#8712; n. T`(k) = Fix2ndVar(f,a`(k))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>Seq2TrSeq_def</span><span> </span><span>ZF_fun_from_tot_val0</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>k</span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k&#8712;n&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a`(k) &#8712; Y&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>apply_funtype</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span>A5</span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(T`(k))`(x) = f`&#10216;x,a`(k)&#10217;&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fix_var_val</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k&#8712;n. &#8704;x&#8712;X. (T`(k))`(x) = f`&#10216;x,a`(k)&#10217;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Basic properties of the sequence of partial folds of a sequence 
+  $a = \{y_k\}_{k\in \{0,..,n\} }$.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>fold_seq_props</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y:n&#8594;Y&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Y&#8800;0&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A6</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F = FoldSeq(f,x,y)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;F: succ(n) &#8594; X&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;F`(0) = x&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k&#8712;n. F`(succ(k)) = f`&#10216;F`(k), y`(k)&#10217;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?T</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Seq2TrSeq(f,y)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A3</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>D</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;domain(y) = n&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func1_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;f : X&#215;Y &#8594; X&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Y&#8800;0&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;fstdom(f) = X&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fstdomdef</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span>A6</span><span> </span><span>D</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span>II</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F: succ(n) &#8594; X&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;F`(0) = x&quot;</span></span></span><span>  
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>seq2trans_seq_props</span><span> </span><span>FoldSeq_def</span><span> </span><span>fin_indseq_var_f_props</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>A4</span><span> </span><span>A6</span><span> </span><span>I</span><span> </span><span>D</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k&#8712;n. F`(succ(k)) = ?T`(k)`(F`(k))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span>  </span><span>seq2trans_seq_props</span><span> </span><span>FoldSeq_def</span><span> </span><span>fin_indseq_var_f_props</span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>k</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k&#8712;n&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k &#8712; succ(n)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span>A3</span><span> </span><span>II</span><span> </span><span>A5</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(?T`(k))`(F`(k)) = f`&#10216;F`(k),y`(k)&#10217;&quot;</span></span></span><span>
+</span><span>      </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>apply_funtype</span><span> </span><span>seq2trans_seq_props</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> </span><span class="keyword1"><span class="command">}</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k&#8712;n. F`(succ(k)) = f`&#10216;F`(k), y`(k)&#10217;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A consistency condition: if we make the list shorter, then we get a shorter
+  sequence of partial folds with the same values as in the original sequence. 
+  This can be proven as a special case of &#8249;fin_indseq_var_f_restrict&#8250;
+  but a proof using &#8249;fold_seq_props&#8250; and induction turns out to be 
+  shorter.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>foldseq_restrict</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;k &#8712; succ(n)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;i &#8712; nat&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a : n &#8594; Y&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;b : i &#8594; Y&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8838; i&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;j &#8712; n. b`(j) = a`(j)&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; X&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;Y &#8800; 0&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FoldSeq(f,x,b)`(k) = FoldSeq(f,x,a)`(k)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?P</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FoldSeq(f,x,a)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?Q</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FoldSeq(f,x,b)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;k &#8712; succ(n)&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?Q`(0) = ?P`(0)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;j &#8712; n. ?Q`(j) = ?P`(j) &#10230; ?Q`(succ(j)) = ?P`(succ(j))&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fold_seq_props</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;?Q`(k) = ?P`(k)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>fin_nat_ind</span><span class="delimiter">)</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A special case of &#8249;foldseq_restrict&#8250; when the longer
+  sequence is created from the shorter one by appending
+  one element.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">corollary</span></span><span> </span><span>fold_seq_append</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;a:n &#8594; Y&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;k &#8712; succ(n)&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8712;Y&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FoldSeq(f,x,Append(a,y))`(k) = FoldSeq(f,x,a)`(k)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?b</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Append(a,y)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?b : succ(n) &#8594; Y&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;j &#8712; n. ?b`(j) = a`(j)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>append_props</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>foldseq_restrict</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;What we really will be using is the notion of the fold
+  of a sequence, which we define as the last element of
+  (inductively defined) sequence of partial folds. The next theorem 
+  lists some properties of the product of the fold operation.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>fold_props</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a:n &#8594; Y&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Y&#8800;0&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,a) =  FoldSeq(f,x,a)`(n)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,a) &#8712; X&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot; FoldSeq(f,x,a) : succ(n) &#8594; X&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span>  </span><span>fold_seq_props</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,a) =  FoldSeq(f,x,a)`(n)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,a) &#8712; X&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>last_seq_elem</span><span> </span><span>apply_funtype</span><span> </span><span>Fold_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A corner case: what happens when we fold an empty list?&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>fold_empty</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> 
+</span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a:0&#8594;Y&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Y&#8800;0&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,a) = x&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?F</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FoldSeq(f,x,a)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;0 &#8712; nat&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a:0&#8594;Y&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Y&#8800;0&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,a) = ?F`(0)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>fold_props</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;0 &#8712; nat&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;a:0&#8594;Y&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Y&#8800;0&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?F = FoldSeq(f,x,a)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?F`(0) = x&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>fold_seq_props</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,a) = x&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The next theorem tells us what happens to the fold of a sequence
+  when we add one more element to it.&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theorem</span></span><span> </span><span>fold_append</span><span class="delimiter">:</span><span>  
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>  </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span>A3</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a:n&#8594;Y&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A4</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A5</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8712;Y&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;FoldSeq(f,x,Append(a,y))`(n) = Fold(f,x,a)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,Append(a,y)) = f`&#10216;Fold(f,x,a), y&#10217;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?b</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Append(a,y)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?P</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;FoldSeq(f,x,?b)&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A5</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>I</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Y &#8800; 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span>thesis1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?P`(n) = Fold(f,x,a)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fold_seq_append</span><span> </span><span>fold_props</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span>I</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>II</span><span class="delimiter">:</span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;succ(n) &#8712; nat&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;f : X&#215;Y &#8594; X&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?b : succ(n) &#8594; Y&quot;</span></span></span><span>   </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Y &#8800; 0&quot;</span></span></span><span>
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;?P = FoldSeq(f,x,?b)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>append_props</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;k &#8712; succ(n). ?P`(succ(k)) =  f`&#10216;?P`(k), ?b`(k)&#10217;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>fold_seq_props</span><span class="delimiter">)</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A3</span><span> </span><span>A5</span><span> </span><span>thesis1</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?P`(succ(n)) =  f`&#10216; Fold(f,x,a), y&#10217;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>append_props</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>II</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?P : succ(succ(n)) &#8594; X&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>fold_seq_props</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,?b) = ?P`(succ(n))&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>last_seq_elem</span><span> </span><span>Fold_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fold(f,x,Append(a,y)) = f`&#10216;Fold(f,x,a), y&#10217;&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>
