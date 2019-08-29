@@ -13,3 +13,8 @@ Before processing the IsarMathLib project theories, make sure you have LaTeX ins
 
 Process the theory files with the "isabelle build -D ./IsarMathLib" command issued in the main project directory where this file is. Make sure the bin directory of the Isabelle distribution is in PATH environment variable, or provide the full path to isabelle executable located there. Checking the proofs will take a couple of minutes, but will eventually produce the proof document and outline and tell you where the the files are located. 
 
+## Readable presentations
+
+The best place to start is the [isamathlib.org](http://www.isarmathlib.org/) site which provides an experimental HTML rendering of most of the IsarMathLib theories.
+
+The Isabelle generated [proof document](https://skolodynski.github.io/IsarMathLib/IsarMathLib/document.pdf) contains all definitions and theorems with formally verified proofs from the last release. The [outline](https://skolodynski.github.io/IsarMathLib/IsarMathLib/outline.pdf) contains all theorems and comments, but does not contain the proofs. Isabelle generated HTML rendering can be browsed [here](https://skolodynski.github.io/IsarMathLib/IsarMathLib/index.html).
