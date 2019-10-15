@@ -11,7 +11,7 @@ IsarMathLib needs Isabelle/ZF logic that is not shipped precompiled in the Isabe
 
 Before processing the IsarMathLib project theories, make sure you have LaTeX installed (including extras, for example in Ubuntu run "apt-get install texlive-latex-extras").
 
-Process the theory files with the "isabelle build -D ./IsarMathLib" command issued in the main project directory where this file is. Make sure the bin directory of the Isabelle distribution is in PATH environment variable, or provide the full path to isabelle executable located there. Checking the proofs will take a couple of minutes, but will eventually produce the proof document and outline and tell you where the the files are located. 
+Process the theory files with the "isabelle build -D ./IsarMathLib" command issued in the main project directory where this file is. Make sure the bin directory of the Isabelle distribution is in PATH environment variable, or provide the full path to isabelle executable located there. Checking the proofs will take a couple of minutes, but will eventually produce the proof document and outline and tell you where the files are located. 
 
 ## Readable presentations
 
