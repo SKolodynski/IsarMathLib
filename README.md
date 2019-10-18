@@ -24,3 +24,8 @@ Here is a list a formalized mathematics projects I found on GitHub:
 | [Odd Order](https://github.com/math-comp/odd-order)              |  Coq                   |a mechanization of the Odd Order Theorem| 
 
 
+## Readable presentations
+
+The best place to start is the [isamathlib.org](http://www.isarmathlib.org/) site which provides an experimental HTML rendering of most of the IsarMathLib theories.
+
+The Isabelle generated [proof document](https://skolodynski.github.io/IsarMathLib/IsarMathLib/document.pdf) contains all definitions and theorems with formally verified proofs from the last release. The [outline](https://skolodynski.github.io/IsarMathLib/IsarMathLib/outline.pdf) contains all theorems and comments, but does not contain the proofs. Isabelle generated HTML rendering can be browsed [here](https://skolodynski.github.io/IsarMathLib/IsarMathLib/index.html).

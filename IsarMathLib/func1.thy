@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2005, 2006  Slawomir Kolodynski
+    Copyright (C) 2005 - 2019  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -73,7 +73,7 @@ lemma func1_1_L1: assumes "f:A\<rightarrow>C" shows "domain(f) = A"
   using assms domain_of_fun by simp
 
 text\<open>Standard Isabelle defines a \<open>function(f)\<close> predicate.
-  the next lemma shows that our function satisfy that predicate. 
+  The next lemma shows that our functions satisfy that predicate. 
   It is a special version of Isabelle's \<open>fun_is_function\<close>.\<close>
 
 lemma fun_is_fun: assumes "f:X\<rightarrow>Y" shows "function(f)"
