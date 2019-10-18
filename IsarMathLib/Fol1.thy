@@ -48,7 +48,7 @@ text\<open>This section contains mostly shortcuts and workarounds
 text\<open>The next lemma serves as a workaround to problems with applying 
   the definition of transitivity (of a relation) in our coding style 
   (any attempt to do
-  something like \<open>using trans_def\<close> results up Isabelle in an 
+  something like \<open>using trans_def\<close> puts Isabelle in an 
   infinite loop).\<close>
 
 lemma Fol1_L2: assumes 
@@ -137,8 +137,7 @@ proof -
 qed
 
 text\<open>The next lemma demonstrates an elegant form of the 
-  \<open>Exactly_1_of_3_holds(p,q,r)\<close> predicate. More on that
-  at www.solcon.nl/mklooster/calc/calc-tri.html .\<close>
+  \<open>Exactly_1_of_3_holds(p,q,r)\<close> predicate.\<close>
 
 lemma Fol1_L8: 
   shows "Exactly_1_of_3_holds(p,q,r) \<longleftrightarrow> (p\<longleftrightarrow>q\<longleftrightarrow>r) \<and> \<not>(p\<and>q\<and>r)"

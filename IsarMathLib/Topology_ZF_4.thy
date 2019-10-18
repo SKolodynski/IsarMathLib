@@ -28,8 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Topology 4\<close>
 
-
-theory Topology_ZF_4 imports Topology_ZF_1 Order_ZF func1
+theory Topology_ZF_4 imports Topology_ZF_1 Order_ZF func1 NatOrder_ZF
 begin
 
 text\<open>This theory deals with convergence in topological spaces.
@@ -69,18 +68,12 @@ proof-
   ultimately show ?thesis using IsDirectedSet_def function_def by auto
 qed
 
+text\<open> Natural numbers are a directed set.\<close>
+
 corollary Le_directs_nat:
   shows "IsLinOrder(nat,Le)" "Le directs nat"
-proof-
-  have "antisym(Le)" unfolding antisym_def Le_def using le_anti_sym by auto moreover
-  have "trans(Le)" unfolding trans_def Le_def using le_trans by auto moreover
-  {
-    fix n m assume "n\<in>nat" "m\<in>nat"
-    then have "Ord(n)" "Ord(m)" using nat_into_Ord by auto
-    then have "n\<le>m \<or> m\<le>n" using Ord_linear_le[where thesis="n\<le>m \<or> m\<le>n"] by auto
-  }
-  then have "Le{is total on}nat" unfolding IsTotal_def Le_def by auto
-  ultimately show "IsLinOrder(nat,Le)" unfolding IsLinOrder_def by auto
+proof -
+  show "IsLinOrder(nat,Le)"  by (rule NatOrder_ZF_1_L2) 
   then show "Le directs nat" using linorder_imp_directed by auto
 qed
 

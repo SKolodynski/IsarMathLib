@@ -54,8 +54,7 @@ text\<open>Isar (the Isabelle's formal proof language) was designed to be simila
   verified by Isabelle. This presentation is different than the source 
   processed by Isabelle (the concept that the source and presentation 
   look different should be familiar to any LaTeX user). To learn
-  how to write Isar proofs one needs to study the source of this tutorial as well.
-\<close>
+  how to write Isar proofs one needs to study the source of this tutorial as well.\<close>
 
 text\<open>The first thing that mathematicians typically do is to define
   notions. In Isar this is done with the \<open>definition\<close> keyword.
@@ -105,8 +104,7 @@ text\<open>We are ready to prove a theorem. Here we show that the relation
   indicates that what follows is the conclusion of the statements 
   collected with ''moreover''. The ''show'' keyword is like ''have'',
   except that it indicates that we have arrived at the claim of the 
-  theorem (or a subproof).
-\<close>
+  theorem (or a subproof).\<close>
 
 theorem disjointness_symmetric: 
   shows "A {is disjoint with} B \<longleftrightarrow> B {is disjoint with} A"
@@ -341,7 +339,6 @@ text\<open>
   IsarMathLib distribution.
   The \<open>MMI_examples\<close> provides some theorems imported from Metamath
   that are printed in this proof document as examples of how translated
-  proofs look like.
-\<close>
+  proofs look like.\<close>
 
 end

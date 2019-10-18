@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2009-2013  Slawomir Kolodynski
+    Copyright (C) 2009-2019  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -209,11 +209,11 @@ proof -
     then have "H\<times>H \<subseteq> \<Union>\<tau>" using prod_top_on_G by auto
     moreover have "IsContinuous(\<tau>,T,f)" using fcon by simp
     ultimately have 
-      "IsContinuous(\<tau> {restricted to} H\<times>H, T {restricted to} ?f\<^sub>H``(H\<times>H),?f\<^sub>H)"
-      using two_top_spaces0.restr_restr_image_cont by simp
+      "IsContinuous(\<tau> {restricted to} H\<times>H, T {restricted to} ?f\<^sub>H``(H\<times>H),?f\<^sub>H)" using two_top_spaces0.restr_restr_image_cont
+      by simp
     moreover have
-      "ProductTopology(?\<tau>\<^sub>0,?\<tau>\<^sub>0) = \<tau> {restricted to} H\<times>H"
-      using topSpaceAssum prod_top_restr_comm by simp
+      "ProductTopology(?\<tau>\<^sub>0,?\<tau>\<^sub>0) = \<tau> {restricted to} H\<times>H" using topSpaceAssum prod_top_restr_comm
+      by simp
     moreover from A1 have "?f\<^sub>H``(H\<times>H) = H" using image_subgr_op
       by simp
     ultimately show ?thesis by simp
@@ -293,8 +293,8 @@ text\<open>Translations preserve interior.\<close>
 lemma (in topgroup) trans_interior: assumes A1: "g\<in>G" and A2: "A\<subseteq>G" 
   shows "g \<ltr> int(A) = int(g\<ltr>A)"
 proof -
-  from assms have "A \<subseteq> \<Union>T" and "IsAhomeomorphism(T,T,LeftTranslation(G,f,g))"
-    using tr_homeo by auto
+  from assms have "A \<subseteq> \<Union>T" and "IsAhomeomorphism(T,T,LeftTranslation(G,f,g))" using tr_homeo 
+    by auto
   then show ?thesis using int_top_invariant by simp
 qed
 (*
@@ -461,7 +461,7 @@ subsection\<open>Sums of sequences of elements and subsets\<close>
 
 text\<open>In this section we consider properties of the function $G^n\rightarrow G$, 
   $x=(x_0,x_1,...,x_{n-1})\mapsto \sum_{i=0}^{n-1}x_i$. We will model the cartesian product
-  $G^n$ by the space of sequences $n\rightarrow G$, where $n=\{0,1,...,n-1]\}$ is a natural number. 
+  $G^n$ by the space of sequences $n\rightarrow G$, where $n=\{0,1,...,n-1 \}$ is a natural number. 
   This space is equipped with a natural product topology defined in \<open>Topology_ZF_3\<close>.\<close>
 
 text\<open>Let's recall first that the sum of elements of a group is an element of the group.\<close>
@@ -507,8 +507,8 @@ theorem (in topgroup) sum_continuous: assumes "n \<in> nat"
       have "{\<langle>x,\<Sum>x\<rangle>.x\<in>succ(0)\<rightarrow>G} = {\<langle>x,x`(0)\<rangle>. x\<in>1\<rightarrow>G}"
         using semigr0_valid_in_tgroup semigr0.prod_of_1elem by simp
       moreover have
-        "IsAhomeomorphism(SeqProductTopology(1,T),T,{\<langle>x,x`(0)\<rangle>. x\<in>1\<rightarrow>\<Union>T})"
-        using topSpaceAssum singleton_prod_top1 by simp
+        "IsAhomeomorphism(SeqProductTopology(1,T),T,{\<langle>x,x`(0)\<rangle>. x\<in>1\<rightarrow>\<Union>T})" using topSpaceAssum singleton_prod_top1
+          by simp
       ultimately show ?thesis using IsAhomeomorphism_def by simp
     qed
     moreover have "\<forall>k\<in>nat.
@@ -531,8 +531,8 @@ theorem (in topgroup) sum_continuous: assumes "n \<in> nat"
               with \<open>k \<in> nat\<close> have "Init(x) \<in> (succ(k)\<rightarrow>G)"
                 using init_props by simp
               with \<open>k \<in> nat\<close> \<open>x : succ(succ(k))\<rightarrow>G\<close> 
-                have "\<langle>Init(x),x`(succ(k))\<rangle> \<in> (succ(k)\<rightarrow>G)\<times>G"
-                using apply_funtype by blast 
+                have "\<langle>Init(x),x`(succ(k))\<rangle> \<in> (succ(k)\<rightarrow>G)\<times>G" using apply_funtype
+                  by blast 
            } then show ?thesis using ZF_fun_from_total by simp
           qed
           moreover have "?g:((succ(k)\<rightarrow>G)\<times>G)\<rightarrow>(G\<times>G)"

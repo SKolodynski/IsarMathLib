@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2008  Slawomir Kolodynski
+    Copyright (C) 2008 - 2019 Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -36,7 +36,7 @@ text\<open>Standard Isabelle Finite.thy contains a very useful
   notion of finite powerset: the set of finite subsets of a given set.
   The definition, however, is specific to Isabelle and based on the notion
   of "datatype", obviously not something that belongs to ZF set theory.
-  This theory file devolopes the notion of finite powerset similarly as
+  This theory file devolops the notion of finite powerset similarly as
   in Finite.thy, but based on standard library's 
   Cardinal.thy. This theory file is intended to 
   replace IsarMathLib's \<open>Finite1\<close> and \<open>Finite_ZF_1\<close> theories
@@ -214,7 +214,7 @@ proof -
     by auto
 qed
 
-text\<open>A subset of a finites subset is a finite subset.\<close>
+text\<open>A subset of a finite subset is a finite subset.\<close>
 
 lemma subset_finpow: assumes "A \<in> FinPow(X)" and "B \<subseteq> A"
   shows "B \<in> FinPow(X)"
@@ -299,7 +299,7 @@ proof -
 qed  
 
 text\<open>Another type of induction (or, maybe recursion).
-  The induction step  we try to find a point in the set that
+  In the induction step  we try to find a point in the set that
   if we remove it, the fact that the property holds for the 
   smaller set implies that the property holds for the whole set. 
 \<close>

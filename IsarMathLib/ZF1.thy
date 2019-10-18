@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2005-2008  Slawomir Kolodynski
+    Copyright (C) 2005-2019  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -32,7 +32,7 @@ theory ZF1 imports ZF.equalities
 
 begin
 
-text\<open>Standard Isabelle distribution contains lots of facts about basic set
+text\<open>The standard Isabelle distribution contains lots of facts about basic set
   theory. This theory file adds some more.\<close>
 
 subsection\<open>Lemmas in Zermelo-Fraenkel set theory\<close>
@@ -41,7 +41,7 @@ text\<open>Here we put lemmas from the set theory that we could not find in
 the standard Isabelle distribution.\<close>
 
 text\<open>If one collection is contained in another, then we can say the same
-  abot their unions.\<close>
+  about their unions.\<close>
 
 lemma collection_contain: assumes "A\<subseteq>B" shows "\<Union>A \<subseteq> \<Union>B"
 proof
@@ -164,7 +164,7 @@ text\<open>In Isabelle/ZF the intersection of an empty family is
 lemma inter_empty_empty: shows "\<Inter>0 = 0" by (rule Inter_0)
 
 text\<open>If an intersection of a collection is not empty, then the collection is
-  not empty. We are (ab)using the fact the the intesection of empty collection 
+  not empty. We are (ab)using the fact the the intersection of empty collection 
   is defined to be empty.\<close>
 
 lemma inter_nempty_nempty: assumes "\<Inter>A \<noteq> 0" shows "A\<noteq>0"
@@ -316,9 +316,7 @@ proof -
   with A1 show "x \<notin> A" by simp
 qed
 
-text\<open>A basic property of sets defined by comprehension.
-  This is one side of standard Isabelle's \<open>separation\<close> 
-  that is in the simp set but somehow not always used by simp.\<close>
+text\<open>A basic property of sets defined by comprehension.\<close>
 
 lemma comprehension: assumes "a \<in> {x\<in>X. p(x)}"
   shows "a\<in>X" and "p(a)" using assms by auto

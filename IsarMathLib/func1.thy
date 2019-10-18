@@ -89,7 +89,7 @@ proof -
   with A2 show "fstdom(f) = X" unfolding fstdom_def by auto
 qed
 
-text\<open>A first-order version of \<open>Pi_type\<close>.\<close>
+text\<open>A version of the \<open>Pi_type\<close> lemma from the standard Isabelle/ZF library.\<close>
 
 lemma func1_1_L1A: assumes A1: "f:X\<rightarrow>Y" and A2: "\<forall>x\<in>X. f`(x) \<in> Z"
   shows "f:X\<rightarrow>Z"
@@ -206,7 +206,7 @@ next
   } thus "f \<subseteq> {\<langle>x, f`(x)\<rangle>. x \<in> X}" by auto
 qed
 
-text\<open>The range of function thet maps $X$ into $Y$ is contained in $Y$.\<close>
+text\<open>The range of function that maps $X$ into $Y$ is contained in $Y$.\<close>
 
 lemma func1_1_L5B: 
   assumes  A1: "f:X\<rightarrow>Y" shows "range(f) \<subseteq> Y"
@@ -371,8 +371,7 @@ lemma lam_is_fun_range: assumes "f={\<langle>x,g(x)\<rangle>. x\<in>X}"
 proof -
   have "\<forall>x\<in>X. g(x) \<in> range({\<langle>x,g(x)\<rangle>. x\<in>X})" unfolding range_def 
     by auto
-  then have "{\<langle>x,g(x)\<rangle>. x\<in>X} : X\<rightarrow>range({\<langle>x,g(x)\<rangle>. x\<in>X})"
-    by (rule ZF_fun_from_total)
+  then have "{\<langle>x,g(x)\<rangle>. x\<in>X} : X\<rightarrow>range({\<langle>x,g(x)\<rangle>. x\<in>X})" by (rule ZF_fun_from_total)
   with assms show ?thesis by auto
 qed
 
@@ -1279,7 +1278,7 @@ proof -
   with A2 show "a = b" by (rule comp_inv_id_eq)
 qed
 
-text\<open>Converse of a converse of a bijection the same bijection. 
+text\<open>Converse of a converse of a bijection is the same bijection. 
 This is a special case of \<open>converse_converse\<close> from standard Isabelle's 
 \<open>equalities\<close> theory where it is proved for relations.\<close>
 
@@ -1478,10 +1477,8 @@ lemma fix_1st_var_fun: assumes A1: "f : X\<times>Y \<rightarrow> Z" and A2: "x\<
 proof -
   from A1 A2 have "\<forall>y\<in>Y. f`\<langle>x,y\<rangle> \<in> Z"
     using apply_funtype by simp
-  then have "{\<langle>y,f`\<langle>x,y\<rangle>\<rangle>. y \<in> Y} :  Y \<rightarrow> Z"
-    using ZF_fun_from_total by simp
-  with A1 A2 show "Fix1stVar(f,x) : Y \<rightarrow> Z"
-    using fix_var_fun_domain by simp
+  then have "{\<langle>y,f`\<langle>x,y\<rangle>\<rangle>. y \<in> Y} :  Y \<rightarrow> Z" using ZF_fun_from_total by simp
+  with A1 A2 show "Fix1stVar(f,x) : Y \<rightarrow> Z" using fix_var_fun_domain by simp
 qed
 
 text\<open>If we fix the second variable, we get a function of the first

@@ -320,17 +320,6 @@ proof -
   ultimately show ?thesis by simp
 qed
 
-text\<open>If an intersection of a collection is not empty, then the collection is
-  not empty. We are (ab)using the fact the the intesection of empty collection 
-  is defined to be empty and prove by contradiction. Should be in ZF1.thy\<close>
-
-lemma Finite1_L9: assumes A1:"\<Inter>A \<noteq> 0" shows "A\<noteq>0"
-proof -
-  { assume A2: "\<not> A \<noteq> 0" 
-    with A1 have False by simp
-  } thus ?thesis by auto 
-qed
-
 text\<open>Cartesian product of finite sets is finite.\<close>
 
 lemma Finite1_L12: assumes A1: "A \<in> Fin(A)" and A2: "B \<in> Fin(B)"
@@ -379,11 +368,9 @@ proof -
       using Characteristic_def by simp
     moreover note A1
     ultimately have 
-      "{Characteristic(A,c,x). x\<in>A} \<in> Fin(A)" 
-      by (rule fin_image_fin)
+      "{Characteristic(A,c,x). x\<in>A} \<in> Fin(A)" by (rule fin_image_fin)
     moreover from D1 have 
-      "{Characteristic(A,c,x). x\<in>A} = A"
-      using Characteristic_def by simp
+      "{Characteristic(A,c,x). x\<in>A} = A" using Characteristic_def by simp
     ultimately have "A \<in> Fin(A)" by simp }
   ultimately show ?thesis by blast
 qed
@@ -432,7 +419,7 @@ lemma Finite1_L16: assumes "x\<in>X" shows "{x} \<in> Fin(X)"
   using assms emptyI consI by simp
 
 text\<open>A special case of \<open>Finite1_L15\<close> where the second
-  set is a singleton. \<open>Group_ZF_3\<close> theory this corresponds 
+  set is a singleton. In \<open>Group_ZF_3\<close> theory this corresponds 
   to the situation where we multiply by a constant.\<close>
 
 lemma Finite1_L16AA: assumes "{b(x). x\<in>A} \<in> Fin(B)" 

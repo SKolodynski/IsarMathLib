@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2008  Slawomir Kolodynski
+    Copyright (C) 2005 - 2019  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -229,7 +229,7 @@ proof -
   then show "n \<subseteq> nat" using nat_union_nat by simp
 qed
 
-text\<open>Adding a natural numbers does not decrease what we add to.\<close>
+text\<open>Adding natural numbers does not decrease what we add to.\<close>
 
 lemma add_nat_le: assumes A1: "n \<in> nat"  and A2: "k \<in> nat"
   shows 
@@ -336,7 +336,7 @@ definition
   "NatInterval(n,k) \<equiv> {n #+ j. j\<in>k}"
 
 text\<open>Subtracting the beginning af the interval results in a number from
-  the length of the interval.It may sound weird, but note that the length of
+  the length of the interval. It may sound weird, but note that the length of
   such interval is a natural number, hence a set.\<close>
 
 lemma inter_diff_in_len: 

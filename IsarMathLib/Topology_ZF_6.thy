@@ -56,7 +56,7 @@ $X$ can be changed by \<open>domain(f)\<close> without any change in the definit
 
 lemma base_image_filter:
   assumes "\<FF> {is a filter on} X" "f:X\<rightarrow>Y"
-  shows "{f``B .B\<in>\<FF>} {is a base filter}(f[\<FF>]..Y)" and "(f[\<FF>]..Y) {is a filter on} Y"
+  shows "{f``B .B\<in>\<FF>} {is a base filter} (f[\<FF>]..Y)" and "(f[\<FF>]..Y) {is a filter on} Y"
 proof-
   {
     assume "0 \<in> {f``B .B\<in>\<FF>}"
@@ -97,10 +97,10 @@ proof-
     }
   then have nB:"{f``B . B\<in>\<FF>}\<subseteq>Pow(Y)" by auto
   ultimately
-  have "(({f``B .B\<in>\<FF>} {is a base filter}{A \<in> Pow(Y) . \<exists>D\<in>{f``B .B\<in>\<FF>}. D \<subseteq> A}) \<and> (\<Union>{A \<in> Pow(Y) . \<exists>D\<in>{f``B .B\<in>\<FF>}. D \<subseteq> A}=Y))" using base_unique_filter_set2 
+  have "(({f``B .B\<in>\<FF>} {is a base filter} {A \<in> Pow(Y) . \<exists>D\<in>{f``B .B\<in>\<FF>}. D \<subseteq> A}) \<and> (\<Union>{A \<in> Pow(Y) . \<exists>D\<in>{f``B .B\<in>\<FF>}. D \<subseteq> A}=Y))" using base_unique_filter_set2 
     by force
-  then have "{f``B .B\<in>\<FF>} {is a base filter}{A \<in> Pow(Y) . \<exists>D\<in>{f``B .B\<in>\<FF>}. D \<subseteq> A}" by auto
-  with assms show "{f``B .B\<in>\<FF>} {is a base filter}(f[\<FF>]..Y)" using ImageFilter_def  by auto
+  then have "{f``B .B\<in>\<FF>} {is a base filter} {A \<in> Pow(Y) . \<exists>D\<in>{f``B .B\<in>\<FF>}. D \<subseteq> A}" by auto
+  with assms show "{f``B .B\<in>\<FF>} {is a base filter} (f[\<FF>]..Y)" using ImageFilter_def  by auto
   moreover
   note sbc
   moreover
@@ -189,7 +189,7 @@ proof -
   from assms(1) assms(3) have "x\<in>X\<^sub>1" 
     using topology0.FilterConverges_def topol_cntxs_valid(1) X1_def by auto
   have "topology0(\<tau>\<^sub>2)" using topol_cntxs_valid(2) by simp 
-  moreover from assms(1) have "(f[\<FF>]..X\<^sub>2) {is a filter on} (\<Union>\<tau>\<^sub>2)" and "{f``B .B\<in>\<FF>} {is a base filter}(f[\<FF>]..X\<^sub>2)" 
+  moreover from assms(1) have "(f[\<FF>]..X\<^sub>2) {is a filter on} (\<Union>\<tau>\<^sub>2)" and "{f``B .B\<in>\<FF>} {is a base filter} (f[\<FF>]..X\<^sub>2)" 
     using base_image_filter fmapAssum X1_def X2_def by auto
   moreover have "\<forall>U\<in>Pow(\<Union>\<tau>\<^sub>2). (f`x)\<in>Interior(U,\<tau>\<^sub>2) \<longrightarrow> (\<exists>D\<in>{f``B .B\<in>\<FF>}. D\<subseteq>U)"
   proof - 
@@ -247,7 +247,7 @@ proof-
         using topology0.FilterConverges_def topol_cntxs_valid(2) unfolding X1_def X2_def 
         by auto
       moreover
-      from fmapAssum NFil have "{f``B .B\<in>?Neig} {is a base filter}(f[?Neig]..X\<^sub>2)" 
+      from fmapAssum NFil have "{f``B .B\<in>?Neig} {is a base filter} (f[?Neig]..X\<^sub>2)" 
         using base_image_filter(1) X1_def X2_def by auto
       ultimately have "\<exists>V\<in>{f``B .B\<in>?Neig}. V\<subseteq>U" using basic_element_filter by blast
       then obtain B where "B\<in>?Neig" "f``B\<subseteq>U" by auto
