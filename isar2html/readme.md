@@ -1,6 +1,5 @@
 Isar2html is a Mathematical Knowledge Management 
-tool for converting IsarMathLib sources to HTML 
-resp. The inputs to the program are as follows:
+tool for converting IsarMathLib sources to HTML. The inputs to the program are as follows:
 
   * A file called theories.conf with the list of theories to process.
 
