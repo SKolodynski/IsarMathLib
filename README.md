@@ -13,19 +13,25 @@ Before processing the IsarMathLib project theories, make sure you have LaTeX ins
 
 Process the theory files with the "isabelle build -D ./IsarMathLib" command issued in the main project directory where this file is. Make sure the bin directory of the Isabelle distribution is in PATH environment variable, or provide the full path to isabelle executable located there. Checking the proofs will take a couple of minutes, but will eventually produce the proof document and outline and tell you where the the files are located.
 
-## Formalized mathematics projects
-
-Here is a list a formalized mathematics projects I found on GitHub:
-
-| Project                                                          | Proof assistant/Logic  |  Comment |
-|------------------------------------------------------------------|:----------------------:|---------:|
-| [Math](https://github.com/berenoguz/Math)                        |  Agda                  |          |
-| [Mathematical Components](https://github.com/math-comp/math-comp)|  Coq                   |          |
-| [Odd Order](https://github.com/math-comp/odd-order)              |  Coq                   |a mechanization of the Odd Order Theorem| 
-
-
 ## Readable presentations
 
 The best place to start is the [isamathlib.org](http://www.isarmathlib.org/) site which provides an experimental HTML rendering of most of the IsarMathLib theories.
 
 The Isabelle generated [proof document](https://skolodynski.github.io/IsarMathLib/IsarMathLib/document.pdf) contains all definitions and theorems with formally verified proofs from the last release. The [outline](https://skolodynski.github.io/IsarMathLib/IsarMathLib/outline.pdf) contains all theorems and comments, but does not contain the proofs. Isabelle generated HTML rendering can be browsed [here](https://skolodynski.github.io/IsarMathLib/IsarMathLib/index.html).
+
+
+## Formalized mathematics projects
+
+Here is a list of formalized mathematics projects I found on GitHub:
+
+| Project                                                          | Proof assistant/Logic  |  Comment |
+|------------------------------------------------------------------|:----------------------:|---------:|
+| [Homotopy Type Theory in Agda](https://github.com/HoTT/HoTT-Agda)|  Agda                  |          |
+| [Isabelle/HoTT](https://github.com/jaycech3n/Isabelle-HoTT)      |  Isabelle/HoTT         |          |
+| [Lean mathlib](https://github.com/leanprover-community/mathlib)  |  Lean                  |          |
+| [Math](https://github.com/berenoguz/Math)                        |  Agda                  |          |
+| [Mathematical Components](https://github.com/math-comp/math-comp)|  Coq                   |          |
+| [Odd Order](https://github.com/math-comp/odd-order)              |  Coq                   |a mechanization of the Odd Order Theorem|
+| [set.mm](https://github.com/metamath/set.mm)                     |  Metamath/ZFC          |          |
+| [isabelle-zf-experiments](https://github.com/alexkrauss/isabelle-zf-experiments)| Isabelle/ZF | superseded by [tyset](https://bitbucket.org/cezaryka/tyset/src/master/) |
+
