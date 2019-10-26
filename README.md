@@ -31,6 +31,7 @@ Here is a list of formalized mathematics projects I found on GitHub:
 | [Lean mathlib](https://github.com/leanprover-community/mathlib)  |  Lean                  |          |
 | [Math](https://github.com/berenoguz/Math)                        |  Agda                  |          |
 | [Mathematical Components](https://github.com/math-comp/math-comp)|  Coq                   |          |
+| [Metamath Zero](https://github.com/digama0/mm0)                  |  Metamath Zero         |see also the [paper](https://arxiv.org/abs/1910.10703) on arXiv |
 | [Odd Order](https://github.com/math-comp/odd-order)              |  Coq                   |a mechanization of the Odd Order Theorem|
 | [set.mm](https://github.com/metamath/set.mm)                     |  Metamath/ZFC          |          |
 | [isabelle-zf-experiments](https://github.com/alexkrauss/isabelle-zf-experiments)| Isabelle/ZF | superseded by [tyset](https://bitbucket.org/cezaryka/tyset/src/master/) |
