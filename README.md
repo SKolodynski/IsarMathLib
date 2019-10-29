@@ -28,7 +28,7 @@ Here is a list of formalized mathematics projects I found on GitHub:
 |------------------------------------------------------------------|:----------------------:|---------:|
 | [Homotopy Type Theory in Agda](https://github.com/HoTT/HoTT-Agda)|  Agda                  |          |
 | [Isabelle/HoTT](https://github.com/jaycech3n/Isabelle-HoTT)      |  Isabelle/HoTT         |          |
-| [Lean mathlib](https://github.com/leanprover-community/mathlib)  |  Lean                  |          |
+| [Lean mathlib](https://github.com/leanprover-community/mathlib)  |  Lean                  |see also the [paper](https://arxiv.org/abs/1910.09336) on arXiv |
 | [Math](https://github.com/berenoguz/Math)                        |  Agda                  |          |
 | [Mathematical Components](https://github.com/math-comp/math-comp)|  Coq                   |          |
 | [Metamath Zero](https://github.com/digama0/mm0)                  |  Metamath Zero         |see also the [paper](https://arxiv.org/abs/1910.10703) on arXiv |
