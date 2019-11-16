@@ -405,8 +405,8 @@ premdefines :: Parser PropPremise
 premdefines = do
     string "defines"
     spaces
-    d <- innerText
-    return (PropDefines d)
+    p <- listLabStatLists
+    return (PropDefines p)
 
 -- | parses labelled statement list
 -- like A1: "a \<in> A"  "b \<in> B"

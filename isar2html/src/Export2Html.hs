@@ -114,7 +114,8 @@ refdiv id content = "<div id=\"" ++ id ++ "\"class=\"refhint\">" ++
 
 -- | exports a simplified form of a premise
 exportPremiseSimple :: [(String,String)] -> PropPremise -> String
-exportPremiseSimple repls (PropDefines def) = (bf "defines ") ++ (isar2latex repls def) ++ "\n"
+exportPremiseSimple repls (PropDefines defs) = 
+    (bf "defines ") ++ (exportSimpleClaims repls defs) ++ "\n"
 exportPremiseSimple repls (PropAssumes prms) =
     (bf "assumes ") ++ (exportSimpleClaims repls prms) ++ "\n"
 
@@ -236,7 +237,7 @@ exportNameNotation repls (NameNotation nm nt) = (isar2latex repls nm) ++ ", "
 
 -- | exports a premise
 exportPremise :: [(String,String)] -> PropPremise -> String
-exportPremise repls (PropDefines def) = par $ (bf "defines ") ++ (isar2latex repls def)
+exportPremise repls (PropDefines defs) = par $ (bf "defines ") ++ (exportClaims repls defs)
 exportPremise repls (PropAssumes prems) = par $ (bf "assumes ") ++ (exportClaims repls prems)
 
 -- | exports proposition

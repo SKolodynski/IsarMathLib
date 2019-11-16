@@ -38,8 +38,6 @@ text\<open>
 
 subsection\<open>CoCardinal Topology of a set $X$\<close>
 
-subsection\<open>CoCardinal topology is a topology.\<close>
-
 text\<open>The collection of subsets of a set whose complement
 is strictly bounded by a cardinal is a topology given some assumptions
 on the cardinal.\<close>
@@ -53,7 +51,7 @@ with an infinite cardinal, but it is obvious that the set \<open>Q\<close>
 can be any set equipollent with an infinite cardinal.
 It is a topology also if the set where the topology is defined is
 too small or the cardinal too large; in this case, as it is later proved the topology
-is a discrete topology. And the last case corresponds with @{prop "Q=1"} which translates
+is a discrete topology. And the last case corresponds with \<open> "Q=1" \<close> which translates
 in the indiscrete topology.\<close>
 
 lemma CoCar_is_topology:
@@ -108,7 +106,7 @@ theorem topology0_CoCardinal:
   using topology0_def CoCar_is_topology assms by auto
 
 text\<open>It can also be proven that, if \<open>CoCardinal X T\<close> is a topology,
-@{prop "X\<noteq>0"}, @{prop "Card(T)"} and @{prop "T\<noteq>0"}; then \<open>T\<close> is an infinite cardinal, @{prop "X\<prec>T"}
+\<open> X\<noteq>0, Card(T)\<close> and \<open>T\<noteq>0\<close>; then \<open>T\<close> is an infinite cardinal, \<open> X\<prec>T\<close>
 or \<open>T=1\<close>.
 It follows from the fact that the union of two closed sets is closed.\<close>
 
@@ -225,7 +223,7 @@ qed
 text\<open>$X$ is a closed set that contains $A$.
 This lemma is necessary because we cannot
 use the lemmas proven in the \<open>topology0\<close> context since
-@{prop "T\<noteq>0"} is too weak for
+\<open> T\<noteq>0"} is too weak for
  \<open>CoCardinal X T\<close> to be a topology.\<close>
 
 lemma X_closedcov_cocardinal:
@@ -356,7 +354,7 @@ proof
   then show "Pow(X)\<subseteq>(CoCardinal X T)" by auto
 qed
 
-text\<open>If the cardinal is taken as @{prop "T=1"} then the topology
+text\<open>If the cardinal is taken as \<open> T=1 \<close> then the topology
 is indiscrete.\<close>
 
 lemma indiscrete_cocardinal:
@@ -752,7 +750,7 @@ theorem topology0_includedset:
 
 text\<open>Choosing a singleton set, it is considered a point excluded
 topology. In the following lemmas and theorems, when neccessary
-it will be considered that @{prop "T\<noteq>0"} and @{prop "T\<subseteq>X"}.
+it will be considered that \<open> T\<noteq>0 \<close> and \<open> T\<subseteq>X \<close>.
 Theese cases will appear in the special cases section.\<close>
 
 definition
@@ -868,7 +866,7 @@ text\<open>The boundary of a set is \<open>X-A\<close> if $A$ contains \<open>T\
 completely, is \<open>A\<close> if $X-A$ contains \<open>T\<close>
 completely
 and \<open>X\<close> if \<open>T\<close> is divided between the two sets.
-The case where @{prop "T=0"} is considered as an special case.\<close>
+The case where \<open> T=0 \<close> is considered as an special case.\<close>
 
 lemma boundary_includedset:
   assumes "A \<subseteq>X""T \<subseteq>X""T\<noteq>0"
@@ -908,7 +906,7 @@ qed
 
 subsection\<open>Special cases and subspaces\<close>
 
-text\<open>The topology is discrete if @{prop "T=0"}\<close>
+text\<open>The topology is discrete if \<open> T=0 \<close>\<close>
 
 lemma smaller_includedset:
   shows "(IncludedSet X 0)=Pow(X)"
@@ -925,7 +923,7 @@ lemma empty_includedset:
 text\<open>The topological subspaces of the \<open>IncludedSet X T\<close> topology
 are also IncludedSet topologies. The trivial case does not fit the idea
 in the demonstration;
-because if @{prop "Y\<subseteq>X"} then \<open>IncludedSet (Y \<inter> X) (Y\<inter>T)\<close>
+because if \<open> Y\<subseteq>X \<close>  then \<open>IncludedSet (Y \<inter> X) (Y\<inter>T)\<close>
 is never trivial. There is no need of a separate proof because
 the only subspace of the trivial topology is itself.\<close>
 

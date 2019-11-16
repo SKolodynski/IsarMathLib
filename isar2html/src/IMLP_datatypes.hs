@@ -93,7 +93,7 @@ data NameNotation = NameNotation { fixedName :: String, fixedNotation :: String 
                 deriving (Eq, Show)
 
 -- | premises in a theorem
-data PropPremise = PropDefines String | PropAssumes [(String,[String])]
+data PropPremise = PropDefines [(String,[String])] | PropAssumes [(String,[String])]
                 deriving (Eq, Show)
 
 -- | a structure for a proposition

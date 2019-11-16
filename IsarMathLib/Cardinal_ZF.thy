@@ -230,7 +230,7 @@ proof-
   ultimately show ?thesis using LimitC_def by auto
 qed
 
-subsection\<open>Main result on cardinals (without the \emph{Axiom of Choice})\<close>
+subsection\<open>Main result on cardinals (without the Axiom of Choice)\<close>
 
 text\<open>If two sets are strictly injective to an infinite cardinal,
 then so is its union. For the case of successor cardinal, this

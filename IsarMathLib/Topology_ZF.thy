@@ -132,6 +132,10 @@ proof -
   thus "0 \<in> T" by simp
 qed
 
+text\<open>The carrier is open.\<close>
+lemma carr_open: assumes "T {is a topology}" shows "(\<Union>T) \<in> T"
+  using assms IsATopology_def by auto
+
 text\<open>Union of a collection of open sets is open.\<close>
 lemma union_open: assumes "T {is a topology}" and "\<forall>A\<in>\<A>. A \<in> T"
   shows "(\<Union>\<A>) \<in> T" using assms IsATopology_def by auto 
@@ -240,7 +244,7 @@ qed
 
 subsection\<open>Interior of a set\<close>
 
-text\<open>In section we show basic properties of the interior of a set.\<close>
+text\<open>In this section we show basic properties of the interior of a set.\<close>
 
 text\<open>Interior of a set $A$ is contained in $A$.\<close>
 
