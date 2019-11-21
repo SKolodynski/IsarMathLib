@@ -55,8 +55,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)</span></span></span></span
 </span><span>
 </span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;CoCardinal Topology of a set $X$&#8250;</span></span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;CoCardinal topology is a topology.&#8250;</span></span></span><span>
-</span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The collection of subsets of a set whose complement
 is strictly bounded by a cardinal is a topology given some assumptions
 on the cardinal.&#8250;</span></span></span><span>
@@ -70,7 +68,7 @@ with an infinite cardinal, but it is obvious that the set &#8249;Q&#8250;
 can be any set equipollent with an infinite cardinal.
 It is a topology also if the set where the topology is defined is
 too small or the cardinal too large; in this case, as it is later proved the topology
-is a discrete topology. And the last case corresponds with @{prop &quot;Q=1&quot;} which translates
+is a discrete topology. And the last case corresponds with &#8249; &quot;Q=1&quot; &#8250; which translates
 in the indiscrete topology.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>CoCar_is_topology</span><span class="delimiter">:</span><span>
@@ -125,7 +123,7 @@ in the indiscrete topology.&#8250;</span></span></span><span>
 </span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>topology0_def</span><span> </span><span>CoCar_is_topology</span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;It can also be proven that, if &#8249;CoCardinal X T&#8250; is a topology,
-@{prop &quot;X&#8800;0&quot;}, @{prop &quot;Card(T)&quot;} and @{prop &quot;T&#8800;0&quot;}; then &#8249;T&#8250; is an infinite cardinal, @{prop &quot;X&#8826;T&quot;}
+&#8249; X&#8800;0, Card(T)&#8250; and &#8249;T&#8800;0&#8250;; then &#8249;T&#8250; is an infinite cardinal, &#8249; X&#8826;T&#8250;
 or &#8249;T=1&#8250;.
 It follows from the fact that the union of two closed sets is closed.&#8250;</span></span></span><span>
 </span><span>
@@ -242,7 +240,7 @@ it isn&#39;t open.&#8250;</span></span></span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;$X$ is a closed set that contains $A$.
 This lemma is necessary because we cannot
 use the lemmas proven in the &#8249;topology0&#8250; context since
-@{prop &quot;T&#8800;0&quot;} is too weak for
+&#8249; T&#8800;0&quot;} &#8250; is too weak for
  &#8249;CoCardinal X T&#8250; to be a topology.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>X_closedcov_cocardinal</span><span class="delimiter">:</span><span>
@@ -373,7 +371,7 @@ is just the discrete topology.&#8250;</span></span></span><span>
 </span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Pow(X)&#8838;(CoCardinal X T)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If the cardinal is taken as @{prop &quot;T=1&quot;} then the topology
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If the cardinal is taken as &#8249; T=1 &#8250; then the topology
 is indiscrete.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>indiscrete_cocardinal</span><span class="delimiter">:</span><span>
@@ -769,7 +767,7 @@ dual; meaning that the closed set of one are the open sets of the other.&#8250;<
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Choosing a singleton set, it is considered a point excluded
 topology. In the following lemmas and theorems, when neccessary
-it will be considered that @{prop &quot;T&#8800;0&quot;} and @{prop &quot;T&#8838;X&quot;}.
+it will be considered that &#8249; T&#8800;0 &#8250; and &#8249; T&#8838;X &#8250;.
 Theese cases will appear in the special cases section.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">definition</span></span><span>
@@ -885,7 +883,7 @@ Theese cases will appear in the special cases section.&#8250;</span></span></spa
 completely, is &#8249;A&#8250; if $X-A$ contains &#8249;T&#8250;
 completely
 and &#8249;X&#8250; if &#8249;T&#8250; is divided between the two sets.
-The case where @{prop &quot;T=0&quot;} is considered as an special case.&#8250;</span></span></span><span>
+The case where &#8249; T=0 &#8250; is considered as an special case.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>boundary_includedset</span><span class="delimiter">:</span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8838;X&quot;</span></span></span><span class="string"><span class="delete"><span class="delete">&quot;T &#8838;X&quot;</span></span></span><span class="string"><span class="delete"><span class="delete">&quot;T&#8800;0&quot;</span></span></span><span>
@@ -925,7 +923,7 @@ The case where @{prop &quot;T=0&quot;} is considered as an special case.&#8250;<
 </span><span>
 </span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Special cases and subspaces&#8250;</span></span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The topology is discrete if @{prop &quot;T=0&quot;}&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The topology is discrete if &#8249; T=0 &#8250;&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>smaller_includedset</span><span class="delimiter">:</span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(IncludedSet X 0)=Pow(X)&quot;</span></span></span><span>
@@ -942,7 +940,7 @@ then the topology is trivial.&#8250;</span></span></span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The topological subspaces of the &#8249;IncludedSet X T&#8250; topology
 are also IncludedSet topologies. The trivial case does not fit the idea
 in the demonstration;
-because if @{prop &quot;Y&#8838;X&quot;} then &#8249;IncludedSet (Y &#8745; X) (Y&#8745;T)&#8250;
+because if &#8249; Y&#8838;X &#8250;  then &#8249;IncludedSet (Y &#8745; X) (Y&#8745;T)&#8250;
 is never trivial. There is no need of a separate proof because
 the only subspace of the trivial topology is itself.&#8250;</span></span></span><span>
 </span><span>

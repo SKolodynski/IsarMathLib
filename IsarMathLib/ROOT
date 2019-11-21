@@ -52,6 +52,7 @@ session "IsarMathLib" = "ZF" +
     Topology_ZF_2
     Topology_ZF_3
     Topology_ZF_4
+    Topology_ZF_4a
     Topology_ZF_examples
     Topology_ZF_examples_1
     Topology_ZF_properties

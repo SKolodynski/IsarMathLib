@@ -19,7 +19,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2005, 2006  Slawomir Kolodynski
+    Copyright (C) 2005 - 2019  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -90,7 +90,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)</span></span></span></span
 </span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>domain_of_fun</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Standard Isabelle defines a &#8249;function(f)&#8250; predicate.
-  the next lemma shows that our function satisfy that predicate. 
+  The next lemma shows that our functions satisfy that predicate. 
   It is a special version of Isabelle&#39;s &#8249;fun_is_function&#8250;.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>fun_is_fun</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f:X&#8594;Y&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;function(f)&quot;</span></span></span><span>
@@ -106,7 +106,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)</span></span></span></span
 </span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;fstdom(f) = X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>fstdom_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A first-order version of &#8249;Pi_type&#8250;.&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A version of the &#8249;Pi_type&#8250; lemma from the standard Isabelle/ZF library.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>func1_1_L1A</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f:X&#8594;Y&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;X. f`(x) &#8712; Z&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f:X&#8594;Z&quot;</span></span></span><span>
@@ -223,7 +223,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)</span></span></span></span
 </span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword3"><span class="command">thus</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f &#8838; {&#10216;x, f`(x)&#10217;. x &#8712; X}&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The range of function thet maps $X$ into $Y$ is contained in $Y$.&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The range of function that maps $X$ into $Y$ is contained in $Y$.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>func1_1_L5B</span><span class="delimiter">:</span><span> 
 </span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span>  </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f:X&#8594;Y&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;range(f) &#8838; Y&quot;</span></span></span><span>
@@ -388,8 +388,7 @@ one $y\in Y$ such that $(x,y)\in f$ then $f$ maps $X$ to $Y$.&#8250;</span></spa
 </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
 </span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;X. g(x) &#8712; range({&#10216;x,g(x)&#10217;. x&#8712;X})&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>range_def</span><span> 
 </span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#10216;x,g(x)&#10217;. x&#8712;X} : X&#8594;range({&#10216;x,g(x)&#10217;. x&#8712;X})&quot;</span></span></span><span>
-</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>ZF_fun_from_total</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#10216;x,g(x)&#10217;. x&#8712;X} : X&#8594;range({&#10216;x,g(x)&#10217;. x&#8712;X})&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>ZF_fun_from_total</span><span class="delimiter">)</span><span>
 </span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
@@ -1296,7 +1295,7 @@ union into two differences and the intersection and define a function separately
 </span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a = b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>comp_inv_id_eq</span><span class="delimiter">)</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Converse of a converse of a bijection the same bijection. 
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Converse of a converse of a bijection is the same bijection. 
 This is a special case of &#8249;converse_converse&#8250; from standard Isabelle&#39;s 
 &#8249;equalities&#8250; theory where it is proved for relations.&#8250;</span></span></span><span>
 </span><span>
@@ -1495,10 +1494,8 @@ This is a special case of &#8249;converse_converse&#8250; from standard Isabelle
 </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
 </span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;y&#8712;Y. f`&#10216;x,y&#10217; &#8712; Z&quot;</span></span></span><span>
 </span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>apply_funtype</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#10216;y,f`&#10216;x,y&#10217;&#10217;. y &#8712; Y} :  Y &#8594; Z&quot;</span></span></span><span>
-</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ZF_fun_from_total</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fix1stVar(f,x) : Y &#8594; Z&quot;</span></span></span><span>
-</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fix_var_fun_domain</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#10216;y,f`&#10216;x,y&#10217;&#10217;. y &#8712; Y} :  Y &#8594; Z&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ZF_fun_from_total</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Fix1stVar(f,x) : Y &#8594; Z&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fix_var_fun_domain</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If we fix the second variable, we get a function of the first
@@ -1597,7 +1594,8 @@ second variable in terms of the original function.&#8250;</span></span></span><s
 </span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fix_var_val</span><span> </span><span>func1_1_L15</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword2"><span class="keyword">end</span></span></pre>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
 
 </div>
 </body>

@@ -19,7 +19,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2008  Slawomir Kolodynski
+    Copyright (C) 2005 - 2019  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -246,7 +246,7 @@ proof -
 </span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8838; nat&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>nat_union_nat</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Adding a natural numbers does not decrease what we add to.&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Adding natural numbers does not decrease what we add to.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>add_nat_le</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;n &#8712; nat&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span>A2</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;k &#8712; nat&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> 
@@ -353,7 +353,7 @@ proof -
 </span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;NatInterval(n,k) &#8801; {n #+ j. j&#8712;k}&quot;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Subtracting the beginning af the interval results in a number from
-  the length of the interval.It may sound weird, but note that the length of
+  the length of the interval. It may sound weird, but note that the length of
   such interval is a natural number, hence a set.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>inter_diff_in_len</span><span class="delimiter">:</span><span> 

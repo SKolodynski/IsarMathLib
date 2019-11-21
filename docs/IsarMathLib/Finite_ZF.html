@@ -19,7 +19,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2008  Slawomir Kolodynski
+    Copyright (C) 2008 - 2019 Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -53,7 +53,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   notion of finite powerset: the set of finite subsets of a given set.
   The definition, however, is specific to Isabelle and based on the notion
   of &quot;datatype&quot;, obviously not something that belongs to ZF set theory.
-  This theory file devolopes the notion of finite powerset similarly as
+  This theory file devolops the notion of finite powerset similarly as
   in Finite.thy, but based on standard library&#39;s 
   Cardinal.thy. This theory file is intended to 
   replace IsarMathLib&#39;s &#8249;Finite1&#8250; and &#8249;Finite_ZF_1&#8250; theories
@@ -231,7 +231,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A subset of a finites subset is a finite subset.&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A subset of a finite subset is a finite subset.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>subset_finpow</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A &#8712; FinPow(X)&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8838; A&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;B &#8712; FinPow(X)&quot;</span></span></span><span>
@@ -316,7 +316,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </span><span class="keyword1"><span class="command">qed</span></span><span>  
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Another type of induction (or, maybe recursion).
-  The induction step  we try to find a point in the set that
+  In the induction step  we try to find a point in the set that
   if we remove it, the fact that the property holds for the 
   smaller set implies that the property holds for the whole set. 
 &#8250;</span></span></span><span>
