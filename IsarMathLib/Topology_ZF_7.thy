@@ -181,7 +181,7 @@ proof-
     fix U V
     assume "U\<in>(CoFinite X)""V\<in>(CoFinite X)""U\<inter>V=0"
     then have eq:"(X-U)\<prec>nat\<or>U=0""(X-V)\<prec>nat\<or>V=0" unfolding Cofinite_def
-      Cocardinal_def by auto
+      CoCardinal_def by auto
     from \<open>U\<inter>V=0\<close> have un:"(X-U)\<union>(X-V)=X" by auto
     {
       assume AS:"(X-U)\<prec>nat""(X-V)\<prec>nat"
@@ -532,44 +532,44 @@ and the excluded set topology on the natural numbers excluding \<open>{0,1}\<clo
 is just the union of both.\<close>
 
 lemma join_top_cofinite_excluded_set:
-  shows "(joinT {CoFinite nat, ExcludedSet nat {0,1}})=(CoFinite nat)\<union> (ExcludedSet nat {0,1})"
+  shows "(joinT {CoFinite nat,ExcludedSet(nat,{0,1})})=(CoFinite nat)\<union> ExcludedSet(nat,{0,1})"
 proof-
   have coftop:"(CoFinite nat){is a topology}" unfolding Cofinite_def using CoCar_is_topology InfCard_nat by auto
   moreover
-  have "(ExcludedSet nat {0,1}){is a topology}" using excludedset_is_topology by auto
+  have "ExcludedSet(nat,{0,1}){is a topology}" using excludedset_is_topology by auto
   moreover
-  have exuni:"\<Union>(ExcludedSet nat {0,1})=nat" using union_excludedset by auto
+  have exuni:"\<Union>ExcludedSet(nat,{0,1})=nat" using union_excludedset by auto
   moreover
   have cofuni:"\<Union>(CoFinite nat)=nat" using union_cocardinal unfolding Cofinite_def by auto
-  ultimately have "(joinT {CoFinite nat, ExcludedSet nat {0,1}}) = (THE T. (CoFinite nat)\<union>(ExcludedSet nat {0,1}) {is a subbase for} T)"
+  ultimately have "(joinT {CoFinite nat,ExcludedSet(nat,{0,1})}) = (THE T. (CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for} T)"
     using joinT_def by auto
   moreover
   have "\<Union>(CoFinite nat)\<in>CoFinite nat" using CoCar_is_topology[OF InfCard_nat] unfolding Cofinite_def IsATopology_def
     by auto
   with cofuni have n:"nat\<in>CoFinite nat" by auto
-  have Pa:"(CoFinite nat)\<union>(ExcludedSet nat {0,1}) {is a subbase for}{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))})}"
+  have Pa:"(CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for}{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}"
     using Top_subbase(2) by auto
-  have "{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))})}=(THE T. (CoFinite nat)\<union>(ExcludedSet nat {0,1}) {is a subbase for} T)"
-    using same_subbase_same_top[where B="(CoFinite nat)\<union>(ExcludedSet nat {0,1})", OF _ Pa] the_equality[where a="{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))})}" and P="\<lambda>T. ((CoFinite nat)\<union>(ExcludedSet nat {0,1})){is a subbase for}T",
+  have "{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}=(THE T. (CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for} T)"
+    using same_subbase_same_top[where B="(CoFinite nat)\<union>ExcludedSet(nat,{0,1})", OF _ Pa] the_equality[where a="{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}" and P="\<lambda>T. ((CoFinite nat)\<union>ExcludedSet(nat,{0,1})){is a subbase for}T",
       OF Pa] by auto
-  ultimately have equal:"(joinT {CoFinite nat, ExcludedSet nat {0,1}}) ={\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))})}"
+  ultimately have equal:"(joinT {CoFinite nat,ExcludedSet(nat,{0,1})}) ={\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}"
     by auto
   {
-    fix U assume "U\<in>{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))})}"
-    then obtain AU where "U=\<Union>AU" and base:"AU\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))})"
+    fix U assume "U\<in>{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}"
+    then obtain AU where "U=\<Union>AU" and base:"AU\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})"
       by auto
     have "(CoFinite nat)\<subseteq>Pow(\<Union>(CoFinite nat))" by auto
     moreover
-    have "(ExcludedSet nat {0,1})\<subseteq>Pow(\<Union>(ExcludedSet nat {0,1}))" by auto
+    have "ExcludedSet(nat,{0,1})\<subseteq>Pow(\<Union>ExcludedSet(nat,{0,1}))" by auto
     moreover
     note cofuni exuni
-    ultimately have sub:"(CoFinite nat)\<union>(ExcludedSet nat {0,1})\<subseteq>Pow(nat)" by auto
-    from base have "\<forall>S\<in>AU. S\<in>{\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))}" by blast
-    then have "\<forall>S\<in>AU. \<exists>B\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1})). S=\<Inter>B" by blast
-    then have eq:"\<forall>S\<in>AU. \<exists>B\<in>Pow((CoFinite nat)\<union>(ExcludedSet nat {0,1})). S=\<Inter>B" unfolding FinPow_def by blast
+    ultimately have sub:"(CoFinite nat)\<union>ExcludedSet(nat,{0,1})\<subseteq>Pow(nat)" by auto
+    from base have "\<forall>S\<in>AU. S\<in>{\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))}" by blast
+    then have "\<forall>S\<in>AU. \<exists>B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1})). S=\<Inter>B" by blast
+    then have eq:"\<forall>S\<in>AU. \<exists>B\<in>Pow((CoFinite nat)\<union>ExcludedSet(nat,{0,1})). S=\<Inter>B" unfolding FinPow_def by blast
     { 
       fix S assume "S\<in>AU"
-      with eq obtain B where "B\<in>Pow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))""S=\<Inter>B" by auto
+      with eq obtain B where "B\<in>Pow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))""S=\<Inter>B" by auto
       with sub have "B\<in>Pow(Pow(nat))" by auto
       {
         fix x assume "x\<in>\<Inter>B"
@@ -583,9 +583,9 @@ proof-
     {
       assume "0\<in>U\<or>1\<in>U"
       with \<open>U=\<Union>AU\<close> obtain S where "S\<in>AU""0\<in>S\<or>1\<in>S" by auto
-      with base obtain BS where "S=\<Inter>BS" and bsbase:"BS\<in>FinPow((CoFinite nat)\<union>(ExcludedSet nat {0,1}))" by auto
+      with base obtain BS where "S=\<Inter>BS" and bsbase:"BS\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))" by auto
       with \<open>0\<in>S\<or>1\<in>S\<close> have "\<forall>M\<in>BS. 0\<in>M\<or>1\<in>M" by auto
-      then have "\<forall>M\<in>BS. M\<notin>(ExcludedSet nat {0,1})-{nat}" unfolding ExcludedPoint_def ExcludedSet_def by auto
+      then have "\<forall>M\<in>BS. M\<notin>ExcludedSet(nat,{0,1})-{nat}" unfolding ExcludedPoint_def ExcludedSet_def by auto
       moreover
       note bsbase n
       ultimately have "BS\<in>FinPow(CoFinite nat)" unfolding FinPow_def by auto
@@ -597,33 +597,33 @@ proof-
       ultimately have "\<Inter>BS\<in>CoFinite nat" using topology0.fin_inter_open_open[OF topology0_CoCardinal[OF InfCard_nat]]
         unfolding Cofinite_def by auto
       with \<open>S=\<Inter>BS\<close> have "S\<in>CoFinite nat" by auto
-      with \<open>0\<in>S\<or>1\<in>S\<close> have "nat-S\<prec>nat" unfolding Cofinite_def Cocardinal_def by auto
+      with \<open>0\<in>S\<or>1\<in>S\<close> have "nat-S\<prec>nat" unfolding Cofinite_def CoCardinal_def by auto
       moreover
       from \<open>U=\<Union>AU\<close>\<open>S\<in>AU\<close> have "S\<subseteq>U" by auto
       then have "nat-U\<subseteq>nat-S" by auto
       then have "nat-U\<lesssim>nat-S" using subset_imp_lepoll by auto
       ultimately
       have "nat-U\<prec>nat" using lesspoll_trans1 by auto
-      with \<open>U\<in>Pow(nat)\<close> have "U\<in>CoFinite nat" unfolding Cofinite_def Cocardinal_def by auto
-      with \<open>U\<in>Pow(nat)\<close> have "U\<in> (CoFinite nat)\<union> (ExcludedSet nat {0,1})" by auto
+      with \<open>U\<in>Pow(nat)\<close> have "U\<in>CoFinite nat" unfolding Cofinite_def CoCardinal_def by auto
+      with \<open>U\<in>Pow(nat)\<close> have "U\<in> (CoFinite nat)\<union> ExcludedSet(nat,{0,1})" by auto
     }
-    with \<open>U\<in>Pow(nat)\<close> have "U\<in>(CoFinite nat)\<union> (ExcludedSet nat {0,1})" unfolding ExcludedSet_def by blast
+    with \<open>U\<in>Pow(nat)\<close> have "U\<in>(CoFinite nat)\<union> ExcludedSet(nat,{0,1})" unfolding ExcludedSet_def by blast
   }
-  then have "({\<Union>A . A \<in> Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> (ExcludedSet nat {0,1}))})}) \<subseteq> (CoFinite nat)\<union> (ExcludedSet nat {0,1})"
+  then have "({\<Union>A . A \<in> Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> ExcludedSet(nat,{0,1}))})}) \<subseteq> (CoFinite nat)\<union> ExcludedSet(nat,{0,1})"
     by blast
   moreover
   {
     fix U
-    assume "U\<in>(CoFinite nat)\<union> (ExcludedSet nat {0,1})"
-    then have "{U}\<in>FinPow((CoFinite nat) \<union> (ExcludedSet nat {0,1}))" unfolding FinPow_def by auto
-    then have "{U}\<in>Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> (ExcludedSet nat {0,1}))})" by blast
+    assume "U\<in>(CoFinite nat)\<union> ExcludedSet(nat,{0,1})"
+    then have "{U}\<in>FinPow((CoFinite nat) \<union> ExcludedSet(nat,{0,1}))" unfolding FinPow_def by auto
+    then have "{U}\<in>Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> ExcludedSet(nat,{0,1}))})" by blast
     moreover
     have "U=\<Union>{U}" by auto
-    ultimately have "U\<in>{\<Union>A . A \<in> Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> (ExcludedSet nat {0,1}))})}" by blast
+    ultimately have "U\<in>{\<Union>A . A \<in> Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> ExcludedSet(nat,{0,1}))})}" by blast
   }
-  then have "(CoFinite nat)\<union> (ExcludedSet nat {0,1})\<subseteq>{\<Union>A . A \<in> Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> (ExcludedSet nat {0,1}))})}"
+  then have "(CoFinite nat)\<union> ExcludedSet(nat,{0,1})\<subseteq>{\<Union>A . A \<in> Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> ExcludedSet(nat,{0,1}))})}"
     by auto
-  ultimately have "(CoFinite nat)\<union> (ExcludedSet nat {0,1})={\<Union>A . A \<in> Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> (ExcludedSet nat {0,1}))})}"
+  ultimately have "(CoFinite nat)\<union> ExcludedSet(nat,{0,1})={\<Union>A . A \<in> Pow({\<Inter>B . B \<in> FinPow((CoFinite nat) \<union> ExcludedSet(nat,{0,1}))})}"
     by auto
   with equal show ?thesis by auto
 qed
@@ -631,39 +631,41 @@ qed
 text\<open>The previous topology in not $T_2$, but is anti-hyperconnected.\<close>
 
 theorem join_Cofinite_ExclPoint_not_T2:
-  shows "\<not>((joinT {CoFinite nat, ExcludedSet nat {0,1}}){is T\<^sub>2})" and "(joinT {CoFinite nat, ExcludedSet nat {0,1}}){is anti-}IsHConnected"
+  shows 
+    "\<not>((joinT {CoFinite nat, ExcludedSet(nat,{0,1})}){is T\<^sub>2})" and 
+    "(joinT {CoFinite nat,ExcludedSet(nat,{0,1})}){is anti-} IsHConnected"
 proof-
-  have "(CoFinite nat)\<subseteq>(CoFinite nat)\<union> (ExcludedSet nat {0,1})" by auto
-  have "\<Union>((CoFinite nat)\<union> (ExcludedSet nat {0,1}))=(\<Union>(CoFinite nat))\<union> (\<Union>(ExcludedSet nat {0,1}))"
+  have "(CoFinite nat) \<subseteq> (CoFinite nat) \<union> ExcludedSet(nat,{0,1})" by auto
+  have "\<Union>((CoFinite nat)\<union> ExcludedSet(nat,{0,1}))=(\<Union>(CoFinite nat))\<union> (\<Union>ExcludedSet(nat,{0,1}))"
     by auto
   moreover
   have "\<dots>=nat "unfolding Cofinite_def using union_cocardinal union_excludedset by auto
-  ultimately have tot:"\<Union>((CoFinite nat)\<union> (ExcludedSet nat {0,1}))=nat" by auto
+  ultimately have tot:"\<Union>((CoFinite nat)\<union> ExcludedSet(nat,{0,1}))=nat" by auto
   { 
-    assume "(joinT {CoFinite nat, ExcludedSet nat {0, 1}}) {is T\<^sub>2}"
-    then have t2:"((CoFinite nat)\<union> (ExcludedSet nat {0,1})){is T\<^sub>2}" using join_top_cofinite_excluded_set
+    assume "(joinT {CoFinite nat,ExcludedSet(nat,{0,1})}) {is T\<^sub>2}"
+    then have t2:"((CoFinite nat)\<union> ExcludedSet(nat,{0,1})){is T\<^sub>2}" using join_top_cofinite_excluded_set
       by auto
-    with tot have "\<exists>U\<in>((CoFinite nat)\<union> (ExcludedSet nat {0,1})). \<exists>V\<in>((CoFinite nat)\<union> (ExcludedSet nat {0,1})). 0\<in>U\<and>1\<in>V\<and>U\<inter>V=0" using isT2_def by auto
+    with tot have "\<exists>U\<in>((CoFinite nat)\<union> ExcludedSet(nat,{0,1})). \<exists>V\<in>((CoFinite nat)\<union> ExcludedSet(nat,{0,1})). 0\<in>U\<and>1\<in>V\<and>U\<inter>V=0" using isT2_def by auto
     then obtain U V where "U \<in> (CoFinite nat) \<or> (0 \<notin> U\<and>1\<notin>U)""V \<in> (CoFinite nat) \<or> (0 \<notin> V\<and>1\<notin>V)""0\<in>U""1\<in>V""U\<inter>V=0" 
       unfolding ExcludedSet_def by auto
     then have "U\<in>(CoFinite nat)""V\<in>(CoFinite nat)" by auto
     with \<open>0\<in>U\<close>\<open>1\<in>V\<close> have "U\<inter>V\<noteq>0" using Cofinite_nat_HConn IsHConnected_def by auto
     with \<open>U\<inter>V=0\<close> have "False" by auto
   }
-  then show "\<not>((joinT {CoFinite nat, ExcludedSet nat {0,1}}){is T\<^sub>2})" by auto
+  then show "\<not>((joinT {CoFinite nat,ExcludedSet(nat,{0,1})}){is T\<^sub>2})" by auto
   {
-    fix A assume AS:"A\<in>Pow(\<Union>((CoFinite nat)\<union> (ExcludedSet nat {0,1})))""(((CoFinite nat)\<union> (ExcludedSet nat {0,1})){restricted to}A){is hyperconnected}"
+    fix A assume AS:"A\<in>Pow(\<Union>((CoFinite nat)\<union> ExcludedSet(nat,{0,1})))""(((CoFinite nat)\<union> ExcludedSet(nat,{0,1})){restricted to}A){is hyperconnected}"
     with tot have "A\<in>Pow(nat)" by auto
     then have sub:"A\<inter>nat=A" by auto
-    have "((CoFinite nat)\<union> (ExcludedSet nat {0,1})){restricted to}A=((CoFinite nat){restricted to}A)\<union> ((ExcludedSet nat {0,1}){restricted to}A)"
+    have "((CoFinite nat)\<union> ExcludedSet(nat,{0,1})){restricted to}A=((CoFinite nat){restricted to}A)\<union> (ExcludedSet(nat,{0,1}){restricted to}A)"
       unfolding RestrictedTo_def by auto
-    also from sub have "\<dots>=(CoFinite A)\<union>(ExcludedSet A {0,1})" using subspace_excludedset[of"nat""{0,1}""A"] subspace_cocardinal[of "nat""nat""A"] unfolding Cofinite_def
+    also from sub have "\<dots>=(CoFinite A)\<union>ExcludedSet(A,{0,1})" using subspace_excludedset[of"nat""{0,1}""A"] subspace_cocardinal[of "nat""nat""A"] unfolding Cofinite_def
       by auto
-    finally have "((CoFinite nat)\<union> (ExcludedSet nat {0,1})){restricted to}A=(CoFinite A)\<union>(ExcludedSet A {0,1})" by auto
-    with AS(2) have eq:"((CoFinite A)\<union>(ExcludedSet A {0,1})){is hyperconnected}" by auto
+    finally have "((CoFinite nat)\<union> ExcludedSet(nat,{0,1})){restricted to}A=(CoFinite A)\<union>ExcludedSet(A,{0,1})" by auto
+    with AS(2) have eq:"((CoFinite A)\<union>ExcludedSet(A,{0,1})){is hyperconnected}" by auto
     {
       assume "{0,1}\<inter>A=0"
-      then have "(CoFinite A)\<union>(ExcludedSet A {0,1})=Pow(A)" using empty_excludedset[of "{0,1}""A"] unfolding Cofinite_def Cocardinal_def
+      then have "(CoFinite A)\<union>ExcludedSet(A,{0,1})=Pow(A)" using empty_excludedset[of "{0,1}""A"] unfolding Cofinite_def CoCardinal_def
         by auto
       with eq have "Pow(A){is hyperconnected}" by auto
       then have "Pow(A){is connected}" using HConn_imp_Conn by auto
@@ -694,9 +696,9 @@ proof-
         {
           assume AS3:"A\<subseteq>{0,1}"
           with AS AS2 have A_def:"A={0,1}" by blast
-          then have "(ExcludedSet A {0,1})=(ExcludedSet A A)" by auto
-          moreover have "(ExcludedSet A A)={0,A}" unfolding ExcludedSet_def by blast
-          ultimately have "(ExcludedSet A {0,1})={0,A}" by auto
+          then have "ExcludedSet(A,{0,1})=ExcludedSet(A,A)" by auto
+          moreover have "ExcludedSet(A,A)={0,A}" unfolding ExcludedSet_def by blast
+          ultimately have "ExcludedSet(A,{0,1})={0,A}" by auto
           moreover
           have "0\<in>(CoFinite A)" using empty_open[of "CoFinite A"]
             CoCar_is_topology[OF InfCard_nat,of "A"] unfolding Cofinite_def by auto
@@ -704,7 +706,7 @@ proof-
           have "\<Union>(CoFinite A)=A" using union_cocardinal unfolding Cofinite_def by auto
           then have "A\<in>(CoFinite A)" using CoCar_is_topology[OF InfCard_nat,of "A"] unfolding Cofinite_def
             IsATopology_def by auto
-          ultimately have "(CoFinite A)\<union>(ExcludedSet A {0,1})=(CoFinite A)" by auto
+          ultimately have "(CoFinite A)\<union>ExcludedSet(A,{0,1})=(CoFinite A)" by auto
           with eq have"(CoFinite A){is hyperconnected}" by auto
           with A_def have  hyp:"(CoFinite {0,1}){is hyperconnected}" by auto
           have "{0}\<approx>1""{1}\<approx>1" using singleton_eqpoll_1 by auto
@@ -713,12 +715,12 @@ proof-
           ultimately have "{0}\<prec>nat""{1}\<prec>nat" using eq_lesspoll_trans by auto
           moreover
           have "{0,1}-{1}={0}""{0,1}-{0}={1}" by auto
-          ultimately have "{1}\<in>(CoFinite {0,1})""{0}\<in>(CoFinite {0,1})" "{1}\<inter>{0}=0" unfolding Cofinite_def Cocardinal_def
+          ultimately have "{1}\<in>(CoFinite {0,1})""{0}\<in>(CoFinite {0,1})" "{1}\<inter>{0}=0" unfolding Cofinite_def CoCardinal_def
             by auto
           with hyp have "False" unfolding IsHConnected_def by auto
         }
         then obtain t where "t\<in>A" "t\<noteq>0" "t\<noteq>1" by auto
-        then have "{t}\<in>(ExcludedSet A {0,1})" unfolding ExcludedSet_def by auto
+        then have "{t}\<in>ExcludedSet(A,{0,1})" unfolding ExcludedSet_def by auto
         moreover
         {
           have "{t}\<approx>1" using singleton_eqpoll_1 by auto
@@ -727,10 +729,10 @@ proof-
           ultimately have "{t}\<prec>nat" using eq_lesspoll_trans by auto
           moreover
           with \<open>t\<in>A\<close> have "A-(A-{t})={t}" by auto
-          ultimately have "A-{t}\<in>(CoFinite A)" unfolding Cofinite_def Cocardinal_def
+          ultimately have "A-{t}\<in>(CoFinite A)" unfolding Cofinite_def CoCardinal_def
             by auto
         }
-        ultimately have "{t}\<in>((CoFinite A)\<union>(ExcludedSet A {0,1}))""A-{t}\<in>((CoFinite A)\<union>(ExcludedSet A {0,1}))"
+        ultimately have "{t}\<in>((CoFinite A)\<union>ExcludedSet(A,{0,1}))""A-{t}\<in>((CoFinite A)\<union>ExcludedSet(A,{0,1}))"
           "{t}\<inter>(A-{t})=0" by auto
         with eq have "A-{t}=0" unfolding IsHConnected_def by auto
         with \<open>t\<in>A\<close> have "A={t}" by auto
@@ -742,9 +744,9 @@ proof-
     }
     ultimately have "A{is in the spectrum of}IsHConnected" by auto
   }
-  then have "((CoFinite nat)\<union>(ExcludedSet nat {0,1})){is anti-}IsHConnected" unfolding antiProperty_def
+  then have "((CoFinite nat)\<union>ExcludedSet(nat,{0,1})){is anti-}IsHConnected" unfolding antiProperty_def
     by auto
-  then show "(joinT {CoFinite nat, ExcludedSet nat {0,1}}){is anti-}IsHConnected" using join_top_cofinite_excluded_set
+  then show "(joinT {CoFinite nat, ExcludedSet(nat,{0,1})}){is anti-}IsHConnected" using join_top_cofinite_excluded_set
     by auto
 qed
 

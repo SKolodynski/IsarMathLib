@@ -117,7 +117,7 @@ proof -
     using NatOrder_ZF_1_L2 card_fin_is_nat nat_finpow_nat 
     by auto
   with assms show "\<sigma>(A) \<in> ord_iso(|A|,Le, A,r)"
-    using linord fin_ord_iso_ex_uniq sigleton_extract 
+    using linord fin_ord_iso_ex_uniq singleton_extract 
       Enumeration_def by simp
   then show "\<sigma>(A) \<in> bij(|A|,A)" and "\<sigma>(A) : |A| \<rightarrow> A"
     using ord_iso_def bij_def surj_def

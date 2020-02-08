@@ -63,7 +63,7 @@ text\<open>The first thing that mathematicians typically do is to define
   \<open>{is disjoint with}\<close> put between two sets to denote our notion 
   of disjointness. 
   The left side of the \<open>\<equiv>\<close> symbol is the notion 
-  being defined, the right side says how we define it. In Isabelle \<open>0\<close>
+  being defined, the right side says how we define it. In Isabelle/ZF \<open>0\<close>
   is used to denote both zero (of natural numbers) and the empty set, which is
   not surprising as those two things are the same in set theory.\<close>
 

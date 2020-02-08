@@ -63,6 +63,7 @@ session "IsarMathLib" = "ZF" +
     Topology_ZF_9
     Topology_ZF_10
     Topology_ZF_11
+    UniformSpace_ZF
     TopologicalGroup_ZF
     TopologicalGroup_ZF_1
     TopologicalGroup_ZF_2

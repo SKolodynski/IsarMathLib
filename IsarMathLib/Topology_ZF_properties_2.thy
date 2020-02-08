@@ -69,19 +69,19 @@ text\<open>The included set topology is locally finite when the set is finite.\<
 
 lemma included_finite_locally_finite:
   assumes "Finite(A)" and "A\<subseteq>X"
-  shows "(IncludedSet X A){is locally}(\<lambda>A.(\<lambda>B. Finite(A)))"
+  shows "(IncludedSet(X,A)){is locally}(\<lambda>A.(\<lambda>B. Finite(A)))"
 proof-
   have "\<forall>b\<in>Pow(X). b\<inter>A\<subseteq>b" by auto moreover
   note assms(1)
   ultimately have rr:"\<forall>b\<in>{A\<union>{x}. x\<in>X}. Finite(b)" by force
   {
-    fix x b assume "x\<in>\<Union>(IncludedSet X A)" "b\<in>(IncludedSet X A)" "x\<in>b"
+    fix x b assume "x\<in>\<Union>(IncludedSet(X,A))" "b\<in>(IncludedSet(X,A))" "x\<in>b"
     then have "A\<union>{x}\<subseteq>b" "A\<union>{x}\<in>{A\<union>{x}. x\<in>X}" and sub: "b\<subseteq>X" unfolding IncludedSet_def by auto
     moreover have "A \<union> {x} \<subseteq> X" using assms(2) sub \<open>x\<in>b\<close> by auto
-    then have "x\<in>Interior(A\<union>{x},IncludedSet X A)" using interior_set_includedset[of "A\<union>{x}""X""A"] by auto
-    ultimately have "\<exists>c\<in>Pow(b). x\<in>Interior(c,IncludedSet X A)\<and> Finite(c)" using rr by blast
+    then have "x\<in>Interior(A\<union>{x},IncludedSet(X,A))" using interior_set_includedset[of "A\<union>{x}""X""A"] by auto
+    ultimately have "\<exists>c\<in>Pow(b). x\<in>Interior(c,IncludedSet(X,A))\<and> Finite(c)" using rr by blast
   }
-  then have "\<forall>x\<in>\<Union>(IncludedSet X A). \<forall>b\<in>(IncludedSet X A). x\<in>b \<longrightarrow> (\<exists>c\<in>Pow(b). x\<in>Interior(c,IncludedSet X A)\<and> Finite(c))" by auto
+  then have "\<forall>x\<in>\<Union>(IncludedSet(X,A)). \<forall>b\<in>(IncludedSet(X,A)). x\<in>b \<longrightarrow> (\<exists>c\<in>Pow(b). x\<in>Interior(c,IncludedSet(X,A))\<and> Finite(c))" by auto
   then show ?thesis using IsLocally_def includedset_is_topology by auto
 qed
 
@@ -275,7 +275,7 @@ next
       assume "M\<noteq>0""M\<noteq>{0}"
       then obtain U where "U\<in>M""U\<noteq>0" by auto
       with \<open>M\<in>Pow(CoFinite X)\<close> have "U\<in>CoFinite X" by auto
-      with \<open>U\<noteq>0\<close> have "U\<subseteq>X" "(X-U)\<prec>nat" unfolding Cofinite_def Cocardinal_def by auto
+      with \<open>U\<noteq>0\<close> have "U\<subseteq>X" "(X-U)\<prec>nat" unfolding Cofinite_def CoCardinal_def by auto
       then have "Finite(X-U)" using lesspoll_nat_is_Finite by auto
       then have "(X-U){is in the spectrum of}(\<lambda>T. (\<Union>T){is compact in}T)" using compact_spectrum
         by auto
@@ -309,7 +309,7 @@ proof-
   {
     fix x B assume "x\<in>\<Union>(CoFinite X)" "B\<in>(CoFinite X)" "x\<in>B"
     then have "x\<in>Interior(B,CoFinite X)" using topology0.Top_2_L3[OF cof] by auto moreover
-    from \<open>B\<in>(CoFinite X)\<close> have "B\<subseteq>X" unfolding Cofinite_def Cocardinal_def by auto
+    from \<open>B\<in>(CoFinite X)\<close> have "B\<subseteq>X" unfolding Cofinite_def CoCardinal_def by auto
     then have "B\<inter>X=B" by auto
     then have "(CoFinite X){restricted to}B=CoFinite B" using subspace_cocardinal unfolding Cofinite_def by auto
     then have "B{is compact in}((CoFinite X){restricted to}B)" using cofinite_compact

@@ -116,38 +116,38 @@ topology is the group of bijective functions.\<close>
 
 theorem homeo_cocardinal:
   assumes "InfCard(Q)"
-  shows "HomeoG(CoCardinal X Q)=bij(X,X)"
+  shows "HomeoG(CoCardinal(X,Q))=bij(X,X)"
 proof
   from assms have n:"Q\<noteq>0" unfolding InfCard_def by auto
-  then show "HomeoG(CoCardinal X Q) \<subseteq> bij(X, X)" unfolding HomeoG_def IsAhomeomorphism_def
+  then show "HomeoG(CoCardinal(X,Q)) \<subseteq> bij(X, X)" unfolding HomeoG_def IsAhomeomorphism_def
     using union_cocardinal by auto
   {
     fix f assume a:"f\<in>bij(X,X)"
     then have "converse(f)\<in>bij(X,X)" using bij_converse_bij by auto
     then have cinj:"converse(f)\<in>inj(X,X)" unfolding bij_def by auto
     from a have fun:"f\<in>X\<rightarrow>X" unfolding bij_def inj_def by auto
-    then have two:"two_top_spaces0((CoCardinal X Q),(CoCardinal X Q),f)" unfolding two_top_spaces0_def
+    then have two:"two_top_spaces0((CoCardinal(X,Q)),(CoCardinal(X,Q)),f)" unfolding two_top_spaces0_def
       using union_cocardinal assms n CoCar_is_topology by auto
     {
-      fix N assume "N{is closed in}(CoCardinal X Q)"
+      fix N assume "N{is closed in}(CoCardinal(X,Q))"
       then have N_def:"N=X \<or> (N\<in>Pow(X) \<and> N\<prec>Q)" using closed_sets_cocardinal n by auto
       then have "restrict(converse(f),N)\<in>bij(N,converse(f)``N)" using cinj restrict_bij by auto
       then have "N\<approx>f-``N" unfolding vimage_def eqpoll_def by auto
       then have "f-``N\<approx>N" using eqpoll_sym by auto
       with N_def have "N=X \<or> (f-``N\<prec>Q \<and> N\<in>Pow(X))" using eq_lesspoll_trans by auto
       with fun have "f-``N=X \<or> (f-``N\<prec>Q \<and> (f-``N)\<in>Pow(X))" using func1_1_L3 func1_1_L4 by auto
-      then have "f-``N {is closed in}(CoCardinal X Q)" using closed_sets_cocardinal n by auto
+      then have "f-``N {is closed in}(CoCardinal(X,Q))" using closed_sets_cocardinal n by auto
     }
-    then have "\<forall>N. N{is closed in}(CoCardinal X Q) \<longrightarrow> f-``N {is closed in}(CoCardinal X Q)" by auto
-    then have "IsContinuous((CoCardinal X Q),(CoCardinal X Q),f)" using two_top_spaces0.Top_ZF_2_1_L4 
+    then have "\<forall>N. N{is closed in}(CoCardinal(X,Q)) \<longrightarrow> f-``N {is closed in}(CoCardinal(X,Q))" by auto
+    then have "IsContinuous((CoCardinal(X,Q)),(CoCardinal(X,Q)),f)" using two_top_spaces0.Top_ZF_2_1_L4 
       two_top_spaces0.Top_ZF_2_1_L3 two_top_spaces0.Top_ZF_2_1_L2 two by auto
   }
-  then have "\<forall>f\<in>bij(X,X). IsContinuous((CoCardinal X Q),(CoCardinal X Q),f)" by auto
-  then have "\<forall>f\<in>bij(X,X). IsContinuous((CoCardinal X Q),(CoCardinal X Q),f) \<and> IsContinuous((CoCardinal X Q),(CoCardinal X Q),converse(f))"
+  then have "\<forall>f\<in>bij(X,X). IsContinuous((CoCardinal(X,Q)),(CoCardinal(X,Q)),f)" by auto
+  then have "\<forall>f\<in>bij(X,X). IsContinuous((CoCardinal(X,Q)),(CoCardinal(X,Q)),f) \<and> IsContinuous((CoCardinal(X,Q)),(CoCardinal(X,Q)),converse(f))"
     using bij_converse_bij by auto
-  then have "\<forall>f\<in>bij(X,X). IsAhomeomorphism((CoCardinal X Q),(CoCardinal X Q),f)" unfolding IsAhomeomorphism_def
+  then have "\<forall>f\<in>bij(X,X). IsAhomeomorphism((CoCardinal(X,Q)),(CoCardinal(X,Q)),f)" unfolding IsAhomeomorphism_def
     using n union_cocardinal by auto
-  then show "bij(X,X)\<subseteq>HomeoG((CoCardinal X Q))" unfolding HomeoG_def bij_def inj_def using n union_cocardinal
+  then show "bij(X,X)\<subseteq>HomeoG((CoCardinal(X,Q)))" unfolding HomeoG_def bij_def inj_def using n union_cocardinal
     by auto
 qed
 
@@ -155,12 +155,12 @@ text\<open>The group of homeomorphism of the excluded set is a direct product of
   and the bijections on $X\cap T$.\<close>
 
 theorem homeo_excluded:
-  shows "HomeoG(ExcludedSet X T)={f\<in>bij(X,X). f``(X-T)=(X-T)}"
+  shows "HomeoG(ExcludedSet(X,T))={f\<in>bij(X,X). f``(X-T)=(X-T)}"
 proof
   have sub1:"X-T\<subseteq>X" by auto
   {
-    fix g assume "g\<in>HomeoG(ExcludedSet X T)"
-    then have fun:"g:X\<rightarrow>X" and bij:"g\<in>bij(X,X)" and hom:"IsAhomeomorphism((ExcludedSet X T),(ExcludedSet X T),g)" unfolding HomeoG_def
+    fix g assume "g\<in>HomeoG(ExcludedSet(X,T))"
+    then have fun:"g:X\<rightarrow>X" and bij:"g\<in>bij(X,X)" and hom:"IsAhomeomorphism((ExcludedSet(X,T)),(ExcludedSet(X,T)),g)" unfolding HomeoG_def
       using union_excludedset unfolding IsAhomeomorphism_def by auto
     {
       assume A:"g``(X-T)=X" and B:"X\<inter>T\<noteq>0"
@@ -183,15 +183,15 @@ proof
     then have "g``(X-T)=X \<longrightarrow> g\<in>{f\<in>bij(X,X). f``(X-T)=(X-T)}" using bij by auto moreover
     {
       fix gg
-      assume A:"gg``(X-T)\<noteq>X" and hom2:"IsAhomeomorphism((ExcludedSet X T),(ExcludedSet X T),gg)"
+      assume A:"gg``(X-T)\<noteq>X" and hom2:"IsAhomeomorphism((ExcludedSet(X,T)),(ExcludedSet(X,T)),gg)"
       from hom2 have fun:"gg\<in>X\<rightarrow>X" and bij:"gg\<in>bij(X,X)" unfolding IsAhomeomorphism_def bij_def inj_def using union_excludedset by auto
-      have sub:"X-T\<subseteq>\<Union>(ExcludedSet X T)" using union_excludedset by auto
-      with hom2 have "gg``(Interior(X-T,(ExcludedSet X T)))=Interior(gg``(X-T),(ExcludedSet X T))"
+      have sub:"X-T\<subseteq>\<Union>(ExcludedSet(X,T))" using union_excludedset by auto
+      with hom2 have "gg``(Interior(X-T,(ExcludedSet(X,T))))=Interior(gg``(X-T),(ExcludedSet(X,T)))"
         using int_top_invariant by auto moreover
-      from sub1 have "Interior(X-T,(ExcludedSet X T))=X-T" using interior_set_excludedset by auto
-      ultimately have "gg``(X-T)=Interior(gg``(X-T),(ExcludedSet X T))" by auto moreover
+      from sub1 have "Interior(X-T,(ExcludedSet(X,T)))=X-T" using interior_set_excludedset by auto
+      ultimately have "gg``(X-T)=Interior(gg``(X-T),(ExcludedSet(X,T)))" by auto moreover
       have ss:"gg``(X-T)\<subseteq>X" using fun func1_1_L6(2) by auto
-      then have "Interior(gg``(X-T),(ExcludedSet X T)) = (gg``(X-T))-T" using interior_set_excludedset A
+      then have "Interior(gg``(X-T),(ExcludedSet(X,T))) = (gg``(X-T))-T" using interior_set_excludedset A
         by auto
       ultimately have eq:"gg``(X-T)=(gg``(X-T))-T" by auto
       {
@@ -203,7 +203,7 @@ proof
       then have "(gg``(X-T))\<inter>T=0" by auto
       then have "gg``(X-T)\<subseteq>X-T" using ss by blast
     }
-    then have "\<forall>gg. gg``(X-T)\<noteq>X \<and> IsAhomeomorphism(ExcludedSet X T,ExcludedSet X T,gg)\<longrightarrow> gg``(X-T)\<subseteq>X-T" by auto moreover
+    then have "\<forall>gg. gg``(X-T)\<noteq>X \<and> IsAhomeomorphism(ExcludedSet(X,T),ExcludedSet(X,T),gg)\<longrightarrow> gg``(X-T)\<subseteq>X-T" by auto moreover
     from bij have conbij:"converse(g)\<in>bij(X,X)" using bij_converse_bij by auto
     then have confun:"converse(g)\<in>X\<rightarrow>X" unfolding bij_def inj_def by auto
     {
@@ -228,7 +228,7 @@ proof
     have GG:"g``(g-``(X-T))=(X-T)" using sub1 surj_image_vimage bij unfolding bij_def by auto
     with G have "converse(g)``(X-T)=X \<longrightarrow> g``(X-T)=X-T" by auto
     then have "converse(g)``(X-T)=X \<longrightarrow> g\<in>{f\<in>bij(X,X). f``(X-T)=(X-T)}" using bij by auto moreover
-    from hom have "IsAhomeomorphism(ExcludedSet X T, ExcludedSet X T, converse(g))" using homeo_inv by auto
+    from hom have "IsAhomeomorphism(ExcludedSet(X,T), ExcludedSet(X,T), converse(g))" using homeo_inv by auto
     moreover note hom ultimately have "g\<in>{f\<in>bij(X,X). f``(X-T)=(X-T)} \<or> (g``(X-T)\<subseteq>X-T \<and> converse(g)``(X-T)\<subseteq>X-T)"
       by force
     then have "g\<in>{f\<in>bij(X,X). f``(X-T)=(X-T)} \<or> (g``(X-T)\<subseteq>X-T \<and> g-``(X-T)\<subseteq>X-T)" unfolding vimage_def by auto moreover
@@ -237,7 +237,7 @@ proof
     ultimately have "g\<in>{f\<in>bij(X,X). f``(X-T)=(X-T)} \<or> (g``(X-T)\<subseteq>X-T \<and> (X-T)\<subseteq>g``(X-T))" by auto
     then have "g\<in>{f\<in>bij(X,X). f``(X-T)=(X-T)}" using bij by auto
   }
-  then show "HomeoG(ExcludedSet X T)\<subseteq>{f\<in>bij(X,X). f``(X-T)=(X-T)}" by auto
+  then show "HomeoG(ExcludedSet(X,T))\<subseteq>{f\<in>bij(X,X). f``(X-T)=(X-T)}" by auto
   {
     fix g assume as:"g\<in>bij(X,X)""g``(X-T)=X-T"
     then have inj:"g\<in>inj(X,X)" and im:"g-``(g``(X-T))=g-``(X-T)" unfolding bij_def by auto
@@ -245,7 +245,7 @@ proof
     with im have as_3:"g-``(X-T)=X-T" by auto
     {
       fix A
-      assume "A\<in>(ExcludedSet X T)"
+      assume "A\<in>(ExcludedSet(X,T))"
       then have "A=X\<or>A\<inter>T=0" "A\<subseteq>X" unfolding ExcludedSet_def by auto
       then have "A\<subseteq>X-T\<or>A=X" by auto moreover
       {
@@ -259,11 +259,11 @@ proof
         then have "g``A\<subseteq>(X-T)" using as(2)  by auto
       }
       ultimately have "g``A\<subseteq>(X-T) \<or> g``A=X" by auto
-      then have "g``A\<in>(ExcludedSet X T)" unfolding ExcludedSet_def by auto
+      then have "g``A\<in>(ExcludedSet(X,T))" unfolding ExcludedSet_def by auto
     }
-    then have "\<forall>A\<in>(ExcludedSet X T). g``A\<in>(ExcludedSet X T)" by auto moreover
+    then have "\<forall>A\<in>(ExcludedSet(X,T)). g``A\<in>(ExcludedSet(X,T))" by auto moreover
     {
-      fix A assume "A\<in>(ExcludedSet X T)"
+      fix A assume "A\<in>(ExcludedSet(X,T))"
       then have "A=X\<or>A\<inter>T=0" "A\<subseteq>X" unfolding ExcludedSet_def by auto
       then have "A\<subseteq>X-T\<or>A=X" by auto moreover
       {
@@ -277,52 +277,52 @@ proof
         then have "g-``A\<subseteq>(X-T)" using as_3 by auto
       }
       ultimately have "g-``A\<subseteq>(X-T) \<or> g-``A=X" by auto
-      then have "g-``A\<in>(ExcludedSet X T)" unfolding ExcludedSet_def by auto
+      then have "g-``A\<in>(ExcludedSet(X,T))" unfolding ExcludedSet_def by auto
     }
-    then have "IsContinuous(ExcludedSet X T,ExcludedSet X T,g)" unfolding IsContinuous_def by auto moreover
-    note as(1) ultimately have "IsAhomeomorphism(ExcludedSet X T,ExcludedSet X T,g)" 
+    then have "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),g)" unfolding IsContinuous_def by auto moreover
+    note as(1) ultimately have "IsAhomeomorphism(ExcludedSet(X,T),ExcludedSet(X,T),g)" 
       using union_excludedset bij_cont_open_homeo by auto
-    with as(1) have "g\<in>HomeoG(ExcludedSet X T)" unfolding bij_def inj_def HomeoG_def using union_excludedset by auto
+    with as(1) have "g\<in>HomeoG(ExcludedSet(X,T))" unfolding bij_def inj_def HomeoG_def using union_excludedset by auto
   }
-  then show "{f \<in> bij(X, X) . f `` (X - T) = X - T} \<subseteq> HomeoG(ExcludedSet X T)" by auto
+  then show "{f \<in> bij(X, X) . f `` (X - T) = X - T} \<subseteq> HomeoG(ExcludedSet(X,T))" by auto
 qed
 
-text\<open>We now give some lemmas that will help us compute \<open>HomeoG(IncludedSet X T)\<close>.\<close>
+text\<open>We now give some lemmas that will help us compute \<open>HomeoG(IncludedSet(X,T))\<close>.\<close>
 
 lemma cont_in_cont_ex:
-  assumes "IsContinuous(IncludedSet X T,IncludedSet X T,f)" "f:X\<rightarrow>X" "T\<subseteq>X"
-  shows "IsContinuous(ExcludedSet X T,ExcludedSet X T,f)"
+  assumes "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),f)" "f:X\<rightarrow>X" "T\<subseteq>X"
+  shows "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),f)"
 proof-
-  from assms(2,3) have two:"two_top_spaces0(IncludedSet X T,IncludedSet X T,f)" using union_includedset includedset_is_topology 
+  from assms(2,3) have two:"two_top_spaces0(IncludedSet(X,T),IncludedSet(X,T),f)" using union_includedset includedset_is_topology 
     unfolding two_top_spaces0_def by auto
   {
-    fix A assume "A\<in>(ExcludedSet X T)"
+    fix A assume "A\<in>(ExcludedSet(X,T))"
     then have "A\<inter>T=0 \<or> A=X""A\<subseteq>X" unfolding ExcludedSet_def by auto
-    then have "A{is closed in}(IncludedSet X T)" using closed_sets_includedset assms by auto
-    then have "f-``A{is closed in}(IncludedSet X T)" using two_top_spaces0.TopZF_2_1_L1 assms(1)
+    then have "A{is closed in}(IncludedSet(X,T))" using closed_sets_includedset assms by auto
+    then have "f-``A{is closed in}(IncludedSet(X,T))" using two_top_spaces0.TopZF_2_1_L1 assms(1)
       two assms includedset_is_topology by auto
     then have "(f-``A)\<inter>T=0 \<or> f-``A=X""f-``A\<subseteq>X" using closed_sets_includedset assms(1,3) by auto
-    then have "f-``A\<in>(ExcludedSet X T)" unfolding ExcludedSet_def by auto
+    then have "f-``A\<in>(ExcludedSet(X,T))" unfolding ExcludedSet_def by auto
   }
-  then show "IsContinuous(ExcludedSet X T,ExcludedSet X T,f)" unfolding IsContinuous_def by auto
+  then show "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),f)" unfolding IsContinuous_def by auto
 qed
 
 lemma cont_ex_cont_in:
-  assumes "IsContinuous(ExcludedSet X T,ExcludedSet X T,f)" "f:X\<rightarrow>X" "T\<subseteq>X"
-  shows "IsContinuous(IncludedSet X T,IncludedSet X T,f)"
+  assumes "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),f)" "f:X\<rightarrow>X" "T\<subseteq>X"
+  shows "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),f)"
 proof-
-  from assms(2) have two:"two_top_spaces0(ExcludedSet X T,ExcludedSet X T,f)" using union_excludedset excludedset_is_topology 
+  from assms(2) have two:"two_top_spaces0(ExcludedSet(X,T),ExcludedSet(X,T),f)" using union_excludedset excludedset_is_topology 
     unfolding two_top_spaces0_def by auto
   {
-    fix A assume "A\<in>(IncludedSet X T)"
+    fix A assume "A\<in>(IncludedSet(X,T))"
     then have "T\<subseteq>A \<or> A=0""A\<subseteq>X" unfolding IncludedSet_def by auto
-    then have "A{is closed in}(ExcludedSet X T)" using closed_sets_excludedset assms by auto
-    then have "f-``A{is closed in}(ExcludedSet X T)" using two_top_spaces0.TopZF_2_1_L1 assms(1)
+    then have "A{is closed in}(ExcludedSet(X,T))" using closed_sets_excludedset assms by auto
+    then have "f-``A{is closed in}(ExcludedSet(X,T))" using two_top_spaces0.TopZF_2_1_L1 assms(1)
       two assms excludedset_is_topology by auto
     then have "T\<subseteq>(f-``A) \<or> f-``A=0""f-``A\<subseteq>X" using closed_sets_excludedset assms(1,3) by auto
-    then have "f-``A\<in>(IncludedSet X T)" unfolding IncludedSet_def by auto
+    then have "f-``A\<in>(IncludedSet(X,T))" unfolding IncludedSet_def by auto
   }
-  then show "IsContinuous(IncludedSet X T,IncludedSet X T,f)" unfolding IsContinuous_def by auto
+  then show "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),f)" unfolding IsContinuous_def by auto
 qed
 
 text\<open>The previous lemmas imply that the group of homeomorphisms of the included set topology
@@ -330,46 +330,46 @@ is the same as the one of the excluded set topology.\<close>
 
 lemma homeo_included:
   assumes "T\<subseteq>X"
-  shows "HomeoG(IncludedSet X T)={f \<in> bij(X, X) . f `` (X - T) = X - T}"
+  shows "HomeoG(IncludedSet(X,T))={f \<in> bij(X, X) . f `` (X - T) = X - T}"
 proof-
   {
-    fix f assume "f\<in>HomeoG(IncludedSet X T)"
-    then have hom:"IsAhomeomorphism(IncludedSet X T,IncludedSet X T,f)" and fun:"f\<in>X\<rightarrow>X" and
+    fix f assume "f\<in>HomeoG(IncludedSet(X,T))"
+    then have hom:"IsAhomeomorphism(IncludedSet(X,T),IncludedSet(X,T),f)" and fun:"f\<in>X\<rightarrow>X" and
       bij:"f\<in>bij(X,X)" unfolding HomeoG_def IsAhomeomorphism_def using union_includedset assms by auto
-    then have cont:"IsContinuous(IncludedSet X T,IncludedSet X T,f)" unfolding IsAhomeomorphism_def by auto
-    then have "IsContinuous(ExcludedSet X T,ExcludedSet X T,f)" using cont_in_cont_ex fun assms by auto moreover
+    then have cont:"IsContinuous(IncludedSet(X,T),IncludedSet(X,T),f)" unfolding IsAhomeomorphism_def by auto
+    then have "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),f)" using cont_in_cont_ex fun assms by auto moreover
     {
-      from hom have cont1:"IsContinuous(IncludedSet X T,IncludedSet X T,converse(f))" unfolding IsAhomeomorphism_def by auto moreover
+      from hom have cont1:"IsContinuous(IncludedSet(X,T),IncludedSet(X,T),converse(f))" unfolding IsAhomeomorphism_def by auto moreover
       have "converse(f):X\<rightarrow>X" using bij_converse_bij bij unfolding bij_def inj_def by auto moreover
       note assms ultimately 
-      have "IsContinuous(ExcludedSet X T,ExcludedSet X T,converse(f))" using cont_in_cont_ex assms by auto
+      have "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),converse(f))" using cont_in_cont_ex assms by auto
     }
-    then have "IsContinuous(ExcludedSet X T,ExcludedSet X T,converse(f))" by auto
+    then have "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),converse(f))" by auto
     moreover note bij ultimately
-    have "IsAhomeomorphism(ExcludedSet X T,ExcludedSet X T,f)" unfolding IsAhomeomorphism_def
+    have "IsAhomeomorphism(ExcludedSet(X,T),ExcludedSet(X,T),f)" unfolding IsAhomeomorphism_def
       using union_excludedset by auto
-    with fun have "f\<in>HomeoG(ExcludedSet X T)" unfolding HomeoG_def using union_excludedset by auto
+    with fun have "f\<in>HomeoG(ExcludedSet(X,T))" unfolding HomeoG_def using union_excludedset by auto
   }
-  then have "HomeoG(IncludedSet X T)\<subseteq>HomeoG(ExcludedSet X T)" by auto moreover
+  then have "HomeoG(IncludedSet(X,T))\<subseteq>HomeoG(ExcludedSet(X,T))" by auto moreover
   {
-    fix f assume "f\<in>HomeoG(ExcludedSet X T)"
-    then have hom:"IsAhomeomorphism(ExcludedSet X T,ExcludedSet X T,f)" and fun:"f\<in>X\<rightarrow>X" and
+    fix f assume "f\<in>HomeoG(ExcludedSet(X,T))"
+    then have hom:"IsAhomeomorphism(ExcludedSet(X,T),ExcludedSet(X,T),f)" and fun:"f\<in>X\<rightarrow>X" and
       bij:"f\<in>bij(X,X)" unfolding HomeoG_def IsAhomeomorphism_def using union_excludedset assms by auto
-    then have cont:"IsContinuous(ExcludedSet X T,ExcludedSet X T,f)" unfolding IsAhomeomorphism_def by auto
-    then have "IsContinuous(IncludedSet X T,IncludedSet X T,f)" using cont_ex_cont_in fun assms by auto moreover
+    then have cont:"IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),f)" unfolding IsAhomeomorphism_def by auto
+    then have "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),f)" using cont_ex_cont_in fun assms by auto moreover
     {
-      from hom have cont1:"IsContinuous(ExcludedSet X T,ExcludedSet X T,converse(f))" unfolding IsAhomeomorphism_def by auto moreover
+      from hom have cont1:"IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),converse(f))" unfolding IsAhomeomorphism_def by auto moreover
       have "converse(f):X\<rightarrow>X" using bij_converse_bij bij unfolding bij_def inj_def by auto moreover
       note assms ultimately 
-      have "IsContinuous(IncludedSet X T,IncludedSet X T,converse(f))" using cont_ex_cont_in assms by auto
+      have "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),converse(f))" using cont_ex_cont_in assms by auto
     }
-    then have "IsContinuous(IncludedSet X T,IncludedSet X T,converse(f))" by auto
+    then have "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),converse(f))" by auto
     moreover note bij ultimately
-    have "IsAhomeomorphism(IncludedSet X T,IncludedSet X T,f)" unfolding IsAhomeomorphism_def
+    have "IsAhomeomorphism(IncludedSet(X,T),IncludedSet(X,T),f)" unfolding IsAhomeomorphism_def
       using union_includedset assms by auto
-    with fun have "f\<in>HomeoG(IncludedSet X T)" unfolding HomeoG_def using union_includedset assms by auto
+    with fun have "f\<in>HomeoG(IncludedSet(X,T))" unfolding HomeoG_def using union_includedset assms by auto
   }
-  then have "HomeoG(ExcludedSet X T)\<subseteq>HomeoG(IncludedSet X T)" by auto ultimately
+  then have "HomeoG(ExcludedSet(X,T))\<subseteq>HomeoG(IncludedSet(X,T))" by auto ultimately
   show ?thesis using homeo_excluded by auto
 qed
 

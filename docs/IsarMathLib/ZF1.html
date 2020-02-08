@@ -19,7 +19,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2005-2008  Slawomir Kolodynski
+    Copyright (C) 2005-2019  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -49,7 +49,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </span><span>
 </span><span class="keyword2"><span class="keyword">begin</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Standard Isabelle distribution contains lots of facts about basic set
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The standard Isabelle distribution contains lots of facts about basic set
   theory. This theory file adds some more.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Lemmas in Zermelo-Fraenkel set theory&#8250;</span></span></span><span>
@@ -58,7 +58,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 the standard Isabelle distribution.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If one collection is contained in another, then we can say the same
-  abot their unions.&#8250;</span></span></span><span>
+  about their unions.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>collection_contain</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8838;B&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8899;A &#8838; &#8899;B&quot;</span></span></span><span>
 </span><span class="keyword1"><span class="command">proof</span></span><span>
@@ -181,7 +181,7 @@ lemma rem_point_empty: assumes &quot;a&#8712;A&quot; and &quot;A-{a} = 0&quot;
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>inter_empty_empty</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8898;0 = 0&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>Inter_0</span><span class="delimiter">)</span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If an intersection of a collection is not empty, then the collection is
-  not empty. We are (ab)using the fact the the intesection of empty collection 
+  not empty. We are (ab)using the fact the the intersection of empty collection 
   is defined to be empty.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>inter_nempty_nempty</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8898;A &#8800; 0&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A&#8800;0&quot;</span></span></span><span>
@@ -236,7 +236,7 @@ lemma rem_point_empty: assumes &quot;a&#8712;A&quot; and &quot;A-{a} = 0&quot;
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A simple version of &#8249; ZF1_1_L9&#8250;.&#8250;</span></span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">corollary</span></span><span> </span><span>sigleton_extract</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;! x. x&#8712;A&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">corollary</span></span><span> </span><span>singleton_extract</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;! x. x&#8712;A&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899; A) &#8712; A&quot;</span></span></span><span>
 </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
 </span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8707;! x. x&#8712;A &#8743; True&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
@@ -261,7 +261,7 @@ lemma rem_point_empty: assumes &quot;a&#8712;A&quot; and &quot;A-{a} = 0&quot;
 </span><span>      </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span>    </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A2</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a=b&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
 </span><span>  </span><span class="keyword1"><span class="command">qed</span></span><span>
-</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899;?A) &#8712; ?A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>sigleton_extract</span><span class="delimiter">)</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899;?A) &#8712; ?A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>singleton_extract</span><span class="delimiter">)</span><span>
 </span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>x</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(&#8899;?A) = P(x)&quot;</span></span></span><span>
 </span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>A1</span><span> </span><span>A2</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;x &#8712; X&#8250;</span></span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P(x) = P(y)&quot;</span></span></span><span>
@@ -316,14 +316,14 @@ lemma rem_point_empty: assumes &quot;a&#8712;A&quot; and &quot;A-{a} = 0&quot;
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>consdef</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;cons(a,A) = A &#8746; {a}&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>cons_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a difference between a set and a sigleton is empty, then
-  the set is empty or it is equal to the sigleton.&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a difference between a set and a singleton is empty, then
+  the set is empty or it is equal to the singleton.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>singl_diff_empty</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A - {x} = 0&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A = 0 &#8744; A = {x}&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a difference between a set and a sigleton is the set, 
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If a difference between a set and a singleton is the set, 
   then the only element of the singleton is not in the set.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>singl_diff_eq</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>A1</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;A - {x} = A&quot;</span></span></span><span>
@@ -333,14 +333,27 @@ lemma rem_point_empty: assumes &quot;a&#8712;A&quot; and &quot;A-{a} = 0&quot;
 </span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>A1</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8713; A&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A basic property of sets defined by comprehension.
-  This is one side of standard Isabelle&#39;s &#8249;separation&#8250; 
-  that is in the simp set but somehow not always used by simp.&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A basic property of sets defined by comprehension.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>comprehension</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a &#8712; {x&#8712;X. p(x)}&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;a&#8712;X&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;p(a)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; The image of a set by a greater relation is greater. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>image_rel_mono</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r&#8838;s&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;r``(A) &#8838; s``(A)&quot;</span></span></span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> 
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; A technical lemma about relations: if $x$ is in its image by a relation $U$
+  and that image is contained in some set $C$, then the image of the singleton
+  $\{ x\}$ by the relation $U \cup C\times C$ equals $C$. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>image_greater_rel</span><span class="delimiter">:</span><span> 
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; U``{x}&quot;</span></span></span><span>  </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;U``{x} &#8838; C&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;(U &#8746; C&#215;C)``{x} = C&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>image_Un_left</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span> 
+</span><span>
 </span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span><span>
 </span></pre>
 
 </div>

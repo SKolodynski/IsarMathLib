@@ -219,7 +219,7 @@ qed
 
 text\<open>A simple version of \<open> ZF1_1_L9\<close>.\<close>
 
-corollary sigleton_extract: assumes  "\<exists>! x. x\<in>A"
+corollary singleton_extract: assumes  "\<exists>! x. x\<in>A"
   shows "(\<Union> A) \<in> A"
 proof -
   from assms have "\<exists>! x. x\<in>A \<and> True" by simp
@@ -244,7 +244,7 @@ proof -
       by auto
     with A2 show "a=b" by blast
   qed
-  then have "(\<Union>?A) \<in> ?A" by (rule sigleton_extract)
+  then have "(\<Union>?A) \<in> ?A" by (rule singleton_extract)
   then obtain x where "x \<in> X" and "(\<Union>?A) = P(x)"
     by auto
   from A1 A2 \<open>x \<in> X\<close> have "P(x) = P(y)"
@@ -299,14 +299,14 @@ text\<open>Standard Isabelle uses a notion of \<open>cons(A,a)\<close> that can 
 lemma consdef: shows "cons(a,A) = A \<union> {a}"
   using cons_def by auto
 
-text\<open>If a difference between a set and a sigleton is empty, then
-  the set is empty or it is equal to the sigleton.\<close>
+text\<open>If a difference between a set and a singleton is empty, then
+  the set is empty or it is equal to the singleton.\<close>
 
 lemma singl_diff_empty: assumes "A - {x} = 0"
   shows "A = 0 \<or> A = {x}"
   using assms by auto
 
-text\<open>If a difference between a set and a sigleton is the set, 
+text\<open>If a difference between a set and a singleton is the set, 
   then the only element of the singleton is not in the set.\<close>
 
 lemma singl_diff_eq: assumes A1: "A - {x} = A"
@@ -321,4 +321,19 @@ text\<open>A basic property of sets defined by comprehension.\<close>
 lemma comprehension: assumes "a \<in> {x\<in>X. p(x)}"
   shows "a\<in>X" and "p(a)" using assms by auto
 
+text\<open> The image of a set by a greater relation is greater. \<close>
+
+lemma image_rel_mono: assumes "r\<subseteq>s" shows "r``(A) \<subseteq> s``(A)" 
+  using assms by auto 
+
+text\<open> A technical lemma about relations: if $x$ is in its image by a relation $U$
+  and that image is contained in some set $C$, then the image of the singleton
+  $\{ x\}$ by the relation $U \cup C\times C$ equals $C$. \<close>
+
+lemma image_greater_rel: 
+  assumes  "x \<in> U``{x}"  and "U``{x} \<subseteq> C"
+  shows "(U \<union> C\<times>C)``{x} = C"
+  using assms image_Un_left by blast 
+
 end
+

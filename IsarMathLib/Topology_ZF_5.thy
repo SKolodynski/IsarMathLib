@@ -73,8 +73,8 @@ proof
     then have reg:"\<forall>A\<in>FinPow(\<Union>T). A {is closed in} T" by auto
     {
       fix U
-      assume AS2:"U\<in>(CoCardinal (\<Union>T) nat)"
-      then have "U\<in>Pow(\<Union>T)" "U=0 \<or> ((\<Union>T)-U)\<prec>nat" using Cocardinal_def by auto
+      assume AS2:"U \<in> CoCardinal(\<Union>T,nat)"
+      then have "U\<in>Pow(\<Union>T)" "U=0 \<or> ((\<Union>T)-U)\<prec>nat" using CoCardinal_def by auto
       then have "U\<in>Pow(\<Union>T)" "U=0 \<or> Finite(\<Union>T-U)" using lesspoll_nat_is_Finite by auto
       then have "U\<in>Pow(\<Union>T)" "U\<in>T\<or>(\<Union>T-U) {is closed in} T" using empty_open topSpaceAssum
         reg unfolding FinPow_def by auto
@@ -87,16 +87,16 @@ proof
   }
   {
     assume "(CoFinite (\<Union>T))\<subseteq>T"
-    then have AS:"(CoCardinal (\<Union>T) nat)\<subseteq>T" using Cofinite_def by auto
+    then have AS:"CoCardinal(\<Union>T,nat) \<subseteq> T" using Cofinite_def by auto
     {
       fix x y
       assume AS2:"x\<in>\<Union>T" "y\<in>\<Union>T""x\<noteq>y"
       have "Finite({y})" by auto
       then obtain n where "{y}\<approx>n" "n\<in>nat" using Finite_def by auto
       then have "{y}\<prec>nat" using n_lesspoll_nat eq_lesspoll_trans by auto
-      then have "{y} {is closed in} (CoCardinal (\<Union>T) nat)" using closed_sets_cocardinal
+      then have "{y} {is closed in} CoCardinal(\<Union>T,nat)" using closed_sets_cocardinal
         AS2(2) by auto
-      then have "(\<Union>T)-{y}\<in>(CoCardinal (\<Union>T) nat)" using union_cocardinal IsClosed_def by auto
+      then have "(\<Union>T)-{y}\<in>CoCardinal(\<Union>T,nat)" using union_cocardinal IsClosed_def by auto
       with AS have "(\<Union>T)-{y}\<in>T" by auto
       moreover
       with AS2(1,3) have "x\<in>((\<Union>T)-{y}) \<and> y\<notin>((\<Union>T)-{y})" by auto
@@ -147,8 +147,8 @@ next
   then have reg:"\<forall>A\<in>FinPow(\<Union>T). A {is closed in} T" by auto
   {
     fix U
-    assume AS2:"U\<in>(CoCardinal (\<Union>T) nat)"
-    then have "U\<in>Pow(\<Union>T)" "U=0 \<or> ((\<Union>T)-U)\<prec>nat" using Cocardinal_def by auto
+    assume AS2:"U\<in>CoCardinal(\<Union>T,nat)"
+    then have "U\<in>Pow(\<Union>T)" "U=0 \<or> ((\<Union>T)-U)\<prec>nat" using CoCardinal_def by auto
     then have "U\<in>Pow(\<Union>T)" "U=0 \<or> Finite(\<Union>T-U)" using lesspoll_nat_is_Finite by auto
     then have "U\<in>Pow(\<Union>T)" "U\<in>T\<or>(\<Union>T-U) {is closed in} T" using empty_open topSpaceAssum
       reg unfolding FinPow_def by auto
@@ -168,24 +168,24 @@ as the partial order of sets. (The order is linear when considering only cardina
 lemma order_cocardinal_top:
   fixes X
   assumes "Q1\<lesssim>Q2"
-  shows "(CoCardinal X Q1)\<subseteq>(CoCardinal X Q2)"
+  shows "CoCardinal(X,Q1) \<subseteq> CoCardinal(X,Q2)"
 proof
   fix x
-  assume "x\<in>(CoCardinal X Q1)"
-  then have "x\<in>Pow(X)" "x=0\<or>(X-x)\<prec>Q1" using Cocardinal_def by auto
+  assume "x \<in> CoCardinal(X,Q1)"
+  then have "x\<in>Pow(X)" "x=0\<or>(X-x)\<prec>Q1" using CoCardinal_def by auto
   with assms have "x\<in>Pow(X)" "x=0\<or>(X-x)\<prec>Q2" using lesspoll_trans2 by auto
-  then show "x\<in>(CoCardinal X Q2)" using Cocardinal_def by auto
+  then show "x\<in>CoCardinal(X,Q2)" using CoCardinal_def by auto
 qed
 
 corollary cocardinal_is_T1:
   fixes X K
   assumes "InfCard(K)"
-  shows "(CoCardinal X K) {is T\<^sub>1}"
+  shows "CoCardinal(X,K) {is T\<^sub>1}"
 proof-
   have "nat\<le>K" using InfCard_def assms by auto
   then have "nat\<subseteq>K" using le_imp_subset by auto
   then have "nat\<lesssim>K" "K\<noteq>0"using subset_imp_lepoll by auto
-  then have "(CoCardinal X nat)\<subseteq>(CoCardinal X K)" "\<Union>(CoCardinal X K)=X" using order_cocardinal_top 
+  then have "CoCardinal(X,nat) \<subseteq> CoCardinal(X,K)" "\<Union>CoCardinal(X,K)=X" using order_cocardinal_top 
     union_cocardinal by auto
   then show ?thesis using topology0.T1_cocardinal_coarser topology0_CoCardinal assms Cofinite_def
     by auto
