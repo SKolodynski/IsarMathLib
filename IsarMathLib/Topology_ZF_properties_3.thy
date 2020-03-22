@@ -643,11 +643,11 @@ proof-
       fix M assume Acov:"?A\<subseteq>\<Union>M" "M\<subseteq>T"
       then have "x\<in>\<Union>M" by auto
       then obtain U where U:"x\<in>U" "U\<in>M" by auto
-      with Acov(2) have (:)"U\<in>T" by auto
+      with Acov(2) have UT:"U\<in>T" by auto
       then have "U=int(U)" using Top_2_L3 by auto
       with U(1) have "x\<in>int(U)" by auto
-      with conv2 (obtain) r where rr:"r\<in>nat" "\<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> ?NN`s\<in>U"
-        unfolding NetConverges_def[OF net2] using dom2 by auto
+      with conv2 obtain r where rr:"r\<in>nat" "\<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> ?NN`s\<in>U"
+        unfolding NetConverges_def[OF net2] using dom2 UT by auto
       have NresFun:"restrict(?NN,{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}):{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}\<rightarrow>\<Union>T" using restrict_fun
         [OF NFun, of "{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}"] by auto
       then have "restrict(?NN,{n\<in>nat. \<langle>n,r\<rangle>\<in>Le})\<in>surj({n\<in>nat. \<langle>n,r\<rangle>\<in>Le},range(restrict(?NN,{n\<in>nat. \<langle>n,r\<rangle>\<in>Le})))"
@@ -923,7 +923,7 @@ next
     then have "A\<prec>nat" using eq_lesspoll_trans n_lesspoll_nat by auto moreover
     have "\<Union>T-(\<Union>T-A)=A" using A(2) by auto
     ultimately have "\<Union>T-(\<Union>T-A)\<prec>nat" by auto
-    then have "\<Union>T-A\<in>CoFinite \<Union>T" unfolding Cofinite_def Cocardinal_def by auto
+    then have "\<Union>T-A\<in>CoFinite \<Union>T" unfolding Cofinite_def CoCardinal_def by auto
     then have "\<Union>T-A\<in>T" using AS T1_cocardinal_coarser by auto
     with A(2) have "A{is closed in}T" unfolding IsClosed_def by auto
   }
@@ -943,7 +943,7 @@ proof-
   {
     fix U V assume as:"U\<in>(CoCountable csucc(nat))""V\<in>(CoCountable csucc(nat))""U\<inter>V=0"
     then have "csucc(nat)-U\<prec>csucc(nat)\<or>U=0""csucc(nat)-V\<prec>csucc(nat)\<or>V=0"
-      unfolding Cocountable_def Cocardinal_def by auto
+      unfolding Cocountable_def CoCardinal_def by auto
     then have "(csucc(nat)-U)\<union>(csucc(nat)-V)\<prec>csucc(nat)\<or>U=0\<or>V=0" using less_less_imp_un_less[
       OF _ _ InfCard_csucc[OF InfCard_nat]] by auto moreover
     {
@@ -1142,17 +1142,17 @@ proof
   assume A:"(CoFinite nat){is US}"
   let ?N="id(nat)"
   have f:"?N:nat\<rightarrow>nat" using id_type by auto
-  then have fun:"?N:nat\<rightarrow>\<Union>(CoCardinal nat nat)" using union_cocardinal unfolding Cofinite_def by auto
+  then have fun:"?N:nat\<rightarrow>\<Union>(CoCardinal(nat,nat))" using union_cocardinal unfolding Cofinite_def by auto
   then have dom:"domain(?N)=nat" using func1_1_L1 by auto
-  with fun have NET:"\<langle>?N,Le\<rangle>{is a net on}\<Union>(CoCardinal nat nat)" unfolding IsNet_def
+  with fun have NET:"\<langle>?N,Le\<rangle>{is a net on}\<Union>(CoCardinal(nat,nat))" unfolding IsNet_def
     using Le_directs_nat by auto
-  have tot:"\<Union>(CoCardinal nat nat)=nat" using union_cocardinal by auto
+  have tot:"\<Union>(CoCardinal(nat,nat))=nat" using union_cocardinal by auto
   {
     fix U n assume U:"U\<in>Pow(\<Union>(CoFinite nat))" "n\<in>Interior(U,(CoFinite nat))"
     have "Interior(U,(CoFinite nat))\<in>(CoFinite nat)" using topology0.Top_2_L2
       topology0_CoCardinal[OF InfCard_nat] unfolding Cofinite_def by auto
     then have "nat-Interior(U,(CoFinite nat))\<prec>nat" using U(2) unfolding Cofinite_def
-      Cocardinal_def by auto
+      CoCardinal_def by auto
     then have "Finite(nat-Interior(U,(CoFinite nat)))" using lesspoll_nat_is_Finite by auto moreover
     have "nat-U\<subseteq>nat-Interior(U,(CoFinite nat))" using topology0.Top_2_L1
       topology0_CoCardinal[OF InfCard_nat] unfolding Cofinite_def by auto
@@ -1179,9 +1179,9 @@ proof
     then have "\<exists>s\<in>nat. \<forall>r\<in>nat. \<langle>s,r\<rangle>\<in>Le \<longrightarrow> ?N`r\<in>U" by auto
   }
   then have "\<forall>n\<in>nat. \<forall>U\<in>Pow(\<Union>(CoFinite nat)). n\<in>Interior(U,CoFinite nat) \<longrightarrow> (\<exists>s\<in>nat. \<forall>r\<in>nat. \<langle>s,r\<rangle>\<in>Le \<longrightarrow> ?N`r\<in>U)" by auto
-  with tot have "\<forall>n\<in>\<Union>(CoCardinal nat nat). \<forall>U\<in>Pow(\<Union>(CoCardinal nat nat)). n\<in>Interior(U,CoCardinal nat nat) \<longrightarrow> (\<exists>s\<in>nat. \<forall>r\<in>nat. \<langle>s,r\<rangle>\<in>Le \<longrightarrow> ?N`r\<in>U)"
+  with tot have "\<forall>n\<in>\<Union>(CoCardinal(nat,nat)). \<forall>U\<in>Pow(\<Union>(CoCardinal(nat,nat))). n\<in>Interior(U,CoCardinal(nat,nat)) \<longrightarrow> (\<exists>s\<in>nat. \<forall>r\<in>nat. \<langle>s,r\<rangle>\<in>Le \<longrightarrow> ?N`r\<in>U)"
     unfolding Cofinite_def by auto
-  then have "\<forall>n\<in>\<Union>(CoCardinal nat nat). (\<langle>?N,Le\<rangle>\<rightarrow>\<^sub>N n {in}(CoCardinal nat nat))" unfolding topology0.NetConverges_def[OF topology0_CoCardinal[OF InfCard_nat] NET]
+  then have "\<forall>n\<in>\<Union>(CoCardinal(nat,nat)). (\<langle>?N,Le\<rangle>\<rightarrow>\<^sub>N n {in}(CoCardinal(nat,nat)))" unfolding topology0.NetConverges_def[OF topology0_CoCardinal[OF InfCard_nat] NET]
     using dom by auto
   with tot have "\<forall>n\<in>nat. (\<langle>?N,Le\<rangle>\<rightarrow>\<^sub>N n {in}(CoFinite nat))" unfolding Cofinite_def by auto
   then have "(\<langle>?N,Le\<rangle>\<rightarrow>\<^sub>N 0 {in}(CoFinite nat)) \<and> (\<langle>?N,Le\<rangle>\<rightarrow>\<^sub>N 1 {in}(CoFinite nat)) \<and> 0\<noteq>1" by auto
@@ -1238,7 +1238,7 @@ proof-
       }
       then have "\<Union>?MN\<subseteq>{csucc(nat)}\<union>\<Union>?SC" by blast
       ultimately have unMN:"\<Union>?MN={csucc(nat)}\<union>\<Union>?SC" by auto
-      from unSC have b1:"csucc(nat)-\<Union>?SC\<prec>csucc(nat)\<or>\<Union>?SC=0" unfolding Cocountable_def Cocardinal_def
+      from unSC have b1:"csucc(nat)-\<Union>?SC\<prec>csucc(nat)\<or>\<Union>?SC=0" unfolding Cocountable_def CoCardinal_def
         by auto
       {
         assume "0\<in>?SC"
@@ -1254,7 +1254,7 @@ proof-
         }
         then have "S\<subseteq>{csucc(nat)}" by auto
         with S(1) have "S={csucc(nat)}" by auto
-        with S(1) have "csucc(nat)-{csucc(nat)}\<prec>csucc(nat)" unfolding Cocountable_def Cocardinal_def
+        with S(1) have "csucc(nat)-{csucc(nat)}\<prec>csucc(nat)" unfolding Cocountable_def CoCardinal_def
           by auto moreover
         then have "csucc(nat)-{csucc(nat)}=csucc(nat)" using mem_not_refl[of "csucc(nat)"] by force
         ultimately have "False" by auto
@@ -1270,7 +1270,7 @@ proof-
       have "\<Union>?SC\<subseteq>\<Union>(CoCountable csucc(nat))" using unSC by auto
       then have "\<Union>?SC\<subseteq>csucc(nat)" using union_cocardinal[OF noE] unfolding Cocountable_def by auto
       ultimately have "(\<Union>?SC \<union> \<Union>?MP)\<in>(CoCountable csucc(nat))"
-        using unMP unfolding Cocountable_def Cocardinal_def by auto
+        using unMP unfolding Cocountable_def CoCardinal_def by auto
       then have "{csucc(nat)}\<union>(\<Union>?SC \<union> \<Union>?MP)\<in>(Pow(csucc(nat)) \<union> {{csucc(nat)}\<union>S. S\<in>(CoCountable csucc(nat))-{0}})"
         using noe by auto moreover
       from unM unMN have "\<Union>M=({csucc(nat)}\<union>\<Union>?SC) \<union> \<Union>?MP" by auto
@@ -1491,7 +1491,7 @@ proof
   }
   then have "S\<subseteq>{csucc(nat)}" by auto
   with S(1) have "S={csucc(nat)}" by auto
-  with S(1) have "csucc(nat)-{csucc(nat)}\<prec>csucc(nat)" unfolding Cocountable_def Cocardinal_def
+  with S(1) have "csucc(nat)-{csucc(nat)}\<prec>csucc(nat)" unfolding Cocountable_def CoCardinal_def
     by auto moreover
   then have "csucc(nat)-{csucc(nat)}=csucc(nat)" using mem_not_refl[of "csucc(nat)"] by force
   ultimately show "False" by auto
@@ -1652,7 +1652,7 @@ proof-
     have xy:"x\<in>\<Union>({one-point compactification of}T)" "y\<in>\<Union>({one-point compactification of}T)"
       using A(2,3) topology0.NetConverges_def[OF _ NET] unfolding topology0_def using op_comp_is_top dom by auto 
     then have pp:"x\<in>\<Union>T \<union>{\<Union>T}" "y\<in>\<Union>T \<union>{\<Union>T}" using op_compact_total by auto
-    from A(2) have (:)"\<forall>U\<in>Pow(\<Union>{one-point compactification of}T).
+    from A(2) have comp:"\<forall>U\<in>Pow(\<Union>{one-point compactification of}T).
         x \<in> Interior(U, {one-point compactification of}T) \<longrightarrow>
         (\<exists>t\<in>nat. \<forall>m\<in>nat. \<langle>t, m\<rangle> \<in> Le \<longrightarrow> N ` m \<in> U)" using topology0.NetConverges_def[OF _ NET, of "x"]
         unfolding topology0_def using op_comp_is_top dom op_compact_total by auto
@@ -1723,7 +1723,7 @@ proof-
         then have "Interior(int(U),{one-point compactification of}T)=int(U)" using topology0.Top_2_L3
           unfolding topology0_def using op_comp_is_top by auto
         with U(2) have "x\<in>Interior(int(U),{one-point compactification of}T)" by auto
-        with intT have "(\<exists>r\<in>nat. \<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> N`s\<in>int(U))" using (op_compact_total) by auto
+        with intT have "(\<exists>r\<in>nat. \<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> N`s\<in>int(U))" using comp op_compact_total by auto
         then obtain r where r_def:"r\<in>nat" "\<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> N`s\<in>U" using Top_2_L1 by auto
         {
           fix s assume AA:"\<langle>r,s\<rangle>\<in>Le"
@@ -1861,11 +1861,11 @@ proof-
           fix M assume Acov:"?A\<subseteq>\<Union>M" "M\<subseteq>T"
           then have "y\<in>\<Union>M" by auto
           then obtain V where V:"y\<in>V" "V\<in>M" by auto
-          with Acov(2) have (:)"V\<in>T" by auto
+          with Acov(2) have VT:"V\<in>T" by auto
           then have "V=int(V)" using Top_2_L3 by auto
           with V(1) have "y\<in>int(V)" by auto
-          with cony (obtain) r where rr:"r\<in>nat" "\<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> ?NN`s\<in>V"
-            unfolding NetConverges_def[OF net2, of "y"] using dom2 y by auto
+          with cony obtain r where rr:"r\<in>nat" "\<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> ?NN`s\<in>V"
+            unfolding NetConverges_def[OF net2, of "y"] using dom2 VT y by auto
           have NresFun:"restrict(?NN,{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}):{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}\<rightarrow>\<Union>T" using restrict_fun
             [OF R, of "{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}"] by auto
           then have "restrict(?NN,{n\<in>nat. \<langle>n,r\<rangle>\<in>Le})\<in>surj({n\<in>nat. \<langle>n,r\<rangle>\<in>Le},range(restrict(?NN,{n\<in>nat. \<langle>n,r\<rangle>\<in>Le})))"
@@ -2052,7 +2052,7 @@ proof-
         then have "Interior(int(U),{one-point compactification of}T)=int(U)" using topology0.Top_2_L3
           unfolding topology0_def using op_comp_is_top by auto
         with U(2) have "x\<in>Interior(int(U),{one-point compactification of}T)" by auto
-        with intT have "(\<exists>r\<in>nat. \<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> N`s\<in>int(U))" using (op_compact_total) by auto
+        with intT have "(\<exists>r\<in>nat. \<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> N`s\<in>int(U))" using comp op_compact_total by auto
         then obtain r where r_def:"r\<in>nat" "\<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> N`s\<in>U" using Top_2_L1 by auto
         {
           fix s assume AA:"\<langle>r,s\<rangle>\<in>Le"
@@ -2075,10 +2075,10 @@ proof-
         fix M assume Acov:"?A\<subseteq>\<Union>M" "M\<subseteq>T"
         then have "x\<in>\<Union>M" by auto
         then obtain V where V:"x\<in>V" "V\<in>M" by auto
-        with Acov(2) have (:)"V\<in>T" by auto
+        with Acov(2) have VT:"V\<in>T" by auto
         then have "V=int(V)" using Top_2_L3 by auto
         with V(1) have "x\<in>int(V)" by auto
-        with cony (obtain) r where rr:"r\<in>nat" "\<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> ?NN`s\<in>V"
+        with cony VT obtain r where rr:"r\<in>nat" "\<forall>s\<in>nat. \<langle>r,s\<rangle>\<in>Le \<longrightarrow> ?NN`s\<in>V"
           unfolding NetConverges_def[OF net2, of "x"] using dom2 y by auto
         have NresFun:"restrict(?NN,{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}):{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}\<rightarrow>\<Union>T" using restrict_fun
           [OF R, of "{n\<in>nat. \<langle>n,r\<rangle>\<in>Le}"] by auto
@@ -2590,7 +2590,7 @@ proof-
   {
     fix x assume x:"x\<in>\<Union>(CoFinite nat)" "{x}\<in>(CoFinite nat)"
     then have xn:"x\<in>nat" using union_cocardinal unfolding Cofinite_def by auto
-    with x(2) have "nat-{x}\<prec>nat" unfolding Cofinite_def Cocardinal_def by auto
+    with x(2) have "nat-{x}\<prec>nat" unfolding Cofinite_def CoCardinal_def by auto
     moreover have "Finite({x})" by auto
     then have "{x}\<prec>nat" unfolding Finite_def using n_lesspoll_nat eq_lesspoll_trans by auto
     ultimately have "(nat-{x})\<union>{x}\<prec>nat" using less_less_imp_un_less[OF _ _ InfCard_nat] by auto
@@ -2620,7 +2620,7 @@ proof-
   {
     fix x assume x:"x\<in>\<Union>(CoCountable csucc(nat))" "{x}\<in>(CoCountable csucc(nat))"
     then have xn:"x\<in>csucc(nat)" using union_cocardinal noE unfolding Cocountable_def by auto
-    with x(2) have "csucc(nat)-{x}\<prec>csucc(nat)" unfolding Cocountable_def Cocardinal_def by auto
+    with x(2) have "csucc(nat)-{x}\<prec>csucc(nat)" unfolding Cocountable_def CoCardinal_def by auto
     moreover have "Finite({x})" by auto
     then have "{x}\<prec>nat" unfolding Finite_def using n_lesspoll_nat eq_lesspoll_trans by auto
     then have "{x}\<lesssim>nat" using lesspoll_imp_lepoll by auto
