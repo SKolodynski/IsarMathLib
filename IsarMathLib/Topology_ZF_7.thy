@@ -333,7 +333,7 @@ proof-
 qed
 
 text\<open>In the literature, there exists a class of spaces called sober spaces; where the only non-empty closed
-hyperconnected subspaces are the closures of points and closures of diferent singletons
+hyperconnected subspaces are the closures of points and closures of different singletons
 are different.\<close>
 
 definition IsSober ("_{is sober}"90)

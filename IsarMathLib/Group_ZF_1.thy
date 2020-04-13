@@ -297,6 +297,16 @@ proof -
   ultimately show ?thesis by auto
 qed
 
+lemma (in group0) rtrans_image: assumes A1: "V\<subseteq>G" and A2: "x\<in>G"
+  shows "RightTranslation(G,P,x)``(V) = {v\<cdot>x. v\<in>V}"
+proof -
+  from assms have "RightTranslation(G,P,x)``(V) = {RightTranslation(G,P,x)`(v). v\<in>V}"
+    using group0_5_L1 func_imagedef by blast
+  moreover from assms have "\<forall>v\<in>V. RightTranslation(G,P,x)`(v) = v\<cdot>x"
+    using group0_5_L2 by auto
+  ultimately show ?thesis by auto
+qed
+
 text\<open>A technical lemma about solving equations with translations.\<close>
 
 lemma (in group0) ltrans_inv_in: assumes A1: "V\<subseteq>G" and A2: "y\<in>G" and
@@ -356,24 +366,31 @@ text\<open>If the neutral element belongs to a set, then an element of group bel
 
 lemma (in group0) neut_trans_elem: 
   assumes A1: "A\<subseteq>G" "g\<in>G" and A2: "\<one>\<in>A" 
-  shows "g \<in> LeftTranslation(G,P,g)``(A)"
+  shows "g \<in> LeftTranslation(G,P,g)``(A)" "g \<in> RightTranslation(G,P,g)``(A)"
 proof -
   from assms have "g\<cdot>\<one> \<in> LeftTranslation(G,P,g)``(A)"
     using ltrans_image by auto
-  with A1 show ?thesis using group0_2_L2 by simp
+  with A1 show "g \<in> LeftTranslation(G,P,g)``(A)" using group0_2_L2 by simp
+  from assms have "\<one>\<cdot>g \<in> RightTranslation(G,P,g)``(A)"
+    using rtrans_image by auto
+  with A1 show "g \<in> RightTranslation(G,P,g)``(A)" using group0_2_L2 by simp
 qed
 
 text\<open>The neutral element belongs to the translation of a set by the inverse
   of an element that belongs to it.\<close>
 
 lemma (in group0) elem_trans_neut: assumes A1: "A\<subseteq>G" and A2: "g\<in>A"
-  shows "\<one> \<in> LeftTranslation(G,P,g\<inverse>)``(A)"
+  shows "\<one> \<in> LeftTranslation(G,P,g\<inverse>)``(A)" "\<one> \<in> RightTranslation(G,P,g\<inverse>)``(A)"
 proof -
-  from assms have "g\<inverse> \<in> G" using inverse_in_group by auto
+  from assms have ginv:"g\<inverse> \<in> G" using inverse_in_group by auto
   with assms have "g\<inverse>\<cdot>g \<in> LeftTranslation(G,P,g\<inverse>)``(A)"
     using ltrans_image by auto
   moreover from assms have "g\<inverse>\<cdot>g = \<one>" using group0_2_L6 by auto
-  ultimately show ?thesis by simp
+  ultimately show "\<one> \<in> LeftTranslation(G,P,g\<inverse>)``(A)" by simp
+  from ginv assms have "g\<cdot>g\<inverse> \<in> RightTranslation(G,P,g\<inverse>)``(A)"
+    using rtrans_image by auto
+  moreover from assms have "g\<cdot>g\<inverse> = \<one>" using group0_2_L6 by auto
+  ultimately show "\<one> \<in> RightTranslation(G,P,g\<inverse>)``(A)" by simp
 qed
 
 subsection\<open>Odd functions\<close>
