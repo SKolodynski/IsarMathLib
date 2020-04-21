@@ -263,6 +263,66 @@ proof -
     using group0_valid_in_tgroup group0.image_ltrans_union by simp
 qed
 
+lemma (in topgroup) elements_in_set_sum: assumes "A\<subseteq>G" "B\<subseteq>G"
+  "t \<in> A\<sad>B" shows "\<exists>s\<in>A. \<exists>q\<in>B. t=s\<ra>q"
+proof -
+  from assms have "t \<in> f``(A\<times>B)" using interval_add(2) by auto
+  moreover from assms(1,2) have "A\<times>B\<subseteq>G\<times>G" by auto
+  ultimately have "t \<in> {f`q. q\<in> A\<times>B}" using func_imagedef[OF topgroup_f_binop, of "A\<times>B"] by auto
+  then obtain q where q:"q:A\<times>B" "t=f`q" by auto
+  then show ?thesis by auto
+qed
+
+lemma (in topgroup) elements_in_ltrans: 
+  assumes "B\<subseteq>G" "g\<in>G" "t \<in> g\<ltr>B" 
+  shows "\<exists>q\<in>B. t=g\<ra>q"
+proof -
+  from assms(1,2) have "LeftTranslation(G,f,g)``(B) = {LeftTranslation(G,f,g)`(q). q\<in>B}"
+    using group0_valid_in_tgroup group0.group0_5_L1(2) func_imagedef by blast
+  with assms show ?thesis using group0.group0_5_L2(2)[OF group0_valid_in_tgroup, of g]
+    by auto 
+qed
+
+lemma (in topgroup) elements_in_rtrans: assumes "B\<subseteq>G" "g\<in>G"
+  "t \<in> B\<rtr>g" shows "\<exists>q\<in>B. t=q\<ra>g"
+proof -
+  from assms(1,2) have "RightTranslation(G,f,g)``(B) = {RightTranslation(G,f,g)`(q). q\<in>B}"
+    using group0_valid_in_tgroup group0.group0_5_L1(1) func_imagedef by blast
+  with assms show ?thesis using group0.group0_5_L2(1)[OF group0_valid_in_tgroup, of g] 
+    by auto
+qed
+
+lemma (in topgroup) elements_in_set_sum_inv: assumes "A\<subseteq>G" "B\<subseteq>G" "t=s\<ra>q" "s\<in>A" "q\<in>B"
+  shows "t \<in> A\<sad>B"
+proof -
+  from assms(3-5) have "t \<in> {f`q. q\<in> A\<times>B}" by auto moreover
+  from assms(1,2) have "A\<times>B\<subseteq>G\<times>G" by auto ultimately
+  have "t \<in> f``(A\<times>B)" using func_imagedef[OF topgroup_f_binop, of "A\<times>B"] by auto
+  with assms(1,2) show ?thesis using interval_add(2) by auto
+qed
+
+lemma (in topgroup) elements_in_ltrans_inv: assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=g\<ra>q"
+  shows "t \<in> g\<ltr>B"
+proof -
+  from assms(1,2) have I:"LeftTranslation(G,f,g)``(B) = {LeftTranslation(G,f,g)`(q). q\<in>B}"
+    using group0_valid_in_tgroup group0.group0_5_L1(2) func_imagedef by blast
+  from assms have "LeftTranslation(G,f,g)`(q) = f`\<langle>g,q\<rangle>"
+    using group0_valid_in_tgroup group0.group0_5_L2(2) by blast     
+  with assms(4) have "t=LeftTranslation(G,f,g)`(q)" by simp 
+  with assms(1,2,3) I show ?thesis by auto 
+qed
+
+lemma (in topgroup) elements_in_rtrans_inv: assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=q\<ra>g"
+  shows "t \<in> B\<rtr>g"
+proof -
+  from assms(1,2) have I:"RightTranslation(G,f,g)``(B) = {RightTranslation(G,f,g)`(q). q\<in>B}"
+    using group0_valid_in_tgroup group0.group0_5_L1(1) func_imagedef by blast
+  from assms have "RightTranslation(G,f,g)`(q) = f`\<langle>q,g\<rangle>"
+    using group0_valid_in_tgroup group0.group0_5_L2(1) by blast     
+  with assms(4) have "t=RightTranslation(G,f,g)`(q)" by simp 
+  with assms(1,2,3) I show ?thesis by auto 
+qed
+
 text\<open>Right and left translations are continuous.\<close>
 
 lemma (in topgroup) trans_cont: assumes "g\<in>G" shows
@@ -297,6 +357,15 @@ proof -
     by auto
   then show ?thesis using int_top_invariant by simp
 qed
+
+lemma (in topgroup) trans_interior_2: assumes A1: "g\<in>G" and A2: "A\<subseteq>G" 
+  shows "int(A) \<rtr> g = int(A\<rtr>g)"
+proof -
+  from assms have "A \<subseteq> \<Union>T" and "IsAhomeomorphism(T,T,RightTranslation(G,f,g))" using tr_homeo 
+    by auto
+  then show ?thesis using int_top_invariant by simp
+qed
+
 (*
 text{*Translating by an inverse and then by an element cancels out.*}
 
@@ -348,6 +417,16 @@ proof -
   with assms show ?thesis using trans_interior by simp
 qed
 
+lemma (in topgroup) elem_in_int_trans_2:
+  assumes A1: "g\<in>G" and A2: "H \<in> \<N>\<^sub>0"
+  shows "g \<in> int(H\<rtr>g)"
+proof -
+  from A2 have "\<zero> \<in> int(H)" and "int(H) \<subseteq> G" using Top_2_L2 by auto
+  with A1 have "g \<in> int(H) \<rtr> g"
+    using group0_valid_in_tgroup group0.neut_trans_elem by simp
+  with assms show ?thesis using trans_interior_2 by simp
+qed
+
 text\<open>Negative of a neighborhood of zero is a neighborhood of zero.\<close>
 
 lemma (in topgroup) neg_neigh_neigh: assumes "H \<in> \<N>\<^sub>0"
@@ -369,6 +448,24 @@ lemma (in topgroup) open_trans_neigh: assumes A1: "U\<in>T" and "g\<in>U"
   shows "(\<rm>g)\<ltr>U \<in> \<N>\<^sub>0"
 proof -
   let ?H = "(\<rm>g)\<ltr>U"
+  from assms have "g\<in>G" by auto
+  then have "(\<rm>g) \<in> G" using neg_in_tgroup by simp
+  with A1 have "?H\<in>T" using open_tr_open by simp
+  hence "?H \<subseteq> G" by auto
+  moreover have "\<zero> \<in> int(?H)"
+  proof -
+    from assms have "U\<subseteq>G" and "g\<in>U" by auto
+    with \<open>?H\<in>T\<close> show "\<zero> \<in> int(?H)" 
+      using group0_valid_in_tgroup group0.elem_trans_neut Top_2_L3
+        by auto
+  qed
+  ultimately show ?thesis by simp
+qed
+
+lemma (in topgroup) open_trans_neigh_2: assumes A1: "U\<in>T" and "g\<in>U"
+  shows "U\<rtr>(\<rm>g) \<in> \<N>\<^sub>0"
+proof -
+  let ?H = "U\<rtr>(\<rm>g)"
   from assms have "g\<in>G" by auto
   then have "(\<rm>g) \<in> G" using neg_in_tgroup by simp
   with A1 have "?H\<in>T" using open_tr_open by simp
