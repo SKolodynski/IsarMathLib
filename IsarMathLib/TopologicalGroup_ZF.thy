@@ -273,24 +273,23 @@ proof -
   then show ?thesis by auto
 qed
 
-lemma (in topgroup) elements_in_ltrans: assumes "B\<subseteq>G" "g\<in>G"
-  "t \<in> g\<ltr>B" shows "\<exists>q\<in>B. t=g\<ra>q"
+lemma (in topgroup) elements_in_ltrans: 
+  assumes "B\<subseteq>G" "g\<in>G" "t \<in> g\<ltr>B" 
+  shows "\<exists>q\<in>B. t=g\<ra>q"
 proof -
-  from assms(3) have "t \<in> LeftTranslation(G,f,g)``B" by auto
-  with assms(1,2) have "t \<in> {LeftTranslation(G,f,g)`q. q\<in> B}" 
-    using func_imagedef[OF group0_5_L1(2), of g B] by auto
-  then obtain q where q:"q:B" "t=LeftTranslation(G,f,g)`q" by auto
-  with assms(1,2) show ?thesis using group0.group0_5_L2(2)[OF group0_valid_in_tgroup, of g] by auto
+  from assms(1,2) have "LeftTranslation(G,f,g)``(B) = {LeftTranslation(G,f,g)`(q). q\<in>B}"
+    using group0_valid_in_tgroup group0.group0_5_L1(2) func_imagedef by blast
+  with assms show ?thesis using group0.group0_5_L2(2)[OF group0_valid_in_tgroup, of g]
+    by auto 
 qed
 
 lemma (in topgroup) elements_in_rtrans: assumes "B\<subseteq>G" "g\<in>G"
   "t \<in> B\<rtr>g" shows "\<exists>q\<in>B. t=q\<ra>g"
 proof -
-  from assms(3) have "t \<in> RightTranslation(G,f,g)``B" by auto
-  with assms(1,2) have "t \<in> {RightTranslation(G,f,g)`q. q\<in> B}" 
-    using func_imagedef[OF group0_5_L1(1), of g B] by auto
-  then obtain q where q:"q:B" "t=RightTranslation(G,f,g)`q" by auto
-  with assms(1,2) show ?thesis using group0.group0_5_L2(1)[OF group0_valid_in_tgroup, of g] by auto
+  from assms(1,2) have "RightTranslation(G,f,g)``(B) = {RightTranslation(G,f,g)`(q). q\<in>B}"
+    using group0_valid_in_tgroup group0.group0_5_L1(1) func_imagedef by blast
+  with assms show ?thesis using group0.group0_5_L2(1)[OF group0_valid_in_tgroup, of g] 
+    by auto
 qed
 
 lemma (in topgroup) elements_in_set_sum_inv: assumes "A\<subseteq>G" "B\<subseteq>G" "t=s\<ra>q" "s\<in>A" "q\<in>B"
@@ -305,23 +304,23 @@ qed
 lemma (in topgroup) elements_in_ltrans_inv: assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=g\<ra>q"
   shows "t \<in> g\<ltr>B"
 proof -
-  from assms have "t=LeftTranslation(G,f,g)`q" 
-    using group0.group0_5_L2(2)[OF group0_valid_in_tgroup, of g q] by force
-  with assms(3) have "t \<in> {LeftTranslation(G,f,g)`q. q\<in> B}" by auto
-  with assms(1,2) have "t \<in> LeftTranslation(G,f,g)``B"
-    using func_imagedef[OF group0_5_L1(2), of g B] by auto
-  then show ?thesis by auto
+  from assms(1,2) have I:"LeftTranslation(G,f,g)``(B) = {LeftTranslation(G,f,g)`(q). q\<in>B}"
+    using group0_valid_in_tgroup group0.group0_5_L1(2) func_imagedef by blast
+  from assms have "LeftTranslation(G,f,g)`(q) = f`\<langle>g,q\<rangle>"
+    using group0_valid_in_tgroup group0.group0_5_L2(2) by blast     
+  with assms(4) have "t=LeftTranslation(G,f,g)`(q)" by simp 
+  with assms(1,2,3) I show ?thesis by auto 
 qed
 
 lemma (in topgroup) elements_in_rtrans_inv: assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=q\<ra>g"
   shows "t \<in> B\<rtr>g"
 proof -
-  from assms have "t=RightTranslation(G,f,g)`q" 
-    using group0.group0_5_L2(1)[OF group0_valid_in_tgroup, of g q] by force
-  with assms(3) have "t \<in> {RightTranslation(G,f,g)`q. q\<in> B}" by auto
-  with assms(1,2) have "t \<in> RightTranslation(G,f,g)``B"
-    using func_imagedef[OF group0_5_L1(1), of g B] by auto
-  then show ?thesis by auto
+  from assms(1,2) have I:"RightTranslation(G,f,g)``(B) = {RightTranslation(G,f,g)`(q). q\<in>B}"
+    using group0_valid_in_tgroup group0.group0_5_L1(1) func_imagedef by blast
+  from assms have "RightTranslation(G,f,g)`(q) = f`\<langle>q,g\<rangle>"
+    using group0_valid_in_tgroup group0.group0_5_L2(1) by blast     
+  with assms(4) have "t=RightTranslation(G,f,g)`(q)" by simp 
+  with assms(1,2,3) I show ?thesis by auto 
 qed
 
 text\<open>Right and left translations are continuous.\<close>
