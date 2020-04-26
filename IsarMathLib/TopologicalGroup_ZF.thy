@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2009-2019  Slawomir Kolodynski
+    Copyright (C) 2009-2020  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -255,73 +255,75 @@ text\<open>In this section we list some properties of operations of translating 
 text\<open>Different ways of looking at adding sets.\<close>
 
 lemma (in topgroup) interval_add: assumes "A\<subseteq>G" "B\<subseteq>G" shows
-  "A\<sad>B \<subseteq> G" and "A\<sad>B = f``(A\<times>B)"  "A\<sad>B = (\<Union>x\<in>A. x\<ltr>B)"
+  "A\<sad>B \<subseteq> G" 
+  "A\<sad>B = f``(A\<times>B)"  
+  "A\<sad>B = (\<Union>x\<in>A. x\<ltr>B)"
+  "A\<sad>B = {x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B}" 
 proof -
-  from assms show "A\<sad>B \<subseteq> G" and "A\<sad>B = f``(A\<times>B)" 
+  from assms show "A\<sad>B \<subseteq> G" and "A\<sad>B = f``(A\<times>B)" and "A\<sad>B = {x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B}"
     using topgroup_f_binop lift_subsets_explained by auto
   from assms show "A\<sad>B = (\<Union>x\<in>A. x\<ltr>B)"
     using group0_valid_in_tgroup group0.image_ltrans_union by simp
 qed
 
-lemma (in topgroup) elements_in_set_sum: assumes "A\<subseteq>G" "B\<subseteq>G"
-  "t \<in> A\<sad>B" shows "\<exists>s\<in>A. \<exists>q\<in>B. t=s\<ra>q"
+text\<open> The \<open>ltrans_image\<close> lemma from \<open>Topology_ZF_1\<close> written in additive notation \<close>
+
+lemma (in topgroup) ltrans_image_add: assumes "V\<subseteq>G" "x\<in>G"
+  shows "LeftTranslation(G,f,x)``(V) = {x\<ra>v. v\<in>V}"
 proof -
-  from assms have "t \<in> f``(A\<times>B)" using interval_add(2) by auto
-  moreover from assms(1,2) have "A\<times>B\<subseteq>G\<times>G" by auto
-  ultimately have "t \<in> {f`q. q\<in> A\<times>B}" using func_imagedef[OF topgroup_f_binop, of "A\<times>B"] by auto
-  then obtain q where q:"q:A\<times>B" "t=f`q" by auto
-  then show ?thesis by auto
+  from assms have "LeftTranslation(G,f,x)``(V) = {f`\<langle>x,v\<rangle>. v\<in>V}"
+    using group0_valid_in_tgroup group0.ltrans_image by blast
+  thus ?thesis by simp
 qed
 
-lemma (in topgroup) elements_in_ltrans: 
+text\<open> The \<open>rtrans_image\<close> lemma from \<open>Topology_ZF_1\<close> written in additive notation \<close>
+
+lemma (in topgroup) rtrans_image_add: assumes "V\<subseteq>G" "x\<in>G"
+  shows "RightTranslation(G,f,x)``(V) = {v\<ra>x. v\<in>V}"
+proof -
+  from assms have "RightTranslation(G,f,x)``(V) = {f`\<langle>v,x\<rangle>. v\<in>V}"
+    using group0_valid_in_tgroup group0.rtrans_image by blast
+  thus ?thesis by simp
+qed
+
+text\<open> A corollary from \<open>interval_add\<close> \<close>
+
+corollary (in topgroup) elements_in_set_sum: assumes "A\<subseteq>G" "B\<subseteq>G"
+  "t \<in> A\<sad>B" shows "\<exists>s\<in>A. \<exists>q\<in>B. t=s\<ra>q"
+  using assms interval_add(4) by auto 
+
+text\<open> A corollary from \<open>ltrans_image_add\<close> \<close> 
+
+corollary (in topgroup) elements_in_ltrans: 
   assumes "B\<subseteq>G" "g\<in>G" "t \<in> g\<ltr>B" 
   shows "\<exists>q\<in>B. t=g\<ra>q"
-proof -
-  from assms(1,2) have "LeftTranslation(G,f,g)``(B) = {LeftTranslation(G,f,g)`(q). q\<in>B}"
-    using group0_valid_in_tgroup group0.group0_5_L1(2) func_imagedef by blast
-  with assms show ?thesis using group0.group0_5_L2(2)[OF group0_valid_in_tgroup, of g]
-    by auto 
-qed
+  using assms ltrans_image_add by simp 
 
-lemma (in topgroup) elements_in_rtrans: assumes "B\<subseteq>G" "g\<in>G"
-  "t \<in> B\<rtr>g" shows "\<exists>q\<in>B. t=q\<ra>g"
-proof -
-  from assms(1,2) have "RightTranslation(G,f,g)``(B) = {RightTranslation(G,f,g)`(q). q\<in>B}"
-    using group0_valid_in_tgroup group0.group0_5_L1(1) func_imagedef by blast
-  with assms show ?thesis using group0.group0_5_L2(1)[OF group0_valid_in_tgroup, of g] 
-    by auto
-qed
+text\<open> A corollary from \<open>rtrans_image_add\<close> \<close>
 
-lemma (in topgroup) elements_in_set_sum_inv: assumes "A\<subseteq>G" "B\<subseteq>G" "t=s\<ra>q" "s\<in>A" "q\<in>B"
+corollary (in topgroup) elements_in_rtrans: 
+  assumes "B\<subseteq>G" "g\<in>G"  "t \<in> B\<rtr>g" shows "\<exists>q\<in>B. t=q\<ra>g"
+  using assms rtrans_image_add by simp
+
+text\<open>Another corollary from \<open>interval_add\<close> \<close>
+
+corollary (in topgroup) elements_in_set_sum_inv: 
+  assumes "A\<subseteq>G" "B\<subseteq>G" "t=s\<ra>q" "s\<in>A" "q\<in>B"
   shows "t \<in> A\<sad>B"
-proof -
-  from assms(3-5) have "t \<in> {f`q. q\<in> A\<times>B}" by auto moreover
-  from assms(1,2) have "A\<times>B\<subseteq>G\<times>G" by auto ultimately
-  have "t \<in> f``(A\<times>B)" using func_imagedef[OF topgroup_f_binop, of "A\<times>B"] by auto
-  with assms(1,2) show ?thesis using interval_add(2) by auto
-qed
+  using assms interval_add by auto 
 
-lemma (in topgroup) elements_in_ltrans_inv: assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=g\<ra>q"
+text\<open>Another corollary of \<open>ltrans_image_add\<close> \<close>
+
+corollary (in topgroup) elements_in_ltrans_inv: assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=g\<ra>q"
   shows "t \<in> g\<ltr>B"
-proof -
-  from assms(1,2) have I:"LeftTranslation(G,f,g)``(B) = {LeftTranslation(G,f,g)`(q). q\<in>B}"
-    using group0_valid_in_tgroup group0.group0_5_L1(2) func_imagedef by blast
-  from assms have "LeftTranslation(G,f,g)`(q) = f`\<langle>g,q\<rangle>"
-    using group0_valid_in_tgroup group0.group0_5_L2(2) by blast     
-  with assms(4) have "t=LeftTranslation(G,f,g)`(q)" by simp 
-  with assms(1,2,3) I show ?thesis by auto 
-qed
+  using assms ltrans_image_add by auto 
 
-lemma (in topgroup) elements_in_rtrans_inv: assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=q\<ra>g"
+text\<open>Another corollary of \<open>rtrans_image_add\<close> \<close>
+
+lemma (in topgroup) elements_in_rtrans_inv:
+  assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=q\<ra>g"
   shows "t \<in> B\<rtr>g"
-proof -
-  from assms(1,2) have I:"RightTranslation(G,f,g)``(B) = {RightTranslation(G,f,g)`(q). q\<in>B}"
-    using group0_valid_in_tgroup group0.group0_5_L1(1) func_imagedef by blast
-  from assms have "RightTranslation(G,f,g)`(q) = f`\<langle>q,g\<rangle>"
-    using group0_valid_in_tgroup group0.group0_5_L2(1) by blast     
-  with assms(4) have "t=RightTranslation(G,f,g)`(q)" by simp 
-  with assms(1,2,3) I show ?thesis by auto 
-qed
+  using assms rtrans_image_add by auto 
 
 text\<open>Right and left translations are continuous.\<close>
 
@@ -348,7 +350,7 @@ lemma (in topgroup) tr_homeo: assumes "g\<in>G" shows
   using assms group0_valid_in_tgroup group0.trans_bij trans_cont open_tr_open
     bij_cont_open_homeo by auto
 
-text\<open>Translations preserve interior.\<close>
+text\<open>Left translations preserve interior.\<close>
 
 lemma (in topgroup) trans_interior: assumes A1: "g\<in>G" and A2: "A\<subseteq>G" 
   shows "g \<ltr> int(A) = int(g\<ltr>A)"
@@ -358,6 +360,8 @@ proof -
   then show ?thesis using int_top_invariant by simp
 qed
 
+text\<open>Right translations preserve interior.\<close>
+
 lemma (in topgroup) trans_interior_2: assumes A1: "g\<in>G" and A2: "A\<subseteq>G" 
   shows "int(A) \<rtr> g = int(A\<rtr>g)"
 proof -
@@ -366,13 +370,12 @@ proof -
   then show ?thesis using int_top_invariant by simp
 qed
 
-(*
-text{*Translating by an inverse and then by an element cancels out.*}
+text\<open>Translating by an inverse and then by an element cancels out.\<close>
 
 lemma (in topgroup) trans_inverse_elem: assumes "g\<in>G" and "A\<subseteq>G"
   shows "g\<ltr>((\<rm>g)\<ltr>A) = A"
 using assms neg_in_tgroup group0_valid_in_tgroup group0.trans_comp_image
-  group0.group0_2_L6 group0.trans_neutral image_id_same by simp*)
+  group0.group0_2_L6 group0.trans_neutral image_id_same by simp
 
 text\<open>Inverse of an open set is open.\<close>
 
@@ -396,7 +399,7 @@ subsection\<open>Neighborhoods of zero\<close>
 
 text\<open>Zero neighborhoods are (not necessarily open) sets whose interior
   contains the neutral element of the group. In the \<open>topgroup\<close> locale
-  the collection of neighboorhoods of zero is denoted \<open>\<N>\<^sub>0\<close>.\<close>
+  the collection of neighboorhoods of zero is denoted \<open>\<N>\<^sub>0\<close>. \<close>
 
 text\<open>The whole space is a neighborhood of zero.\<close>
 
@@ -405,7 +408,7 @@ lemma (in topgroup) zneigh_not_empty: shows "G \<in> \<N>\<^sub>0"
   by simp
 
 text\<open>Any element belongs to the interior of any neighboorhood of zero
-  translated by that element.\<close>
+  left translated by that element.\<close>
 
 lemma (in topgroup) elem_in_int_trans:
   assumes A1: "g\<in>G" and A2: "H \<in> \<N>\<^sub>0"
@@ -416,6 +419,9 @@ proof -
     using group0_valid_in_tgroup group0.neut_trans_elem by simp
   with assms show ?thesis using trans_interior by simp
 qed
+
+text\<open>Any element belongs to the interior of any neighboorhood of zero
+  right translated by that element.\<close>
 
 lemma (in topgroup) elem_in_int_trans_2:
   assumes A1: "g\<in>G" and A2: "H \<in> \<N>\<^sub>0"
@@ -441,7 +447,7 @@ proof -
   ultimately show ?thesis by simp
 qed
 
-text\<open>Translating an open set by a negative of a point that belongs to it
+text\<open>Left translating an open set by a negative of a point that belongs to it
   makes it a neighboorhood of zero.\<close>
 
 lemma (in topgroup) open_trans_neigh: assumes A1: "U\<in>T" and "g\<in>U"
@@ -461,6 +467,9 @@ proof -
   qed
   ultimately show ?thesis by simp
 qed
+
+text\<open>Right translating an open set by a negative of a point that belongs to it
+  makes it a neighboorhood of zero.\<close>
 
 lemma (in topgroup) open_trans_neigh_2: assumes A1: "U\<in>T" and "g\<in>U"
   shows "U\<rtr>(\<rm>g) \<in> \<N>\<^sub>0"
@@ -513,7 +522,7 @@ proof
   with \<open>?V = x \<ltr> (\<sm>int(H))\<close> \<open>int(H) \<subseteq> G\<close> \<open>x\<in>G\<close> have "x \<in> y\<ltr>int(H)"
     using group0_valid_in_tgroup group0.ltrans_inv_in by simp
   with \<open>y\<in>A\<close> have "x \<in> (\<Union>y\<in>A. y\<ltr>H)" using Top_2_L1 func1_1_L8 by auto
-  with assms show "x \<in> A\<sad>H" using interval_add by simp
+  with assms show "x \<in> A\<sad>H" using interval_add(3) by simp
 qed
 
 text\<open>The next theorem provides a characterization of closure in topological
@@ -536,7 +545,7 @@ next
           using open_trans_neigh neg_neigh_neigh by auto
         with \<open>x \<in> (\<Inter>H\<in>\<N>\<^sub>0. A\<sad>H)\<close> have "x \<in> A\<sad>?H" by auto
         with assms \<open>?H \<in> \<N>\<^sub>0\<close> obtain y where "y\<in>A" and "x \<in> y\<ltr>?H"
-          using interval_add by auto
+          using interval_add(3) by auto
         have "y\<in>U"
         proof -
           from assms \<open>y\<in>A\<close> have "y\<in>G" by auto
