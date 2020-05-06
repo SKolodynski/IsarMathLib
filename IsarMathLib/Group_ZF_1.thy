@@ -285,7 +285,7 @@ next
   ultimately show "?T = ?F" by (rule func_eq)
 qed
 
-text\<open>A lemma about translating sets.\<close>
+text\<open>A lemma demonstrating what is the left translation of a set\<close>
 
 lemma (in group0) ltrans_image: assumes A1: "V\<subseteq>G" and A2: "x\<in>G"
   shows "LeftTranslation(G,P,x)``(V) = {x\<cdot>v. v\<in>V}"
@@ -296,6 +296,8 @@ proof -
     using group0_5_L2 by auto
   ultimately show ?thesis by auto
 qed
+
+text\<open>A lemma demonstrating what is the right translation of a set\<close>
 
 lemma (in group0) rtrans_image: assumes A1: "V\<subseteq>G" and A2: "x\<in>G"
   shows "RightTranslation(G,P,x)``(V) = {v\<cdot>x. v\<in>V}"
@@ -334,7 +336,7 @@ proof -
 qed
 
 text\<open>We can look at the result of interval arithmetic operation as union of
-  translated sets.\<close>
+  left translated sets.\<close>
 
 lemma (in group0) image_ltrans_union: assumes "A\<subseteq>G" "B\<subseteq>G" shows
   "(P {lifted to subsets of} G)`\<langle>A,B\<rangle> = (\<Union>a\<in>A.  LeftTranslation(G,P,a)``(B))"
@@ -358,6 +360,33 @@ proof
     ultimately obtain b where "b\<in>B" and "c = a\<cdot>b" by auto
     with I \<open>a\<in>A\<close> have "c \<in> (P {lifted to subsets of} G)`\<langle>A,B\<rangle>" by auto
   } thus "(\<Union>a\<in>A. LeftTranslation(G,P,a)``(B)) \<subseteq> (P {lifted to subsets of} G)`\<langle>A,B\<rangle>"
+    by auto
+qed
+
+text\<open> The right translation version of \<open>image_ltrans_union\<close> The proof follows the same schema.\<close>
+
+lemma (in group0) image_rtrans_union: assumes "A\<subseteq>G" "B\<subseteq>G" shows
+  "(P {lifted to subsets of} G)`\<langle>A,B\<rangle> = (\<Union>b\<in>B.  RightTranslation(G,P,b)``(A))"
+proof
+  from assms have I: "(P {lifted to subsets of} G)`\<langle>A,B\<rangle> = {a\<cdot>b . \<langle>a,b\<rangle> \<in> A\<times>B}"
+    using group_oper_assocA lift_subsets_explained by simp
+  { fix c assume "c \<in> (P {lifted to subsets of} G)`\<langle>A,B\<rangle>"
+    with I obtain a b where "c = a\<cdot>b" and "a\<in>A"  "b\<in>B" by auto
+    hence "c \<in> {a\<cdot>b. a\<in>A}" by auto
+    moreover from assms \<open>b\<in>B\<close> have 
+      "RightTranslation(G,P,b)``(A) = {a\<cdot>b. a\<in>A}" using rtrans_image by auto
+    ultimately have "c \<in> RightTranslation(G,P,b)``(A)" by simp
+    with \<open>b\<in>B\<close> have "c \<in> (\<Union>b\<in>B.  RightTranslation(G,P,b)``(A))" by auto
+  } thus "(P {lifted to subsets of} G)`\<langle>A,B\<rangle> \<subseteq> (\<Union>b\<in>B.  RightTranslation(G,P,b)``(A))"
+    by auto
+  { fix c assume "c \<in> (\<Union>b\<in>B.  RightTranslation(G,P,b)``(A))"
+    then obtain b where "b\<in>B" and "c \<in> RightTranslation(G,P,b)``(A)"
+      by auto
+    moreover from assms \<open>b\<in>B\<close> have "RightTranslation(G,P,b)``(A) = {a\<cdot>b. a\<in>A}"
+      using rtrans_image by auto
+    ultimately obtain a where "a\<in>A" and "c = a\<cdot>b" by auto
+    with I \<open>b\<in>B\<close> have "c \<in> (P {lifted to subsets of} G)`\<langle>A,B\<rangle>" by auto
+  } thus "(\<Union>b\<in>B. RightTranslation(G,P,b)``(A)) \<subseteq> (P {lifted to subsets of} G)`\<langle>A,B\<rangle>"
     by auto
 qed
 

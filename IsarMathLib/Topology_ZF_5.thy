@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Topology 5\<close>
 
-theory Topology_ZF_5 imports Topology_ZF_examples Topology_ZF_properties func1 Topology_ZF_examples_1 Topology_ZF_4
+theory Topology_ZF_5 imports Topology_ZF_properties Topology_ZF_examples_1 Topology_ZF_4
 begin
 
 subsection\<open>Some results for separation axioms\<close>

@@ -40,14 +40,16 @@ subsection\<open>New ideas using a base for a topology\<close>
 
 subsection\<open>The topology of a base\<close>
 
-text\<open>Given a family of subsets satisfiying the base condition,
- it is posible to construct
-a topology where that family is a base. Even more,
-it is the only topology with such characteristics.\<close>
+text\<open>Given a family of subsets satisfying the base condition,
+  it is possible to construct a topology where that family is a base of. Even more,
+  it is the only topology with such characteristics.\<close>
 
 definition 
   TopologyWithBase ("TopologyBase _ " 50) where
   "U {satisfies the base condition} \<Longrightarrow> TopologyBase U \<equiv> THE T. U {is a base for} T"
+
+text\<open> If a collection $U$ of sets satisfies the base condition then the topology
+  constructed from it is indeed a topology and $U$ is a base for this topology. \<close>
 
 theorem Base_topology_is_a_topology:
   assumes "U {satisfies the base condition}"
@@ -90,56 +92,51 @@ proof-
   then show "B{is a base for}T \<longleftrightarrow> (B-{0}){is a base for}T" using IsAbaseFor_def by auto
 qed
 
-text\<open>The interior of a set is the union of
-all the sets of the base which are fully
-contained by it.\<close>
+text\<open>The interior of a set is the union of all the sets of the base which are fully
+  contained by it.\<close>
 
 lemma interior_set_base_topology:
-  assumes "U {is a base for} T""T{is a topology}"
-  shows "Interior(A,T)=\<Union>{T\<in>U. T\<subseteq>A}"
+  assumes "U {is a base for} T" "T{is a topology}"
+  shows "Interior(A,T) = \<Union>{T\<in>U. T\<subseteq>A}"
 proof
   have "{T\<in>U. T\<subseteq>A}\<subseteq>U" by auto
   with assms(1) have "\<Union>{T\<in>U. T\<subseteq>A}\<in>T"
     using IsAbaseFor_def by auto
-  moreover
-  have "\<Union>{T\<in>U. T\<subseteq>A}\<subseteq>A" by blast
-  with calculation assms(2) show "\<Union>{T\<in>U. T\<subseteq>A}\<subseteq>Interior(A,T)"
-    using topology0.Top_2_L5 topology0_def by auto
+  moreover have "\<Union>{T\<in>U. T\<subseteq>A} \<subseteq> A" by blast
+  ultimately show  "\<Union>{T\<in>U. T\<subseteq>A} \<subseteq> Interior(A,T)"
+    using assms(2) topology0.Top_2_L5 topology0_def by auto
   {
     fix x
-    assume "x\<in>Interior(A,T)"
-    with assms obtain V where "V\<in>U""V\<subseteq>Interior(A,T)""x\<in>V"
-      using point_open_base_neigh
-      topology0.Top_2_L2 topology0_def by blast
-    with assms have "V\<in>U""x\<in>V""V\<subseteq>A" using topology0.Top_2_L1 topology0_def
-      by(safe,blast)
-    hence "x\<in>\<Union>{T\<in>U. T\<subseteq>A}" by auto
+    assume "x \<in> Interior(A,T)"
+    with assms obtain V where "V\<in>U" "V \<subseteq> Interior(A,T)" "x\<in>V"
+      using point_open_base_neigh topology0.Top_2_L2 topology0_def 
+      by blast
+    with assms have "V\<in>U" "x\<in>V" "V\<subseteq>A" using topology0.Top_2_L1 topology0_def
+      by auto  
+    hence "x \<in> \<Union>{T\<in>U. T\<subseteq>A}" by auto
   }
   thus "Interior(A, T) \<subseteq> \<Union>{T \<in> U . T \<subseteq> A} " by auto
 qed
 
-text\<open>In the following, we offer another lemma
-about the closure of a set given a basis for a topology.
-This lemma is based on \<open>cl_inter_neigh\<close> and \<open>inter_neigh_cl\<close>. It states that it is only necessary to
-check the sets of the base, not all the open sets.\<close>
+text\<open>In the following, we offer another lemma about the closure of a set 
+  given a basis for a topology. This lemma is based on \<open>cl_inter_neigh\<close> and \<open>inter_neigh_cl\<close>. 
+  It states that it is only necessary to check the sets of the base, not all the open sets.\<close>
 
 lemma closure_set_base_topology:
-  assumes "U {is a base for} Q""Q{is a topology}""A\<subseteq>\<Union>Q"
-  shows "Closure(A,Q)={x\<in>\<Union>Q. \<forall>T\<in>U. x\<in>T\<longrightarrow>A\<inter>T\<noteq>0}"
+  assumes "U {is a base for} Q" "Q{is a topology}" "A\<subseteq>\<Union>Q"
+  shows "Closure(A,Q) = {x\<in>\<Union>Q. \<forall>T\<in>U. x\<in>T\<longrightarrow>A\<inter>T\<noteq>0}"
 proof
   {
     fix x
     assume A:"x\<in>Closure(A,Q)"
     with assms(2,3) have B:"x\<in>\<Union>Q" using topology0_def topology0.Top_3_L11(1)
-    by blast
+      by blast
     moreover
     {
       fix T
-      assume "T\<in>U""x\<in>T"
-      with assms(1) have "T\<in>Q""x\<in>T" using base_sets_open
-        by auto
-      with assms(2,3) A have "A\<inter>T\<noteq>0" using topology0_def
-        topology0.cl_inter_neigh[where U="T" and T="Q" and A="A"]
+      assume "T\<in>U" "x\<in>T"
+      with assms(1) have "T\<in>Q""x\<in>T" using base_sets_open by auto
+      with assms(2,3) A have "A\<inter>T \<noteq> 0" using topology0_def topology0.cl_inter_neigh
         by auto
     }
     hence "\<forall>T\<in>U. x\<in>T\<longrightarrow>A\<inter>T\<noteq>0" by auto
@@ -155,7 +152,7 @@ proof
     {
       fix R
       assume "R\<in>Q"                     
-      with assms(1) obtain W where RR:"W\<subseteq>U""R=\<Union>W" using
+      with assms(1) obtain W where RR:"W\<subseteq>U" "R=\<Union>W" using
         IsAbaseFor_def by auto
       {
         assume "x\<in>R"
@@ -163,7 +160,7 @@ proof
         {
           assume "R\<inter>A=0"
           with RR(2) TT(1) have "WW\<inter>A=0"  by auto
-           with TT(1) RR(1) have "WW\<in>U""WW\<inter>A=0" by auto
+           with TT(1) RR(1) have "WW\<in>U" "WW\<inter>A=0" by auto
           with AS have "x\<in>\<Union>Q-WW" by auto
           with TT(2) have "False" by auto
         }
@@ -171,46 +168,46 @@ proof
       }
     }
     hence "\<forall>U\<in>Q. x\<in>U \<longrightarrow> U\<inter>A\<noteq>0" by auto
-    with calculation assms(2,3) have "x\<in>Closure(A,Q)" using topology0_def
-      topology0.inter_neigh_cl by auto
+    ultimately have "x\<in>Closure(A,Q)" using assms(2,3) topology0_def topology0.inter_neigh_cl 
+      by auto
   }
-  then show "{x \<in> \<Union>Q . \<forall>T\<in>U. x \<in> T \<longrightarrow> A \<inter> T \<noteq> 0}\<subseteq>Closure(A,Q)"
+  then show "{x \<in> \<Union>Q . \<forall>T\<in>U. x \<in> T \<longrightarrow> A \<inter> T \<noteq> 0} \<subseteq> Closure(A,Q)"
     by auto
 qed
 
 text\<open>The restriction of a base is a base for the restriction.\<close>
 
 lemma subspace_base_topology:
-  assumes "B{is a base for}T"
-  shows "(B{restricted to}Y){is a base for}(T{restricted to}Y)"
-proof-
-  {
-    fix t
-    assume "t\<in>RepFun({\<Union>A . A \<in> Pow(B)}, (\<inter>)(Y))"
-    then obtain x where A:"t=Y\<inter>x""x\<in>{\<Union>A . A \<in> Pow(B)}" by auto
-    then obtain A where B:"x=\<Union>A""A\<in>Pow(B)" by auto
-    from A(1) B(1) have "t=\<Union>(A {restricted to} Y)" using RestrictedTo_def
+  assumes "B {is a base for} T"
+  shows "(B {restricted to} Y) {is a base for} (T {restricted to} Y)"
+proof -
+  from assms have "(B {restricted to} Y) \<subseteq> (T {restricted to} Y)"
+    unfolding IsAbaseFor_def RestrictedTo_def by auto 
+  moreover have "(T {restricted to} Y) = {\<Union>A. A \<in> Pow(B {restricted to} Y)}"
+  proof
+    { fix U assume "U \<in> (T {restricted to} Y)"
+      then obtain W where "W\<in>T" and "U = W\<inter>Y" unfolding RestrictedTo_def by blast
+      with assms obtain C where "C\<in>Pow(B)" and "W=\<Union>C" unfolding IsAbaseFor_def
+        by blast
+      let ?A="{V\<inter>Y. V\<in>C}"
+      from \<open>C\<in>Pow(B)\<close> \<open>U = W\<inter>Y\<close> \<open>W=\<Union>C\<close> have 
+        "?A \<in> Pow(B {restricted to} Y)" and "U=(\<Union>?A)" 
+        unfolding RestrictedTo_def by auto 
+      hence "U \<in> {\<Union>A. A \<in> Pow(B {restricted to} Y)}" by blast 
+    } thus "(T {restricted to} Y) \<subseteq> {\<Union>A. A \<in> Pow(B {restricted to} Y)}"
       by auto
-    with B(2) have "t\<in>{\<Union>A . A \<in> Pow(RepFun(B, (\<inter>)(Y)))}" unfolding RestrictedTo_def
-      by blast
-  }
-  hence "RepFun({\<Union>A . A \<in> Pow(B)}, (\<inter>)(Y)) \<subseteq> {\<Union>A . A \<in> Pow(RepFun(B, (\<inter>)(Y)))}" by(auto+)
-  moreover
-  {
-    fix t
-    assume "t\<in>{\<Union>A . A \<in> Pow(RepFun(B, (\<inter>)(Y)))}"
-    then obtain A where A:"A\<subseteq> B{restricted to}Y""t=\<Union>A" using RestrictedTo_def
-      by auto
-    let ?AA="{C\<in>B. Y\<inter>C\<in>A}"
-    from A(1) have "?AA\<subseteq>B""A=?AA {restricted to}Y" using RestrictedTo_def 
-      by auto
-    with A(2) have "?AA\<subseteq>B""t=\<Union>(?AA {restricted to}Y)" by auto
-    then have "?AA\<subseteq>B""t=Y\<inter>(\<Union>?AA)" using RestrictedTo_def by auto
-    hence "t\<in>RepFun({\<Union>A . A \<in> Pow(B)}, (\<inter>)(Y))" by auto
-  }
-  hence "{\<Union>A . A \<in> Pow(RepFun(B, (\<inter>)(Y)))} \<subseteq> RepFun({\<Union>A . A \<in> Pow(B)}, (\<inter>)(Y)) " by (auto+)
-  ultimately have "{\<Union>A . A \<in> Pow(RepFun(B, (\<inter>)(Y)))} = RepFun({\<Union>A . A \<in> Pow(B)}, (\<inter>)(Y))" by auto
-  with assms show ?thesis using RestrictedTo_def IsAbaseFor_def by auto
+    { fix U assume "U \<in> {\<Union>A. A \<in> Pow(B {restricted to} Y)}"
+      then obtain A where A: "A \<subseteq> (B {restricted to} Y)" and "U = (\<Union>A)" by auto
+      let ?A\<^sub>0="{C\<in>B. Y\<inter>C\<in>A}"
+      from A have "?A\<^sub>0 \<subseteq> B" and "A = ?A\<^sub>0 {restricted to} Y" unfolding RestrictedTo_def
+        by auto 
+      with \<open>U = (\<Union>A)\<close> have "?A\<^sub>0 \<subseteq> B" and "U = \<Union>(?A\<^sub>0 {restricted to} Y)" 
+        by auto
+      with assms have "U \<in> (T {restricted to} Y)" unfolding RestrictedTo_def IsAbaseFor_def
+        by auto
+    } thus "{\<Union>A. A \<in> Pow(B {restricted to} Y)} \<subseteq> (T {restricted to} Y)" by blast 
+  qed
+  ultimately show ?thesis unfolding IsAbaseFor_def by simp 
 qed
 
 text\<open>If the base of a topology is contained in the base of another
@@ -1494,5 +1491,3 @@ theorem same_subbase_same_top:
   by auto
 
 end
-
-
