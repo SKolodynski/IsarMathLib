@@ -36,7 +36,7 @@ pureText :: [String]-> Parser String
 pureText ss = do
     notFollowedBy (choice (map (try . string) ss))
     manyTill anyChar (choice (map (lookAhead . try . string) ss))
-    
+
 
 -- like textBetween, but returns the enclosing delimiters
 enclosedIn :: String -> String -> Parser String
@@ -76,13 +76,13 @@ informalText = do
     spaces
     "\\<open>" `betweenNest` "\\<close>"
 
--- | parses the section line, returns the section title. 
+-- | parses the section line, returns the section title.
 section :: Parser String
 section = do
     string "section"
     spaces
     "\\<open>" `textBetween` "\\<close>"
-    
+
 -- | this parses a word that consists of alphanumeric characters
 -- plus a list of some additional allowed characters given in the
 -- argument, but fails if that word is any of the keywords
@@ -138,7 +138,7 @@ defpreamble = do
    spaces
    ts <- option "" typespec
    spaces
-   spec <- defnotation
+   spec <- option "" defnotation
    spaces
    string "where"
    return (name, c, ts,spec)
@@ -705,8 +705,3 @@ prepTheory :: String -> String
 prepTheory = ( filter (/=';') ) . ( dropWhile (/='s') ). ( appBetween (\x-> []) "(*" "*)" ) . ( ' ': )
 
 -- | test with parseTest theoryParser x
-
-
-
-
-
