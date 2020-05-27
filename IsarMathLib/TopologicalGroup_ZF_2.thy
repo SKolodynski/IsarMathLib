@@ -62,26 +62,24 @@ proof-
       then have "h\<in>G" using subH by auto
       have "b\<in>G" using \<open>b\<in>A\<close>\<open>A\<in>T\<close> by auto
       then have "(\<rm>b)\<in>G" using neg_in_tgroup by auto
-      from prd have "t=f`\<langle>h, GroupInv(G, f) ` (\<rm> b)\<rangle>" using group0.group0_2_L18(1)[OF group0_valid_in_tgroup \<open>t\<in>G\<close>\<open>(\<rm>b)\<in>G\<close>\<open>h\<in>G\<close>]
-        unfolding grinv_def by auto
-      then have "t=f`\<langle>h,b\<rangle>" using group0.group_inv_of_inv[OF group0_valid_in_tgroup \<open>b\<in>G\<close>]
-        unfolding grinv_def by auto
-      then have "\<langle>\<langle>h,b\<rangle>,t\<rangle>\<in>f" using apply_Pair[OF topgroup_f_binop] \<open>h\<in>G\<close>\<open>b\<in>G\<close> by auto moreover
-      from \<open>h\<in>H\<close>\<open>b\<in>A\<close> have "\<langle>h,b\<rangle>\<in>H\<times>A" by auto
+      from prd have "h=t\<ra>(\<rm>b)" by simp
+      with \<open>t\<in>G\<close> \<open>b\<in>G\<close> have "t = h\<ra>b" using inv_cancel_two_add(1) by simp 
+      then have "\<langle>\<langle>h,b\<rangle>,t\<rangle>\<in>f" using apply_Pair[OF topgroup_f_binop] \<open>h\<in>G\<close>\<open>b\<in>G\<close> by auto 
+      moreover from \<open>h\<in>H\<close>\<open>b\<in>A\<close> have "\<langle>h,b\<rangle>\<in>H\<times>A" by auto
       ultimately have "t\<in>f``(H\<times>A)" using image_iff by auto
       with subA subH have "t\<in>H\<sad>A" using interval_add(2) by auto
     }
     then show "({\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``({\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}``A))\<subseteq>H\<sad>A" by force
     {
       fix t assume "t\<in>H\<sad>A"
-      with subA subH have "t\<in>f``(H\<times>A)" using interval_add(2) by auto
-      then obtain ha where "ha\<in>H\<times>A""\<langle>ha,t\<rangle>\<in>f" using image_iff by auto
+      with subA subH have "t \<in> f``(H\<times>A)" using interval_add(2) by auto
+      then obtain ha where "ha\<in>H\<times>A" "\<langle>ha,t\<rangle>\<in>f" using image_iff by auto
       then obtain h aa where "ha=\<langle>h,aa\<rangle>""h\<in>H""aa\<in>A" by auto
       then have "h\<in>G""aa\<in>G" using subH subA by auto
       from \<open>\<langle>ha,t\<rangle>\<in>f\<close> have "t\<in>G" using topgroup_f_binop unfolding Pi_def by auto
-      from \<open>ha=\<langle>h,aa\<rangle>\<close> \<open>\<langle>ha,t\<rangle>\<in>f\<close> have "t=f`\<langle>h,aa\<rangle>" using apply_equality[OF _ topgroup_f_binop] by auto
-      then have "f`\<langle>t,\<rm>aa\<rangle>=h" using group0.group0_2_L18(1)[OF group0_valid_in_tgroup \<open>h\<in>G\<close>\<open>aa\<in>G\<close>\<open>t\<in>G\<close>]
-        by auto
+      from \<open>ha=\<langle>h,aa\<rangle>\<close> \<open>\<langle>ha,t\<rangle>\<in>f\<close> have "t=h\<ra>aa" using apply_equality topgroup_f_binop 
+        by auto 
+      with \<open>h\<in>G\<close> \<open>aa\<in>G\<close> have "t\<ra>(\<rm>aa) = h" using inv_cancel_two_add(2) by simp
       with \<open>h\<in>H\<close>\<open>t\<in>G\<close>\<open>aa\<in>G\<close> have "\<langle>t,aa\<rangle>\<in>r" unfolding r_def QuotientGroupRel_def by auto
       then have "r``{t}=r``{aa}" using eqT equiv_class_eq by auto
       with \<open>aa\<in>G\<close> have "\<langle>aa,r``{t}\<rangle>\<in>{\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}" by auto

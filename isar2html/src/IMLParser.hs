@@ -552,7 +552,7 @@ hencethus :: Parser ConnectedStep
 hencethus = do
    ht <- string "hence" <|> string "thus"
    spaces
-   c <- listLabStatLists
+   c <- (try listLabStatLists) <|> claimfalse
    spaces
    string "by"
    char ' '

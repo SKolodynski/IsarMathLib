@@ -371,6 +371,15 @@ proof -
     "GroupInv(G,P) = converse(GroupInv(G,P))" using comp_id_conv by simp
 qed
 
+text\<open>A set comprehension form of the image of a set under the group inverse. \<close>
+
+lemma (in group0) ginv_image: assumes "V\<subseteq>G" shows "GroupInv(G,P)``(V) = {g\<inverse>. g \<in> V}"  
+proof -
+  from assms have "GroupInv(G,P)``(V) = {GroupInv(G,P)`(g). g\<in>V}" 
+    using groupAssum group0_2_T2 func_imagedef by blast 
+  thus ?thesis by simp
+qed
+
 text\<open>For the group inverse the image is the same as inverse image.\<close>
 
 lemma (in group0) inv_image_vimage: shows "GroupInv(G,P)``(V) = GroupInv(G,P)-``(V)"
@@ -500,7 +509,27 @@ proof -
   finally show "a\<cdot>(b\<cdot>c)\<cdot>c\<inverse> = a\<cdot>b"
     by simp
 qed
-  
+
+text\<open> A simple equation to solve \<close>
+
+lemma (in group0) simple_equation0: 
+  assumes "a\<in>G"  "b\<in>G" "c\<in>G" "a\<cdot>b\<inverse> = c\<inverse>"
+  shows "c = b\<cdot>a\<inverse>" 
+proof - 
+  from assms(4) have "(a\<cdot>b\<inverse>)\<inverse> = (c\<inverse>)\<inverse>" by simp
+  with assms(1,2,3) show "c = b\<cdot>a\<inverse>" using group0_2_L12(1) group_inv_of_inv by simp
+qed
+
+text\<open> Another simple equation \<close>
+
+lemma (in group0) simple_equation1: 
+  assumes "a\<in>G"  "b\<in>G" "c\<in>G" "a\<inverse>\<cdot>b = c\<inverse>"
+  shows "c = b\<inverse>\<cdot>a" 
+proof - 
+  from assms(4) have "(a\<inverse>\<cdot>b)\<inverse> = (c\<inverse>)\<inverse>" by simp
+  with assms(1,2,3) show "c = b\<inverse>\<cdot>a" using group0_2_L12(2) group_inv_of_inv by simp
+qed
+     
 text\<open>Another lemma about rearranging a product of four group
   elements.\<close>
 
@@ -568,7 +597,7 @@ lemma (in group0) group0_2_L17:
 text\<open>We can put an element on the other side of an equation.\<close>
 
 lemma (in group0) group0_2_L18:
-  assumes A1: "a\<in>G"  "b\<in>G"  "c\<in>G"
+  assumes A1: "a\<in>G"  "b\<in>G"
   and A2: "c = a\<cdot>b"
   shows "c\<cdot>b\<inverse> = a"  "a\<inverse>\<cdot>c = b" 
 proof-
@@ -578,6 +607,24 @@ proof-
     using group0_2_L6 group0_2_L2 by auto
   ultimately show "c\<cdot>b\<inverse> = a"  "a\<inverse>\<cdot>c = b" 
     by auto
+qed
+
+text\<open> We can cancel an element on the right from both sides of an equation. \<close>
+
+lemma (in group0) cancel_right: assumes "a\<in>G"  "b\<in>G"  "c\<in>G" "a\<cdot>b = c\<cdot>b"
+  shows "a = c" 
+proof -
+  from assms(4) have "a\<cdot>b\<cdot>b\<inverse> = c\<cdot>b\<cdot>b\<inverse>" by simp
+  with assms(1,2,3) show ?thesis using inv_cancel_two(2) by simp
+qed
+
+text\<open> We can cancel an element on the left from both sides of an equation. \<close>
+
+lemma (in group0) cancel_left: assumes "a\<in>G"  "b\<in>G"  "c\<in>G" "a\<cdot>b = a\<cdot>c"
+  shows "b=c"
+proof -
+  from assms(4) have "a\<inverse>\<cdot>(a\<cdot>b) = a\<inverse>\<cdot>(a\<cdot>c)" by simp
+  with assms(1,2,3) show ?thesis using inv_cancel_two(3) by simp
 qed
 
 text\<open>Multiplying different group elements by the same factor results

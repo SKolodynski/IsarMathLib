@@ -160,6 +160,16 @@ proof -
   thus ?thesis by simp
 qed
 
+text\<open>Sum of two group elements is in the group.\<close>
+
+lemma (in topgroup) group_op_closed_add:  assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"
+  shows "x\<^sub>1\<ra>x\<^sub>2 \<in> G" 
+proof -
+  from assms have "f`\<langle>x\<^sub>1,x\<^sub>2\<rangle> \<in> G" using assms group0_valid_in_tgroup group0.group_op_closed 
+    by blast
+  thus ?thesis by simp
+qed
+
 text\<open>Zero is in the group.\<close>
 
 lemma (in topgroup) zero_in_tgroup: shows "\<zero>\<in>G"
@@ -168,6 +178,93 @@ proof -
     using group0_valid_in_tgroup group0.group0_2_L2 by blast
   then show "\<zero>\<in>G" by simp
 qed
+
+text\<open> Another lemma about canceling with two group elements written in additive notation \<close>
+
+lemma (in topgroup) inv_cancel_two_add: 
+  assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G" 
+  shows 
+    "x\<^sub>1\<ra>(\<rm>x\<^sub>2)\<ra>x\<^sub>2 = x\<^sub>1"
+    "x\<^sub>1\<ra>x\<^sub>2\<ra>(\<rm>x\<^sub>2) = x\<^sub>1"
+    "(\<rm>x\<^sub>1)\<ra>(x\<^sub>1\<ra>x\<^sub>2) = x\<^sub>2"
+    "x\<^sub>1\<ra>((\<rm>x\<^sub>1)\<ra>x\<^sub>2) = x\<^sub>2"
+  using assms group0_valid_in_tgroup group0.inv_cancel_two by auto
+
+text\<open>A useful identity proven in the \<open>Group_ZF\<close> theory, rewritten here in additive notation.
+  Note since the group operation notation is left associative we don't really need the first set
+  of parentheses.\<close>
+
+lemma (in topgroup) cancel_middle: assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G"
+  shows 
+    "(x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3)) = x\<^sub>1\<ra> (\<rm>x\<^sub>3)"
+    "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) = (\<rm>x\<^sub>1)\<ra> x\<^sub>3"
+proof - 
+  from assms have "f`\<langle>x\<^sub>1,GroupInv(G,f)`(x\<^sub>3)\<rangle> = f`\<langle>f`\<langle>x\<^sub>1,GroupInv(G,f)`(x\<^sub>2)\<rangle>,f`\<langle>x\<^sub>2,GroupInv(G,f)`(x\<^sub>3)\<rangle>\<rangle>"
+    using group0_valid_in_tgroup group0.group0_2_L14A(1) by blast
+  thus "(x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3)) = x\<^sub>1\<ra> (\<rm>x\<^sub>3)" by simp 
+  from assms have "f`\<langle>GroupInv(G,f)`(x\<^sub>1),x\<^sub>3\<rangle> = f`\<langle>f`\<langle>GroupInv(G,f)`(x\<^sub>1),x\<^sub>2\<rangle>,f`\<langle>GroupInv(G,f)`(x\<^sub>2),x\<^sub>3\<rangle>\<rangle>"
+    using group0_valid_in_tgroup group0.group0_2_L14A(2) by blast
+  thus "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) = (\<rm>x\<^sub>1)\<ra> x\<^sub>3" by simp
+qed
+
+text\<open> We can cancel an element on the right from both sides of an equation. \<close>
+
+lemma (in topgroup) cancel_right_add: 
+  assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G" "x\<^sub>1\<ra>x\<^sub>2 = x\<^sub>3\<ra>x\<^sub>2" 
+  shows "x\<^sub>1 = x\<^sub>3"
+proof -
+  from assms(4) have "f`\<langle>x\<^sub>1,x\<^sub>2\<rangle> = f`\<langle>x\<^sub>3,x\<^sub>2\<rangle>" by simp 
+  with assms(1,2,3) show "x\<^sub>1 = x\<^sub>3" using group0_valid_in_tgroup group0.cancel_right
+    by blast 
+qed 
+
+text\<open> We can cancel an element on the left from both sides of an equation. \<close>
+
+lemma (in topgroup) cancel_left_add: 
+  assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G" "x\<^sub>1\<ra>x\<^sub>2 = x\<^sub>1\<ra>x\<^sub>3" 
+  shows "x\<^sub>2 = x\<^sub>3"
+proof -
+  from assms(4) have "f`\<langle>x\<^sub>1,x\<^sub>2\<rangle> = f`\<langle>x\<^sub>1,x\<^sub>3\<rangle>" by simp 
+  with assms(1,2,3) show "x\<^sub>2 = x\<^sub>3" using group0_valid_in_tgroup group0.cancel_left
+    by blast 
+qed 
+
+text\<open>We can put an element on the other side of an equation.\<close>
+
+lemma (in topgroup) put_on_the_other_side: 
+  assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G" "x\<^sub>3 = x\<^sub>1\<ra>x\<^sub>2"
+  shows "x\<^sub>3\<ra>(\<rm>x\<^sub>2) = x\<^sub>1" and "(\<rm>x\<^sub>1)\<ra>x\<^sub>3 = x\<^sub>2" 
+  using assms group0_valid_in_tgroup group0.group0_2_L18 by auto 
+
+text\<open>A simple equation from lemma \<open>simple_equation0\<close> in \<open>Group_ZF\<close> in additive notation \<close>
+
+lemma (in topgroup) simple_equation0_add: 
+  assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G" "x\<^sub>1\<ra>(\<rm>x\<^sub>2) = (\<rm>x\<^sub>3)"
+  shows "x\<^sub>3 = x\<^sub>2 \<ra> (\<rm>x\<^sub>1)"
+proof -
+  from assms(4) have "f`\<langle>x\<^sub>1,GroupInv(G,f)`(x\<^sub>2)\<rangle> = GroupInv(G,f)`(x\<^sub>3)" by simp 
+  with assms(1,2,3) have "x\<^sub>3 = f`\<langle>x\<^sub>2,GroupInv(G,f)`(x\<^sub>1)\<rangle>" 
+    using group0_valid_in_tgroup group0.simple_equation0 by blast
+  thus ?thesis by simp
+qed
+
+text\<open>A simple equation from lemma \<open>simple_equation1\<close> in \<open>Group_ZF\<close> in additive notation \<close>
+
+lemma (in topgroup) simple_equation1_add: 
+  assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G" "(\<rm>x\<^sub>1)\<ra>x\<^sub>2 = (\<rm>x\<^sub>3)"
+  shows "x\<^sub>3 = (\<rm>x\<^sub>2) \<ra> x\<^sub>1"
+proof -
+  from assms(4) have "f`\<langle>GroupInv(G,f)`(x\<^sub>1),x\<^sub>2\<rangle> = GroupInv(G,f)`(x\<^sub>3)" by simp 
+  with assms(1,2,3) have "x\<^sub>3 = f`\<langle>GroupInv(G,f)`(x\<^sub>2),x\<^sub>1\<rangle>" 
+    using group0_valid_in_tgroup group0.simple_equation1 by blast
+  thus ?thesis by simp
+qed
+
+text\<open>The set comprehension form of negative of a set. The proof uses the \<open>ginv_image\<close> lemma from 
+  \<open>Group_ZF\<close> theory which states the same thing in multiplicative notation. \<close>
+
+lemma (in topgroup) ginv_image_add: assumes "V\<subseteq>G" shows "(\<sm>V) = {\<rm>x. x \<in> V}"
+  using assms group0_valid_in_tgroup group0.ginv_image by simp 
 
 text\<open>Of course the product topology is a topology (on $G\times G$).\<close>
 
@@ -269,7 +366,7 @@ qed
 text\<open> The \<open>ltrans_image\<close> lemma from \<open>Topology_ZF_1\<close> written in additive notation \<close>
 
 lemma (in topgroup) ltrans_image_add: assumes "V\<subseteq>G" "x\<in>G"
-  shows "LeftTranslation(G,f,x)``(V) = {x\<ra>v. v\<in>V}"
+  shows "x\<ltr>V = {x\<ra>v. v\<in>V}"
 proof -
   from assms have "LeftTranslation(G,f,x)``(V) = {f`\<langle>x,v\<rangle>. v\<in>V}"
     using group0_valid_in_tgroup group0.ltrans_image by blast
@@ -279,7 +376,7 @@ qed
 text\<open> The \<open>rtrans_image\<close> lemma from \<open>Topology_ZF_1\<close> written in additive notation \<close>
 
 lemma (in topgroup) rtrans_image_add: assumes "V\<subseteq>G" "x\<in>G"
-  shows "RightTranslation(G,f,x)``(V) = {v\<ra>x. v\<in>V}"
+  shows "V\<rtr>x = {v\<ra>x. v\<in>V}"
 proof -
   from assms have "RightTranslation(G,f,x)``(V) = {f`\<langle>v,x\<rangle>. v\<in>V}"
     using group0_valid_in_tgroup group0.rtrans_image by blast
@@ -583,8 +680,7 @@ proof -
 qed
 
 text\<open>In this context \<open>x\<ra>y\<close> is the same as the value of the group operation
-  on the elements $x$ and $y$. Normally we shouldn't need to state this a s separate lemma.
-\<close>
+  on the elements $x$ and $y$. Normally we shouldn't need to state this a s separate lemma.\<close>
 
 lemma (in topgroup) grop_def1: shows "f`\<langle>x,y\<rangle> = x\<ra>y" by simp 
 
