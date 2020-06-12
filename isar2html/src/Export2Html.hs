@@ -114,7 +114,7 @@ refdiv id content = "<div id=\"" ++ id ++ "\"class=\"refhint\">" ++
 
 -- | exports a simplified form of a premise
 exportPremiseSimple :: [(String,String)] -> PropPremise -> String
-exportPremiseSimple repls (PropDefines defs) = 
+exportPremiseSimple repls (PropDefines defs) =
     (bf "defines ") ++ (exportSimpleClaims repls defs) ++ "\n"
 exportPremiseSimple repls (PropAssumes prms) =
     (bf "assumes ") ++ (exportSimpleClaims repls prms) ++ "\n"
@@ -146,7 +146,8 @@ createRefDiv mfii nm =
    else ""
      where
         nmAfterDot = reverse $ takeWhile (/='.') $ reverse nm
-        lookres = (M.lookup nmAfterDot) mfii
+        lookupNm = takeWhile ( \x -> x/='(' ) nmAfterDot
+        lookres = (M.lookup lookupNm) mfii
 
 -- | takes the template and the database of theorems and renders to html
 exportTheories :: String -> KnowledgeBase -> [(String,String)]
@@ -369,13 +370,18 @@ exportClaimProof repls mfii cp =
 
 -- | takes the map of formal items and a name of theorem,
 -- returns a div that can be clicked on to show the hint
+-- only the part of the referenced theorem name that is after the last dot
+-- but before an opening parenthesis is taken
+-- e.g. if the referenced theorem name is topology0.lemma53(1)m then
+-- we look for lemma53 in the first argument
 getRefSlider :: M.Map String String -> String -> String
 getRefSlider mfii nm = if isJust lookres then
                           ( "<span id=\"hintref\">" ++ nmAfterDot ++ "</span>" )
                        else nm
                           where
                              nmAfterDot = reverse $ takeWhile (/='.') $ reverse nm
-                             lookres = (M.lookup nmAfterDot) mfii
+                             lookupNm = takeWhile ( \x -> x/='(' ) nmAfterDot
+                             lookres = (M.lookup lookupNm) mfii
 
 
 -- | create a lookup table of descriptions of referenced theorems
@@ -405,7 +411,7 @@ uniquefy id htmlstring = st ++
       sti = foldr incrcount ("",0) htmlstring
       st = fst sti
       count = snd sti
-      incrcount c (s,i) = 
+      incrcount c (s,i) =
          if id `isPrefixOf` ns then (id ++ (show i) ++ (drop (length id) ns), i+1)
          else (ns,i)
             where ns = c:s
@@ -413,5 +419,3 @@ uniquefy id htmlstring = st ++
 -- composes some number of uniquefy fo a list of id strings
 uniquefyids :: [String] -> String -> String
 uniquefyids ids = foldr1 (.) (map uniquefy ids)
-
-

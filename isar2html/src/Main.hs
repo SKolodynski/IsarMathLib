@@ -43,9 +43,3 @@ extractTheoryName = (++ ".thy")
 -- | removes comments - the text between (* and *)
 remComments :: String -> String
 remComments = tail . (appBetween (\s -> "") "(*" "*)") . (' ':)
-
-
-
-
-
-
