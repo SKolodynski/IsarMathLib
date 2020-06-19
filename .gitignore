@@ -1,0 +1,15 @@
+# proof document and outline
+IsarMathLib/output/
+
+# binaries produced by GHC
+isar2html/dist/
+
+# generated part of isarmathlib site
+isar2html/isarhtml/*.html
+#except the index file
+!isar2html/isarhtml/index.html
+
+# handy link to isar2html executable
+isar2html/ih
+
+

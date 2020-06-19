@@ -163,6 +163,8 @@ inner2LatexSym = [("<", " \\lt ")
                  ,("surj(","\\text{surj}(")
                  ,(" then ","\\text{ then }")
                  ,(" else ","\\text{ else }")
+                 ,("leftUniformity","\\text{ leftUniformity }")
+                 ,("rightUniformity","\\text{ rightUniformity }")
                  ,("trans(","\\text{trans}(")
                  ,("Neigh","\\text{Neigh}")
                  ,("Net(","\\text{Net}(")
@@ -232,4 +234,3 @@ convPredicate n sp =
 -- | converts a definition name to a pair that can be used for replacements
 def2replPair :: String -> (String,String)
 def2replPair s = (s++['(']," \\text{" ++ s ++ "}(")
-

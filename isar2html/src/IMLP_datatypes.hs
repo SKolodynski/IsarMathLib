@@ -38,13 +38,13 @@ data TheoryInfo =
    TheoryInfo { tiname   :: String -- redundant, but useful
               , titheory :: Theory -- parsed theory
               , tideps   :: [String] -- a list of all dependencies in theory
-              }
+              } deriving (Eq, Show)
 
 -- | useful data extracted from all theories
 data KnowledgeBase =
    KnowledgeBase { kbformalitems :: [FormalItemInfo] -- common for all theories
                  , kbtheories :: [TheoryInfo] -- a list of information about theories
-                 }
+                 } deriving (Eq, Show)
 
 -- | a structure for a section
 data Subsection =
@@ -183,14 +183,3 @@ data ProofStep =  LongReasoning Reasoning [MoreoverBody] -- maybe short as the l
                | LetStep String String
                | Next
                deriving (Eq, Show)
-
-
-
-
-
-
-
-
-
-
-
