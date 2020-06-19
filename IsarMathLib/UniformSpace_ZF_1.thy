@@ -111,8 +111,8 @@ proof(safe)
     then obtain V where V:"U = V``{xa}" "V:\<Gamma>" by auto
     from V(2) have ent:"(ProdFunction(f,f)-``V)\<in>\<Phi>" using assms(4) unfolding IsUniformlyCont_def[OF assms(1-3)] by auto
     have "!!t. t: (ProdFunction(f,f)-``V)``{x} <-> \<langle>x,t\<rangle>: ProdFunction(f,f)-``V" using image_def by auto
-    with x have "!!t. t: (ProdFunction(f,f)-``V)``{x} <-> (t:X \<and> ProdFunction(f,f)`\<langle>x,t\<rangle>: V)" using func1_1_L15[OF prodFunction[OF assms(1) assms(1)]]
-      by auto
+    with x have "!!t. t: (ProdFunction(f,f)-``V)``{x} <-> (t:X \<and> ProdFunction(f,f)`\<langle>x,t\<rangle>: V)" using 
+      func1_1_L15[OF prodFunction[OF assms(1) assms(1)]] by auto
     with x have R:"!!t. t: (ProdFunction(f,f)-``V)``{x} <-> (t:X \<and> \<langle>f`x,f`t\<rangle>: V)" using prodFunctionApp[OF assms(1) assms(1)] by auto
     with as(1) have R:"!!t. t: (ProdFunction(f,f)-``V)``{x} <-> (t:X \<and> \<langle>xa,f`t\<rangle>: V)" using apply_equality assms(1) by auto
     with V(1) have R:"!!t. t: (ProdFunction(f,f)-``V)``{x} <-> (t:X \<and> f`t: U)" by auto
