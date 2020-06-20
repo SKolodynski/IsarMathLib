@@ -490,8 +490,12 @@ proof-
     }
     then have "U\<in>T" using open_neigh_open by auto
   }
-  ultimately show "{U \<in> Pow(G) . \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> leftUniformity}\<rangle> . t \<in> G} ` x} = T" 
-  "{U \<in> Pow(G) . \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> rightUniformity}\<rangle> . t \<in> G} ` x} = T" by auto
+  ultimately have 
+  "{U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V``{t} . V \<in> leftUniformity}\<rangle>. t \<in> G}`(x)} = T" 
+  "{U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V``{t} . V \<in> rightUniformity}\<rangle>. t \<in> G}`(x)} = T" 
+    by auto
+  then show "UniformTopology(leftUniformity,G) = T" and "UniformTopology(rightUniformity,G) = T"
+    unfolding UniformTopology_def by auto 
 qed
 
 text\<open> The side uniformities are called this way because of how they affect left and right translations \<close>
