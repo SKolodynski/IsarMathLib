@@ -26,62 +26,11 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
-theory UniformSpace_ZF_1 imports UniformSpace_ZF Topology_ZF_2
+theory UniformSpace_ZF_1 imports func_ZF_1 UniformSpace_ZF Topology_ZF_2
 begin
 
 text\<open> This theory defines the maps to study in uniform spaces and proves their basic properties. \<close>
 
-subsection\<open> Product of functions \<close>
-
-text\<open> Given 2 functions $f:A\to B$ and $g:C\to D$ , we can consider a function $h:A\times C \to B\times D$
-such that $h(x,y)=(f(x),g(y))$ \<close>
-
-definition
-  ProdFunction where
-  "ProdFunction(f,g) \<equiv> {\<langle>z,\<langle>f`(fst(z)),g`(snd(z))\<rangle>\<rangle>. z\<in>domain(f)\<times>domain(g)}"
-
-lemma prodFunction:
-  assumes "f:A->B" "g:C->D"
-  shows "ProdFunction(f,g):(A\<times>C)->(B\<times>D)"
-proof-
-  have func:"function(ProdFunction(f,g))" unfolding function_def apply safe
-  proof-
-    fix x y z assume "\<langle>x,y\<rangle>:ProdFunction(f,g)" "\<langle>x,z\<rangle>:ProdFunction(f,g)"
-    with ProdFunction_def show "y=z" by auto 
-  qed
-  moreover have "ProdFunction(f,g) \<subseteq> (A\<times>C)\<times>(B\<times>D)" 
-  proof
-    fix t assume "t:ProdFunction(f,g)"
-    then obtain z where z:"z:domain(f)\<times>domain(g)" "t=\<langle>z,\<langle>f`(fst(z)),g`(snd(z))\<rangle>\<rangle>" unfolding ProdFunction_def by blast
-    from z(1) assms have z3:"z:A\<times>C" using domain_of_fun by auto
-    then have "fst(z):A" "snd(z):C" by auto
-    then have "f`(fst(z)):B" "g`(snd(z)):D" using apply_funtype assms by auto
-    then have "\<langle>f`(fst(z)),g`(snd(z))\<rangle>:B\<times>D" by auto
-    with z(2) z3 show "t:(A\<times>C)\<times>(B\<times>D)" by auto
-  qed
-  moreover have "A\<times>C \<subseteq> domain(ProdFunction(f,g))"
-  proof-
-    have "domain(ProdFunction(f,g)) = domain(f)\<times>domain(g)" unfolding ProdFunction_def by auto 
-    moreover from assms have "domain(f) = A" "domain(g) =C" using domain_of_fun by auto
-    ultimately show "A\<times>C \<subseteq> domain(ProdFunction(f,g))" by auto 
-  qed
-  ultimately show ?thesis using Pi_iff by auto
-qed
-
-lemma prodFunctionApp:
-  assumes "f:A->B" "g:C->D" "x:A" "y:C"
-  shows "ProdFunction(f,g)`\<langle>x,y\<rangle> = \<langle>f`x,g`y\<rangle>" using apply_equality[OF _ prodFunction[OF assms(1,2)], of "\<langle>x,y\<rangle>" "\<langle>f`x,g`y\<rangle>"] 
-    unfolding ProdFunction_def apply auto
-proof-
-  assume R:"x \<in> domain(f) \<and> y \<in> domain(g) \<Longrightarrow>
-     {\<langle>z, f ` fst(z), g ` snd(z)\<rangle> . z \<in> domain(f) \<times> domain(g)} ` \<langle>x, y\<rangle> =
-     \<langle>f ` x, g ` y\<rangle>"
-  have "x:domain(f)" using assms(1,3) unfolding domain_def Pi_def by auto moreover
-  have "y:domain(g)" using assms(2,4) unfolding domain_def Pi_def by auto moreover
-  note R ultimately
-  show "{\<langle>z, f ` fst(z), g ` snd(z)\<rangle> . z \<in> domain(f) \<times> domain(g)} ` \<langle>x, y\<rangle> =
-     \<langle>f ` x, g ` y\<rangle>" by auto
-qed
 
 subsection\<open> Uniformly continuous functions \<close>
 

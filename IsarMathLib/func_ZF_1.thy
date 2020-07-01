@@ -307,7 +307,42 @@ proof -
   from I show "domain(SliceProjection(X\<times>{y})) = X\<times>{y}"
     using func1_1_L1 by simp
 qed
-  
+
+text\<open> Given 2 functions $f:A\to B$ and $g:C\to D$ , we can consider a function $h:A\times C \to B\times D$
+such that $h(x,y)=\langle f(x),g(y)\rangle$ \<close>
+
+definition
+  ProdFunction where
+  "ProdFunction(f,g) \<equiv> {\<langle>z,\<langle>f`(fst(z)),g`(snd(z))\<rangle>\<rangle>. z\<in>domain(f)\<times>domain(g)}"
+
+text\<open> For given functions $f:A\to B$ and $g:C\to D$ the function \<open>ProdFunction(f,g)\<close>
+  maps $A\times C$ to $B\times D$. \<close>
+
+lemma prodFunction:
+  assumes "f:A->B" "g:C->D"
+  shows "ProdFunction(f,g):(A\<times>C)->(B\<times>D)"
+proof-
+  from assms have "\<forall>z \<in> domain(f)\<times>domain(g). \<langle>f`(fst(z)),g`(snd(z))\<rangle> \<in> B\<times>D" 
+    using func1_1_L1 apply_type by auto 
+  with assms show ?thesis unfolding ProdFunction_def using func1_1_L1 ZF_fun_from_total
+    by simp 
+qed
+
+text\<open> For given functions $f:A\to B$ and $g:C\to D$ and points $x\in A$, $y\in C$ the value of the 
+  function \<open>ProdFunction(f,g)\<close> on $\langle x,y \rangle$ is $\langle f(x),g(y) \rangle$. \<close>
+
+lemma prodFunctionApp:
+  assumes "f:A->B" "g:C->D" "x\<in>A" "y\<in>C"
+  shows "ProdFunction(f,g)`\<langle>x,y\<rangle> = \<langle>f`(x),g`(y)\<rangle>"
+proof -
+  let ?z = "\<langle>x,y\<rangle>"
+  from assms have "ProdFunction(f,g):(A\<times>C)->(B\<times>D)" and "?z \<in> A\<times>C" 
+    using prodFunction by auto 
+  moreover from assms(1,2) have "ProdFunction(f,g) = {\<langle>z,\<langle>f`(fst(z)),g`(snd(z))\<rangle>\<rangle>. z\<in>A\<times>C}"
+    unfolding ProdFunction_def using func1_1_L1 by blast
+  ultimately show ?thesis using ZF_fun_from_tot_val by auto 
+qed
+
 subsection\<open>Induced relations and order isomorphisms\<close>
 
 text\<open>When we have two sets $X,Y$, function $f:X\rightarrow Y$ and
