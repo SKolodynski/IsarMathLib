@@ -271,6 +271,12 @@ text\<open>The set comprehension form of negative of a set. The proof uses the \
 lemma (in topgroup) ginv_image_add: assumes "V\<subseteq>G" shows "(\<sm>V) = {\<rm>x. x \<in> V}"
   using assms group0_valid_in_tgroup group0.ginv_image by simp 
 
+text\<open> The additive notation version of \<open>ginv_image_el\<close> lemma from \<open>Group_ZF\<close> theory \<close>
+
+lemma (in topgroup) ginv_image_el_add: assumes "V\<subseteq>G" "x \<in> (\<sm>V)"
+  shows "(\<rm>x) \<in> V"
+  using assms group0_valid_in_tgroup group0.ginv_image_el by simp
+
 text\<open>Of course the product topology is a topology (on $G\times G$).\<close>
 
 lemma (in topgroup) prod_top_on_G:
@@ -368,24 +374,24 @@ proof -
     using group0_valid_in_tgroup group0.image_ltrans_union by simp
 qed
 
-text\<open> The \<open>ltrans_image\<close> lemma from \<open>Topology_ZF_1\<close> written in additive notation \<close>
+text\<open> Some lemmas from \<open>Topology_ZF_1\<close> about images of set by translations 
+  written in additive notation \<close>
 
-lemma (in topgroup) ltrans_image_add: assumes "V\<subseteq>G" "x\<in>G"
-  shows "x\<ltr>V = {x\<ra>v. v\<in>V}"
+lemma (in topgroup) lrtrans_image: assumes "V\<subseteq>G" "x\<in>G"
+  shows 
+    "x\<ltr>V = {x\<ra>v. v\<in>V}" 
+    "V\<rtr>x = {v\<ra>x. v\<in>V}"
+    "x\<ltr>V \<subseteq> G"
+    "V\<rtr>x \<subseteq>G"
 proof -
   from assms have "LeftTranslation(G,f,x)``(V) = {f`\<langle>x,v\<rangle>. v\<in>V}"
     using group0_valid_in_tgroup group0.ltrans_image by blast
-  thus ?thesis by simp
-qed
-
-text\<open> The \<open>rtrans_image\<close> lemma from \<open>Topology_ZF_1\<close> written in additive notation \<close>
-
-lemma (in topgroup) rtrans_image_add: assumes "V\<subseteq>G" "x\<in>G"
-  shows "V\<rtr>x = {v\<ra>x. v\<in>V}"
-proof -
+  thus "x\<ltr>V = {x\<ra>v. v\<in>V}" by simp
   from assms have "RightTranslation(G,f,x)``(V) = {f`\<langle>v,x\<rangle>. v\<in>V}"
     using group0_valid_in_tgroup group0.rtrans_image by blast
-  thus ?thesis by simp
+  thus "V\<rtr>x = {v\<ra>x. v\<in>V}" by simp
+  from assms show "x\<ltr>V \<subseteq> G" and "V\<rtr>x \<subseteq>G" 
+    using group0_valid_in_tgroup group0.lrtrans_in_group by auto 
 qed
 
 text\<open> A corollary from \<open>interval_add\<close> \<close>
@@ -394,18 +400,18 @@ corollary (in topgroup) elements_in_set_sum: assumes "A\<subseteq>G" "B\<subsete
   "t \<in> A\<sad>B" shows "\<exists>s\<in>A. \<exists>q\<in>B. t=s\<ra>q"
   using assms interval_add(4) by auto 
 
-text\<open> A corollary from \<open>ltrans_image_add\<close> \<close> 
+text\<open> A corollary from \<open> lrtrans_image\<close> \<close> 
 
 corollary (in topgroup) elements_in_ltrans: 
   assumes "B\<subseteq>G" "g\<in>G" "t \<in> g\<ltr>B" 
   shows "\<exists>q\<in>B. t=g\<ra>q"
-  using assms ltrans_image_add by simp 
+  using assms lrtrans_image(1) by simp 
 
-text\<open> A corollary from \<open>rtrans_image_add\<close> \<close>
+text\<open> Another corollary of \<open>lrtrans_image\<close> \<close>
 
 corollary (in topgroup) elements_in_rtrans: 
   assumes "B\<subseteq>G" "g\<in>G"  "t \<in> B\<rtr>g" shows "\<exists>q\<in>B. t=q\<ra>g"
-  using assms rtrans_image_add by simp
+  using assms lrtrans_image(2) by simp
 
 text\<open>Another corollary from \<open>interval_add\<close> \<close>
 
@@ -414,18 +420,18 @@ corollary (in topgroup) elements_in_set_sum_inv:
   shows "t \<in> A\<sad>B"
   using assms interval_add by auto 
 
-text\<open>Another corollary of \<open>ltrans_image_add\<close> \<close>
+text\<open>Another corollary of \<open>lrtrans_image\<close> \<close>
 
 corollary (in topgroup) elements_in_ltrans_inv: assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=g\<ra>q"
   shows "t \<in> g\<ltr>B"
-  using assms ltrans_image_add by auto 
+  using assms lrtrans_image(1) by auto 
 
 text\<open>Another corollary of \<open>rtrans_image_add\<close> \<close>
 
 lemma (in topgroup) elements_in_rtrans_inv:
   assumes "B\<subseteq>G" "g\<in>G" "q\<in>B" "t=q\<ra>g"
   shows "t \<in> B\<rtr>g"
-  using assms rtrans_image_add by auto 
+  using assms lrtrans_image(2) by auto 
 
 text\<open>Right and left translations are continuous.\<close>
 

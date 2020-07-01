@@ -88,8 +88,8 @@ proof-
       by auto  
     moreover 
     have "int(AU)\<inter>int(BU) \<subseteq> AU\<inter>BU" using Top_2_L1 by auto
-    with op have "int(AU)\<inter>int(BU)\<subseteq>int(AU\<inter>BU)" using Top_2_L5[of "int(AU)\<inter>int(BU)"]
-      by auto moreover note AU(1) BU(1)
+    with op have "int(AU)\<inter>int(BU)\<subseteq>int(AU\<inter>BU)" using Top_2_L5 by auto 
+    moreover note AU(1) BU(1)
     ultimately have "AU\<inter>BU: \<N>\<^sub>0" unfolding zerohoods_def by auto
     moreover have "{\<langle>s,t\<rangle>\<in>G\<times>G. (\<rm>s)\<ra>t \<in>AU\<inter>BU}\<subseteq>{\<langle>s,t\<rangle>\<in>G\<times>G. (\<rm>s)\<ra>t \<in>AU}" by auto
     with AU(2) BU(2) have "{\<langle>s,t\<rangle>\<in>G\<times>G. (\<rm>s)\<ra>t \<in>AU\<inter>BU}\<subseteq>A\<inter>B" by auto
@@ -147,8 +147,8 @@ proof-
       using Top_2_L2 topSpaceAssum IsATopology_def by auto 
     moreover 
     have "int(AU)\<inter>int(BU) \<subseteq> AU\<inter>BU" using Top_2_L1 by auto
-    with op have "int(AU)\<inter>int(BU)\<subseteq>int(AU\<inter>BU)" using Top_2_L5[of "int(AU)\<inter>int(BU)"]
-      by auto moreover note AU(1) BU(1)
+    with op have "int(AU)\<inter>int(BU)\<subseteq>int(AU\<inter>BU)" using Top_2_L5 by auto 
+    moreover note AU(1) BU(1)
     ultimately have "AU\<inter>BU: \<N>\<^sub>0" unfolding zerohoods_def by auto
     moreover have "{\<langle>s,t\<rangle>\<in>G\<times>G. s\<ra>(\<rm>t) \<in>AU\<inter>BU}\<subseteq>{\<langle>s,t\<rangle>\<in>G\<times>G. s\<ra>(\<rm>t) \<in>AU}" by auto
     with AU(2) BU(2) have "{\<langle>s,t\<rangle>\<in>G\<times>G. s\<ra>(\<rm>t) \<in>AU\<inter>BU}\<subseteq>A\<inter>B" by auto
@@ -349,7 +349,7 @@ proof-
         {
           assume t:"t\<in>U"
           with \<open>U\<subseteq>G\<close> \<open>(\<rm>x)\<in>G\<close> have "(\<rm>x)\<ra>t \<in> ((\<rm>x)\<ltr>U)"
-            using ltrans_image_add by auto 
+            using lrtrans_image(1) by auto 
         } 
         ultimately have "(\<rm>x)\<ra>t\<in>((\<rm>x)\<ltr>U) \<longleftrightarrow> t:U" by blast
       } 
@@ -385,7 +385,7 @@ proof-
         moreover
         {
           assume "t\<in>U"
-          with \<open>(\<rm>x)\<in>G\<close> \<open>U\<subseteq>G\<close> have "t\<ra>(\<rm>x)\<in>(U\<rtr>(\<rm>x))" using rtrans_image_add
+          with \<open>(\<rm>x)\<in>G\<close> \<open>U\<subseteq>G\<close> have "t\<ra>(\<rm>x)\<in>(U\<rtr>(\<rm>x))" using lrtrans_image(2)
             by auto 
         } ultimately have "t\<ra>(\<rm>x)\<in>(U\<rtr>(\<rm>x)) \<longleftrightarrow> t:U" by blast
       } with N have "\<forall>t\<in>G. t:{\<langle>s,t\<rangle>\<in>G\<times>G. s\<ra>(\<rm>t)\<in>(U\<rtr>(\<rm>x))}-``{x} \<longleftrightarrow> t:U" 
@@ -470,7 +470,7 @@ proof-
       from W(1) have WG:"W\<subseteq>G" by auto
       {
         fix t assume "t \<in> W\<rtr>x"
-        with \<open>x\<in>G\<close> \<open>W\<subseteq>G\<close> obtain s where "s\<in>W" and "t=s\<ra>x" using rtrans_image_add 
+        with \<open>x\<in>G\<close> \<open>W\<subseteq>G\<close> obtain s where "s\<in>W" and "t=s\<ra>x" using lrtrans_image(2) 
           by auto
         with \<open>W\<subseteq>G\<close> have "s\<in>G" by auto 
         with \<open>x\<in>G\<close> \<open>t=s\<ra>x\<close> have "t\<in>G" using group_op_closed_add by simp 
@@ -598,15 +598,14 @@ proof(safe)
   from V(2) have "\<zero>\<in>int(V)" by auto
   then have V0:"\<zero>\<in>V" using Top_2_L1 by auto
   {
-    fix x assume x:"x:G"
-    with V0 have "RightTranslation(G, f, x) `\<zero> : V\<rtr>x" using func_imagedef[OF group0.group0_5_L1(1)[OF group0_valid_in_tgroup x] VG] by auto
-    then have "x : V\<rtr>x" using apply_equality[OF _ group0.group0_5_L1(1)[OF group0_valid_in_tgroup x], of "\<zero>" x] unfolding RightTranslation_def
-      using group0.group0_2_L2[OF group0_valid_in_tgroup] x by auto moreover
+    fix x assume x:"x\<in>G"
+    with \<open>V\<in>\<N>\<^sub>0\<close> have "x \<in> V\<rtr>x" using elem_in_int_trans_2 Top_2_L1 by blast 
+    moreover
     from VG x have VxG:"V\<rtr>x \<subseteq> G" using func1_1_L6(2)[OF group0.group0_5_L1(1)[OF group0_valid_in_tgroup x]] by auto moreover
     note V0 ultimately have "x\<ra>\<zero> : (V\<rtr>x)\<sad>V" using interval_add(4)[OF _ VG] by auto
     then have "x: (V\<rtr>x)\<sad>V" using group0.group0_2_L2[OF group0_valid_in_tgroup] x by auto
     with x have "\<langle>x,x\<rangle>:{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(V\<rtr>s)\<sad>V}" by auto
-    with V(1) show "\<langle>x,x\<rangle>:U" by auto
+    with V(1) show "\<langle>x,x\<rangle>\<in>U" by auto
   }
   {
     fix l assume "l:{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>((\<sm>V)\<rtr>s)\<sad>(\<sm>V)}"
@@ -627,18 +626,16 @@ proof(safe)
     then have ts:"(\<rm>z)\<ra>t\<ra>(\<rm>y) = s" using group0.group_oper_assoc[OF group0_valid_in_tgroup group0.inverse_in_group[OF group0_valid_in_tgroup xyzG(3)]]
       st(2) group0.inverse_in_group[OF group0_valid_in_tgroup xyzG(2)] by auto
     {
-      fix u assume u:"u:(\<sm>V)"
-      with smV obtain qz where "qz:V" "u=\<rm>qz" by auto 
-      with VG have "qz:V" "qz:G" "(\<rm>u)=\<rm>(\<rm>qz)" by auto
-      then have "qz:V" "(\<rm>u)=qz" using group0.group_inv_of_inv[OF group0_valid_in_tgroup, of qz] by auto
-      then have "(\<rm>u) : V" by auto
+      fix u assume "u\<in>(\<sm>V)"
+      with \<open>V\<subseteq>G\<close> have "(\<rm>u) \<in> V" using ginv_image_el_add by simp
     }
     then have R:"!!u. u:(\<sm>V) ==> (\<rm>u) : V" by auto
     with z(2) xy(3) have zy:"(\<rm>z):V" "(\<rm>y):V" by auto
-    from zy(1) VG st(2) have "(\<rm>z)\<ra>t : V\<rtr>t" using rtrans_image_add by auto
-    with zy(2) VG VsG have "(\<rm>z)\<ra>t\<ra>(\<rm>y) : (V\<rtr>t)\<sad>V" using interval_add(4) by auto
+    from zy(1) VG st(2) have "(\<rm>z)\<ra>t : V\<rtr>t" using lrtrans_image(2) by auto
+    with zy(2) VG VsG have "(\<rm>z)\<ra>t\<ra>(\<rm>y) : (V\<rtr>t)\<sad>V" using interval_add(4) 
+      by auto
     with ts have "s:(V\<rtr>t)\<sad>V" by auto
-    with st(1,2) have "\<langle>s,t\<rangle> :converse({\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(V\<rtr>s)\<sad>V})" using converse_iff[of s t "{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(V\<rtr>s)\<sad>V}"] by auto
+    with st(1,2) have "\<langle>s,t\<rangle> :converse({\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(V\<rtr>s)\<sad>V})" using converse_iff by auto
     with V(1) have "\<langle>s,t\<rangle> : converse(U)" by auto
     with st(4) have "l:converse(U)" by auto
   }
@@ -668,7 +665,7 @@ proof(safe)
     moreover
     from xy(3) z(2) xy2(3) z2(2) WG have "z'\<ra>z : W\<sad>W" "y\<ra>y' :W\<sad>W" using interval_add(4) by auto
     with W(2) have yzV:"z'\<ra>z : V" "y\<ra>y' : V" by auto
-    from yzV(1) VG x(1) have "(z'\<ra>z)\<ra>x1 : V\<rtr>x1" using rtrans_image_add by auto
+    from yzV(1) VG x(1) have "(z'\<ra>z)\<ra>x1 : V\<rtr>x1" using lrtrans_image(2) by auto
     with yzV(2) Vx1G VG have "((z'\<ra>z)\<ra>x1)\<ra>(y\<ra>y') : (V\<rtr>x1)\<sad>V" using interval_add(4) by auto
     with x3 have "x3:(V\<rtr>x1)\<sad>V" by auto
     with x(1,3,6) have "k:{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(V\<rtr>s)\<sad>V}" by auto
@@ -686,7 +683,7 @@ next
       moreover have "\<zero> = f`\<langle>f`\<langle>\<zero>,\<zero>\<rangle>,\<zero>\<rangle>" using group0.group0_2_L2[OF group0_valid_in_tgroup] zero_in_tgroup by auto
       moreover have "\<zero>\<in>int(W)" using U(1) by auto
       then have nW:"\<zero>\<in>W" using Top_2_L1 by auto
-      with U(1) have "\<zero>\<ra>\<zero> : W\<rtr>\<zero>" using rtrans_image_add[of W "\<zero>"] group0.group0_2_L2[OF group0_valid_in_tgroup] by auto
+      with U(1) have "\<zero>\<ra>\<zero> : W\<rtr>\<zero>" using lrtrans_image(2)[of W "\<zero>"] group0.group0_2_L2[OF group0_valid_in_tgroup] by auto
       with nW U(1) have "f`\<langle>f`\<langle>\<zero>,\<zero>\<rangle>,\<zero>\<rangle> :(W\<rtr>\<zero>)\<sad>W" using interval_add(4) func1_1_L6(2)[OF group0.group0_5_L1(1)[OF group0_valid_in_tgroup]]
         group0.group0_2_L2[OF group0_valid_in_tgroup] by auto 
       ultimately have "\<langle>\<zero>,\<zero>\<rangle>\<in>{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(W\<rtr>s)\<sad>W}" by auto
@@ -720,8 +717,8 @@ next
         then obtain s t where z:"z=\<langle>s,t\<rangle>" "s:G" "t:G" "t \<in>((AU\<inter>BU)\<rtr>s)\<sad>(AU\<inter>BU)" by force
         from z(2,4) interNeigh obtain x y where t:"t=x\<ra>y" "x:(AU\<inter>BU)\<rtr>s" "y:AU\<inter>BU" using interval_add(4) 
           func1_1_L6(2)[OF group0.group0_5_L1(1)[OF group0_valid_in_tgroup]] by auto
-        from t(2) z(2) interNeigh obtain q where x:"x=q\<ra>s" "q:AU\<inter>BU" using rtrans_image_add by auto
-        with AU(1) BU(1) z(2) have "x:AU\<rtr>s" "x:BU\<rtr>s" using rtrans_image_add by auto
+        from t(2) z(2) interNeigh obtain q where x:"x=q\<ra>s" "q:AU\<inter>BU" using lrtrans_image(2) by auto
+        with AU(1) BU(1) z(2) have "x:AU\<rtr>s" "x:BU\<rtr>s" using lrtrans_image(2) by auto
         with t(1,3) z(2) AU(1) BU(1) have "t:(AU\<rtr>s)\<sad>AU" "t:(BU\<rtr>s)\<sad>BU" using interval_add(4) func1_1_L6(2)[OF group0.group0_5_L1(1)[OF group0_valid_in_tgroup]]
           by auto
         with z(1-3) have "z:{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(AU\<rtr>s)\<sad>AU}" "z:{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(BU\<rtr>s)\<sad>BU}" by auto

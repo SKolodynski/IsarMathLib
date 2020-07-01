@@ -380,6 +380,12 @@ proof -
   thus ?thesis by simp
 qed
 
+text\<open>Inverse of an element that belongs to the inverse of the set belongs to the set. \<close>
+
+lemma (in group0) ginv_image_el: assumes "V\<subseteq>G" "g \<in> GroupInv(G,P)``(V)"
+  shows "g\<inverse> \<in> V"
+  using assms ginv_image group_inv_of_inv by auto 
+
 text\<open>For the group inverse the image is the same as inverse image.\<close>
 
 lemma (in group0) inv_image_vimage: shows "GroupInv(G,P)``(V) = GroupInv(G,P)-``(V)"

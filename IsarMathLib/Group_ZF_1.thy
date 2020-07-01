@@ -309,6 +309,17 @@ proof -
   ultimately show ?thesis by auto
 qed
 
+text\<open>Right and left translations of a subset of the group are subsets of the group. \<close>
+
+lemma (in group0) lrtrans_in_group: assumes A1: "V\<subseteq>G" and A2: "x\<in>G"
+  shows "LeftTranslation(G,P,x)``(V) \<subseteq> G" and "RightTranslation(G,P,x)``(V) \<subseteq> G" 
+proof -
+  from assms show "LeftTranslation(G,P,x)``(V) \<subseteq> G" 
+    using ltrans_image group_op_closed by auto
+  from assms show "RightTranslation(G,P,x)``(V) \<subseteq> G" 
+    using rtrans_image group_op_closed by auto
+qed
+
 text\<open>A technical lemma about solving equations with translations.\<close>
 
 lemma (in group0) ltrans_inv_in: assumes A1: "V\<subseteq>G" and A2: "y\<in>G" and
