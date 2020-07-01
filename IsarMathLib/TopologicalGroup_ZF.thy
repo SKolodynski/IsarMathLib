@@ -141,6 +141,11 @@ text\<open>We can use the \<open>group0\<close> locale in the context of \<open>
 lemma (in topgroup) group0_valid_in_tgroup: shows "group0(G,f)"
   using Ggroup group0_def by simp
 
+text\<open>We can use the \<open>group0\<close> locale in the context of \<open>topgroup\<close>.\<close>
+
+sublocale topgroup < group0 G f gzero grop grinv 
+    unfolding group0_def gzero_def grop_def grinv_def using Ggroup by auto
+
 text\<open>We can use \<open>semigr0\<close> locale in the context of \<open>topgroup\<close>.\<close>
 
 lemma (in topgroup) semigr0_valid_in_tgroup: shows "semigr0(G,f)"
