@@ -91,14 +91,13 @@ alphaNumNotKeyword chars = do
    notAnyOf $ map (try . string) keywords
    many1 (alphaNum <|> (choice $ map char chars))
 
--- | parses a valid theory or proposition name, also labels.
+-- | parses a valid theory,proposition or sublocale name, also labels.
 itemName :: Parser String
 itemName = alphaNumNotKeyword "_.,()"
 
 -- | like an the itemName, but we don't allow parantheses
 pureItemName :: Parser String
 pureItemName = alphaNumNotKeyword "_."
-
 
 -- | parses a variable name
 varname :: Parser String
@@ -305,7 +304,7 @@ itemWdescription :: Parser Item
 itemWdescription = do
    desc <- informalText
    spaces
-   fitem <- abbreviation <|> definition <|> try locale <|> proposition -- (l)ocale like (l)emma
+   fitem <- abbreviation <|> definition <|> sublocale <|> try locale <|> proposition -- (l)ocale like (l)emma
    return ( Item { description = desc, formalItem = fitem } )
 
 -- | parses a theory
@@ -363,6 +362,26 @@ theoryTest = do
 incontext :: Parser String
 incontext = textBetween "(in "  ")"
 
+-- | parses a sublocale
+sublocale :: Parser FormalItem
+sublocale = do
+  string "sublocale"
+  spaces
+  sln <- pureItemName
+  spaces
+  char '<'
+  spaces
+  ln <- pureItemName
+  spaces
+  itms <- (manyTill (do {i <- itemName; spaces; return i}) (anyOf ["using","unfolding","proof","by"]))
+  spaces
+  pr <- proof
+  return Sublocale
+            { sublocalename = sln
+            , localename = ln
+            , remapping = itms
+            , sublocproof = pr }
+
 -- | parses a proposition
 proposition :: Parser FormalItem
 proposition = do
@@ -379,7 +398,7 @@ proposition = do
    spaces
    pr <- proof
    return (FormalItem Proposition
-                      {proptype = t
+                      { proptype = t
                       , context = c
                       , propname = n
                       , propprems = p

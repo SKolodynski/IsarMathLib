@@ -76,6 +76,10 @@ data FormalItem =
    | Locale { localename  :: String
             , inheritsFrom :: (String,[String]) -- we are supporting only one parent: locale1 = locale0 + [localeItems]
             , localeItems :: [LocaleItem] }
+   | Sublocale { sublocalename :: String
+               , localename :: String
+               , remapping :: [String]
+               , sublocproof :: Proof }
    | FormalItem Proposition
    deriving (Eq, Show)
 

@@ -217,6 +217,9 @@ exportFormalItem repls mfii (Locale nm (parent,vars) itms) = mkformal $
    ( par $ (bf "Locale ") ++ nm ++
       ( if null parent then "" else " = " ++ parent ++ " " ++ (unwords vars) ++ " +") ) ++
    (unlines $ map (exportLocaleItem repls) itms)
+exportFormalItem repls mfii (Sublocale sln ln _ pr) = mkformal $
+  (bf "Sublocale") ++ sln ++ " &lt " ++ ln ++ 
+  (par $ exportProof repls mfii pr)
 exportFormalItem repls mfii (FormalItem p) = exportProposition repls mfii p
 
 -- | export locale item
