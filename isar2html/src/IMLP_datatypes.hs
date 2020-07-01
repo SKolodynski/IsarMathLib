@@ -49,9 +49,9 @@ data KnowledgeBase =
 -- | a structure for a section
 data Subsection =
    Subsection { sectitle    :: String,
-             secIntro    :: String,
-             items       :: [Item]
-           } deriving (Eq, Show)
+                secIntro    :: String,
+                items       :: [Item]
+              } deriving (Eq, Show)
 
 -- | a structure holding a formal item (definition, theorem or a
 -- context) with its informal description. Note we enforce convention
@@ -128,6 +128,8 @@ data SimpleFormalItem = SimpleProp { sproptype :: String
 
 data Proof = UsingBy { useunfold :: String -- "using" or "unfolding"
                      , usedprops :: [String] -- a list of references
+                     , useunfold1 :: String -- "using" or "unfolding", optional second claus
+                     , usedprops1 :: [String] -- a list of references for the second clause
                      , ptactic :: String -- a tactic: simp, auto, etc
                      }
            | ByRule String
@@ -183,14 +185,3 @@ data ProofStep =  LongReasoning Reasoning [MoreoverBody] -- maybe short as the l
                | LetStep String String
                | Next
                deriving (Eq, Show)
-
-
-
-
-
-
-
-
-
-
-

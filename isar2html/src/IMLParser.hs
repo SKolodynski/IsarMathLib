@@ -435,17 +435,35 @@ shortProofByTac = do
    string "by"
    spaces
    tac <- tactic
-   return ( UsingBy { useunfold = "", usedprops = [], ptactic = tac } )
+   return ( UsingBy { useunfold = "", usedprops = [], useunfold1 = "", usedprops1 = [], ptactic = tac } )
+
+-- | a helper function for manyTill - tries any of given strings and succeeds
+-- when one of them parses. Does not consume input
+anyOf :: [String] -> Parser String
+anyOf ss = lookAhead $ choice $ (map (try . string) ss)
+
+-- | parses short proof that has "using" or "unfolding" keyword with references,
+-- stops on either the "by" or the next "using" or "unfolding"
+-- returns the name
+shortProofRef :: Parser (String,[String])
+shortProofRef = do
+  meth <- (try $ string "using") <|> (string "unfolding")
+  spaces
+  --itms <- (manyTill (do {i <- itemName; spaces; return i}) (lookAhead ((try $ (string "using")) <|> (try $ (string "unfolding")) <|> (try $ (string "by")))))
+  itms <- (manyTill (do {i <- itemName; spaces; return i}) (anyOf ["using","unfolding","by"]))
+  return (meth,itms)
 
 -- | parses short proof that has "using" or "unfolding" keyword with references
-shortProofRefTac :: String -> Parser Proof
-shortProofRefTac meth = do
-   string meth
+shortProofRefTac :: Parser Proof
+shortProofRefTac = do
+   (meth,itms) <- shortProofRef
    spaces
-   itms <- (manyTill (do {i <- itemName; spaces; return i}) (try (string "by")))
+   (meth1,itms1) <- option ("",[]) shortProofRef
+   spaces
+   string "by"
    spaces
    tac <- tactic
-   return ( UsingBy { useunfold = meth, usedprops = itms, ptactic = tac } )
+   return ( UsingBy { useunfold = meth, usedprops = itms, useunfold1 = meth1, usedprops1 = itms1, ptactic = tac } )
 
 -- parsers a tactic
 tactic :: Parser String
@@ -672,9 +690,8 @@ longproof = do
 
 -- | parses a proof
 proof :: Parser Proof
-proof = longproof <|>
-        (try shortProofByTac) <|> shortProofByRule <|>
-        (try $ shortProofRefTac "using") <|> (shortProofRefTac "unfolding") <?> "parsing a proof failed"
+proof = longproof <|> (try shortProofByTac) <|> shortProofByRule <|> shortProofRefTac
+     <?> "parsing a proof failed"
 
 -- | parses local references starting from "from" or "with" or "note"
 locrefs :: String -> Parser [String]

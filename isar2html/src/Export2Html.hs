@@ -114,7 +114,7 @@ refdiv id content = "<div id=\"" ++ id ++ "\"class=\"refhint\">" ++
 
 -- | exports a simplified form of a premise
 exportPremiseSimple :: [(String,String)] -> PropPremise -> String
-exportPremiseSimple repls (PropDefines defs) = 
+exportPremiseSimple repls (PropDefines defs) =
     (bf "defines ") ++ (exportSimpleClaims repls defs) ++ "\n"
 exportPremiseSimple repls (PropAssumes prms) =
     (bf "assumes ") ++ (exportSimpleClaims repls prms) ++ "\n"
@@ -263,9 +263,12 @@ exportOneClaim repls (label,claims) =
 
 -- | exports a proof
 exportProof :: [(String,String)] -> M.Map String String -> Proof -> String
-exportProof _ mfii ( UsingBy useunf uprops tac ) =
+exportProof _ mfii ( UsingBy useunf uprops useunf1 uprops1 tac ) =
    if not $ null uprops then
-      (bf useunf) ++ " " ++ (unwords $ intersperse ", " $ map (getRefSlider mfii) uprops )
+      (bf useunf) ++ " " ++ (unwords $ intersperse ", " $ map (getRefSlider mfii) uprops ) ++
+      if not $ null uprops1 then
+        (bf useunf1) ++ " " ++ (unwords $ intersperse ", " $ map (getRefSlider mfii) uprops1 )
+      else " "
    else " "
 
 
@@ -405,7 +408,7 @@ uniquefy id htmlstring = st ++
       sti = foldr incrcount ("",0) htmlstring
       st = fst sti
       count = snd sti
-      incrcount c (s,i) = 
+      incrcount c (s,i) =
          if id `isPrefixOf` ns then (id ++ (show i) ++ (drop (length id) ns), i+1)
          else (ns,i)
             where ns = c:s
@@ -413,5 +416,3 @@ uniquefy id htmlstring = st ++
 -- composes some number of uniquefy fo a list of id strings
 uniquefyids :: [String] -> String -> String
 uniquefyids ids = foldr1 (.) (map uniquefy ids)
-
-
