@@ -49,9 +49,9 @@ data KnowledgeBase =
 -- | a structure for a section
 data Subsection =
    Subsection { sectitle    :: String,
-             secIntro    :: String,
-             items       :: [Item]
-           } deriving (Eq, Show)
+                secIntro    :: String,
+                items       :: [Item]
+              } deriving (Eq, Show)
 
 -- | a structure holding a formal item (definition, theorem or a
 -- context) with its informal description. Note we enforce convention
@@ -76,6 +76,10 @@ data FormalItem =
    | Locale { localename  :: String
             , inheritsFrom :: (String,[String]) -- we are supporting only one parent: locale1 = locale0 + [localeItems]
             , localeItems :: [LocaleItem] }
+   | Sublocale { sublocalename :: String
+               , localename :: String
+               , remapping :: [String]
+               , sublocproof :: Proof }
    | FormalItem Proposition
    deriving (Eq, Show)
 
@@ -128,6 +132,8 @@ data SimpleFormalItem = SimpleProp { sproptype :: String
 
 data Proof = UsingBy { useunfold :: String -- "using" or "unfolding"
                      , usedprops :: [String] -- a list of references
+                     , useunfold1 :: String -- "using" or "unfolding", optional second claus
+                     , usedprops1 :: [String] -- a list of references for the second clause
                      , ptactic :: String -- a tactic: simp, auto, etc
                      }
            | ByRule String
