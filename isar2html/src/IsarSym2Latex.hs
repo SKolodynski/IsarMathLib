@@ -29,6 +29,7 @@ import Data.Char(isAlpha)
 -- | list of translations from Isar symbols to LaTeX symbols
 -- inner2LatexSym :: [(String,String)]
 inner2LatexSym = [("<", " \\lt ")
+                 ,("%","\\%")
                  ,("\\<longrightarrow>", "\\longrightarrow ")
                  ,(".", ".\\ ")
                  ,(" O ", "\\circ ")
@@ -159,6 +160,7 @@ inner2LatexSym = [("<", " \\lt ")
                  ,("inj(","\\text{inj}(")
                  ,("range(","\\text{range}(")
                  ,("restrict(","\\text{restrict}(")
+                 ,("Pi(","\\text{Pi}(")
                  ,("snd(","\\text{snd}(")
                  ,("surj(","\\text{surj}(")
                  ,(" then ","\\text{ then }")
@@ -185,6 +187,7 @@ inner2LatexSym = [("<", " \\lt ")
                  ,("-``", "^{-1}")
                  ,("$", "\\ \\$ ")
                  ,(" \\{in\\} ","\\text{ in }")
+                 ,(" \\{and\\}","\\text{ and }")
                  ,("\\<inverse>", "^{-1}")
                  ]
 

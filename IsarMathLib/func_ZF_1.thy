@@ -263,7 +263,7 @@ proof -
     using ord_iso_extend by auto
 qed
   
-subsection\<open>Projections in cartesian products\<close>
+subsection\<open>Functions in cartesian products\<close>
 
 text\<open>In this section we consider maps arising naturally
   in cartesian products.\<close>
@@ -319,8 +319,8 @@ text\<open> For given functions $f:A\to B$ and $g:C\to D$ the function \<open>Pr
   maps $A\times C$ to $B\times D$. \<close>
 
 lemma prodFunction:
-  assumes "f:A->B" "g:C->D"
-  shows "ProdFunction(f,g):(A\<times>C)->(B\<times>D)"
+  assumes "f:A\<rightarrow>B" "g:C\<rightarrow>D"
+  shows "ProdFunction(f,g):(A\<times>C)\<rightarrow>(B\<times>D)"
 proof-
   from assms have "\<forall>z \<in> domain(f)\<times>domain(g). \<langle>f`(fst(z)),g`(snd(z))\<rangle> \<in> B\<times>D" 
     using func1_1_L1 apply_type by auto 
@@ -332,16 +332,27 @@ text\<open> For given functions $f:A\to B$ and $g:C\to D$ and points $x\in A$, $
   function \<open>ProdFunction(f,g)\<close> on $\langle x,y \rangle$ is $\langle f(x),g(y) \rangle$. \<close>
 
 lemma prodFunctionApp:
-  assumes "f:A->B" "g:C->D" "x\<in>A" "y\<in>C"
+  assumes "f:A\<rightarrow>B" "g:C\<rightarrow>D" "x\<in>A" "y\<in>C"
   shows "ProdFunction(f,g)`\<langle>x,y\<rangle> = \<langle>f`(x),g`(y)\<rangle>"
 proof -
   let ?z = "\<langle>x,y\<rangle>"
-  from assms have "ProdFunction(f,g):(A\<times>C)->(B\<times>D)" and "?z \<in> A\<times>C" 
+  from assms have "?z \<in> A\<times>C" and "ProdFunction(f,g):(A\<times>C)\<rightarrow>(B\<times>D)"
     using prodFunction by auto 
   moreover from assms(1,2) have "ProdFunction(f,g) = {\<langle>z,\<langle>f`(fst(z)),g`(snd(z))\<rangle>\<rangle>. z\<in>A\<times>C}"
     unfolding ProdFunction_def using func1_1_L1 by blast
   ultimately show ?thesis using ZF_fun_from_tot_val by auto 
 qed
+
+text\<open>Somewhat technical lemma about inverse image of a set by a \<open>ProdFunction(f,f)\<close>. \<close>
+
+lemma prodFunVimage: assumes "x\<in>X" "f:X\<rightarrow>Y"
+  shows "\<langle>x,t\<rangle> \<in> ProdFunction(f,f)-``(V) \<longleftrightarrow> t\<in>X \<and> \<langle>f`x,f`t\<rangle> \<in> V"
+proof -
+  from assms(2) have T:"ProdFunction(f,f)-``(V) = {z \<in> X\<times>X. ProdFunction(f,f)`(z) \<in> V}"
+    using prodFunction func1_1_L15 by blast 
+  with assms show ?thesis using prodFunctionApp by auto 
+qed
+
 
 subsection\<open>Induced relations and order isomorphisms\<close>
 
