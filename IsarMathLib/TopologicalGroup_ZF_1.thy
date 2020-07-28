@@ -235,7 +235,7 @@ proof-
   {
     fix x assume "x\<in>cl(V)"
     with \<open>V\<in>\<N>\<^sub>0\<close> have "x\<in>\<Union>T" "V\<subseteq>\<Union>T" using Top_3_L11(1) unfolding zerohoods_def G_def by blast+
-    with \<open>V\<in>\<N>\<^sub>0\<close> have "x\<in>int(x\<ltr>V)" using elem_in_int_trans G_def by auto
+    with \<open>V\<in>\<N>\<^sub>0\<close> have "x\<in>int(x\<ltr>V)" using elem_in_int_ltrans G_def by auto
     with \<open>V\<subseteq>\<Union>T\<close>\<open>x\<in>cl(V)\<close> have "int(x\<ltr>V)\<inter>V\<noteq>0" using cl_inter_neigh Top_2_L2 by blast
     then have "(x\<ltr>V)\<inter>V\<noteq>0" using Top_2_L1 by blast
     then obtain q where "q\<in>(x\<ltr>V)" and "q\<in>V" by blast
@@ -331,7 +331,7 @@ proof-
       with \<open>(\<rm>y)\<ra>x\<notin>U\<close> have "False" by auto
     }
     then have "(x\<ltr>Q)\<inter>(y\<ltr>Q)=0" by auto
-    moreover have "x\<in>int(x\<ltr>Q)""y\<in>int(y\<ltr>Q)" using elem_in_int_trans \<open>Q\<in>\<N>\<^sub>0\<close>
+    moreover have "x\<in>int(x\<ltr>Q)""y\<in>int(y\<ltr>Q)" using elem_in_int_ltrans \<open>Q\<in>\<N>\<^sub>0\<close>
       \<open>x\<in>\<Union>T\<close> \<open>y\<in>\<Union>T\<close> unfolding G_def by auto moreover
     have "int(x\<ltr>Q)\<subseteq>(x\<ltr>Q)""int(y\<ltr>Q)\<subseteq>(y\<ltr>Q)" using Top_2_L1 by auto
     moreover have "int(x\<ltr>Q)\<in>T" "int(y\<ltr>Q)\<in>T" using Top_2_L2 by auto
@@ -355,7 +355,7 @@ proof-
   then have "\<Union>T-(x\<ltr>A)=x\<ltr>(\<Union>T-A)" using inj_image_dif[of "LeftTranslation(G, f, x)""G""G", OF _ assms(2)]
     unfolding ltrans_def G_def using group0.trans_bij(2)[OF group0_valid_in_tgroup assms(1)] bij_def by auto
   then have "int(\<Union>T-(x\<ltr>A))=int(x\<ltr>(\<Union>T-A))" by auto
-  then have "int(\<Union>T-(x\<ltr>A))=x\<ltr>int(\<Union>T-A)" using trans_interior[OF assms(1),of "\<Union>T-A"] unfolding G_def by force
+  then have "int(\<Union>T-(x\<ltr>A))=x\<ltr>int(\<Union>T-A)" using ltrans_interior[OF assms(1),of "\<Union>T-A"] unfolding G_def by force
   have "\<Union>T-int(\<Union>T-A)=cl(\<Union>T-(\<Union>T-A))" using Top_3_L11(2)[of "\<Union>T-A"] by force
   have "\<Union>T-(\<Union>T-A)=A" using assms(2) G_def by auto
   with \<open>\<Union>T-int(\<Union>T-A)=cl(\<Union>T-(\<Union>T-A))\<close> have "\<Union>T-int(\<Union>T-A)=cl(A)" by auto
@@ -462,7 +462,7 @@ proof-
     from \<open>N\<in>\<N>\<^sub>0\<close> have "N\<subseteq>G" unfolding zerohoods_def by auto
     ultimately have "(x\<ltr>N)\<subseteq>U" using trans_subset unfolding G_def by auto moreover
     from \<open>N\<subseteq>G\<close>\<open>x\<in>\<Union>T\<close> assms(2) \<open>P(N,T)\<close> have "P((x\<ltr>N),T)" unfolding G_def by auto moreover
-    from \<open>N\<in>\<N>\<^sub>0\<close>\<open>x\<in>\<Union>T\<close> have "x\<in>int(x\<ltr>N)" using elem_in_int_trans unfolding G_def by auto
+    from \<open>N\<in>\<N>\<^sub>0\<close>\<open>x\<in>\<Union>T\<close> have "x\<in>int(x\<ltr>N)" using elem_in_int_ltrans unfolding G_def by auto
     ultimately have "\<exists>N\<in>Pow(U). x\<in>int(N)\<and>P(N,T)" by auto
   }
   then show ?thesis unfolding IsLocally_def[OF topSpaceAssum] by auto

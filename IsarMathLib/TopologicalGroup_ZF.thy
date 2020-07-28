@@ -195,14 +195,17 @@ lemma (in topgroup) inv_cancel_two_add:
     "x\<^sub>1\<ra>((\<rm>x\<^sub>1)\<ra>x\<^sub>2) = x\<^sub>2"
   using assms group0_valid_in_tgroup group0.inv_cancel_two by auto
 
-text\<open>A useful identity proven in the \<open>Group_ZF\<close> theory, rewritten here in additive notation.
+text\<open>Useful identities proven in the \<open>Group_ZF\<close> theory, rewritten here in additive notation.
   Note since the group operation notation is left associative we don't really need the first set
-  of parentheses.\<close>
+  of parentheses in some cases.\<close>
 
-lemma (in topgroup) cancel_middle: assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G"
+lemma (in topgroup) cancel_middle_add:assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G"
   shows 
     "(x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3)) = x\<^sub>1\<ra> (\<rm>x\<^sub>3)"
-    "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) = (\<rm>x\<^sub>1)\<ra> x\<^sub>3"
+    "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) = (\<rm>x\<^sub>1)\<ra> x\<^sub>3" 
+    "(\<rm> (x\<^sub>1\<ra>x\<^sub>2)) \<ra> (x\<^sub>1\<ra>x\<^sub>3) = (\<rm>x\<^sub>2)\<ra>x\<^sub>3"
+    "(x\<^sub>1\<ra>x\<^sub>2) \<ra> (\<rm>(x\<^sub>3\<ra>x\<^sub>2)) =x\<^sub>1\<ra> (\<rm>x\<^sub>3)"
+    "(\<rm>x\<^sub>1) \<ra> (x\<^sub>1\<ra>x\<^sub>2\<ra>x\<^sub>3) \<ra> (\<rm>x\<^sub>3) = x\<^sub>2"
 proof - 
   from assms have "f`\<langle>x\<^sub>1,GroupInv(G,f)`(x\<^sub>3)\<rangle> = f`\<langle>f`\<langle>x\<^sub>1,GroupInv(G,f)`(x\<^sub>2)\<rangle>,f`\<langle>x\<^sub>2,GroupInv(G,f)`(x\<^sub>3)\<rangle>\<rangle>"
     using group0_valid_in_tgroup group0.group0_2_L14A(1) by blast
@@ -210,6 +213,12 @@ proof -
   from assms have "f`\<langle>GroupInv(G,f)`(x\<^sub>1),x\<^sub>3\<rangle> = f`\<langle>f`\<langle>GroupInv(G,f)`(x\<^sub>1),x\<^sub>2\<rangle>,f`\<langle>GroupInv(G,f)`(x\<^sub>2),x\<^sub>3\<rangle>\<rangle>"
     using group0_valid_in_tgroup group0.group0_2_L14A(2) by blast
   thus "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) = (\<rm>x\<^sub>1)\<ra> x\<^sub>3" by simp
+  from assms show "(\<rm> (x\<^sub>1\<ra>x\<^sub>2)) \<ra> (x\<^sub>1\<ra>x\<^sub>3) = (\<rm>x\<^sub>2)\<ra>x\<^sub>3"
+    using cancel_middle(1) by simp
+  from assms show "(x\<^sub>1\<ra>x\<^sub>2) \<ra> (\<rm>(x\<^sub>3\<ra>x\<^sub>2)) =x\<^sub>1\<ra> (\<rm>x\<^sub>3)"
+    using cancel_middle(2) by simp
+  from assms show "(\<rm>x\<^sub>1) \<ra> (x\<^sub>1\<ra>x\<^sub>2\<ra>x\<^sub>3) \<ra> (\<rm>x\<^sub>3) = x\<^sub>2"
+    using cancel_middle(3) by simp
 qed
 
 text\<open> We can cancel an element on the right from both sides of an equation. \<close>
@@ -217,41 +226,28 @@ text\<open> We can cancel an element on the right from both sides of an equation
 lemma (in topgroup) cancel_right_add: 
   assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G" "x\<^sub>1\<ra>x\<^sub>2 = x\<^sub>3\<ra>x\<^sub>2" 
   shows "x\<^sub>1 = x\<^sub>3"
-proof -
-  from assms(4) have "f`\<langle>x\<^sub>1,x\<^sub>2\<rangle> = f`\<langle>x\<^sub>3,x\<^sub>2\<rangle>" by simp 
-  with assms(1,2,3) show "x\<^sub>1 = x\<^sub>3" using group0_valid_in_tgroup group0.cancel_right
-    by blast 
-qed 
+  using assms cancel_right by simp
 
 text\<open> We can cancel an element on the left from both sides of an equation. \<close>
 
 lemma (in topgroup) cancel_left_add: 
   assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G" "x\<^sub>1\<ra>x\<^sub>2 = x\<^sub>1\<ra>x\<^sub>3" 
   shows "x\<^sub>2 = x\<^sub>3"
-proof -
-  from assms(4) have "f`\<langle>x\<^sub>1,x\<^sub>2\<rangle> = f`\<langle>x\<^sub>1,x\<^sub>3\<rangle>" by simp 
-  with assms(1,2,3) show "x\<^sub>2 = x\<^sub>3" using group0_valid_in_tgroup group0.cancel_left
-    by blast 
-qed 
+  using assms cancel_left by simp
 
 text\<open>We can put an element on the other side of an equation.\<close>
 
 lemma (in topgroup) put_on_the_other_side: 
   assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G" "x\<^sub>3 = x\<^sub>1\<ra>x\<^sub>2"
   shows "x\<^sub>3\<ra>(\<rm>x\<^sub>2) = x\<^sub>1" and "(\<rm>x\<^sub>1)\<ra>x\<^sub>3 = x\<^sub>2" 
-  using assms group0_valid_in_tgroup group0.group0_2_L18 by auto 
+  using assms group0_2_L18 by auto 
 
 text\<open>A simple equation from lemma \<open>simple_equation0\<close> in \<open>Group_ZF\<close> in additive notation \<close>
 
 lemma (in topgroup) simple_equation0_add: 
   assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G" "x\<^sub>1\<ra>(\<rm>x\<^sub>2) = (\<rm>x\<^sub>3)"
   shows "x\<^sub>3 = x\<^sub>2 \<ra> (\<rm>x\<^sub>1)"
-proof -
-  from assms(4) have "f`\<langle>x\<^sub>1,GroupInv(G,f)`(x\<^sub>2)\<rangle> = GroupInv(G,f)`(x\<^sub>3)" by simp 
-  with assms(1,2,3) have "x\<^sub>3 = f`\<langle>x\<^sub>2,GroupInv(G,f)`(x\<^sub>1)\<rangle>" 
-    using group0_valid_in_tgroup group0.simple_equation0 by blast
-  thus ?thesis by simp
-qed
+  using assms simple_equation0 by blast
 
 text\<open>A simple equation from lemma \<open>simple_equation1\<close> in \<open>Group_ZF\<close> in additive notation \<close>
 
@@ -268,8 +264,9 @@ qed
 text\<open>The set comprehension form of negative of a set. The proof uses the \<open>ginv_image\<close> lemma from 
   \<open>Group_ZF\<close> theory which states the same thing in multiplicative notation. \<close>
 
-lemma (in topgroup) ginv_image_add: assumes "V\<subseteq>G" shows "(\<sm>V) = {\<rm>x. x \<in> V}"
-  using assms group0_valid_in_tgroup group0.ginv_image by simp 
+lemma (in topgroup) ginv_image_add: assumes "V\<subseteq>G" 
+  shows "(\<sm>V)\<subseteq>G" and "(\<sm>V) = {\<rm>x. x \<in> V}" 
+  using assms group0_valid_in_tgroup group0.ginv_image by auto
 
 text\<open> The additive notation version of \<open>ginv_image_el\<close> lemma from \<open>Group_ZF\<close> theory \<close>
 
@@ -374,15 +371,22 @@ proof -
     using group0_valid_in_tgroup group0.image_ltrans_union by simp
 qed
 
-text\<open> Some lemmas from \<open>Topology_ZF_1\<close> about images of set by translations 
-  written in additive notation \<close>
+text\<open> If the neutral element is in a set, then it is in the sum of the sets. \<close>
+
+lemma (in topgroup) interval_add_zero: assumes "A\<subseteq>G" "\<zero>\<in>A"
+  shows "\<zero> \<in> A\<sad>A"
+proof -
+  from assms have "\<zero>\<ra>\<zero> \<in> A\<sad>A" using interval_add(4) by auto
+  then show "\<zero> \<in> A\<sad>A" using group0_2_L2 by auto
+qed
+
+text\<open>Some lemmas from \<open>Group_ZF_1\<close> about images of set by translations 
+  written in additive notation\<close>
 
 lemma (in topgroup) lrtrans_image: assumes "V\<subseteq>G" "x\<in>G"
   shows 
     "x\<ltr>V = {x\<ra>v. v\<in>V}" 
     "V\<rtr>x = {v\<ra>x. v\<in>V}"
-    "x\<ltr>V \<subseteq> G"
-    "V\<rtr>x \<subseteq>G"
 proof -
   from assms have "LeftTranslation(G,f,x)``(V) = {f`\<langle>x,v\<rangle>. v\<in>V}"
     using group0_valid_in_tgroup group0.ltrans_image by blast
@@ -390,10 +394,16 @@ proof -
   from assms have "RightTranslation(G,f,x)``(V) = {f`\<langle>v,x\<rangle>. v\<in>V}"
     using group0_valid_in_tgroup group0.rtrans_image by blast
   thus "V\<rtr>x = {v\<ra>x. v\<in>V}" by simp
-  from assms show "x\<ltr>V \<subseteq> G" and "V\<rtr>x \<subseteq>G" 
-    using group0_valid_in_tgroup group0.lrtrans_in_group by auto 
-qed
+qed  
+  
+text\<open> Right and left translations of a set are subsets of the group. 
+  This is of course typically applied to the subsets of the group, but formally we don't
+  need to assume that. \<close>
 
+lemma (in topgroup) lrtrans_in_group_add: assumes "x\<in>G" 
+  shows  "x\<ltr>V \<subseteq> G" and "V\<rtr>x \<subseteq>G"
+  using assms lrtrans_in_group by auto
+    
 text\<open> A corollary from \<open>interval_add\<close> \<close>
 
 corollary (in topgroup) elements_in_set_sum: assumes "A\<subseteq>G" "B\<subseteq>G"
@@ -460,7 +470,7 @@ lemma (in topgroup) tr_homeo: assumes "g\<in>G" shows
 
 text\<open>Left translations preserve interior.\<close>
 
-lemma (in topgroup) trans_interior: assumes A1: "g\<in>G" and A2: "A\<subseteq>G" 
+lemma (in topgroup) ltrans_interior: assumes A1: "g\<in>G" and A2: "A\<subseteq>G" 
   shows "g \<ltr> int(A) = int(g\<ltr>A)"
 proof -
   from assms have "A \<subseteq> \<Union>T" and "IsAhomeomorphism(T,T,LeftTranslation(G,f,g))" using tr_homeo 
@@ -470,7 +480,7 @@ qed
 
 text\<open>Right translations preserve interior.\<close>
 
-lemma (in topgroup) trans_interior_2: assumes A1: "g\<in>G" and A2: "A\<subseteq>G" 
+lemma (in topgroup) rtrans_interior: assumes A1: "g\<in>G" and A2: "A\<subseteq>G" 
   shows "int(A) \<rtr> g = int(A\<rtr>g)"
 proof -
   from assms have "A \<subseteq> \<Union>T" and "IsAhomeomorphism(T,T,RightTranslation(G,f,g))" using tr_homeo 
@@ -515,30 +525,51 @@ lemma (in topgroup) zneigh_not_empty: shows "G \<in> \<N>\<^sub>0"
   using topSpaceAssum IsATopology_def Top_2_L3 zero_in_tgroup
   by simp
 
+
+text\<open>Any element that belongs to a subset of the group belongs to that subset with the 
+  interior of a neighborhood of zero added. \<close>
+
+lemma (in topgroup) elem_in_int_sad: assumes "A\<subseteq>G" "g\<in>A" "H \<in> \<N>\<^sub>0"
+  shows "g \<in> A\<sad>int(H)"
+proof -
+  from assms(3) have "\<zero> \<in> int(H)" and "int(H) \<subseteq> G" using Top_2_L2 by auto
+  with assms(1,2) have "g\<ra>\<zero> \<in> A\<sad>int(H)" using elements_in_set_sum_inv
+    by simp
+  with assms(1,2) show ?thesis using group0_2_L2 by auto
+qed
+
 text\<open>Any element belongs to the interior of any neighboorhood of zero
   left translated by that element.\<close>
 
-lemma (in topgroup) elem_in_int_trans:
-  assumes A1: "g\<in>G" and A2: "H \<in> \<N>\<^sub>0"
-  shows "g \<in> int(g\<ltr>H)"
+lemma (in topgroup) elem_in_int_ltrans:
+  assumes "g\<in>G" and "H \<in> \<N>\<^sub>0"
+  shows "g \<in> int(g\<ltr>H)" and "g \<in> int(g\<ltr>H) \<sad> int(H)"
 proof -
-  from A2 have "\<zero> \<in> int(H)" and "int(H) \<subseteq> G" using Top_2_L2 by auto
-  with A1 have "g \<in> g \<ltr> int(H)"
+  from assms(2) have "\<zero> \<in> int(H)" and "int(H) \<subseteq> G" using Top_2_L2 by auto
+  with assms(1) have "g \<in> g \<ltr> int(H)"
     using group0_valid_in_tgroup group0.neut_trans_elem by simp
-  with assms show ?thesis using trans_interior by simp
+  with assms show "g \<in> int(g\<ltr>H)" using ltrans_interior by simp
+  from assms(1) have "int(g\<ltr>H) \<subseteq> G" using lrtrans_in_group_add(1) Top_2_L1
+    by blast
+  with \<open>g \<in> int(g\<ltr>H)\<close> assms(2) show "g \<in> int(g\<ltr>H) \<sad> int(H)" 
+    using elem_in_int_sad by simp
 qed
 
 text\<open>Any element belongs to the interior of any neighboorhood of zero
   right translated by that element.\<close>
 
-lemma (in topgroup) elem_in_int_trans_2:
+lemma (in topgroup) elem_in_int_rtrans:
   assumes A1: "g\<in>G" and A2: "H \<in> \<N>\<^sub>0"
-  shows "g \<in> int(H\<rtr>g)"
+  shows "g \<in> int(H\<rtr>g)" and "g \<in> int(H\<rtr>g) \<sad> int(H)"
 proof -
   from A2 have "\<zero> \<in> int(H)" and "int(H) \<subseteq> G" using Top_2_L2 by auto
   with A1 have "g \<in> int(H) \<rtr> g"
     using group0_valid_in_tgroup group0.neut_trans_elem by simp
-  with assms show ?thesis using trans_interior_2 by simp
+  with assms show "g \<in> int(H\<rtr>g)" using rtrans_interior by simp
+  from assms(1) have "int(H\<rtr>g) \<subseteq> G" using lrtrans_in_group_add(2) Top_2_L1
+    by blast
+  with \<open>g \<in> int(H\<rtr>g)\<close> assms(2) show "g \<in> int(H\<rtr>g) \<sad> int(H)" 
+    using elem_in_int_sad by simp
 qed
 
 text\<open>Negative of a neighborhood of zero is a neighborhood of zero.\<close>
@@ -597,6 +628,42 @@ proof -
   ultimately show ?thesis by simp
 qed
 
+text\<open>Right and left translating an neighboorhood of zero by a point and its negative 
+  makes it back a neighboorhood of zero.\<close>
+
+lemma (in topgroup) lrtrans_neigh: assumes "W\<in>\<N>\<^sub>0" and "x\<in>G"
+  shows "x\<ltr>(W\<rtr>(\<rm>x)) \<in> \<N>\<^sub>0" and "(x\<ltr>W)\<rtr>(\<rm>x) \<in> \<N>\<^sub>0"
+proof -
+  from assms(2) have "x\<ltr>(W\<rtr>(\<rm>x)) \<subseteq> G" using lrtrans_in_group_add(1) by simp
+  moreover have "\<zero> \<in> int(x\<ltr>(W\<rtr>(\<rm>x)))"
+  proof -
+    from assms(2) have "int(W\<rtr>(\<rm>x)) \<subseteq> G" 
+      using neg_in_tgroup lrtrans_in_group_add(2) Top_2_L1 by blast
+    with assms(2) have "(x\<ltr>int((W\<rtr>(\<rm>x)))) = {x\<ra>y. y\<in>int(W\<rtr>(\<rm>x))}"
+      using lrtrans_image(1) by simp
+    moreover from assms have "(\<rm>x) \<in> int(W\<rtr>(\<rm>x))" 
+      using neg_in_tgroup elem_in_int_rtrans(1) by simp
+    ultimately have "x\<ra>(\<rm>x) \<in> x\<ltr>int(W\<rtr>(\<rm>x))" by auto
+    with assms show ?thesis using group0_2_L6 neg_in_tgroup lrtrans_in_group_add(2) ltrans_interior 
+      by simp
+  qed
+  ultimately show "x\<ltr>(W\<rtr>(\<rm>x)) \<in> \<N>\<^sub>0" by simp
+  from assms(2) have "(x\<ltr>W)\<rtr>(\<rm>x) \<subseteq> G" using lrtrans_in_group_add(2) neg_in_tgroup 
+    by simp
+  moreover have "\<zero> \<in> int((x\<ltr>W)\<rtr>(\<rm>x))"
+  proof -
+    from assms(2) have "int((x\<ltr>W)) \<subseteq> G" using lrtrans_in_group_add(1) Top_2_L1 by blast
+    with assms(2) have "int(x\<ltr>W) \<rtr> (\<rm>x) = {y\<ra>(\<rm>x).y\<in>int(x\<ltr>W)}"
+      using neg_in_tgroup  lrtrans_image(2) by simp
+    moreover from assms have "x \<in> int(x\<ltr>W)" using elem_in_int_ltrans(1) by simp
+    ultimately have "x\<ra>(\<rm>x) \<in> int(x\<ltr>W) \<rtr> (\<rm>x)" by auto
+    with assms(2) have "\<zero> \<in> int(x\<ltr>W) \<rtr> (\<rm>x)" using group0_2_L6 by simp
+    with assms show ?thesis using group0_2_L6 neg_in_tgroup lrtrans_in_group_add(1) rtrans_interior
+      by auto
+  qed
+  ultimately show "(x\<ltr>W)\<rtr>(\<rm>x) \<in> \<N>\<^sub>0" by simp
+qed
+ 
 subsection\<open>Closure in topological groups\<close>
 
 text\<open>This section is devoted to a characterization of closure
@@ -617,13 +684,13 @@ proof
   have "?V = x \<ltr> (\<sm>int(H))"
   proof -
     from A2 \<open>x\<in>G\<close> have "?V = x \<ltr> int(\<sm>H)" 
-      using neg_neigh_neigh trans_interior by simp
+      using neg_neigh_neigh ltrans_interior by simp
     with A2 show ?thesis  using int_inv_inv_int by simp
   qed
   have "A\<inter>?V \<noteq> 0"
   proof -
     from A2 \<open>x\<in>G\<close> \<open>x \<in> cl(A)\<close> have "?V\<in>T" and "x \<in> cl(A) \<inter> ?V" 
-      using neg_neigh_neigh elem_in_int_trans Top_2_L2 by auto
+      using neg_neigh_neigh elem_in_int_ltrans(1) Top_2_L2 by auto
     with A1 show "A\<inter>?V \<noteq> 0" using cl_inter_neigh by simp
   qed
   then obtain y where "y\<in>A" and "y\<in>?V" by auto

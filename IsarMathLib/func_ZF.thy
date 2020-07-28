@@ -489,7 +489,9 @@ qed
 subsection\<open>Identity function\<close>
 
 text\<open>In this section we show some additional facts about the identity 
-  function defined in the standard Isabelle's \<open>Perm\<close> theory.\<close>
+  function defined in the standard Isabelle's \<open>Perm\<close> theory.
+  Note there is also \<open>image_id_same\<close> lemma in \<open>func1\<close> theory.
+  \<close>
 
 text\<open>A function that maps every point to itself is the identity on its domain.\<close>
 
@@ -523,7 +525,7 @@ proof -
     using fun_extension_iff by auto
 qed
 
-text\<open>An intuitively clear, but surprsingly nontrivial fact:identity is the only function from 
+text\<open>An intuitively clear, but surprsingly nontrivial fact: identity is the only function from 
   a singleton to itself.\<close>
 
 lemma singleton_fun_id: shows "({x} \<rightarrow> {x}) = {id({x})}"
@@ -578,6 +580,7 @@ proof -
     using id_def by simp
   ultimately show "f = id(X)" by (rule func_eq)
 qed
+
 
 subsection\<open>Lifting to subsets\<close>
 

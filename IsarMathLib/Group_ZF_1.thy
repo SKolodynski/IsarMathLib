@@ -197,6 +197,13 @@ proof -
   then show "LeftTranslation(G,P,\<one>) = id(G)" by (rule indentity_fun)
 qed
 
+text\<open>Translation by neutral element does not move sets. \<close>
+
+lemma (in group0) trans_neutral_image: assumes "V\<subseteq>G"
+  shows "RightTranslation(G,P,\<one>)``(V) = V" and "LeftTranslation(G,P,\<one>)``(V) = V"
+  using assms trans_neutral image_id_same by auto
+
+
 text\<open>Composition of translations by an element and its inverse is identity.\<close>
 
 lemma (in group0) trans_comp_id: assumes "g\<in>G" shows
@@ -309,15 +316,16 @@ proof -
   ultimately show ?thesis by auto
 qed
 
-text\<open>Right and left translations of a subset of the group are subsets of the group. \<close>
+text\<open>Right and left translations of a set are subsets of the group. 
+  Interestingly, we do not have to assume the set is a subset of the group. \<close>
 
-lemma (in group0) lrtrans_in_group: assumes A1: "V\<subseteq>G" and A2: "x\<in>G"
+lemma (in group0) lrtrans_in_group: assumes "x\<in>G"
   shows "LeftTranslation(G,P,x)``(V) \<subseteq> G" and "RightTranslation(G,P,x)``(V) \<subseteq> G" 
 proof -
-  from assms show "LeftTranslation(G,P,x)``(V) \<subseteq> G" 
-    using ltrans_image group_op_closed by auto
-  from assms show "RightTranslation(G,P,x)``(V) \<subseteq> G" 
-    using rtrans_image group_op_closed by auto
+  from assms have "LeftTranslation(G,P,x):G\<rightarrow>G" and "RightTranslation(G,P,x):G\<rightarrow>G"
+    using group0_5_L1 by auto
+  then show "LeftTranslation(G,P,x)``(V) \<subseteq> G" and "RightTranslation(G,P,x)``(V) \<subseteq> G"
+    using func1_1_L6(2) by auto
 qed
 
 text\<open>A technical lemma about solving equations with translations.\<close>
