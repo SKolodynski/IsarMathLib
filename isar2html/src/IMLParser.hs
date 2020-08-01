@@ -101,7 +101,7 @@ pureItemName = alphaNumNotKeyword "_."
 
 -- | parses a variable name
 varname :: Parser String
-varname = alphaNumNotKeyword "_\\<>^"
+varname = alphaNumNotKeyword "_\\<>^'"
 
 -- | parses a quote reference. Isabelle 2007 allows to
 -- refere by writing a fact, like `a \<in>B` instead of A1

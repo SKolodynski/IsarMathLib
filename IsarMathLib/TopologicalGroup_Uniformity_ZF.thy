@@ -28,7 +28,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Topological groups - uniformity\<close>
 
-theory TopologicalGroup_Uniformity_ZF imports TopologicalGroup_ZF_1 UniformSpace_ZF_1
+theory TopologicalGroup_Uniformity_ZF imports TopologicalGroup_ZF UniformSpace_ZF_1
 
 begin
 text\<open> Each topological group is a uniform space.
@@ -210,20 +210,20 @@ proof-
       from V(1) obtain W where W:"W:\<N>\<^sub>0" "W \<sad> W \<subseteq>V" using exists_procls_zerohood by blast
       {
         fix x assume as:"x \<in> {\<langle>s,t\<rangle>\<in>G\<times>G. (\<rm>s)\<ra>t \<in> W} O {\<langle>s,t\<rangle>\<in>G\<times>G. (\<rm>s)\<ra>t \<in> W}"
-        then obtain x1 x2 x3 where 
-          x:"x1\<in>G" "x2\<in>G" "x3\<in>G" "(\<rm>x1)\<ra>x2 \<in> W" "(\<rm>x2)\<ra>x3 \<in> W" "x=\<langle>x1,x3\<rangle>"
+        then obtain x\<^sub>1 x\<^sub>2 x\<^sub>3 where 
+          x:"x\<^sub>1\<in>G" "x\<^sub>2\<in>G" "x\<^sub>3\<in>G" "(\<rm>x\<^sub>1)\<ra>x\<^sub>2 \<in> W" "(\<rm>x\<^sub>2)\<ra>x\<^sub>3 \<in> W" "x=\<langle>x\<^sub>1,x\<^sub>3\<rangle>"
           unfolding comp_def by auto
         from W(1) have "W\<sad>W = f``(W\<times>W)" using interval_add(2) by auto 
         moreover from W(1) have WW:"W\<times>W\<subseteq>G\<times>G" by auto
         moreover 
-        from x(4,5) have "\<langle>(\<rm>x1)\<ra>x2,(\<rm>x2)\<ra>x3\<rangle>:W\<times>W" by auto
-        with WW have "f`(\<langle>(\<rm>x1)\<ra>x2,(\<rm>x2)\<ra>x3\<rangle>):f``(W\<times>W)"
+        from x(4,5) have "\<langle>(\<rm>x\<^sub>1)\<ra>x\<^sub>2,(\<rm>x\<^sub>2)\<ra>x\<^sub>3\<rangle>:W\<times>W" by auto
+        with WW have "f`(\<langle>(\<rm>x\<^sub>1)\<ra>x\<^sub>2,(\<rm>x\<^sub>2)\<ra>x\<^sub>3\<rangle>):f``(W\<times>W)"
           using func_imagedef topgroup_f_binop by auto
-        ultimately have "((\<rm>x1)\<ra>x2)\<ra>((\<rm>x2)\<ra>x3) :W\<sad>W" by auto
-        moreover from x(1,2,3) have "((\<rm>x1)\<ra>x2)\<ra>((\<rm>x2)\<ra>x3) = (\<rm>x1)\<ra> x3"
+        ultimately have "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) :W\<sad>W" by auto
+        moreover from x(1,2,3) have "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) = (\<rm>x\<^sub>1)\<ra> x\<^sub>3"
           using cancel_middle_add(2) by simp     
-        ultimately have "(\<rm>x1)\<ra> x3\<in>W\<sad>W" by auto
-        with W(2) have "(\<rm>x1)\<ra> x3\<in>V" by auto
+        ultimately have "(\<rm>x\<^sub>1)\<ra> x\<^sub>3\<in>W\<sad>W" by auto
+        with W(2) have "(\<rm>x\<^sub>1)\<ra> x\<^sub>3\<in>V" by auto
         with x(1,3,6) have "x:{\<langle>s,t\<rangle>\<in>G\<times>G. (\<rm>s)\<ra>t \<in> V}" by auto
       }
       then have "{\<langle>s,t\<rangle>\<in>G\<times>G. (\<rm>s)\<ra>t \<in> W} O {\<langle>s,t\<rangle>\<in>G\<times>G. (\<rm>s)\<ra>t \<in> W} \<subseteq> U"
@@ -279,20 +279,20 @@ proof-
       from V(1) obtain W where W:"W:\<N>\<^sub>0" "W \<sad> W \<subseteq>V" using exists_procls_zerohood by blast
       {
         fix x assume as:"x:{\<langle>s,t\<rangle>\<in>G\<times>G.  s\<ra>(\<rm>t) \<in> W} O {\<langle>s,t\<rangle>\<in>G\<times>G.  s\<ra>(\<rm>t) \<in> W}"
-        then obtain x1 x2 x3 where 
-          x:"x1:G" "x2:G" "x3:G" "x1\<ra>(\<rm>x2) \<in> W" "x2\<ra>(\<rm>x3) \<in> W" "x=\<langle>x1,x3\<rangle>"
+        then obtain x\<^sub>1 x\<^sub>2 x\<^sub>3 where 
+          x:"x\<^sub>1:G" "x\<^sub>2\<in>G" "x\<^sub>3\<in>G" "x\<^sub>1\<ra>(\<rm>x\<^sub>2) \<in> W" "x\<^sub>2\<ra>(\<rm>x\<^sub>3) \<in> W" "x=\<langle>x\<^sub>1,x\<^sub>3\<rangle>"
           unfolding comp_def by auto
         from W(1) have "W\<sad>W = f``(W\<times>W)" using interval_add(2) by auto
         moreover from W(1) have WW:"W\<times>W\<subseteq>G\<times>G" by auto
         moreover 
-        from x(4,5) have "\<langle>x1\<ra>(\<rm>x2),x2\<ra>(\<rm>x3)\<rangle> \<in> W\<times>W" by auto
-        with WW have "f`(\<langle>x1\<ra>(\<rm>x2),x2\<ra>(\<rm>x3)\<rangle>) \<in> f``(W\<times>W)"
+        from x(4,5) have "\<langle>x\<^sub>1\<ra>(\<rm>x\<^sub>2),x\<^sub>2\<ra>(\<rm>x\<^sub>3)\<rangle> \<in> W\<times>W" by auto
+        with WW have "f`(\<langle>x\<^sub>1\<ra>(\<rm>x\<^sub>2),x\<^sub>2\<ra>(\<rm>x\<^sub>3)\<rangle>) \<in> f``(W\<times>W)"
           using func_imagedef topgroup_f_binop  by auto
-        ultimately have "(x1\<ra>(\<rm>x2))\<ra>(x2\<ra>(\<rm>x3)) \<in> W\<sad>W" by auto
-        moreover from x(1,2,3) have "(x1\<ra>(\<rm>x2))\<ra>(x2\<ra>(\<rm>x3)) = x1\<ra> (\<rm>x3)"
+        ultimately have "(x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3)) \<in> W\<sad>W" by auto
+        moreover from x(1,2,3) have "(x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3)) = x\<^sub>1\<ra> (\<rm>x\<^sub>3)"
           using cancel_middle_add(1) by simp 
-        ultimately have "x1\<ra>(\<rm>x3) \<in> W\<sad>W" by auto
-        with W(2) have "x1\<ra>(\<rm>x3) \<in> V" by auto
+        ultimately have "x\<^sub>1\<ra>(\<rm>x\<^sub>3) \<in> W\<sad>W" by auto
+        with W(2) have "x\<^sub>1\<ra>(\<rm>x\<^sub>3) \<in> V" by auto
         then have "x \<in> {\<langle>s,t\<rangle>\<in>G\<times>G. s\<ra>(\<rm>t) \<in> V}" using x(1,3,6) by auto
       }
       with V(2) have "{\<langle>s,t\<rangle>\<in>G\<times>G. s\<ra>(\<rm>t) \<in> W} O {\<langle>s,t\<rangle>\<in>G\<times>G. s\<ra>(\<rm>t) \<in> W} \<subseteq> U"
@@ -598,6 +598,8 @@ text\<open> The third uniformity important on topological groups is called the u
 definition(in topgroup) roelckeUniformity
  where "roelckeUniformity \<equiv> {V\<in>Pow(G\<times>G). \<exists>U\<in> \<N>\<^sub>0. {\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(U\<rtr>s)\<sad>U}\<subseteq> V}"
 
+text\<open>The Roelcke uniformity is indeed a uniformity on the group. \<close>
+
 lemma (in topgroup) roelcke_uniformity:
   shows "roelckeUniformity {is a uniformity on} G"
 proof -
@@ -661,33 +663,32 @@ proof -
       then have WG:"W\<subseteq>G" by auto
       moreover
       { fix k assume as:"k:{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(W\<rtr>s)\<sad>W} O {\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(W\<rtr>s)\<sad>W}"
-        then obtain x1 x2 x3 where 
-          x:"x1\<in>G" "x2\<in>G" "x3\<in>G" "x2 \<in> (W\<rtr>x1)\<sad>W" "x3 \<in> (W\<rtr>x2)\<sad>W" "k=\<langle>x1,x3\<rangle>"
+        then obtain x\<^sub>1 x\<^sub>2 x\<^sub>3 where 
+          x:"x\<^sub>1\<in>G" "x\<^sub>2\<in>G" "x\<^sub>3\<in>G" "x\<^sub>2 \<in> (W\<rtr>x\<^sub>1)\<sad>W" "x\<^sub>3 \<in> (W\<rtr>x\<^sub>2)\<sad>W" "k=\<langle>x\<^sub>1,x\<^sub>3\<rangle>"
           unfolding comp_def by auto
-        from \<open>x1\<in>G\<close> have VsG:"W\<rtr>x1 \<subseteq> G" and Vx1G:"V\<rtr>x1 \<subseteq> G" 
+        from \<open>x\<^sub>1\<in>G\<close> have VsG:"W\<rtr>x\<^sub>1 \<subseteq> G" and Vx1G:"V\<rtr>x\<^sub>1 \<subseteq> G" 
           using lrtrans_in_group_add(2) by auto
-        from x(4) VsG WG obtain x y where xy:"x2 = x\<ra>y" "x \<in> W\<rtr>x1" "y\<in>W" 
+        from x(4) VsG WG obtain x y where xy:"x\<^sub>2 = x\<ra>y" "x \<in> W\<rtr>x\<^sub>1" "y\<in>W" 
           using elements_in_set_sum by blast
-        from xy(2) WG x(1) obtain z where z:"x = z\<ra>x1" "z\<in>W" using elements_in_rtrans 
+        from xy(2) WG x(1) obtain z where z:"x = z\<ra>x\<^sub>1" "z\<in>W" using elements_in_rtrans 
           by blast
         from z(2) xy(3) WG have yzG:"y\<in>G" "z\<in>G" by auto
-        from x(2) have VsG:"W\<rtr>x2 \<subseteq> G" using lrtrans_in_group_add by simp
-        from x(5) VsG WG obtain x' y' where xy2:"x3 = x'\<ra>y'" "x'\<in> W\<rtr>x2" "y'\<in>W" 
+        from x(2) have VsG:"W\<rtr>x\<^sub>2 \<subseteq> G" using lrtrans_in_group_add by simp
+        from x(5) VsG WG obtain x' y' where xy2:"x\<^sub>3 = x'\<ra>y'" "x'\<in> W\<rtr>x\<^sub>2" "y'\<in>W" 
           using elements_in_set_sum by blast
-        from xy2(2) WG x(2) obtain z' where z2:"x' = z'\<ra>x2" "z'\<in>W" using elements_in_rtrans 
+        from xy2(2) WG x(2) obtain z' where z2:"x' = z'\<ra>x\<^sub>2" "z'\<in>W" using elements_in_rtrans 
           by blast
         from z2(2) xy2(3) WG have yzG2:"y'\<in>G" "z'\<in>G" by auto
-        from xy(1) z(1) xy2(1) z2(1) have "x3 = (z'\<ra>(z\<ra>x1\<ra>y))\<ra>y'" by auto
-        with yzG yzG2 x(1) have x3:"x3 = ((z'\<ra>z)\<ra>x1)\<ra>(y\<ra>y')" 
+        from xy(1) z(1) xy2(1) z2(1) have "x\<^sub>3 = (z'\<ra>(z\<ra>x\<^sub>1\<ra>y))\<ra>y'" by auto
+        with yzG yzG2 x(1) have x3:"x\<^sub>3 = ((z'\<ra>z)\<ra>x\<^sub>1)\<ra>(y\<ra>y')" 
           using group_oper_assoc group_op_closed by simp
-        moreover
         from xy(3) z(2) xy2(3) z2(2) WG have "z'\<ra>z \<in>  W\<sad>W" "y\<ra>y' \<in> W\<sad>W" 
           using interval_add(4) by auto
         with W(2) have yzV:"z'\<ra>z \<in> V" "y\<ra>y' \<in> V" by auto
-        from yzV(1) VG x(1) have "(z'\<ra>z)\<ra>x1 \<in> V\<rtr>x1" using lrtrans_image(2) by auto
-        with yzV(2) Vx1G VG have "((z'\<ra>z)\<ra>x1)\<ra>(y\<ra>y') \<in> (V\<rtr>x1)\<sad>V" 
+        from yzV(1) VG x(1) have "(z'\<ra>z)\<ra>x\<^sub>1 \<in> V\<rtr>x\<^sub>1" using lrtrans_image(2) by auto
+        with yzV(2) Vx1G VG have "((z'\<ra>z)\<ra>x\<^sub>1)\<ra>(y\<ra>y') \<in> (V\<rtr>x\<^sub>1)\<sad>V" 
           using interval_add(4) by auto
-        with x3 have "x3 \<in> (V\<rtr>x1)\<sad>V" by auto
+        with x3 have "x\<^sub>3 \<in> (V\<rtr>x\<^sub>1)\<sad>V" by auto
         with x(1,3,6) have "k:{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(V\<rtr>s)\<sad>V}" by auto
       }
       with V(1) have "{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(W\<rtr>s)\<sad>W} O {\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(W\<rtr>s)\<sad>W}\<subseteq>U" 
@@ -744,8 +745,9 @@ proof -
         by auto
       moreover 
       have "int(AU)\<inter>int(BU) \<subseteq> AU\<inter>BU" using Top_2_L1 by auto
-      with op have "int(AU)\<inter>int(BU)\<subseteq>int(AU\<inter>BU)" using Top_2_L5[of "int(AU)\<inter>int(BU)"]
-        by auto moreover note AU(1) BU(1)
+      with op have "int(AU)\<inter>int(BU)\<subseteq>int(AU\<inter>BU)" using Top_2_L5
+        by auto 
+      moreover note AU(1) BU(1)
       ultimately have interNeigh:"AU\<inter>BU \<in> \<N>\<^sub>0" unfolding zerohoods_def by auto 
       moreover
       {
@@ -763,7 +765,7 @@ proof -
         with \<open>y \<in> AU\<inter>BU\<close> \<open>AU\<in> \<N>\<^sub>0\<close> \<open>BU\<in> \<N>\<^sub>0\<close> \<open>s \<in> G\<close> \<open>t=x\<ra>y\<close> have
           "t \<in> (AU\<rtr>s)\<sad>AU" and "t \<in> (BU\<rtr>s)\<sad>BU"
           using lrtrans_in_group_add(2) elements_in_set_sum_inv by auto 
-        with z(1-3) have 
+        with z(1,2,3) have 
           "z \<in> {\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(AU\<rtr>s)\<sad>AU}" and "z \<in>{\<langle>s,t\<rangle>\<in>G\<times>G. t \<in>(BU\<rtr>s)\<sad>BU}" 
           by auto
       }
@@ -887,24 +889,24 @@ proof -
         fix z assume z:"z \<in> (?V\<rtr>x)\<sad>?V"
         from W(1) have VG:"?V \<subseteq> G" by auto
         with \<open>x\<in>G\<close> have VxG:"?V\<rtr>x \<subseteq> G" using lrtrans_in_group_add(2) by simp
-        from z VG VxG W(1) obtain a1 b1 where ab:"z=a1\<ra>b1" "a1 \<in> ?V\<rtr>x" "b1 \<in> ?V" 
+        from z VG VxG W(1) obtain a\<^sub>1 b\<^sub>1 where ab:"z=a\<^sub>1\<ra>b\<^sub>1" "a\<^sub>1 \<in> ?V\<rtr>x" "b\<^sub>1 \<in> ?V" 
           using elements_in_set_sum by blast
-        from ab(2) xg VG obtain c1 where c:"a1=c1\<ra>x" "c1 \<in> ?V" using elements_in_rtrans 
+        from ab(2) xg VG obtain c\<^sub>1 where c:"a\<^sub>1=c\<^sub>1\<ra>x" "c\<^sub>1 \<in> ?V" using elements_in_rtrans 
           by blast
-        from ab(3) c(2) have bc:"b1\<in>W" "c1 \<in> x\<ltr>(W\<rtr>(\<rm>x))" by auto
+        from ab(3) c(2) have bc:"b\<^sub>1\<in>W" "c\<^sub>1 \<in> x\<ltr>(W\<rtr>(\<rm>x))" by auto
         from \<open>x\<in>G\<close> have "x\<ltr>(W\<rtr>(\<rm>x)) = {x\<ra>y. y\<in>(W\<rtr>(\<rm>x))}"
           using neg_in_tgroup lrtrans_in_group_add lrtrans_image by auto
-        with \<open>c1 \<in> x\<ltr>(W\<rtr>(\<rm>x))\<close> obtain d where d:"c1=x\<ra>d" "d \<in> W\<rtr>(\<rm>x)" 
+        with \<open>c\<^sub>1 \<in> x\<ltr>(W\<rtr>(\<rm>x))\<close> obtain d where d:"c\<^sub>1=x\<ra>d" "d \<in> W\<rtr>(\<rm>x)" 
           by auto
         from \<open>x\<in>G\<close> \<open>W\<in>\<N>\<^sub>0\<close> \<open>d \<in> W\<rtr>(\<rm>x)\<close> obtain e where e:"d=e\<ra>(\<rm>x)" "e\<in>W"
           using neg_in_tgroup lrtrans_in_group lrtrans_image(2) by auto 
         from e(2) WG have eG:"e\<in>G" by auto
-        from \<open>e\<in>W\<close> \<open>W\<subseteq>G\<close> \<open>b1\<in>W\<close> have "e\<in>G" "b1\<in>G" by auto 
-        from \<open>z = a1\<ra>b1\<close> \<open>a1 = c1\<ra>x\<close>  \<open>c1 = x\<ra>d\<close> \<open>d = e\<ra>(\<rm>x)\<close>
-        have "z = x \<ra> (e\<ra>(\<rm>x)) \<ra> x \<ra> b1" by simp
-        with \<open>x\<in>G\<close> \<open>e\<in>G\<close> have "z=(x\<ra>e)\<ra>b1" using cancel_middle(4) by simp
-        with \<open>x\<in>G\<close> \<open>e\<in>G\<close> \<open>b1\<in>G\<close> have "z = x\<ra>(e\<ra>b1)" using group_oper_assoc by simp
-        moreover from e(2) ab(3) WG have "e\<ra>b1 \<in> W\<sad>W" using elements_in_set_sum_inv 
+        from \<open>e\<in>W\<close> \<open>W\<subseteq>G\<close> \<open>b\<^sub>1\<in>W\<close> have "e\<in>G" "b\<^sub>1\<in>G" by auto 
+        from \<open>z = a\<^sub>1\<ra>b\<^sub>1\<close> \<open>a\<^sub>1 = c\<^sub>1\<ra>x\<close>  \<open>c\<^sub>1 = x\<ra>d\<close> \<open>d = e\<ra>(\<rm>x)\<close>
+        have "z = x \<ra> (e\<ra>(\<rm>x)) \<ra> x \<ra> b\<^sub>1" by simp
+        with \<open>x\<in>G\<close> \<open>e\<in>G\<close> have "z=(x\<ra>e)\<ra>b\<^sub>1" using cancel_middle(4) by simp
+        with \<open>x\<in>G\<close> \<open>e\<in>G\<close> \<open>b\<^sub>1\<in>G\<close> have "z = x\<ra>(e\<ra>b\<^sub>1)" using group_oper_assoc by simp
+        moreover from e(2) ab(3) WG have "e\<ra>b\<^sub>1 \<in> W\<sad>W" using elements_in_set_sum_inv 
           by auto
         moreover note xg WG
         ultimately have "z\<in>x\<ltr>(W\<sad>W)" using elements_in_ltrans_inv interval_add(1) 
@@ -916,8 +918,7 @@ proof -
         ultimately have "z\<in>U" by auto
       }
       then have sub:"(?V\<rtr>x)\<sad>?V \<subseteq> U" by auto 
-      moreover
-      from V_NEIG have unif:"{\<langle>s,t\<rangle> \<in> G\<times>G. t : (?V\<rtr>s)\<sad>?V} \<in> roelckeUniformity" 
+      moreover from V_NEIG have unif:"{\<langle>s,t\<rangle> \<in> G\<times>G. t : (?V\<rtr>s)\<sad>?V} \<in> roelckeUniformity" 
         unfolding roelckeUniformity_def by auto 
       moreover from xg have 
         "\<forall>q. q\<in>{\<langle>s,t\<rangle> \<in> G\<times>G. t : (?V\<rtr>s)\<sad>?V}``{x} \<longleftrightarrow> q\<in>((?V\<rtr>x)\<sad>?V)\<inter>G" 
@@ -929,10 +930,9 @@ proof -
       have add:"({x}\<times>U)``{x} =U" by auto
       from basic add have "({\<langle>s,t\<rangle> \<in> G\<times>G. t \<in> (?V\<rtr>s)\<sad>?V}\<union>({x}\<times>U))``{x} = U" 
         by auto
-      moreover
-      have R:"\<forall>B\<in>roelckeUniformity.(\<forall> C\<in>Pow(G \<times> G).  B \<subseteq> C \<longrightarrow> C \<in> roelckeUniformity)" 
+      moreover have R:"\<forall>B\<in>roelckeUniformity.(\<forall> C\<in>Pow(G \<times> G).  B \<subseteq> C \<longrightarrow> C \<in> roelckeUniformity)" 
         using roelcke_uniformity unfolding IsUniformity_def IsFilter_def by auto
-      from op xg have GG:"({\<langle>s,t\<rangle> \<in> G\<times>G. t \<in> (?V\<rtr>s)\<sad>?V}\<union>({x}\<times>U)):Pow(G\<times>G)" by auto
+      moreover from op xg have GG:"({\<langle>s,t\<rangle> \<in> G\<times>G. t \<in> (?V\<rtr>s)\<sad>?V}\<union>({x}\<times>U)):Pow(G\<times>G)" by auto
       moreover have 
         "{\<langle>s,t\<rangle> \<in> G\<times>G. t\<in>(?V\<rtr>s)\<sad>?V} \<subseteq> ({\<langle>s,t\<rangle> \<in> G\<times>G. t\<in>(?V\<rtr>s)\<sad>?V}\<union>({x}\<times>U))" 
         by auto
@@ -943,12 +943,12 @@ proof -
       with xg fun have "U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G} ` x" 
         using apply_equality by auto
     } hence "\<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G} ` x" by auto
-    with op have "U:{U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G} ` x}" 
+    with op have "U:{U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G}`(x)}" 
       by auto
-  } then have "T \<subseteq> {U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G} ` x}" 
+  } then have "T \<subseteq> {U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G}`(x)}" 
     by auto
   ultimately have 
-    "{U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G} ` x} = T" by auto
+    "{U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G}`(x)} = T" by auto
   then show ?thesis unfolding UniformTopology_def by auto
 qed
 

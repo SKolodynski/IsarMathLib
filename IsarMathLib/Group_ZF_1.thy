@@ -105,7 +105,6 @@ proof -
     using group0_5_L2 group_oper_assoc by simp
 qed
 
-
 text\<open>Composition of right translations is a right translation by 
   the product.\<close>
 
@@ -202,7 +201,6 @@ text\<open>Translation by neutral element does not move sets. \<close>
 lemma (in group0) trans_neutral_image: assumes "V\<subseteq>G"
   shows "RightTranslation(G,P,\<one>)``(V) = V" and "LeftTranslation(G,P,\<one>)``(V) = V"
   using assms trans_neutral image_id_same by auto
-
 
 text\<open>Composition of translations by an element and its inverse is identity.\<close>
 

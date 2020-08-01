@@ -525,7 +525,7 @@ proof -
     using fun_extension_iff by auto
 qed
 
-text\<open>An intuitively clear, but surprsingly nontrivial fact: identity is the only function from 
+text\<open>An intuitively clear, but surprisingly nontrivial fact: identity is the only function from 
   a singleton to itself.\<close>
 
 lemma singleton_fun_id: shows "({x} \<rightarrow> {x}) = {id({x})}"

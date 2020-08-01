@@ -328,6 +328,19 @@ proof -
   then show "V\<in>T" using Top_2_L3 by simp
 qed
 
+text\<open>The intersection of interiors is a equal to the interior of intersections.\<close>
+
+lemma (in topology0) int_inter_int: shows "int(A) \<inter> int(B) = int(A\<inter>B)"
+proof
+  have "int(A) \<inter> int(B) \<subseteq> A\<inter>B" using Top_2_L1 by auto  
+  moreover have "int(A) \<inter> int(B) \<in> T" using Top_2_L2 IsATopology_def topSpaceAssum 
+    by auto
+  ultimately show "int(A) \<inter> int(B) \<subseteq> int(A\<inter>B)" using Top_2_L5 by simp
+  have "A\<inter>B \<subseteq> A" and "A\<inter>B \<subseteq> B" by auto 
+  then have "int(A\<inter>B) \<subseteq> int(A)" and "int(A\<inter>B) \<subseteq> int(B)" using interior_mono by auto
+  thus "int(A\<inter>B) \<subseteq> int(A) \<inter> int(B)" by auto
+qed 
+
 subsection\<open>Closed sets, closure, boundary.\<close>
 
 text\<open>This section is devoted to closed sets and properties 
