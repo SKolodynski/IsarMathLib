@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory UniformSpace_ZF_1 (Isabelle2020: April 2020)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory UniformSpace_ZF_1</h1>
+
+<span class="command">theory</span> <span class="name">UniformSpace_ZF_1</span><br/>
+<span class="keyword">imports</span> <a href="func_ZF_1.html"><span class="name">func_ZF_1</span></a> <a href="UniformSpace_ZF.html"><span class="name">UniformSpace_ZF</span></a> <a href="Topology_ZF_2.html"><span class="name">Topology_ZF_2</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics written for Isabelle/Isar.
+
+    Copyright (C) 2020 Daniel de la Concepcion
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)</span></span></span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249; More on uniform spaces &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>UniformSpace_ZF_1</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>func_ZF_1</span><span> </span><span>UniformSpace_ZF</span><span> </span><span>Topology_ZF_2</span><span>
+</span><span class="keyword2"><span class="keyword">begin</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; This theory defines the maps to study in uniform spaces and proves their basic properties. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; Uniformly continuous functions &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; Just as the the most general setting for continuity of functions is that of topological spaces, uniform spaces 
+  are the most general setting for the study of uniform continuity. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; A map between 2 uniformities is uniformly continuous if it preserves
+the entourages: &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span>IsUniformlyCont</span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;_ {is uniformly continuous between} _ {and} _&quot;</span></span></span><span> </span><span>90</span><span class="delimiter">)</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;f:X-&gt;Y ==&gt; &#934; {is a uniformity on}X  ==&gt; &#915; {is a uniformity on}Y  ==&gt; 
+  f {is uniformly continuous between} &#934; {and} &#915; &#8801; &#8704;V&#8712;&#915;. (ProdFunction(f,f)-``V)&#8712;&#934;&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; Any uniformly continuous function is continuous when considering the topologies on the uniformities. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>uniformly_cont_is_cont</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f:X-&gt;Y&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#934; {is a uniformity on}X &quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#915; {is a uniformity on}Y&quot;</span></span></span><span> 
+</span><span>    </span><span class="string"><span class="delete"><span class="delete">&quot;f {is uniformly continuous between} &#934; {and} &#915;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;IsContinuous(UniformTopology(&#934;,X),UniformTopology(&#915;,Y),f)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">{</span></span><span>  </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>U</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>op</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;U &#8712; UniformTopology(&#915;,Y)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f-``(U) &#8712; UniformTopology(&#934;,X)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f-``(U) &#8838; X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func1_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">moreover</span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">{</span></span><span> </span><span class="keyword3"><span class="command">fix</span></span><span> </span><span>x</span><span> </span><span>xa</span><span> </span><span class="keyword3"><span class="command">assume</span></span><span> </span><span>as</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,xa&#10217; &#8712; f&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;xa &#8712; U&quot;</span></span></span><span>
+</span><span>        </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>x</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>Pi_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>as</span><span class="delimiter">(</span><span>2</span><span class="delimiter">)</span><span> </span><span>op</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>U</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;U &#8712; {&#10216;t,{V``{t}.V&#8712;&#915;}&#10217;.t&#8712;Y}`(xa)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>UniformTopology_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>as</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span>assms</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>xa</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;xa &#8712; Y&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>Pi_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#10216;t,{V``{t}.V&#8712;&#915;}&#10217;.t&#8712;Y} &#8712; Pi(Y,%t. {{V``{t}.V&#8712;&#915;}})&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>Pi_def</span><span> </span><span>function_def</span><span> 
+</span><span>          </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>U</span><span> </span><span>xa</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;U &#8712;{V``{xa}.V&#8712;&#915;}&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>apply_equality</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">obtain</span></span><span> </span><span>V</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span> </span><span>V</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;U = V``{xa}&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;V&#8712;&#915;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>ent</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;(ProdFunction(f,f)-``(V))&#8712;&#934;&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsUniformlyCont_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;t. t &#8712; (ProdFunction(f,f)-``V)``{x} &lt;-&gt; &#10216;x,t&#10217; &#8712; ProdFunction(f,f)-``(V)&quot;</span></span></span><span> 
+</span><span>          </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>image_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span>x</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;t. t: (ProdFunction(f,f)-``V)``{x} &#10231; (t&#8712;X &#8743; &#10216;f`x,f`t&#10217; &#8712; V)&quot;</span></span></span><span> 
+</span><span>          </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>prodFunVimage</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span>as</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;t. t &#8712; (ProdFunction(f,f)-``V)``{x} &#10231; (t&#8712;X &#8743; &#10216;xa,f`t&#10217;: V)&quot;</span></span></span><span> 
+</span><span>          </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>apply_equality</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>V</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;t. t &#8712; (ProdFunction(f,f)-``V)``{x} &#10231; (t&#8712;X &#8743; f`(t) &#8712; U)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span class="delimiter">(</span><span>1</span><span class="delimiter">)</span><span> </span><span>U</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;t. t &#8712; (ProdFunction(f,f)-``V)``{x} &#10231; t &#8712; f-``U&quot;</span></span></span><span>
+</span><span>          </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func1_1_L15</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">hence</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f-``U = (ProdFunction(f,f)-``V)``{x}&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>ent</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f-``(U) &#8712; {V``{x} . V &#8712; &#934;}&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> 
+</span><span>        </span><span class="keyword1"><span class="command">moreover</span></span><span>
+</span><span>        </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;{&#10216;t,{V``{t}.V&#8712;&#934;}&#10217;.t&#8712;X} &#8712; Pi(X,%t. {{V``{t}.V&#8712;&#934;}})&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>Pi_def</span><span> </span><span>function_def</span><span> 
+</span><span>          </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>        </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f-``(U) &#8712; {&#10216;t, {V `` {t} . V &#8712; &#934;}&#10217; . t &#8712; X}`(x)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>x</span><span> </span><span>apply_equality</span><span> 
+</span><span>          </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
+</span><span>      </span><span class="keyword1"><span class="command">}</span></span><span> 
+</span><span>      </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f-``(U) &#8712; UniformTopology(&#934;,X)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>UniformTopology_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">}</span></span><span> </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>IsContinuous_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
+
+</div>
+</body>
+</html>
