@@ -280,7 +280,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*)</span></span></span></span>
 </span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ord_iso_extend</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>  
-</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Projections in cartesian products&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Functions in cartesian products&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we consider maps arising naturally
   in cartesian products.&#8250;</span></span></span><span>
@@ -324,7 +324,53 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*)</span></span></span></span>
 </span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>I</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;domain(SliceProjection(X&#215;{y})) = X&#215;{y}&quot;</span></span></span><span>
 </span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func1_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
-</span><span>  
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; Given 2 functions $f:A\to B$ and $g:C\to D$ , we can consider a function $h:A\times C \to B\times D$
+such that $h(x,y)=\langle f(x),g(y)\rangle$ &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span>ProdFunction</span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;ProdFunction(f,g) &#8801; {&#10216;z,&#10216;f`(fst(z)),g`(snd(z))&#10217;&#10217;. z&#8712;domain(f)&#215;domain(g)}&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; For given functions $f:A\to B$ and $g:C\to D$ the function &#8249;ProdFunction(f,g)&#8250;
+  maps $A\times C$ to $B\times D$. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>prodFunction</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f:A&#8594;B&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g:C&#8594;D&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ProdFunction(f,g):(A&#215;C)&#8594;(B&#215;D)&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;z &#8712; domain(f)&#215;domain(g). &#10216;f`(fst(z)),g`(snd(z))&#10217; &#8712; B&#215;D&quot;</span></span></span><span> 
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func1_1_L1</span><span> </span><span>apply_type</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>ProdFunction_def</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func1_1_L1</span><span> </span><span>ZF_fun_from_total</span><span>
+</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span> 
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; For given functions $f:A\to B$ and $g:C\to D$ and points $x\in A$, $y\in C$ the value of the 
+  function &#8249;ProdFunction(f,g)&#8250; on $\langle x,y \rangle$ is $\langle f(x),g(y) \rangle$. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>prodFunctionApp</span><span class="delimiter">:</span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f:A&#8594;B&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;g:C&#8594;D&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;A&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;y&#8712;C&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ProdFunction(f,g)`&#10216;x,y&#10217; = &#10216;f`(x),g`(y)&#10217;&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">let</span></span><span> </span><span class="var">?z</span><span> </span><span class="delimiter">=</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,y&#10217;&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;?z &#8712; A&#215;C&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ProdFunction(f,g):(A&#215;C)&#8594;(B&#215;D)&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>prodFunction</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span class="delimiter">(</span><span>1</span><span class="delimiter">,</span><span>2</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;ProdFunction(f,g) = {&#10216;z,&#10216;f`(fst(z)),g`(snd(z))&#10217;&#10217;. z&#8712;A&#215;C}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">unfolding</span></span><span> </span><span>ProdFunction_def</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>func1_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ZF_fun_from_tot_val</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> 
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Somewhat technical lemma about inverse image of a set by a &#8249;ProdFunction(f,f)&#8250;. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>prodFunVimage</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x&#8712;X&quot;</span></span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f:X&#8594;Y&quot;</span></span></span><span>
+</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216;x,t&#10217; &#8712; ProdFunction(f,f)-``(V) &#10231; t&#8712;X &#8743; &#10216;f`x,f`t&#10217; &#8712; V&quot;</span></span></span><span>
+</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
+</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span class="delimiter">(</span><span>2</span><span class="delimiter">)</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span>T</span><span class="delimiter">:</span><span class="string"><span class="delete"><span class="delete">&quot;ProdFunction(f,f)-``(V) = {z &#8712; X&#215;X. ProdFunction(f,f)`(z) &#8712; V}&quot;</span></span></span><span>
+</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>prodFunction</span><span> </span><span>func1_1_L15</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span> 
+</span><span>  </span><span class="keyword1"><span class="command">with</span></span><span> </span><span>assms</span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>prodFunctionApp</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span> 
+</span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
+</span><span>
 </span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Induced relations and order isomorphisms&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;When we have two sets $X,Y$, function $f:X\rightarrow Y$ and
@@ -695,7 +741,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*)</span></span></span></span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>  
 </span><span>
-</span><span class="keyword2"><span class="keyword">end</span></span></pre>
+</span><span class="keyword2"><span class="keyword">end</span></span><span>
+</span></pre>
 
 </div>
 </body>

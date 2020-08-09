@@ -373,12 +373,20 @@ qed
 
 text\<open>A set comprehension form of the image of a set under the group inverse. \<close>
 
-lemma (in group0) ginv_image: assumes "V\<subseteq>G" shows "GroupInv(G,P)``(V) = {g\<inverse>. g \<in> V}"  
+lemma (in group0) ginv_image: assumes "V\<subseteq>G" 
+  shows "GroupInv(G,P)``(V) \<subseteq> G" and "GroupInv(G,P)``(V) = {g\<inverse>. g \<in> V}"  
 proof -
-  from assms have "GroupInv(G,P)``(V) = {GroupInv(G,P)`(g). g\<in>V}" 
+  from assms have I: "GroupInv(G,P)``(V) = {GroupInv(G,P)`(g). g\<in>V}" 
     using groupAssum group0_2_T2 func_imagedef by blast 
-  thus ?thesis by simp
+  thus "GroupInv(G,P)``(V) = {g\<inverse>. g \<in> V}"  by simp
+  show "GroupInv(G,P)``(V) \<subseteq> G" using groupAssum group0_2_T2 func1_1_L6(2) by blast
 qed
+
+text\<open>Inverse of an element that belongs to the inverse of the set belongs to the set. \<close>
+
+lemma (in group0) ginv_image_el: assumes "V\<subseteq>G" "g \<in> GroupInv(G,P)``(V)"
+  shows "g\<inverse> \<in> V"
+  using assms ginv_image group_inv_of_inv by auto 
 
 text\<open>For the group inverse the image is the same as inverse image.\<close>
 
@@ -582,6 +590,30 @@ proof -
     using group_inv_of_two inverse_in_group by auto
   with A1 show "a\<cdot>(b\<cdot>a)\<inverse> = b\<inverse>" using inv_cancel_two
     by simp
+qed
+
+text\<open> Some other identities with three element and cancelling. \<close>
+
+lemma (in group0) cancel_middle:
+  assumes "a\<in>G"  "b\<in>G" "c\<in>G"
+  shows 
+    "(a\<cdot>b)\<inverse>\<cdot>(a\<cdot>c) = b\<inverse>\<cdot>c"
+    "(a\<cdot>b)\<cdot>(c\<cdot>b)\<inverse> = a\<cdot>c\<inverse>"
+    "a\<inverse>\<cdot>(a\<cdot>b\<cdot>c)\<cdot>c\<inverse> = b"
+    "a\<cdot>(b\<cdot>c\<inverse>)\<cdot>c = a\<cdot>b"
+proof -
+  from assms have "(a\<cdot>b)\<inverse>\<cdot>(a\<cdot>c) = b\<inverse>\<cdot>(a\<inverse>\<cdot>(a\<cdot>c))"
+    using group_inv_of_two inverse_in_group group_oper_assoc group_op_closed by auto
+  with assms(1,3) show "(a\<cdot>b)\<inverse>\<cdot>(a\<cdot>c) = b\<inverse>\<cdot>c" using inv_cancel_two(3) by simp
+  from assms have "(a\<cdot>b)\<cdot>(c\<cdot>b)\<inverse> = a\<cdot>(b\<cdot>(b\<inverse>\<cdot>c\<inverse>))"
+    using group_inv_of_two inverse_in_group group_oper_assoc group_op_closed by auto
+  with assms show "(a\<cdot>b)\<cdot>(c\<cdot>b)\<inverse> =a\<cdot>c\<inverse>" using inverse_in_group inv_cancel_two(4) by simp
+  from assms have "a\<inverse>\<cdot>(a\<cdot>b\<cdot>c)\<cdot>c\<inverse> = (a\<inverse>\<cdot>a)\<cdot>b\<cdot>(c\<cdot>c\<inverse>)" 
+    using inverse_in_group group_oper_assoc group_op_closed by auto
+  with assms show "a\<inverse>\<cdot>(a\<cdot>b\<cdot>c)\<cdot>c\<inverse> = b" using group0_2_L6 group0_2_L2 by simp
+  from assms have "a\<cdot>(b\<cdot>c\<inverse>)\<cdot>c = a\<cdot>b\<cdot>(c\<inverse>\<cdot>c)" using inverse_in_group group_oper_assoc group_op_closed
+    by simp
+  with assms show "a\<cdot>(b\<cdot>c\<inverse>)\<cdot>c = a\<cdot>b" using group_op_closed group0_2_L6 group0_2_L2 by simp
 qed
 
 text\<open>Adding a neutral element to a set that is 

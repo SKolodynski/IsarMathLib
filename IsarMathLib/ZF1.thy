@@ -335,5 +335,9 @@ lemma image_greater_rel:
   shows "(U \<union> C\<times>C)``{x} = C"
   using assms image_Un_left by blast 
 
+text\<open> It's hard to believe but there are cases where we have to reference this rule. \<close>
+
+lemma set_mem_eq: assumes "x\<in>A" "A=B" shows "x\<in>B" using assms by simp
+
 end
 

@@ -110,7 +110,7 @@ getDepsFromProposition = getDepsFromProof . propproof
 
 -- | gets dependencies from a proof
 getDepsFromProof :: Proof -> [String]
-getDepsFromProof (UsingBy _ d _) = d
+getDepsFromProof (UsingBy _ d _ d1 _ ) = d ++ d1
 getDepsFromProof (ByRule s) = [s]
 getDepsFromProof (LongProof _  pss) = concatMap getDepsFromProofStep pss
 
@@ -166,18 +166,3 @@ isProposition _ = False
 isDefinition :: FormalItemInfo -> Bool
 isDefinition (FormalItemInfo _  (SimpleDef _ _)) = True
 isDefinition _ = False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

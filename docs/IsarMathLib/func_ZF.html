@@ -506,7 +506,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*)</span></span></span></span>
 </span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Identity function&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In this section we show some additional facts about the identity 
-  function defined in the standard Isabelle&#39;s &#8249;Perm&#8250; theory.&#8250;</span></span></span><span>
+  function defined in the standard Isabelle&#39;s &#8249;Perm&#8250; theory.
+  Note there is also &#8249;image_id_same&#8250; lemma in &#8249;func1&#8250; theory.
+  &#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A function that maps every point to itself is the identity on its domain.&#8250;</span></span></span><span>
 </span><span>
@@ -540,7 +542,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*)</span></span></span></span>
 </span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>fun_extension_iff</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;An intuitively clear, but surprsingly nontrivial fact:identity is the only function from 
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;An intuitively clear, but surprisingly nontrivial fact: identity is the only function from 
   a singleton to itself.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>singleton_fun_id</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;({x} &#8594; {x}) = {id({x})}&quot;</span></span></span><span>
@@ -595,6 +597,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.*)</span></span></span></span>
 </span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>id_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
 </span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;f = id(X)&quot;</span></span></span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span class="delimiter">(</span><span>rule</span><span> </span><span>func_eq</span><span class="delimiter">)</span><span>
 </span><span class="keyword1"><span class="command">qed</span></span><span>
+</span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Lifting to subsets&#8250;</span></span></span><span>
 </span><span>

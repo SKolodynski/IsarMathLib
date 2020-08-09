@@ -152,78 +152,6 @@ qed
 
 subsection\<open>Existence of nice neighbourhoods.\<close>
 
-theorem(in topgroup) exists_sym_zerohood:
-  assumes "U\<in>\<N>\<^sub>0"
-  shows "\<exists>V\<in>\<N>\<^sub>0. (V\<subseteq>U\<and> (\<sm>V)=V)"
-proof
-  let ?V="U\<inter>(\<sm>U)"
-  have "U\<subseteq>G" using assms unfolding zerohoods_def by auto
-  then have "?V\<subseteq>G" by auto
-  have invg:" GroupInv(G, f) \<in> G \<rightarrow> G" using group0_2_T2 Ggroup by auto
-  have invb:"GroupInv(G, f) \<in>bij(G,G)" using group0.group_inv_bij(2) group0_valid_in_tgroup by auto
-  have "(\<sm>?V)=GroupInv(G,f)-``?V" unfolding setninv_def using group0.inv_image_vimage group0_valid_in_tgroup by auto
-  also have "\<dots>=(GroupInv(G,f)-``U)\<inter>(GroupInv(G,f)-``(\<sm>U))" using invim_inter_inter_invim invg by auto
-  also have "\<dots>=(\<sm>U)\<inter>(GroupInv(G,f)-``(GroupInv(G,f)``U))" unfolding setninv_def using group0.inv_image_vimage group0_valid_in_tgroup by auto
-  also with \<open>U\<subseteq>G\<close> have "\<dots>=(\<sm>U)\<inter>U" using inj_vimage_image invb unfolding bij_def
-    by auto
-  finally have "(\<sm>?V)=?V" by auto
-  then show "?V \<subseteq> U \<and> (\<sm> ?V) = ?V" by auto
-  from assms have "(\<sm>U)\<in>\<N>\<^sub>0" using neg_neigh_neigh by auto
-  with assms have "\<zero>\<in>int(U)\<inter>int(\<sm>U)" unfolding zerohoods_def by auto
-  moreover 
-  have "int(U)\<inter>int(\<sm>U)\<in>T" using Top_2_L3 IsATopology_def topSpaceAssum Top_2_L4 by auto
-  then have int:"int(int(U)\<inter>int(\<sm>U))=int(U)\<inter>int(\<sm>U)" using Top_2_L3 by auto
-  have "int(U)\<inter>int(\<sm>U)\<subseteq>?V" using Top_2_L1 by auto
-  from interior_mono[OF this] int have "int(U)\<inter>int(\<sm>U)\<subseteq>int(?V)" by auto
-  ultimately have "\<zero>\<in>int(?V)" by auto
-  with \<open>?V\<subseteq>G\<close> show "?V\<in>\<N>\<^sub>0" using zerohoods_def by auto
-qed 
-
-theorem(in topgroup) exists_procls_zerohood:
-  assumes "U\<in>\<N>\<^sub>0"
-  shows "\<exists>V\<in>\<N>\<^sub>0. (V\<subseteq>U\<and> (V\<sad>V)\<subseteq>U \<and> (\<sm>V)=V)"
-proof-
-  have "int(U)\<in>T" using Top_2_L2 by auto
-  then have "f-``(int(U))\<in>\<tau>" using fcon IsContinuous_def by auto
-  moreover 
-  have fne:"f ` \<langle>\<zero>, \<zero>\<rangle> = \<zero>" using group0.group0_2_L2 group0_valid_in_tgroup by auto
-  have "\<zero>\<in>int(U)" using assms unfolding zerohoods_def by auto
-  then have "f -`` {\<zero>}\<subseteq>f-``(int(U))" using func1_1_L8 vimage_def by auto
-  then have "GroupInv(G,f)\<subseteq>f-``(int(U))" using group0.group0_2_T3 group0_valid_in_tgroup by auto
-  then have "\<langle>\<zero>,\<zero>\<rangle>\<in>f-``(int(U))" using fne zero_in_tgroup unfolding GroupInv_def
-    by auto
-  ultimately obtain W V where wop:"W\<in>T" and vop:"V\<in>T" and cartsub:"W\<times>V\<subseteq>f-``(int(U))" and zerhood:"\<langle>\<zero>,\<zero>\<rangle>\<in>W\<times>V" using prod_top_point_neighb topSpaceAssum
-    unfolding prodtop_def by force
-  then have "\<zero>\<in>W" and "\<zero>\<in>V" by auto
-  then have "\<zero>\<in>W\<inter>V" by auto
-  have sub:"W\<inter>V\<subseteq>G" using wop vop G_def by auto
-  have assoc:"f\<in>G\<times>G\<rightarrow>G" using group0.group_oper_assocA group0_valid_in_tgroup by auto
-  {
-    fix t s assume "t\<in>W\<inter>V" and "s\<in>W\<inter>V"
-    then have "t\<in>W" and "s\<in>V" by auto
-    then have "\<langle>t,s\<rangle>\<in>W\<times>V" by auto
-    then have "\<langle>t,s\<rangle>\<in>f-``(int(U))" using cartsub by auto
-    then have "f`\<langle>t,s\<rangle>\<in>int(U)" using func1_1_L15 assoc by auto
-  }
-  then have "{f`\<langle>t,s\<rangle>. \<langle>t,s\<rangle>\<in>(W\<inter>V)\<times>(W\<inter>V)}\<subseteq>int(U)" by auto
-  then have "(W\<inter>V)\<sad>(W\<inter>V)\<subseteq>int(U)" unfolding setadd_def using lift_subsets_explained(4) assoc sub
-    by auto
-  then have "(W\<inter>V)\<sad>(W\<inter>V)\<subseteq>U" using Top_2_L1 by auto
-  from topSpaceAssum have "W\<inter>V\<in>T" using vop wop unfolding IsATopology_def by auto
-  then have "int(W\<inter>V)=W\<inter>V" using Top_2_L3 by auto
-  with sub \<open>\<zero>\<in>W\<inter>V\<close> have "W\<inter>V\<in>\<N>\<^sub>0" unfolding zerohoods_def by auto
-  then obtain Q where "Q\<in>\<N>\<^sub>0" and "Q\<subseteq>W\<inter>V" and "(\<sm>Q)=Q" using exists_sym_zerohood by blast
-  then have "Q\<times>Q\<subseteq>(W\<inter>V)\<times>(W\<inter>V)" by auto 
-  moreover from \<open>Q\<subseteq>W\<inter>V\<close> have "W\<inter>V\<subseteq>G" and "Q\<subseteq>G" using vop wop unfolding G_def by auto
-  ultimately have "Q\<sad>Q\<subseteq>(W\<inter>V)\<sad>(W\<inter>V)" using interval_add(2) func1_1_L8 by auto
-  with \<open>(W\<inter>V)\<sad>(W\<inter>V)\<subseteq>U\<close> have "Q\<sad>Q\<subseteq>U" by auto
-  from \<open>Q\<in>\<N>\<^sub>0\<close> have "\<zero>\<in>Q" unfolding zerohoods_def using Top_2_L1 by auto
-  with \<open>Q\<sad>Q\<subseteq>U\<close> \<open>Q\<subseteq>G\<close> have "\<zero>\<ltr>Q\<subseteq>U" using interval_add(3) by auto
-  with \<open>Q\<subseteq>G\<close> have "Q\<subseteq>U" unfolding ltrans_def using group0.trans_neutral(2) group0_valid_in_tgroup
-    unfolding gzero_def using image_id_same by auto
-  with \<open>Q\<in>\<N>\<^sub>0\<close> \<open>Q\<sad>Q\<subseteq>U\<close> \<open>(\<sm>Q)=Q\<close> show ?thesis by auto
-qed
-
 
 lemma (in topgroup) exist_basehoods_closed:
   assumes "U\<in>\<N>\<^sub>0"
@@ -235,7 +163,7 @@ proof-
   {
     fix x assume "x\<in>cl(V)"
     with \<open>V\<in>\<N>\<^sub>0\<close> have "x\<in>\<Union>T" "V\<subseteq>\<Union>T" using Top_3_L11(1) unfolding zerohoods_def G_def by blast+
-    with \<open>V\<in>\<N>\<^sub>0\<close> have "x\<in>int(x\<ltr>V)" using elem_in_int_trans G_def by auto
+    with \<open>V\<in>\<N>\<^sub>0\<close> have "x\<in>int(x\<ltr>V)" using elem_in_int_ltrans G_def by auto
     with \<open>V\<subseteq>\<Union>T\<close>\<open>x\<in>cl(V)\<close> have "int(x\<ltr>V)\<inter>V\<noteq>0" using cl_inter_neigh Top_2_L2 by blast
     then have "(x\<ltr>V)\<inter>V\<noteq>0" using Top_2_L1 by blast
     then obtain q where "q\<in>(x\<ltr>V)" and "q\<in>V" by blast
@@ -331,7 +259,7 @@ proof-
       with \<open>(\<rm>y)\<ra>x\<notin>U\<close> have "False" by auto
     }
     then have "(x\<ltr>Q)\<inter>(y\<ltr>Q)=0" by auto
-    moreover have "x\<in>int(x\<ltr>Q)""y\<in>int(y\<ltr>Q)" using elem_in_int_trans \<open>Q\<in>\<N>\<^sub>0\<close>
+    moreover have "x\<in>int(x\<ltr>Q)""y\<in>int(y\<ltr>Q)" using elem_in_int_ltrans \<open>Q\<in>\<N>\<^sub>0\<close>
       \<open>x\<in>\<Union>T\<close> \<open>y\<in>\<Union>T\<close> unfolding G_def by auto moreover
     have "int(x\<ltr>Q)\<subseteq>(x\<ltr>Q)""int(y\<ltr>Q)\<subseteq>(y\<ltr>Q)" using Top_2_L1 by auto
     moreover have "int(x\<ltr>Q)\<in>T" "int(y\<ltr>Q)\<in>T" using Top_2_L2 by auto
@@ -355,7 +283,7 @@ proof-
   then have "\<Union>T-(x\<ltr>A)=x\<ltr>(\<Union>T-A)" using inj_image_dif[of "LeftTranslation(G, f, x)""G""G", OF _ assms(2)]
     unfolding ltrans_def G_def using group0.trans_bij(2)[OF group0_valid_in_tgroup assms(1)] bij_def by auto
   then have "int(\<Union>T-(x\<ltr>A))=int(x\<ltr>(\<Union>T-A))" by auto
-  then have "int(\<Union>T-(x\<ltr>A))=x\<ltr>int(\<Union>T-A)" using trans_interior[OF assms(1),of "\<Union>T-A"] unfolding G_def by force
+  then have "int(\<Union>T-(x\<ltr>A))=x\<ltr>int(\<Union>T-A)" using ltrans_interior[OF assms(1),of "\<Union>T-A"] unfolding G_def by force
   have "\<Union>T-int(\<Union>T-A)=cl(\<Union>T-(\<Union>T-A))" using Top_3_L11(2)[of "\<Union>T-A"] by force
   have "\<Union>T-(\<Union>T-A)=A" using assms(2) G_def by auto
   with \<open>\<Union>T-int(\<Union>T-A)=cl(\<Union>T-(\<Union>T-A))\<close> have "\<Union>T-int(\<Union>T-A)=cl(A)" by auto
@@ -462,7 +390,7 @@ proof-
     from \<open>N\<in>\<N>\<^sub>0\<close> have "N\<subseteq>G" unfolding zerohoods_def by auto
     ultimately have "(x\<ltr>N)\<subseteq>U" using trans_subset unfolding G_def by auto moreover
     from \<open>N\<subseteq>G\<close>\<open>x\<in>\<Union>T\<close> assms(2) \<open>P(N,T)\<close> have "P((x\<ltr>N),T)" unfolding G_def by auto moreover
-    from \<open>N\<in>\<N>\<^sub>0\<close>\<open>x\<in>\<Union>T\<close> have "x\<in>int(x\<ltr>N)" using elem_in_int_trans unfolding G_def by auto
+    from \<open>N\<in>\<N>\<^sub>0\<close>\<open>x\<in>\<Union>T\<close> have "x\<in>int(x\<ltr>N)" using elem_in_int_ltrans unfolding G_def by auto
     ultimately have "\<exists>N\<in>Pow(U). x\<in>int(N)\<and>P(N,T)" by auto
   }
   then show ?thesis unfolding IsLocally_def[OF topSpaceAssum] by auto

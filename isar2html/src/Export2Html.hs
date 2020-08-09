@@ -218,6 +218,9 @@ exportFormalItem repls mfii (Locale nm (parent,vars) itms) = mkformal $
    ( par $ (bf "Locale ") ++ nm ++
       ( if null parent then "" else " = " ++ parent ++ " " ++ (unwords vars) ++ " +") ) ++
    (unlines $ map (exportLocaleItem repls) itms)
+exportFormalItem repls mfii (Sublocale sln ln _ pr) = mkformal $
+  (bf "Sublocale") ++ sln ++ " &lt " ++ ln ++ 
+  (par $ exportProof repls mfii pr)
 exportFormalItem repls mfii (FormalItem p) = exportProposition repls mfii p
 
 -- | export locale item
@@ -264,9 +267,12 @@ exportOneClaim repls (label,claims) =
 
 -- | exports a proof
 exportProof :: [(String,String)] -> M.Map String String -> Proof -> String
-exportProof _ mfii ( UsingBy useunf uprops tac ) =
+exportProof _ mfii ( UsingBy useunf uprops useunf1 uprops1 tac ) =
    if not $ null uprops then
-      (bf useunf) ++ " " ++ (unwords $ intersperse ", " $ map (getRefSlider mfii) uprops )
+      (bf useunf) ++ " " ++ (unwords $ intersperse ", " $ map (getRefSlider mfii) uprops ) ++
+      if not $ null uprops1 then
+        (bf useunf1) ++ " " ++ (unwords $ intersperse ", " $ map (getRefSlider mfii) uprops1 )
+      else " "
    else " "
 
 

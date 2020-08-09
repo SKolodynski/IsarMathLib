@@ -300,12 +300,13 @@ proof-
     fix h assume AS:"h\<in>cl(H)"
     with clsub have "(\<rm>h)\<in>cl(H)" using group0.group0_3_T3A group0_valid_in_tgroup by auto moreover
     then have "(\<rm>h)\<in>G" using subcl by auto
-    with V(2) have "(\<rm>h)\<in>int((\<rm>h)\<ltr>V)" using elem_in_int_trans by auto ultimately
+    with V(2) have "(\<rm>h)\<in>int((\<rm>h)\<ltr>V)" using elem_in_int_ltrans by auto ultimately
     have "(\<rm>h)\<in>(cl(H))\<inter>(int((\<rm>h)\<ltr>V))" by auto moreover
     have "int((\<rm>h)\<ltr>V)\<in>T" using Top_2_L2 by auto moreover
     note sub ultimately
     have "H\<inter>(int((\<rm>h)\<ltr>V))\<noteq>0" using cl_inter_neigh by auto moreover
-    from \<open>(\<rm>h)\<in>G\<close> V(2) have "int((\<rm>h)\<ltr>V)=(\<rm>h)\<ltr>int(V)" unfolding zerohoods_def using trans_interior by force
+    from \<open>(\<rm>h)\<in>G\<close> V(2) have "int((\<rm>h)\<ltr>V)=(\<rm>h)\<ltr>int(V)" unfolding zerohoods_def 
+      using ltrans_interior by force
     ultimately have "H\<inter>((\<rm>h)\<ltr>int(V))\<noteq>0" by auto
     then obtain y where y:"y\<in>H" "y\<in>(\<rm>h)\<ltr>int(V)" by blast
     then obtain v where v:"v\<in>int(V)" "y=(\<rm>h)\<ra>v" unfolding ltrans_def LeftTranslation_def by auto
