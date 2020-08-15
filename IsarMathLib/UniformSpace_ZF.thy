@@ -56,7 +56,7 @@ definition
     "\<Phi> {is a uniformity on} X \<equiv>(\<Phi> {is a filter on} (X\<times>X))
     \<and> (\<forall>U\<in>\<Phi>. id(X) \<subseteq> U \<and> (\<exists>V\<in>\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> \<Phi>)"
 
-text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Phi$ is a certain relation on $X$ (a subset of $X\times X$ and is called 
+text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Phi$ is a certain relation on $X$ (a subset of $X\times X$) and is called 
   an ''entourage''. For an $x\in X$ we call $V\{ x\}$ a neighborhood of $x$. 
   The first useful fact we will show is that neighborhoods are non-empty. \<close>
 
