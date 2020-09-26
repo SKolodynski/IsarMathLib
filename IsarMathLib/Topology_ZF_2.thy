@@ -496,7 +496,7 @@ text\<open>Suppose we have two topologies $\tau_1,\tau_2$ on sets
 $X_i=\bigcup\tau_i, i=1,2$. Consider some function $f:A\rightarrow X_2$, where
 $A\subseteq X_1$ (we will call such function ''partial''). In such situation we have two
 natural possibilities for the pairs of topologies with respect to which this function may
-be continuous. One is obvously the original $\tau_1,\tau_2$ and in the second one
+be continuous. One is obviously the original $\tau_1,\tau_2$ and in the second one
 the first element of the pair is the topology relative to the domain of the
 function: $\{A\cap U | U \in \tau_1\}$. These two possibilities are not exactly
 the same and the goal of this section is to explore the differences.\<close>

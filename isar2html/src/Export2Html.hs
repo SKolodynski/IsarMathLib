@@ -153,7 +153,7 @@ createRefDiv mfii nm =
 exportTheories :: String -> KnowledgeBase -> [(String,String)]
 exportTheories templ kb = map expThr tinfos where
    fi = kbformalitems kb
-   repls = inner2LatexSym ++ (map def2replPair $ extractDefs fi)
+   repls = (map def2replPair $ extractDefs fi) ++ inner2LatexSym
    mfii = getRefsInfo repls fi
    tinfos = kbtheories kb
    tlinks = concatMap (thrylink . tiname) tinfos

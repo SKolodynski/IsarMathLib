@@ -492,7 +492,7 @@ text\<open>In this section we consider sets that are saturated
   $r$ if $A=r^{-1}(r(A))$. 
   For equivalence relations saturated sets are unions of equivalence classes.
   This makes them useful as a tool to define subsets of 
-  the quoutient space using properties
+  the quotient space using properties
   of representants. Namely, we often define a set 
   $B\subseteq X/r$ by saying that
   $[x]_r \in B$ iff $x\in A$. 

@@ -112,22 +112,22 @@ text\<open>We say that a set has a maximum if it has an element that is
   under some conditions this element of the set is unique (if exists).\<close>
 
 definition
-  "HasAmaximum(r,A) \<equiv> \<exists>M\<in>A.\<forall>x\<in>A. \<langle> x,M\<rangle> \<in> r"
+  "HasAmaximum(r,A) \<equiv> \<exists>M\<in>A.\<forall>x\<in>A. \<langle>x,M\<rangle> \<in> r"
 
 text\<open>A similar definition what it means that a set has a minimum.\<close>
 
 definition
-  "HasAminimum(r,A) \<equiv> \<exists>m\<in>A.\<forall>x\<in>A. \<langle> m,x\<rangle> \<in> r"
+  "HasAminimum(r,A) \<equiv> \<exists>m\<in>A.\<forall>x\<in>A. \<langle>m,x\<rangle> \<in> r"
 
 text\<open>Definition of the maximum of a set.\<close>
 
 definition
-  "Maximum(r,A) \<equiv> THE M. M\<in>A \<and> (\<forall>x\<in>A. \<langle> x,M\<rangle> \<in> r)"
+  "Maximum(r,A) \<equiv> THE M. M\<in>A \<and> (\<forall>x\<in>A. \<langle>x,M\<rangle> \<in> r)"
 
 text\<open>Definition of a minimum of a set.\<close>
 
 definition
-  "Minimum(r,A) \<equiv> THE m. m\<in>A \<and> (\<forall>x\<in>A. \<langle> m,x\<rangle> \<in> r)"
+  "Minimum(r,A) \<equiv> THE m. m\<in>A \<and> (\<forall>x\<in>A. \<langle>m,x\<rangle> \<in> r)"
 
 text\<open>The supremum of a set $A$ is defined as the minimum of the set of
   upper bounds, i.e. the set 
@@ -138,6 +138,25 @@ text\<open>The supremum of a set $A$ is defined as the minimum of the set of
 
 definition
   "Supremum(r,A) \<equiv> Minimum(r,\<Inter>a\<in>A. r``{a})"
+
+text\<open> The notion of "having a supremum" is the same as the set of upper bounds having a
+  minimum, but having it a a separate notion does simplify notattion in soma cases.
+  The definition is written in terms of 
+  images of singletons $\{ x\}$ under relation. To understand this formulation note
+  that the set of upper bounds of a set $A\subseteq X$ is 
+  $\bigcap_{x\in A}\{ y\in X | \langle x,y\rangle \in r \}$, which is the same
+  as $\bigcap_{x\in A} r(\{ x \})$, where $r(\{ x \})$ is the image of the singleton $\{ x\}$ under
+  relation $r$. \<close>
+
+definition
+  "HasAsupremum(r,A) \<equiv> HasAminimum(r,\<Inter>a\<in>A. r``{a})"
+
+text\<open> The notion of "having an infimum" is the same as the set of lower bounds having a
+  maximum. \<close>
+
+definition
+  "HasAnInfimum(r,A) \<equiv> HasAmaximum(r,\<Inter>a\<in>A. r-``{a})"
+
 
 text\<open>Infimum is defined analogously.\<close>
 
@@ -224,7 +243,7 @@ lemma Order_ZF_2_L1A: assumes "x \<in> Interval(r,a,b)"
   shows "\<langle> a,x\<rangle> \<in> r"  "\<langle> x,b\<rangle> \<in> r"
   using assms  Order_ZF_2_L1 by auto
 
-text\<open>\<open>Order_ZF_2_L1\<close>, implication from right to left.\<close>
+text\<open> \<open>Order_ZF_2_L1\<close>, implication from right to left.\<close>
 
 lemma Order_ZF_2_L1B: assumes "\<langle> a,x\<rangle> \<in> r"  "\<langle> x,b\<rangle> \<in> r"
   shows "x \<in> Interval(r,a,b)"
