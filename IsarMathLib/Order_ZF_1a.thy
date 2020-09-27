@@ -622,7 +622,7 @@ text\<open> Infimum of the set of infima of a collection of sets is infimum of t
 
 lemma inf_inf:
   assumes 
-    "r \<subseteq> X\<times>X" "antisym(r)" "trans(r)" "\<T> \<in> Pow(X)" 
+    "r \<subseteq> X\<times>X" "antisym(r)" "trans(r)" 
     "\<forall>T\<in>\<T>. HasAnInfimum(r,T)"
     "HasAnInfimum(r,{Infimum(r,T).T\<in>\<T>})"
   shows 
@@ -630,14 +630,14 @@ lemma inf_inf:
 proof -
   let ?i = "Infimum(r,{Infimum(r,T).T\<in>\<T>})"
   note assms(2)
-  moreover from assms(5,6) have "\<Union>\<T> \<noteq> 0" using set_inf_not_empty by blast
+  moreover from assms(4,5) have "\<Union>\<T> \<noteq> 0" using set_inf_not_empty by blast
   moreover
   have "\<forall>T\<in>\<T>.\<forall>t\<in>T. \<langle>?i,t\<rangle> \<in> r"
   proof -
     { fix T t assume "T\<in>\<T>" "t\<in>T"
-      with assms(1,2,5) have "\<langle>Infimum(r,T),t\<rangle> \<in> r"
+      with assms(1,2,4) have "\<langle>Infimum(r,T),t\<rangle> \<in> r"
         unfolding HasAnInfimum_def using inf_in_space(2) by blast
-      moreover from assms(1,2,6) \<open>T\<in>\<T>\<close> have "\<langle>?i,Infimum(r,T)\<rangle> \<in> r"
+      moreover from assms(1,2,5) \<open>T\<in>\<T>\<close> have "\<langle>?i,Infimum(r,T)\<rangle> \<in> r"
         unfolding HasAnInfimum_def using inf_in_space(2) by blast
       moreover note assms(3)
       ultimately have "\<langle>?i,t\<rangle> \<in> r" unfolding trans_def by blast
@@ -647,9 +647,9 @@ proof -
   moreover have J: "\<forall>y. (\<forall>x\<in>\<Union>\<T>. \<langle>y,x\<rangle> \<in> r) \<longrightarrow> \<langle>y,?i\<rangle> \<in> r"
   proof -
     { fix y x assume A: "\<forall>x\<in>\<Union>\<T>. \<langle>y,x\<rangle> \<in> r"
-      with assms(2,5) have "\<forall>a\<in>{Infimum(r,T).T\<in>\<T>}. \<langle>y,a\<rangle> \<in> r" using inf_geq_lo_bnd
+      with assms(2,4) have "\<forall>a\<in>{Infimum(r,T).T\<in>\<T>}. \<langle>y,a\<rangle> \<in> r" using inf_geq_lo_bnd
         by simp
-      with assms(2,6) have "\<langle>y,?i\<rangle> \<in> r" by (rule inf_geq_lo_bnd)
+      with assms(2,5) have "\<langle>y,?i\<rangle> \<in> r" by (rule inf_geq_lo_bnd)
     } thus ?thesis by simp
   qed 
   ultimately have "HasAmaximum(r,\<Inter>a\<in>\<Union>\<T>. r-``{a})" by (rule inf_glb)

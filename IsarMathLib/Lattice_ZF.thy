@@ -44,12 +44,7 @@ text\<open> We start with a relation $r$ which is a partial order on a set $L$. 
  in \<open>Order_ZF\<close> as the predicate \<open>IsPartOrder(L,r)\<close>. \<close>
 
 text\<open> A partially ordered $(L,r)$ set is a join-semilattice if each two-element subset of $L$
-  has a supremum (i.e. the least upper bound). The definition is written in terms of 
-  images of singletons $\{ x\}$ under relation. To understand this formulation note
-  that the set of upper bounds of a set $A\subseteq X$ is 
-  $\bigcap_{x\in A}\{ y\in X | \langle x,y\rangle \in r \}$, which is the same
-  as $\bigcap_{x\in A} r(\{ x \})$, where $r(\{ x \})$ is the image of the singleton $\{ x\}$ under
-  relation $r$. \<close>
+  has a supremum (i.e. the least upper bound). \<close>
 
 definition
   "IsJoinSemilattice(L,r) \<equiv> 
@@ -191,8 +186,7 @@ proof -
     unfolding IsJoinSemilattice_def IsPartOrder_def using join_props sup_inf_singl(2) 
     by auto
   also from assms joinLatt have "... = (sup {x,y}) \<squnion> z "
-    unfolding IsJoinSemilattice_def IsPartOrder_def using join_props sup_inf_singl(2) 
-    by auto
+    unfolding IsJoinSemilattice_def IsPartOrder_def using join_props by auto
   also from joinLatt assms(1,2) have "... = x\<squnion>y\<squnion>z" using join_val by simp
   finally show "x\<squnion>(y\<squnion>z) = x\<squnion>y\<squnion>z" by simp
 qed
@@ -201,6 +195,84 @@ text\<open> Join is idempotent. \<close>
 
 lemma (in join_semilatt) join_idempotent: assumes "x\<in>L" shows "x\<squnion>x = x" 
   using joinLatt assms join_val IsJoinSemilattice_def IsPartOrder_def sup_inf_singl(2)
+  by auto
+
+text\<open> The meet_semilatt locale is the dual of the join-semilattice locale defined above. \
+  We will use the $\sqcap$ symbol to denote join, giving it ab bit higher precedence.\<close>
+
+locale meet_semilatt =
+  fixes L
+  fixes r
+  assumes meetLatt: "IsMeetSemilattice(L,r)"
+  fixes join (infixl "\<sqinter>" 72)
+  defines join_def [simp]: "x \<sqinter> y \<equiv> Meet(L,r)`\<langle>x,y\<rangle>"
+  fixes sup ("inf _" ) 
+  defines sup_def [simp]: "inf A  \<equiv> Infimum(r,A)"
+
+text\<open> Meet of the elements of the lattice is in the lattice. \<close>
+
+lemma (in meet_semilatt) meet_props: assumes "x\<in>L" "y\<in>L" 
+  shows "x\<sqinter>y \<in> L" and "x\<sqinter>y = inf {x,y}"
+proof -
+  from meetLatt assms have "Meet(L,r)`\<langle>x,y\<rangle> \<in> L" using meet_is_binop apply_funtype 
+    by blast
+  thus "x\<sqinter>y \<in> L" by simp
+  from meetLatt assms have "Meet(L,r)`\<langle>x,y\<rangle> = Infimum(r,{x,y})" using meet_val by simp
+  thus "x\<sqinter>y = inf {x,y}" by simp
+qed
+
+text\<open> Meet is associative. \<close>
+
+lemma (in meet_semilatt) meet_assoc: assumes "x\<in>L" "y\<in>L" "z\<in>L"
+  shows "x\<sqinter>(y\<sqinter>z) = x\<sqinter>y\<sqinter>z"
+proof -
+  from meetLatt assms(2,3) have "x\<sqinter>(y\<sqinter>z) = x\<sqinter>(inf {y,z})" using meet_val by simp
+  also from assms meetLatt have "... = inf {inf {x}, inf {y,z}}"
+    unfolding IsMeetSemilattice_def IsPartOrder_def using meet_props sup_inf_singl(4) 
+    by auto
+  also have "... = inf {x,y,z}"
+  proof -
+    let ?\<T> = "{{x},{y,z}}"
+    from meetLatt have "r \<subseteq> L\<times>L" "antisym(r)" "trans(r)" 
+      unfolding IsMeetSemilattice_def IsPartOrder_def by auto
+    moreover from meetLatt assms have "\<forall>T\<in>?\<T>. HasAnInfimum(r,T)"
+      unfolding IsMeetSemilattice_def IsPartOrder_def using sup_inf_singl(3) by blast
+    moreover from meetLatt assms have "HasAnInfimum(r,{Infimum(r,T).T\<in>?\<T>})"
+      unfolding IsMeetSemilattice_def IsPartOrder_def  HasAnInfimum_def 
+      using inf_in_space(1) sup_inf_singl(4) by auto
+    ultimately have "Infimum(r,{Infimum(r,T).T\<in>?\<T>}) = Infimum(r,\<Union>?\<T>)" by (rule inf_inf)
+    moreover have "{Infimum(r,T).T\<in>?\<T>} = {inf {x}, inf {y,z}}" and "\<Union>?\<T> = {x,y,z}"
+      by auto
+    ultimately show "(inf {inf {x}, inf {y,z}}) =  inf {x,y,z}" by simp
+  qed
+  also have "... = inf {inf {x,y}, inf {z}}"
+  proof -
+    let ?\<T> = "{{x,y},{z}}"
+    from meetLatt have "r \<subseteq> L\<times>L" "antisym(r)" "trans(r)" 
+      unfolding IsMeetSemilattice_def IsPartOrder_def by auto
+    moreover from meetLatt assms have "\<forall>T\<in>?\<T>. HasAnInfimum(r,T)"
+      unfolding IsMeetSemilattice_def IsPartOrder_def using sup_inf_singl(3) by blast
+    moreover from meetLatt assms have "HasAnInfimum(r,{Infimum(r,T).T\<in>?\<T>})"
+      unfolding IsMeetSemilattice_def IsPartOrder_def HasAnInfimum_def 
+      using inf_in_space(1) sup_inf_singl(4) by auto
+    ultimately have "Infimum(r,{Infimum(r,T).T\<in>?\<T>}) = Infimum(r,\<Union>?\<T>)" by (rule inf_inf)
+    moreover have "{Infimum(r,T).T\<in>?\<T>} = {inf {x,y}, inf {z}}" and "\<Union>?\<T> = {x,y,z}"
+      by auto
+    ultimately show "(inf {x,y,z}) = inf {inf {x,y}, inf {z}}" by auto
+  qed
+  also from assms meetLatt have "... = inf {inf {x,y}, z}"
+    unfolding IsMeetSemilattice_def IsPartOrder_def using meet_props sup_inf_singl(4) 
+    by auto
+  also from assms meetLatt have "... = (inf {x,y}) \<sqinter> z "
+    unfolding IsMeetSemilattice_def IsPartOrder_def using meet_props by auto
+  also from meetLatt assms(1,2) have "... = x\<sqinter>y\<sqinter>z" using meet_val by simp
+  finally show "x\<sqinter>(y\<sqinter>z) = x\<sqinter>y\<sqinter>z" by simp
+qed
+
+text\<open> Meet is idempotent. \<close>
+
+lemma (in meet_semilatt) meet_idempotent: assumes "x\<in>L" shows "x\<sqinter>x = x" 
+  using meetLatt assms meet_val IsMeetSemilattice_def IsPartOrder_def sup_inf_singl(4)
   by auto
 
 end
