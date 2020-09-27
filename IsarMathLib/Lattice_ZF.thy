@@ -64,13 +64,13 @@ definition
   IsAlattice (infixl "{is a lattice on}" 90) where
   "r {is a lattice on} L \<equiv> IsJoinSemilattice(L,r) \<and> IsMeetSemilattice(L,r)"
 
-text\<open> Join is a binary operation whose value on a pair $\langle x,y\rangle$ is def\{ x,y\}$ 
+text\<open> Join is a binary operation whose value on a pair $\langle x,y\rangle$
   is defined as the supremum of the set $\{ x,y\}$. \<close>
 
 definition
   "Join(L,r) \<equiv> {\<langle>p,Supremum(r,{fst(p),snd(p)})\<rangle> . p \<in> L\<times>L}"
 
-text\<open> Meet is a binary operation whose value on a pair $\langle x,y\rangle$ is def\{ x,y\}$ 
+text\<open> Meet is a binary operation whose value on a pair $\langle x,y\rangle$
   is defined as the infimum of the set $\{ x,y\}$.\<close>
 
 
@@ -197,7 +197,7 @@ lemma (in join_semilatt) join_idempotent: assumes "x\<in>L" shows "x\<squnion>x 
   using joinLatt assms join_val IsJoinSemilattice_def IsPartOrder_def sup_inf_singl(2)
   by auto
 
-text\<open> The meet_semilatt locale is the dual of the join-semilattice locale defined above. \
+text\<open> The \<open>meet_semilatt\<close> locale is the dual of the join-semilattice locale defined above.
   We will use the $\sqcap$ symbol to denote join, giving it ab bit higher precedence.\<close>
 
 locale meet_semilatt =

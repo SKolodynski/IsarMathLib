@@ -129,22 +129,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   under some conditions this element of the set is unique (if exists).&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">definition</span></span><span>
-</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;HasAmaximum(r,A) &#8801; &#8707;M&#8712;A.&#8704;x&#8712;A. &#10216; x,M&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;HasAmaximum(r,A) &#8801; &#8707;M&#8712;A.&#8704;x&#8712;A. &#10216;x,M&#10217; &#8712; r&quot;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;A similar definition what it means that a set has a minimum.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">definition</span></span><span>
-</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;HasAminimum(r,A) &#8801; &#8707;m&#8712;A.&#8704;x&#8712;A. &#10216; m,x&#10217; &#8712; r&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;HasAminimum(r,A) &#8801; &#8707;m&#8712;A.&#8704;x&#8712;A. &#10216;m,x&#10217; &#8712; r&quot;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of the maximum of a set.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">definition</span></span><span>
-</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Maximum(r,A) &#8801; THE M. M&#8712;A &#8743; (&#8704;x&#8712;A. &#10216; x,M&#10217; &#8712; r)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Maximum(r,A) &#8801; THE M. M&#8712;A &#8743; (&#8704;x&#8712;A. &#10216;x,M&#10217; &#8712; r)&quot;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition of a minimum of a set.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">definition</span></span><span>
-</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Minimum(r,A) &#8801; THE m. m&#8712;A &#8743; (&#8704;x&#8712;A. &#10216; m,x&#10217; &#8712; r)&quot;</span></span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Minimum(r,A) &#8801; THE m. m&#8712;A &#8743; (&#8704;x&#8712;A. &#10216;m,x&#10217; &#8712; r)&quot;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The supremum of a set $A$ is defined as the minimum of the set of
   upper bounds, i.e. the set 
@@ -155,6 +155,25 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </span><span>
 </span><span class="keyword1"><span class="command">definition</span></span><span>
 </span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;Supremum(r,A) &#8801; Minimum(r,&#8898;a&#8712;A. r``{a})&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; The notion of &quot;having a supremum&quot; is the same as the set of upper bounds having a
+  minimum, but having it a a separate notion does simplify notattion in soma cases.
+  The definition is written in terms of 
+  images of singletons $\{ x\}$ under relation. To understand this formulation note
+  that the set of upper bounds of a set $A\subseteq X$ is 
+  $\bigcap_{x\in A}\{ y\in X | \langle x,y\rangle \in r \}$, which is the same
+  as $\bigcap_{x\in A} r(\{ x \})$, where $r(\{ x \})$ is the image of the singleton $\{ x\}$ under
+  relation $r$. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;HasAsupremum(r,A) &#8801; HasAminimum(r,&#8898;a&#8712;A. r``{a})&quot;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; The notion of &quot;having an infimum&quot; is the same as the set of lower bounds having a
+  maximum. &#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">definition</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;HasAnInfimum(r,A) &#8801; HasAmaximum(r,&#8898;a&#8712;A. r-``{a})&quot;</span></span></span><span>
+</span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Infimum is defined analogously.&#8250;</span></span></span><span>
 </span><span>
@@ -241,7 +260,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,x&#10217; &#8712; r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,b&#10217; &#8712; r&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span>  </span><span>Order_ZF_2_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#8249;Order_ZF_2_L1&#8250;, implication from right to left.&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; &#8249;Order_ZF_2_L1&#8250;, implication from right to left.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span>Order_ZF_2_L1B</span><span class="delimiter">:</span><span> </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; a,x&#10217; &#8712; r&quot;</span></span></span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;&#10216; x,b&#10217; &#8712; r&quot;</span></span></span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;x &#8712; Interval(r,a,b)&quot;</span></span></span><span>
