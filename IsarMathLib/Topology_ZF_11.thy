@@ -687,7 +687,7 @@ proof-
           with g have "\<langle>t,g\<rangle>\<in>r" by auto
           with assms(3) have "g\<in>X" by auto
           with g have boundX:"\<exists>g\<in>X. \<forall>y\<in>U\<inter>LeftRayX(X,r,v). \<langle>y,g\<rangle>\<in>r" by auto
-          have "\<langle>x,?min\<rangle>\<in>r" using Order_ZF_5_L7(2)[OF assms(3) _ assms(5) _ nE boundX]
+          have "\<langle>x,?min\<rangle>\<in>r" using Order_ZF_5_L7(2)[OF assms(3) _ assms(5) _  boundX]
             assms(1) \<open>U\<subseteq>X\<close> A unfolding LeftRayX_def IsLinOrder_def by auto
           ultimately have "x=?min" using assms(1) unfolding IsLinOrder_def antisym_def by auto
         }
