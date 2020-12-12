@@ -999,7 +999,7 @@ next
       then obtain x where "x\<in>H\<^sub>1" and "x\<notin>H\<^sub>2" by auto
       with assms(1) have "x\<inverse> \<in> H\<^sub>1" using group0_3_T3A by simp
       { fix y assume "y\<in>H\<^sub>2"
-        let ?z="x\<cdot>y"
+        let ?z = "x\<cdot>y"
         from \<open>x\<in>H\<^sub>1\<close> \<open>y\<in>H\<^sub>2\<close> have "x \<in> H\<^sub>1\<union>H\<^sub>2" and "y \<in> H\<^sub>1\<union>H\<^sub>2" by auto
         with \<open>IsAsubgroup(H\<^sub>1\<union>H\<^sub>2,P)\<close> have "?z \<in> H\<^sub>1\<union>H\<^sub>2" using group0_3_L6 by blast
         from assms \<open>x \<in> H\<^sub>1\<union>H\<^sub>2\<close>  \<open>y\<in>H\<^sub>2\<close> have "x\<in>G" "y\<in>G" and "y\<inverse>\<in>H\<^sub>2"

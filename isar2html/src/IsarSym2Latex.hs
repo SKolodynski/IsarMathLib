@@ -119,6 +119,7 @@ inner2LatexSym = [("<", " \\lt ")
                  ,("\\<rtr>", " + ")
                  ,("\\<rmu>", "\\cdot ")
                  ,("\\<sad>", " + ")
+                 ,("\\<sdot>", "\\cdot ")
                  ,("\\<sigma>", "\\sigma ")
                  ,("\\<sim>", "\\sim ")
                  ,("\\<sm>", "-")
@@ -196,6 +197,7 @@ inner2LatexSym = [("<", " \\lt ")
                  ,(" \\{in\\} ","\\text{ in }")
                  ,(" \\{and\\}","\\text{ and }")
                  ,("\\<inverse>", "^{-1}")
+                 ,("\\<sinv>", "^{-1}")
                  ]
 
 

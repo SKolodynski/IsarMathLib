@@ -483,7 +483,7 @@ text\<open> The section \<open>Binary operations\<close> in the \<open>func_ZF\<
   $f:X\times X \longrightarrow X $ on a set $X$ defines an operation
   on the subsets of $X$ defined by $F(A,B) = \{ f\langle x,y \rangle | x\in A, y\in B\}$.
   In the group context using multiplicative notation we can write this as 
-  $H\cdot K = \{ x\cdot y | x\in A, y\in B\}$. Similarly we can define $H^{-1}={x^{-1} | x\in H\}$.
+  $H\cdot K = \{ x\cdot y | x\in A, y\in B\}$. Similarly we can define $H^{-1}=\{ x^{-1} | x\in H\}$.
   In this section we study properties of these derived operation and how they relate to the concept
   of subgroups.\<close>
 
@@ -503,7 +503,7 @@ lemma (in group4) interval_prod: assumes "A\<subseteq>G" "B\<subseteq>G"
   shows "A\<sdot>B =  {x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B}"
   using assms group_oper_assocA lift_subsets_explained by auto
 
-text\<open>Product of elements of subsets of the group is in the set product of those sebsets\<close>
+text\<open>Product of elements of subsets of the group is in the set product of those subsets\<close>
 
 lemma (in group4) interval_prod_el: assumes "A\<subseteq>G" "B\<subseteq>G" "x\<in>A" "y\<in>B"
   shows "x\<cdot>y \<in> A\<sdot>B"
@@ -576,7 +576,7 @@ next
   { fix x y assume "x\<in>A" "y\<in>A"
     with assms have "x\<cdot>y \<in> A\<sdot>A" using interval_prod by auto
     with \<open>A\<sdot>A \<subseteq> A\<close> have "x\<cdot>y \<in> A" by auto
-  } thus "A {is closed under} P" unfolding IsOpClosed_def by simp
+  } then show "A {is closed under} P" unfolding IsOpClosed_def by simp
 qed
 
 text\<open>Inverse and square of a subgroup is this subgroup.\<close>
@@ -675,7 +675,7 @@ next
   from assms have "H\<subseteq>G" and "K\<subseteq>G" using group0_3_L2 by auto
   have I: "H\<sdot>K \<noteq> 0"
   proof -
-    let ?x="\<one>" let ?y="\<one>"
+    let ?x = "\<one>" let ?y = "\<one>"
     from assms have "?x\<cdot>?y \<in> (H\<sdot>K)" using group0_3_L5 group0_3_L2 interval_prod 
       by auto
     thus ?thesis by auto
