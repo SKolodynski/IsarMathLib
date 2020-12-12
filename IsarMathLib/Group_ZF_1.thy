@@ -476,4 +476,235 @@ next assume A2: "\<forall>a\<in>G. (p`(a\<inverse>))\<inverse> = p`(a)"
   } then show "\<forall>a\<in>G. p`(a\<inverse>) = (p`(a))\<inverse>" by simp
 qed
 
+subsection\<open>Subgroups and interval arithmetics\<close>
+
+text\<open> The section \<open>Binary operations\<close> in the \<open>func_ZF\<close> theory defines the notion of 
+  "lifting operation to subsets". In short, every binary operation 
+  $f:X\times X \longrightarrow X $ on a set $X$ defines an operation
+  on the subsets of $X$ defined by $F(A,B) = \{ f\langle x,y \rangle | x\in A, y\in B\}$.
+  In the group context using multiplicative notation we can write this as 
+  $H\cdot K = \{ x\cdot y | x\in A, y\in B\}$. Similarly we can define $H^{-1}={x^{-1} | x\in H\}$.
+  In this section we study properties of these derived operation and how they relate to the concept
+  of subgroups.\<close>
+
+text\<open>The next locale extends the \<open>groups0\<close> locale with notation related to interval arithmetics.\<close>
+
+locale group4 = group0 +
+  fixes sdot (infixl "\<sdot>" 70)
+  defines sdot_def [simp]: "A\<sdot>B  \<equiv> (P {lifted to subsets of} G)`\<langle>A,B\<rangle>"
+
+  fixes sinv ("_\<sinv> " [90] 91)
+  defines sinv_def[simp]: "A\<sinv> \<equiv> GroupInv(G,P)``(A)"
+
+text\<open>The next lemma shows a somewhat more explicit way of defining the product 
+  of two subsets of a group.\<close>
+
+lemma (in group4) interval_prod: assumes "A\<subseteq>G" "B\<subseteq>G" 
+  shows "A\<sdot>B =  {x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B}"
+  using assms group_oper_assocA lift_subsets_explained by auto
+
+text\<open>Product of elements of subsets of the group is in the set product of those sebsets\<close>
+
+lemma (in group4) interval_prod_el: assumes "A\<subseteq>G" "B\<subseteq>G" "x\<in>A" "y\<in>B"
+  shows "x\<cdot>y \<in> A\<sdot>B"
+  using assms interval_prod by auto
+
+text\<open>An alternative definition of a group inverse of a set.\<close>
+
+lemma (in group4) interval_inv: assumes "A\<subseteq>G"
+  shows "A\<sinv> = {x\<inverse>.x\<in>A}"
+proof -
+  from groupAssum have "GroupInv(G,P):G\<rightarrow>G" using group0_2_T2 by simp
+  with assms show "A\<sinv> = {x\<inverse>.x\<in>A}" using func_imagedef by simp
+qed
+
+text\<open>Group inverse of a set is a subset of the group. 
+  Interestingly we don't need to assume the set is a subset of the group.\<close>
+
+lemma (in group4) interval_inv_cl: shows "A\<sinv> \<subseteq> G"
+proof -
+  from groupAssum have "GroupInv(G,P):G\<rightarrow>G" using group0_2_T2 by simp
+  then show "A\<sinv> \<subseteq> G" using func1_1_L6(2) by simp
+qed
+
+text\<open>The product of two subsets of a group is a subset of the group.\<close>
+
+lemma (in group4) interval_prod_closed: assumes "A\<subseteq>G" "B\<subseteq>G"
+  shows "A\<sdot>B \<subseteq> G"
+proof
+  fix z assume "z \<in> A\<sdot>B"
+  with assms obtain x y where "x\<in>A" "y\<in>B" "z=x\<cdot>y" using interval_prod by auto
+  with assms show "z\<in>G" using group_op_closed by auto
+qed
+
+text\<open> The product of sets operation is associative.\<close>
+
+lemma (in group4) interval_prod_assoc: assumes "A\<subseteq>G" "B\<subseteq>G" "C\<subseteq>G"
+  shows "A\<sdot>B\<sdot>C = A\<sdot>(B\<sdot>C)"
+proof -
+  from groupAssum have "(P {lifted to subsets of} G) {is associative on} Pow(G)" 
+    unfolding IsAgroup_def IsAmonoid_def using lift_subset_assoc by simp
+  with assms show ?thesis unfolding IsAssociative_def by auto
+qed
+
+text\<open> A simple rearrangement following from associativity of the product of sets operation.\<close>
+
+lemma (in group4) interval_prod_rearr1: assumes "A\<subseteq>G" "B\<subseteq>G" "C\<subseteq>G" "D\<subseteq>G"
+  shows "A\<sdot>B\<sdot>(C\<sdot>D) = A\<sdot>(B\<sdot>C)\<sdot>D"
+proof -
+  from assms(1,2) have "A\<sdot>B \<subseteq> G" using interval_prod_closed by simp
+  with assms(3,4) have "A\<sdot>B\<sdot>(C\<sdot>D) = A\<sdot>B\<sdot>C\<sdot>D"
+    using interval_prod_assoc by simp
+  also from assms(1,2,3) have "A\<sdot>B\<sdot>C\<sdot>D = A\<sdot>(B\<sdot>C)\<sdot>D"
+    using interval_prod_assoc by simp
+  finally show ?thesis by simp
+qed
+
+text\<open>A subset $A$ of the group is closed with respect to the group operation 
+  iff $A\cdot A \subseteq A$. \<close>
+
+lemma (in group4) subset_gr_op_cl: assumes "A\<subseteq>G" 
+  shows "(A {is closed under} P) \<longleftrightarrow> A\<sdot>A \<subseteq> A"
+proof
+  assume "A {is closed under} P"
+  { fix z assume "z \<in> A\<sdot>A"
+    with assms obtain x y where "x\<in>A" "y\<in>A" and "z=x\<cdot>y" using interval_prod by auto
+    with \<open>A {is closed under} P\<close> have "z\<in>A" unfolding IsOpClosed_def by simp
+  } thus "A\<sdot>A \<subseteq> A" by auto
+next
+  assume "A\<sdot>A \<subseteq> A"
+  { fix x y assume "x\<in>A" "y\<in>A"
+    with assms have "x\<cdot>y \<in> A\<sdot>A" using interval_prod by auto
+    with \<open>A\<sdot>A \<subseteq> A\<close> have "x\<cdot>y \<in> A" by auto
+  } thus "A {is closed under} P" unfolding IsOpClosed_def by simp
+qed
+
+text\<open>Inverse and square of a subgroup is this subgroup.\<close>
+
+lemma (in group4) subgroup_inv_sq: assumes "IsAsubgroup(H,P)" 
+   shows "H\<sinv> = H" and "H\<sdot>H = H"
+proof
+  from assms have "H\<subseteq>G" using group0_3_L2 by simp
+  with assms show "H\<sinv> \<subseteq> H" using interval_inv group0_3_T3A by auto
+  { fix x assume "x\<in>H"
+    with assms have "(x\<inverse>)\<inverse> \<in> {y\<inverse>.y\<in>H}" using group0_3_T3A by auto
+    moreover from \<open>x\<in>H\<close> \<open>H\<subseteq>G\<close> have "(x\<inverse>)\<inverse> = x" using group_inv_of_inv by auto
+    ultimately have "x \<in> {y\<inverse>.y\<in>H}" by auto
+    with \<open>H\<subseteq>G\<close> have "x \<in> H\<sinv>" using interval_inv by simp
+  } thus "H \<subseteq> H\<sinv>" by auto
+  from assms have "H {is closed under} P" using group0_3_L6 unfolding IsOpClosed_def by simp
+  with assms have "H\<sdot>H \<subseteq> H" using subset_gr_op_cl group0_3_L2 by simp
+  moreover
+  { fix x assume "x\<in>H"
+    with assms have "x\<in>G" using group0_3_L2 by auto
+    from assms \<open>H\<subseteq>G\<close> \<open>x\<in>H\<close> have "x\<cdot>\<one> \<in> H\<sdot>H" using group0_3_L5 interval_prod by auto
+    with \<open>x\<in>G\<close> have "x \<in> H\<sdot>H" using group0_2_L2 by simp
+  } hence "H \<subseteq> H\<sdot>H" by auto
+  ultimately show "H\<sdot>H = H" by auto
+qed
+
+text\<open>Inverse of a product two sets is a product of inverses with the reversed order.\<close>
+
+lemma (in group4) interval_prod_inv: assumes "A\<subseteq>G" "B\<subseteq>G"
+  shows 
+    "(A\<sdot>B)\<sinv> = {(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}"
+    "(A\<sdot>B)\<sinv> = {y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}"
+    "(A\<sdot>B)\<sinv> = (B\<sinv>)\<sdot>(A\<sinv>)"
+proof -
+  from assms have "(A\<sdot>B) \<subseteq> G" using interval_prod_closed by simp
+  then have I: "(A\<sdot>B)\<sinv> = {z\<inverse>.z\<in>A\<sdot>B}" using interval_inv by simp
+  show II: "(A\<sdot>B)\<sinv> = {(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}"
+  proof
+    { fix p assume "p \<in> (A\<sdot>B)\<sinv>"
+      with I obtain z where "p=z\<inverse>" and "z\<in>A\<sdot>B" by auto
+      with assms obtain x y where "\<langle>x,y\<rangle> \<in> A\<times>B" and "z=x\<cdot>y" using interval_prod by auto
+      with \<open>p=z\<inverse>\<close> have "p\<in>{(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by auto
+    } thus "(A\<sdot>B)\<sinv> \<subseteq> {(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by blast
+    { fix p assume "p\<in>{(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}"
+      then obtain x y where "x\<in>A" "y\<in>B" and "p=(x\<cdot>y)\<inverse>" by auto
+      with assms \<open>(A\<sdot>B) \<subseteq> G\<close> have "p\<in>(A\<sdot>B)\<sinv>" using interval_prod interval_inv
+        by auto
+    } thus "{(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B} \<subseteq> (A\<sdot>B)\<sinv>" by blast
+  qed
+  have "{(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B} = {y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}"
+  proof 
+    { fix p assume "p \<in> {(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}"
+      then obtain x y where "x\<in>A" "y\<in>B" and "p=(x\<cdot>y)\<inverse>" by auto
+      with assms have "y\<inverse>\<cdot>x\<inverse> = (x\<cdot>y)\<inverse>" using group_inv_of_two by auto
+      with \<open>p=(x\<cdot>y)\<inverse>\<close> have "p = y\<inverse>\<cdot>x\<inverse>" by simp
+      with \<open>x\<in>A\<close> \<open>y\<in>B\<close> have "p\<in>{y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by auto
+    } thus "{(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B} \<subseteq> {y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by blast
+    { fix p assume "p\<in>{y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}"
+      then obtain x y where "x\<in>A" "y\<in>B" and "p=y\<inverse>\<cdot>x\<inverse>" by auto
+      with assms have "p = (x\<cdot>y)\<inverse>" using group_inv_of_two by auto
+      with \<open>x\<in>A\<close> \<open>y\<in>B\<close> have "p \<in> {(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by auto
+    } thus "{y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B} \<subseteq> {(x\<cdot>y)\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by blast
+  qed
+  with II show III: "(A\<sdot>B)\<sinv> = {y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by simp
+  have "{y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B} = (B\<sinv>)\<sdot>(A\<sinv>)"
+  proof    
+    { fix p assume "p\<in>{y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}"
+      then obtain x y where "x\<in>A" "y\<in>B" and "p=y\<inverse>\<cdot>x\<inverse>" by auto
+      with assms have "y\<inverse> \<in> (B\<sinv>)" and "x\<inverse> \<in> (A\<sinv>)"
+        using interval_inv by auto
+      with \<open>p=y\<inverse>\<cdot>x\<inverse>\<close> have "p \<in> (B\<sinv>)\<sdot>(A\<sinv>)" using interval_inv_cl interval_prod
+        by auto
+    } thus "{y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B} \<subseteq> (B\<sinv>)\<sdot>(A\<sinv>)" by blast
+    { fix p assume "p \<in> (B\<sinv>)\<sdot>(A\<sinv>)"
+      then obtain y x where "y\<in>B\<sinv>" "x\<in>A\<sinv>" and "p=y\<cdot>x"
+        using interval_inv_cl interval_prod by auto
+      with assms obtain x\<^sub>1 y\<^sub>1 where "x\<^sub>1 \<in> A" "y\<^sub>1 \<in> B" and "x=x\<^sub>1\<inverse>" "y=y\<^sub>1\<inverse>" using interval_inv
+        by auto
+      with \<open>p=y\<cdot>x\<close> have "p \<in> {y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by auto 
+    } thus "(B\<sinv>)\<sdot>(A\<sinv>) \<subseteq> {y\<inverse>\<cdot>x\<inverse>.\<langle>x,y\<rangle> \<in> A\<times>B}" by blast
+  qed
+  with III show "(A\<sdot>B)\<sinv> = (B\<sinv>)\<sdot>(A\<sinv>)" by simp
+qed
+
+text\<open> If $H,K$ are subgroups then $H\cdot K$ is a subgroup iff $H\cdot K = K\cdot H$. \<close>
+
+theorem (in group4) prod_subgr_subgr: 
+  assumes "IsAsubgroup(H,P)" and "IsAsubgroup(K,P)"
+  shows "IsAsubgroup(H\<sdot>K,P) \<longleftrightarrow>  H\<sdot>K = K\<sdot>H"
+proof
+  assume "IsAsubgroup(H\<sdot>K,P)"
+  then have "(H\<sdot>K)\<sinv> = H\<sdot>K" using subgroup_inv_sq(1) by simp
+  with assms show "H\<sdot>K = K\<sdot>H" using group0_3_L2 interval_prod_inv subgroup_inv_sq(1)
+    by auto
+next
+  from assms have "H\<subseteq>G" and "K\<subseteq>G" using group0_3_L2 by auto
+  have I: "H\<sdot>K \<noteq> 0"
+  proof -
+    let ?x="\<one>" let ?y="\<one>"
+    from assms have "?x\<cdot>?y \<in> (H\<sdot>K)" using group0_3_L5 group0_3_L2 interval_prod 
+      by auto
+    thus ?thesis by auto
+  qed
+  from \<open>H\<subseteq>G\<close> \<open>K\<subseteq>G\<close> have II: "H\<sdot>K \<subseteq> G" using interval_prod_closed by simp 
+  assume "H\<sdot>K = K\<sdot>H"
+  have III: "(H\<sdot>K){is closed under} P"
+  proof -
+    have "(H\<sdot>K)\<sdot>(H\<sdot>K) = H\<sdot>K"
+    proof -
+      from \<open>H\<subseteq>G\<close> \<open>K\<subseteq>G\<close> have "(H\<sdot>K)\<sdot>(H\<sdot>K) = H\<sdot>(K\<sdot>H)\<sdot>K"
+        using interval_prod_rearr1 by simp
+      also from \<open>H\<sdot>K = K\<sdot>H\<close> have "... = H\<sdot>(H\<sdot>K)\<sdot>K" by simp
+      also from \<open>H\<subseteq>G\<close> \<open>K\<subseteq>G\<close> have "... = (H\<sdot>H)\<sdot>(K\<sdot>K)"
+        using interval_prod_rearr1 by simp
+      also from assms have "... = H\<sdot>K" using subgroup_inv_sq(2) by simp
+      finally show ?thesis by simp
+    qed
+    with \<open>H\<sdot>K \<subseteq> G\<close> show ?thesis using subset_gr_op_cl by simp
+  qed
+  have IV: "\<forall>x \<in> H\<sdot>K. x\<inverse> \<in> H\<sdot>K"
+  proof -
+    { fix x assume "x \<in> H\<sdot>K" 
+      with \<open>H\<sdot>K \<subseteq> G\<close> have "x\<inverse> \<in> (H\<sdot>K)\<sinv>" using interval_inv by auto
+      with assms \<open>H\<subseteq>G\<close> \<open>K\<subseteq>G\<close> \<open>H\<sdot>K = K\<sdot>H\<close> have "x\<inverse> \<in> H\<sdot>K"
+        using interval_prod_inv subgroup_inv_sq(1) by simp
+    } thus ?thesis by auto
+  qed
+  from I II III IV show "IsAsubgroup(H\<sdot>K,P)" using group0_3_T3 by simp
+qed
+
 end

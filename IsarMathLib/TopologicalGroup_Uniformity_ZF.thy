@@ -34,7 +34,7 @@ begin
 text\<open> Each topological group is a uniform space.
   This theory is about the unifomities that are naturally defined by a topological group structure. \<close>
 
-subsection\<open>Topological group: definition and notation\<close>
+subsection\<open>Natural uniformities in topological groups: definitions and notation\<close>
 
 text\<open>There are two basic uniformities that can be defined on a topological group. \<close>
 
