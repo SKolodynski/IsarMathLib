@@ -476,7 +476,7 @@ next assume A2: "\<forall>a\<in>G. (p`(a\<inverse>))\<inverse> = p`(a)"
   } then show "\<forall>a\<in>G. p`(a\<inverse>) = (p`(a))\<inverse>" by simp
 qed
 
-subsection\<open>Subgroups and interval arithmetics\<close>
+subsection\<open>Subgroups and interval arithmetic\<close>
 
 text\<open> The section \<open>Binary operations\<close> in the \<open>func_ZF\<close> theory defines the notion of 
   "lifting operation to subsets". In short, every binary operation 
