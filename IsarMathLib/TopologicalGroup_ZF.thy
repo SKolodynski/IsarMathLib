@@ -159,30 +159,18 @@ lemma (in topgroup) prod_top_spaces0_valid: shows "prod_top_spaces0(T,T,T)"
 text\<open>Negative of a group element is in group.\<close>
 
 lemma (in topgroup) neg_in_tgroup: assumes "g\<in>G" shows "(\<rm>g) \<in> G"
-proof -
-  from assms have "GroupInv(G,f)`(g) \<in> G" 
-    using group0_valid_in_tgroup group0.inverse_in_group by blast
-  thus ?thesis by simp
-qed
+  using assms inverse_in_group by simp
 
 text\<open>Sum of two group elements is in the group.\<close>
 
 lemma (in topgroup) group_op_closed_add:  assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"
   shows "x\<^sub>1\<ra>x\<^sub>2 \<in> G" 
-proof -
-  from assms have "f`\<langle>x\<^sub>1,x\<^sub>2\<rangle> \<in> G" using assms group0_valid_in_tgroup group0.group_op_closed 
-    by blast
-  thus ?thesis by simp
-qed
+  using assms group_op_closed by simp
 
 text\<open>Zero is in the group.\<close>
 
 lemma (in topgroup) zero_in_tgroup: shows "\<zero>\<in>G"
-proof -
-  have "TheNeutralElement(G,f) \<in> G" 
-    using group0_valid_in_tgroup group0.group0_2_L2 by blast
-  then show "\<zero>\<in>G" by simp
-qed
+  using group0_2_L2 by simp
 
 text\<open> Another lemma about canceling with two group elements written in additive notation \<close>
 
@@ -193,13 +181,13 @@ lemma (in topgroup) inv_cancel_two_add:
     "x\<^sub>1\<ra>x\<^sub>2\<ra>(\<rm>x\<^sub>2) = x\<^sub>1"
     "(\<rm>x\<^sub>1)\<ra>(x\<^sub>1\<ra>x\<^sub>2) = x\<^sub>2"
     "x\<^sub>1\<ra>((\<rm>x\<^sub>1)\<ra>x\<^sub>2) = x\<^sub>2"
-  using assms group0_valid_in_tgroup group0.inv_cancel_two by auto
+  using assms inv_cancel_two by auto
 
 text\<open>Useful identities proven in the \<open>Group_ZF\<close> theory, rewritten here in additive notation.
   Note since the group operation notation is left associative we don't really need the first set
   of parentheses in some cases.\<close>
 
-lemma (in topgroup) cancel_middle_add:assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G"
+lemma (in topgroup) cancel_middle_add: assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G"
   shows 
     "(x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3)) = x\<^sub>1\<ra> (\<rm>x\<^sub>3)"
     "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) = (\<rm>x\<^sub>1)\<ra> x\<^sub>3" 
@@ -254,25 +242,20 @@ text\<open>A simple equation from lemma \<open>simple_equation1\<close> in \<ope
 lemma (in topgroup) simple_equation1_add: 
   assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \<in> G"  "x\<^sub>3 \<in> G" "(\<rm>x\<^sub>1)\<ra>x\<^sub>2 = (\<rm>x\<^sub>3)"
   shows "x\<^sub>3 = (\<rm>x\<^sub>2) \<ra> x\<^sub>1"
-proof -
-  from assms(4) have "f`\<langle>GroupInv(G,f)`(x\<^sub>1),x\<^sub>2\<rangle> = GroupInv(G,f)`(x\<^sub>3)" by simp 
-  with assms(1,2,3) have "x\<^sub>3 = f`\<langle>GroupInv(G,f)`(x\<^sub>2),x\<^sub>1\<rangle>" 
-    using group0_valid_in_tgroup group0.simple_equation1 by blast
-  thus ?thesis by simp
-qed
+  using assms simple_equation1 by blast
 
 text\<open>The set comprehension form of negative of a set. The proof uses the \<open>ginv_image\<close> lemma from 
   \<open>Group_ZF\<close> theory which states the same thing in multiplicative notation. \<close>
 
 lemma (in topgroup) ginv_image_add: assumes "V\<subseteq>G" 
   shows "(\<sm>V)\<subseteq>G" and "(\<sm>V) = {\<rm>x. x \<in> V}" 
-  using assms group0_valid_in_tgroup group0.ginv_image by auto
+  using assms ginv_image by auto
 
 text\<open> The additive notation version of \<open>ginv_image_el\<close> lemma from \<open>Group_ZF\<close> theory \<close>
 
 lemma (in topgroup) ginv_image_el_add: assumes "V\<subseteq>G" "x \<in> (\<sm>V)"
   shows "(\<rm>x) \<in> V"
-  using assms group0_valid_in_tgroup group0.ginv_image_el by simp
+  using assms ginv_image_el by simp
 
 text\<open>Of course the product topology is a topology (on $G\times G$).\<close>
 
@@ -298,7 +281,7 @@ proof -
   let ?f\<^sub>H = "restrict(f,H\<times>H)"
   have "\<Union>?\<tau>\<^sub>0 = G \<inter> H" using union_restrict by simp
   also from A1 have "\<dots> = H" 
-    using group0_valid_in_tgroup group0.group0_3_L2 by blast
+    using group0_3_L2 by blast
   finally have "\<Union>?\<tau>\<^sub>0 = H" by simp
   have "?\<tau>\<^sub>0 {is a topology}" using Top_1_L4 by simp
   moreover from A1 \<open>\<Union>?\<tau>\<^sub>0 = H\<close> have "IsAgroup(\<Union>?\<tau>\<^sub>0,?f\<^sub>H)"
@@ -309,8 +292,7 @@ proof -
       using topSpaceAssum prod_top_on_G topgroup_f_binop prod_top_on_G
 	two_top_spaces0_def by simp
     moreover 
-    from A1 have "H \<subseteq> G" using group0_valid_in_tgroup group0.group0_3_L2
-      by simp
+    from A1 have "H \<subseteq> G" using group0_3_L2 by simp
     then have "H\<times>H \<subseteq> \<Union>\<tau>" using prod_top_on_G by auto
     moreover have "IsContinuous(\<tau>,T,f)" using fcon by simp
     ultimately have 
@@ -330,20 +312,14 @@ proof -
       using Ggroup group0_2_T2 by simp
     then have "two_top_spaces0(T,T,GroupInv(G,f))"
       using topSpaceAssum two_top_spaces0_def by simp
-    moreover from A1 have "H \<subseteq> \<Union>T" 
-      using group0_valid_in_tgroup group0.group0_3_L2
-      by simp
+    moreover from A1 have "H \<subseteq> \<Union>T" using group0_3_L2 by simp
     ultimately have 
       "IsContinuous(?\<tau>\<^sub>0,T {restricted to} ?g``(H),?g)"
       using inv_cont two_top_spaces0.restr_restr_image_cont
       by simp
-    moreover from A1 have "?g``(H) = H"
-      using group0_valid_in_tgroup group0.restr_inv_onto
-      by simp  
+    moreover from A1 have "?g``(H) = H" using restr_inv_onto by simp  
     moreover
-    from A1 have "GroupInv(H,?f\<^sub>H) = ?g"
-      using group0_valid_in_tgroup group0.group0_3_T1
-      by simp
+    from A1 have "GroupInv(H,?f\<^sub>H) = ?g" using group0_3_T1 by simp
     with \<open>\<Union>?\<tau>\<^sub>0 = H\<close> have "?g = GroupInv(\<Union>?\<tau>\<^sub>0,?f\<^sub>H)" by simp
     ultimately show ?thesis by simp
   qed
@@ -367,8 +343,7 @@ lemma (in topgroup) interval_add: assumes "A\<subseteq>G" "B\<subseteq>G" shows
 proof -
   from assms show "A\<sad>B \<subseteq> G" and "A\<sad>B = f``(A\<times>B)" and "A\<sad>B = {x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B}"
     using topgroup_f_binop lift_subsets_explained by auto
-  from assms show "A\<sad>B = (\<Union>x\<in>A. x\<ltr>B)"
-    using group0_valid_in_tgroup group0.image_ltrans_union by simp
+  from assms show "A\<sad>B = (\<Union>x\<in>A. x\<ltr>B)" using image_ltrans_union by simp
 qed
 
 text\<open> If the neutral element is in a set, then it is in the sum of the sets. \<close>
@@ -387,14 +362,7 @@ lemma (in topgroup) lrtrans_image: assumes "V\<subseteq>G" "x\<in>G"
   shows 
     "x\<ltr>V = {x\<ra>v. v\<in>V}" 
     "V\<rtr>x = {v\<ra>x. v\<in>V}"
-proof -
-  from assms have "LeftTranslation(G,f,x)``(V) = {f`\<langle>x,v\<rangle>. v\<in>V}"
-    using group0_valid_in_tgroup group0.ltrans_image by blast
-  thus "x\<ltr>V = {x\<ra>v. v\<in>V}" by simp
-  from assms have "RightTranslation(G,f,x)``(V) = {f`\<langle>v,x\<rangle>. v\<in>V}"
-    using group0_valid_in_tgroup group0.rtrans_image by blast
-  thus "V\<rtr>x = {v\<ra>x. v\<in>V}" by simp
-qed  
+  using assms ltrans_image rtrans_image by auto
   
 text\<open> Right and left translations of a set are subsets of the group. 
   This is of course typically applied to the subsets of the group, but formally we don't
@@ -448,8 +416,7 @@ text\<open>Right and left translations are continuous.\<close>
 lemma (in topgroup) trans_cont: assumes "g\<in>G" shows
   "IsContinuous(T,T,RightTranslation(G,f,g))" and
   "IsContinuous(T,T,LeftTranslation(G,f,g))"
-using assms group0_valid_in_tgroup group0.trans_eq_section
-  topgroup_f_binop fcon prod_top_spaces0_valid 
+using assms trans_eq_section topgroup_f_binop fcon prod_top_spaces0_valid 
   prod_top_spaces0.fix_1st_var_cont prod_top_spaces0.fix_2nd_var_cont
   by auto
 
@@ -457,16 +424,15 @@ text\<open>Left and right translations of an open set are open.\<close>
 
 lemma (in topgroup) open_tr_open: assumes "g\<in>G" and "V\<in>T"
   shows "g\<ltr>V \<in> T" and  "V\<rtr>g \<in> T"
-  using assms neg_in_tgroup trans_cont IsContinuous_def 
-    group0_valid_in_tgroup group0.trans_image_vimage by auto
+  using assms neg_in_tgroup trans_cont IsContinuous_def trans_image_vimage by auto
 
 text\<open>Right and left translations are homeomorphisms.\<close>
 
 lemma (in topgroup) tr_homeo: assumes "g\<in>G" shows
   "IsAhomeomorphism(T,T,RightTranslation(G,f,g))" and
   "IsAhomeomorphism(T,T,LeftTranslation(G,f,g))"
-  using assms group0_valid_in_tgroup group0.trans_bij trans_cont open_tr_open
-    bij_cont_open_homeo by auto
+  using assms trans_bij trans_cont open_tr_open bij_cont_open_homeo 
+  by auto
 
 text\<open>Left translations preserve interior.\<close>
 
@@ -492,20 +458,18 @@ text\<open>Translating by an inverse and then by an element cancels out.\<close>
 
 lemma (in topgroup) trans_inverse_elem: assumes "g\<in>G" and "A\<subseteq>G"
   shows "g\<ltr>((\<rm>g)\<ltr>A) = A"
-using assms neg_in_tgroup group0_valid_in_tgroup group0.trans_comp_image
-  group0.group0_2_L6 group0.trans_neutral image_id_same by simp
+  using assms neg_in_tgroup trans_comp_image group0_2_L6 trans_neutral image_id_same 
+  by simp
 
 text\<open>Inverse of an open set is open.\<close>
 
 lemma (in topgroup) open_inv_open: assumes "V\<in>T" shows "(\<sm>V) \<in> T"
-  using assms group0_valid_in_tgroup group0.inv_image_vimage
-    inv_cont IsContinuous_def by simp
+  using assms inv_image_vimage inv_cont IsContinuous_def by simp
 
 text\<open>Inverse is a homeomorphism.\<close>
 
 lemma (in topgroup) inv_homeo: shows "IsAhomeomorphism(T,T,GroupInv(G,f))"
-  using group0_valid_in_tgroup group0.group_inv_bij inv_cont open_inv_open
-  bij_cont_open_homeo by simp
+  using group_inv_bij inv_cont open_inv_open bij_cont_open_homeo by simp
 
 text\<open>Taking negative preserves interior.\<close>
 
@@ -546,8 +510,7 @@ lemma (in topgroup) elem_in_int_ltrans:
   shows "g \<in> int(g\<ltr>H)" and "g \<in> int(g\<ltr>H) \<sad> int(H)"
 proof -
   from assms(2) have "\<zero> \<in> int(H)" and "int(H) \<subseteq> G" using Top_2_L2 by auto
-  with assms(1) have "g \<in> g \<ltr> int(H)"
-    using group0_valid_in_tgroup group0.neut_trans_elem by simp
+  with assms(1) have "g \<in> g \<ltr> int(H)" using neut_trans_elem by simp
   with assms show "g \<in> int(g\<ltr>H)" using ltrans_interior by simp
   from assms(1) have "int(g\<ltr>H) \<subseteq> G" using lrtrans_in_group_add(1) Top_2_L1
     by blast
@@ -563,8 +526,7 @@ lemma (in topgroup) elem_in_int_rtrans:
   shows "g \<in> int(H\<rtr>g)" and "g \<in> int(H\<rtr>g) \<sad> int(H)"
 proof -
   from A2 have "\<zero> \<in> int(H)" and "int(H) \<subseteq> G" using Top_2_L2 by auto
-  with A1 have "g \<in> int(H) \<rtr> g"
-    using group0_valid_in_tgroup group0.neut_trans_elem by simp
+  with A1 have "g \<in> int(H) \<rtr> g" using neut_trans_elem by simp
   with assms show "g \<in> int(H\<rtr>g)" using rtrans_interior by simp
   from assms(1) have "int(H\<rtr>g) \<subseteq> G" using lrtrans_in_group_add(2) Top_2_L1
     by blast
@@ -578,8 +540,7 @@ lemma (in topgroup) neg_neigh_neigh: assumes "H \<in> \<N>\<^sub>0"
   shows "(\<sm>H) \<in> \<N>\<^sub>0"
 proof -
   from assms have "int(H) \<subseteq> G" and "\<zero> \<in> int(H)" using Top_2_L1 by auto
-  with assms have "\<zero> \<in> int(\<sm>H)" using group0_valid_in_tgroup group0.neut_inv_neut
-    int_inv_inv_int by simp
+  with assms have "\<zero> \<in> int(\<sm>H)" using neut_inv_neut int_inv_inv_int by simp
   moreover
   have "GroupInv(G,f):G\<rightarrow>G" using Ggroup group0_2_T2 by simp
   then have "(\<sm>H) \<subseteq> G" using func1_1_L6 by simp
@@ -600,9 +561,7 @@ proof -
   moreover have "\<zero> \<in> int(?H)"
   proof -
     from assms have "U\<subseteq>G" and "g\<in>U" by auto
-    with \<open>?H\<in>T\<close> show "\<zero> \<in> int(?H)" 
-      using group0_valid_in_tgroup group0.elem_trans_neut Top_2_L3
-        by auto
+    with \<open>?H\<in>T\<close> show "\<zero> \<in> int(?H)" using elem_trans_neut Top_2_L3 by auto
   qed
   ultimately show ?thesis by simp
 qed
@@ -621,9 +580,7 @@ proof -
   moreover have "\<zero> \<in> int(?H)"
   proof -
     from assms have "U\<subseteq>G" and "g\<in>U" by auto
-    with \<open>?H\<in>T\<close> show "\<zero> \<in> int(?H)" 
-      using group0_valid_in_tgroup group0.elem_trans_neut Top_2_L3
-        by auto
+    with \<open>?H\<in>T\<close> show "\<zero> \<in> int(?H)" using elem_trans_neut Top_2_L3  by auto
   qed
   ultimately show ?thesis by simp
 qed
@@ -685,15 +642,13 @@ proof
   have "U\<subseteq>G" using assms unfolding zerohoods_def by auto
   then have "?V\<subseteq>G" by auto
   have invg:" GroupInv(G, f) \<in> G \<rightarrow> G" using group0_2_T2 Ggroup by auto
-  have invb:"GroupInv(G, f) \<in>bij(G,G)" using group0.group_inv_bij(2) group0_valid_in_tgroup 
-    by auto
-  have "(\<sm>?V)=GroupInv(G,f)-``?V" 
-    unfolding setninv_def using group0.inv_image_vimage group0_valid_in_tgroup 
+  have invb:"GroupInv(G, f) \<in>bij(G,G)" using group_inv_bij(2) by auto
+  have "(\<sm>?V)=GroupInv(G,f)-``?V" unfolding setninv_def using inv_image_vimage 
     by auto
   also have "\<dots>=(GroupInv(G,f)-``U)\<inter>(GroupInv(G,f)-``(\<sm>U))" using invim_inter_inter_invim invg 
     by auto
   also have "\<dots>=(\<sm>U)\<inter>(GroupInv(G,f)-``(GroupInv(G,f)``U))" 
-    unfolding setninv_def using group0.inv_image_vimage group0_valid_in_tgroup by auto
+    unfolding setninv_def using inv_image_vimage by auto
   also from \<open>U\<subseteq>G\<close> have "\<dots>=(\<sm>U)\<inter>U" using inj_vimage_image invb unfolding bij_def
     by auto
   finally have "(\<sm>?V)=?V" by auto
@@ -787,7 +742,7 @@ proof
   qed
   then obtain y where "y\<in>A" and "y\<in>?V" by auto
   with \<open>?V = x \<ltr> (\<sm>int(H))\<close> \<open>int(H) \<subseteq> G\<close> \<open>x\<in>G\<close> have "x \<in> y\<ltr>int(H)"
-    using group0_valid_in_tgroup group0.ltrans_inv_in by simp
+    using ltrans_inv_in by simp
   with \<open>y\<in>A\<close> have "x \<in> (\<Union>y\<in>A. y\<ltr>H)" using Top_2_L1 func1_1_L8 by auto
   with assms show "x \<in> A\<sad>H" using interval_add(3) by simp
 qed
@@ -817,10 +772,9 @@ next
         proof -
           from assms \<open>y\<in>A\<close> have "y\<in>G" by auto
           with \<open>(\<rm>x)\<ltr>U \<subseteq> G\<close> and \<open>x \<in> y\<ltr>?H\<close> have "y \<in> x\<ltr>((\<rm>x)\<ltr>U)"
-            using group0_valid_in_tgroup group0.ltrans_inv_in by simp
+            using ltrans_inv_in by simp
           with \<open>U\<in>T\<close> \<open>x\<in>G\<close> show "y\<in>U" 
-            using neg_in_tgroup group0_valid_in_tgroup group0.trans_comp_image
-              group0.group0_2_L6 group0.trans_neutral image_id_same
+            using neg_in_tgroup trans_comp_image group0_2_L6 trans_neutral image_id_same
               by auto
         qed
         with \<open>y\<in>A\<close> have "U\<inter>A \<noteq> 0" by auto
