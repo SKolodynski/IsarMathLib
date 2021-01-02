@@ -952,4 +952,74 @@ proof -
   then show ?thesis unfolding UniformTopology_def by auto
 qed
 
+text\<open>The inverse map is uniformly continuous in the roelcke uniformity\<close>
+
+lemma (in topgroup) inv_uniform_roelcke:
+  shows 
+    "GroupInv(G,f) {is uniformly continuous between} roelckeUniformity {and} roelckeUniformity" 
+proof -
+  let ?P = "ProdFunction(GroupInv(G,f), GroupInv(G,f))"
+  have L: "GroupInv(G,f):G\<rightarrow>G" and R:"roelckeUniformity {is a uniformity on} G" 
+    using group0_2_T2[OF groupAssum] roelcke_uniformity by auto
+  moreover have "\<forall>V \<in> roelckeUniformity. ?P-``(V) \<in> roelckeUniformity"
+  proof
+    fix V assume v:"V\<in> roelckeUniformity"
+    then obtain U where "U \<in> \<N>\<^sub>0" and "{\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> U \<rtr> s \<sad> U} \<subseteq> V"
+      unfolding roelckeUniformity_def by auto
+    with \<open>V \<in> roelckeUniformity\<close> have 
+      as:"V \<subseteq> G \<times> G" "U \<in> \<N>\<^sub>0" "{\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> U \<rtr> s \<sad> U} \<subseteq> V"
+      unfolding roelckeUniformity_def by auto
+    from as(2) obtain W where w:"W \<in> \<N>\<^sub>0" "W \<subseteq> U" "(\<sm>W) = W" using exists_sym_zerohood by blast
+    from w(1) have wg:"W\<subseteq>G" by auto
+    {
+      fix z assume z:"z \<in> {\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> W \<rtr> s \<sad> W}"
+      then obtain s t where st:"z=\<langle>s,t\<rangle>" "s\<in>G" "t\<in>G" by auto
+      from st(1) z have st2: "t \<in> W \<rtr> s \<sad> W" by auto
+      then obtain u v where uv:"t=u\<ra>v" "u\<in>W\<rtr>s" "v\<in>W" 
+        using interval_add(4) `W \<in> \<N>\<^sub>0` lrtrans_in_group_add(2) st(2) by auto
+      from uv(2) obtain q where q:"q\<in>W" "u=q\<ra>s" using st(2) elements_in_rtrans[of W s] w(1) by auto
+      from w(2) as(2) q st(2) have "u\<in>U\<rtr>s" using lrtrans_image(2) by auto
+      with w(2) uv(1,3) as(2) st(2) have "t\<in>U \<rtr> s \<sad> U" using interval_add(4)
+        lrtrans_in_group_add(2) by auto
+      with st have "z \<in> {\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> U \<rtr> s \<sad> U}" by auto
+    }
+    then have sub:"{\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> W \<rtr> s \<sad> W}\<subseteq>{\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> U \<rtr> s \<sad> U}" by auto
+    { 
+      fix z assume z:"z \<in> {\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> W \<rtr> s \<sad> W}"
+      then obtain s t where st:"z=\<langle>s,t\<rangle>" "s\<in>G" "t\<in>G" by auto
+      from st(1) z have st2: "t \<in> W \<rtr> s \<sad> W" by auto
+      then obtain u v where uv:"t=u\<ra>v" "u\<in>W\<rtr>s" "v\<in>W" 
+        using interval_add(4) `W \<in> \<N>\<^sub>0` lrtrans_in_group_add(2) st(2) by auto
+      from uv(2) obtain q where q:"q\<in>W" "u=q\<ra>s" using st(2) elements_in_rtrans[of W s] w(1) by auto
+      from w(1) have "W\<subseteq>G" by auto
+      with q st(2) have "u\<in>G" "v\<in>G" "q\<in>G" using group_op_closed[of q s] uv(3) by auto
+      with st(2) uv(1) q(2) have "t=q\<ra>(s\<ra>v)" using group_oper_assoc by auto
+      with st(2) `q\<in>G` `v\<in>G` have minust:"(\<rm>t) = (\<rm>v)\<ra>(\<rm>s)\<ra>(\<rm>q)" 
+        using group_inv_of_two[of q "s\<ra>v"] group_op_closed[of s v] group_inv_of_two[of s v] by auto
+      from q(1) wg have "(\<rm>q)\<in>\<sm>W" using ginv_image_add(2) by auto
+      with w(3) have minusq:"(\<rm>q)\<in>W" by auto
+      from uv(3) wg have "(\<rm>v)\<in>\<sm>W" using ginv_image_add(2) by auto
+      with w(3) have minusv:"(\<rm>v)\<in>W" by auto
+      with st(2) wg have "(\<rm>v)\<ra>(\<rm>s) \<in> W\<rtr>(\<rm>s)" using lrtrans_image(2) inverse_in_group by auto
+      with minust minusq st(2) have "(\<rm>t)\<in>(W\<rtr>(\<rm>s))\<sad>W" using interval_add(4)[OF _ wg]
+          inverse_in_group lrtrans_in_group_add(2) by auto
+      moreover
+      from st have "?P`(z) = \<langle>GroupInv(G,f)`(s), GroupInv(G,f)`(t)\<rangle>"
+        using prodFunctionApp group0_2_T2[OF groupAssum] by blast
+      with st(2,3) have "?P`(z) = \<langle>\<rm>s,\<rm>t\<rangle>" by auto
+      ultimately have "?P`(z) \<in> {\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> W \<rtr> s \<sad> W}"
+        using st(2,3) inverse_in_group by auto
+      with sub have "?P`(z) \<in> {\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> U \<rtr> s \<sad> U}" by force
+      with as(3) have "?P`(z) \<in> V" by force
+      with z have "z \<in> ?P-``(V)" using L prodFunction func1_1_L5A vimage_iff
+        by blast
+    }
+    with w(1) have "\<exists>U\<in>\<N>\<^sub>0. {\<langle>s,t\<rangle> \<in> G \<times> G . t \<in> U \<rtr> s \<sad> U} \<subseteq> ?P-``(V)" 
+      by blast
+    with L show "?P-``(V) \<in> roelckeUniformity"
+      unfolding roelckeUniformity_def using prodFunction func1_1_L6A by blast
+  qed
+  with L R show ?thesis using IsUniformlyCont_def by auto
+qed
+
 end

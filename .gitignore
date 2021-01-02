@@ -12,4 +12,8 @@ isar2html/isarhtml/*.html
 # handy link to isar2html executable
 isar2html/ih
 
+# vscode
+.vscode
 
+#intellij
+.idea
