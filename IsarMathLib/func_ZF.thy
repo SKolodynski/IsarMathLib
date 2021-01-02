@@ -744,12 +744,12 @@ text\<open>Lifting to subsets inherits associativity.
   we prove two inclusions and the proof of the second inclusion is very similar
   to the proof of the first one.\<close>
 
-lemma lift_subset_assoc:  assumes A1: "f : X \<times> X \<rightarrow> X" and 
-  A2: "f {is associative on} X" and
-  A3: "F = f {lifted to subsets of} X"
+lemma lift_subset_assoc:  assumes  
+  A1: "f {is associative on} X" and A2: "F = f {lifted to subsets of} X"
   shows "F {is associative on} Pow(X)"
 proof -
-  from A1 A3 have "F : Pow(X)\<times>Pow(X) \<rightarrow> Pow(X)"
+  from A1 have "f : X\<times>X \<rightarrow> X" unfolding IsAssociative_def by simp 
+  with A2 have "F : Pow(X)\<times>Pow(X) \<rightarrow> Pow(X)"
     using lift_subsets_binop by simp
   moreover have "\<forall>A \<in> Pow(X).\<forall>B \<in> Pow(X). \<forall>C \<in> Pow(X). 
     F`\<langle>F`\<langle>A,B\<rangle>,C\<rangle> = F`\<langle>A,F`\<langle>B,C\<rangle>\<rangle>"
@@ -759,60 +759,60 @@ proof -
       have "F`\<langle>F`\<langle>A,B\<rangle>,C\<rangle> \<subseteq> F`\<langle>A,F`\<langle>B,C\<rangle>\<rangle>"
       proof
 	fix z assume I: "z \<in> F`\<langle>F`\<langle>A,B\<rangle>,C\<rangle>"
-	from A1 A3 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close>
+	from \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close>
 	have "F`\<langle>A,B\<rangle> \<in> Pow(X)"
 	  using lift_subsets_binop apply_funtype by blast
-	with A1 A3 \<open>C \<in> Pow(X)\<close> I have
+	with \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>C \<in> Pow(X)\<close> I have
 	  "\<exists>x y. x \<in> F`\<langle>A,B\<rangle> \<and> y \<in> C \<and> z = f`\<langle>x,y\<rangle>"
 	  using lift_subset_nec by simp
 	then obtain x y where 
 	  II: "x \<in> F`\<langle>A,B\<rangle>" and "y \<in> C" and III: "z = f`\<langle>x,y\<rangle>"
 	  by auto
-	from A1 A3 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close> II have
+	from \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close> II have
 	  "\<exists> s t. s \<in> A \<and> t \<in> B \<and> x = f`\<langle>s,t\<rangle>"
 	  using lift_subset_nec by auto
 	then obtain s t where "s\<in>A" and "t\<in>B" and "x = f`\<langle>s,t\<rangle>"
 	  by auto
-	with A2 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close> \<open>C \<in> Pow(X)\<close> III 
+	with A1 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close> \<open>C \<in> Pow(X)\<close> III 
 	  \<open>s\<in>A\<close> \<open>t\<in>B\<close> \<open>y\<in>C\<close> have IV: "z = f`\<langle>s, f`\<langle>t,y\<rangle>\<rangle>"
 	  using IsAssociative_def by blast
-	from A1 A3 \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close>  \<open>t\<in>B\<close>  \<open>y\<in>C\<close>
+	from \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close>  \<open>t\<in>B\<close>  \<open>y\<in>C\<close>
 	have "f`\<langle>t,y\<rangle> \<in> F`\<langle>B,C\<rangle>" using lift_subset_suff by simp
-	moreover from A1 A3 \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close>
+	moreover from \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close>
 	have "F`\<langle>B,C\<rangle> \<subseteq> X" using lift_subsets_binop apply_funtype 
 	  by blast
-	moreover note A1 A3 \<open>A \<in> Pow(X)\<close> \<open>s\<in>A\<close> IV
+	moreover note \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>A \<in> Pow(X)\<close> \<open>s\<in>A\<close> IV
 	ultimately show "z \<in> F`\<langle>A,F`\<langle>B,C\<rangle>\<rangle>"
 	  using lift_subset_suff by simp
       qed
       moreover have "F`\<langle>A,F`\<langle>B,C\<rangle>\<rangle> \<subseteq> F`\<langle>F`\<langle>A,B\<rangle>,C\<rangle>"
       proof
 	fix z assume I: "z \<in> F`\<langle>A,F`\<langle>B,C\<rangle>\<rangle>"
-	from A1 A3 \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close>
+	from \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>B \<in> Pow(X)\<close> \<open>C \<in> Pow(X)\<close>
 	have "F`\<langle>B,C\<rangle> \<in> Pow(X)"
 	  using lift_subsets_binop apply_funtype by blast
-	with A1 A3 \<open>A \<in> Pow(X)\<close> I have
+	with \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>A \<in> Pow(X)\<close> I have
 	  "\<exists>x y. x \<in> A \<and> y \<in> F`\<langle>B,C\<rangle> \<and> z = f`\<langle>x,y\<rangle>"
 	  using lift_subset_nec by simp
 	then obtain x y where 
 	  "x \<in> A" and II: "y \<in> F`\<langle>B,C\<rangle>" and III: "z = f`\<langle>x,y\<rangle>"
 	  by auto
-	from A1 A3 \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close> II have
+	from \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close> II have
 	  "\<exists> s t. s \<in> B \<and> t \<in> C \<and> y = f`\<langle>s,t\<rangle>"
 	  using lift_subset_nec by auto
 	then obtain s t where "s\<in>B" and "t\<in>C" and "y = f`\<langle>s,t\<rangle>"
 	  by auto
 	with III have "z = f`\<langle>x,f`\<langle>s,t\<rangle>\<rangle>" by simp
-	moreover from  A2 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close>
+	moreover from A1 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close>  \<open>C \<in> Pow(X)\<close>
 	  \<open>x\<in>A\<close> \<open>s\<in>B\<close> \<open>t\<in>C\<close> have "f`\<langle>f`\<langle>x,s\<rangle>,t\<rangle> = f`\<langle>x,f`\<langle>s,t\<rangle>\<rangle>"
 	  using IsAssociative_def by blast
 	ultimately have IV: "z = f`\<langle>f`\<langle>x,s\<rangle>,t\<rangle>" by simp
-	from A1 A3 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close>  \<open>x\<in>A\<close>  \<open>s\<in>B\<close>
+	from \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close>  \<open>x\<in>A\<close>  \<open>s\<in>B\<close>
 	have "f`\<langle>x,s\<rangle> \<in> F`\<langle>A,B\<rangle>" using lift_subset_suff by simp
-	moreover from A1 A3 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close>
+	moreover from \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>A \<in> Pow(X)\<close>  \<open>B \<in> Pow(X)\<close>
 	have "F`\<langle>A,B\<rangle> \<subseteq> X" using lift_subsets_binop apply_funtype 
 	  by blast
-	moreover note A1 A3 \<open>C \<in> Pow(X)\<close> \<open>t\<in>C\<close> IV
+	moreover note \<open>f:X\<times>X \<rightarrow> X\<close> A2 \<open>C \<in> Pow(X)\<close> \<open>t\<in>C\<close> IV
 	ultimately show "z \<in> F`\<langle>F`\<langle>A,B\<rangle>,C\<rangle>"
 	  using lift_subset_suff by simp
       qed

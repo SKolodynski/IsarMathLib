@@ -908,7 +908,8 @@ proof -
     IsAsubgroup_def IsAgroup_def by simp
 qed
 
-text\<open>Intersection of subgroups is a subgroup.\<close>
+text\<open>Intersection of subgroups is a subgroup. This lemma is obsolete and should be replaced by 
+  \<open>subgroup_inter\<close>. \<close>
 
 lemma group0_3_L7:
   assumes A1: "IsAgroup(G,f)"
@@ -941,6 +942,21 @@ proof -
     using group0.group0_3_T3 by simp
 qed
 
+text\<open>Intersection of subgroups is a subgroup.\<close>
+
+lemma (in group0) subgroup_inter: assumes  "IsAsubgroup(H\<^sub>1,P)" and "IsAsubgroup(H\<^sub>2,P)"
+  shows "IsAsubgroup(H\<^sub>1\<inter>H\<^sub>2,P)"
+proof -
+  from assms have "H\<^sub>1\<inter>H\<^sub>2 \<noteq> 0" using group0_3_L5 by auto
+  moreover from assms have "H\<^sub>1\<inter>H\<^sub>2 \<subseteq> G" using group0_3_L2 by auto
+  moreover from assms have "H\<^sub>1\<inter>H\<^sub>2 {is closed under} P"
+    unfolding IsOpClosed_def using group0_3_L6 func_ZF_4_L7 func_ZF_4_L5 by simp
+  moreover from assms have "\<forall>x \<in> H\<^sub>1\<inter>H\<^sub>2. x\<inverse> \<in> H\<^sub>1\<inter>H\<^sub>2"
+    using group0_3_T2 group0_3_T3A by simp
+  ultimately show ?thesis using group0_3_T3 by auto
+qed
+
+
 text\<open>The range of the subgroup operation is the whole subgroup.\<close>
 
 lemma image_subgr_op: assumes A1: "IsAsubgroup(H,P)"
@@ -962,6 +978,42 @@ proof -
     using IsAsubgroup_def group0_def group0.group_inv_surj
     by simp
   with A1 show ?thesis using group0_3_T1 by simp
+qed
+
+text\<open>A union of two subgroups is a subgroup iff 
+  one of the subgroups is a subset of the other subgroup.\<close>
+
+lemma (in group0) union_subgroups: 
+  assumes "IsAsubgroup(H\<^sub>1,P)" and "IsAsubgroup(H\<^sub>2,P)"
+  shows "IsAsubgroup(H\<^sub>1\<union>H\<^sub>2,P) \<longleftrightarrow> (H\<^sub>1\<subseteq>H\<^sub>2 \<or> H\<^sub>2\<subseteq>H\<^sub>1)"
+proof 
+  assume "H\<^sub>1\<subseteq>H\<^sub>2 \<or> H\<^sub>2\<subseteq>H\<^sub>1" show "IsAsubgroup(H\<^sub>1\<union>H\<^sub>2,P)"
+  proof -
+    from \<open>H\<^sub>1\<subseteq>H\<^sub>2 \<or> H\<^sub>2\<subseteq>H\<^sub>1\<close> have "H\<^sub>2 = H\<^sub>1\<union>H\<^sub>2 \<or> H\<^sub>1 = H\<^sub>1\<union>H\<^sub>2" by auto
+    with assms show "IsAsubgroup(H\<^sub>1\<union>H\<^sub>2,P)" by auto
+  qed
+next
+  assume "IsAsubgroup(H\<^sub>1\<union>H\<^sub>2, P)" show "H\<^sub>1\<subseteq>H\<^sub>2 \<or> H\<^sub>2\<subseteq>H\<^sub>1"
+  proof -
+    { assume "\<not> H\<^sub>1\<subseteq>H\<^sub>2"
+      then obtain x where "x\<in>H\<^sub>1" and "x\<notin>H\<^sub>2" by auto
+      with assms(1) have "x\<inverse> \<in> H\<^sub>1" using group0_3_T3A by simp
+      { fix y assume "y\<in>H\<^sub>2"
+        let ?z = "x\<cdot>y"
+        from \<open>x\<in>H\<^sub>1\<close> \<open>y\<in>H\<^sub>2\<close> have "x \<in> H\<^sub>1\<union>H\<^sub>2" and "y \<in> H\<^sub>1\<union>H\<^sub>2" by auto
+        with \<open>IsAsubgroup(H\<^sub>1\<union>H\<^sub>2,P)\<close> have "?z \<in> H\<^sub>1\<union>H\<^sub>2" using group0_3_L6 by blast
+        from assms \<open>x \<in> H\<^sub>1\<union>H\<^sub>2\<close>  \<open>y\<in>H\<^sub>2\<close> have "x\<in>G" "y\<in>G" and "y\<inverse>\<in>H\<^sub>2"
+          using group0_3_T3A group0_3_L2 by auto
+        then have "?z\<cdot>y\<inverse> = x" and "x\<inverse>\<cdot>?z = y" using inv_cancel_two(2,3) by auto
+        { assume "?z \<in> H\<^sub>2"
+          with \<open>IsAsubgroup(H\<^sub>2,P)\<close> \<open>y\<inverse>\<in>H\<^sub>2\<close> have "?z\<cdot>y\<inverse> \<in> H\<^sub>2" using group0_3_L6 by simp
+          with \<open>?z\<cdot>y\<inverse> = x\<close> \<open>x\<notin>H\<^sub>2\<close> have False by auto
+        } hence "?z \<notin> H\<^sub>2" by auto
+        with assms(1) \<open>x\<inverse> \<in> H\<^sub>1\<close> \<open>?z \<in> H\<^sub>1\<union>H\<^sub>2\<close> have "x\<inverse>\<cdot>?z \<in> H\<^sub>1" using group0_3_L6 by simp
+        with \<open>x\<inverse>\<cdot>?z = y\<close> have "y\<in>H\<^sub>1" by simp
+      } hence "H\<^sub>2\<subseteq>H\<^sub>1" by blast
+    } thus ?thesis by blast
+  qed
 qed
 
 end
