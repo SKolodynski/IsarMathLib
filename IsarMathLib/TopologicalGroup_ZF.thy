@@ -195,11 +195,11 @@ lemma (in topgroup) cancel_middle_add: assumes "x\<^sub>1 \<in> G"  "x\<^sub>2 \
     "(x\<^sub>1\<ra>x\<^sub>2) \<ra> (\<rm>(x\<^sub>3\<ra>x\<^sub>2)) =x\<^sub>1\<ra> (\<rm>x\<^sub>3)"
     "(\<rm>x\<^sub>1) \<ra> (x\<^sub>1\<ra>x\<^sub>2\<ra>x\<^sub>3) \<ra> (\<rm>x\<^sub>3) = x\<^sub>2"
 proof - 
-  from assms have "f`\<langle>x\<^sub>1,GroupInv(G,f)`(x\<^sub>3)\<rangle> = f`\<langle>f`\<langle>x\<^sub>1,GroupInv(G,f)`(x\<^sub>2)\<rangle>,f`\<langle>x\<^sub>2,GroupInv(G,f)`(x\<^sub>3)\<rangle>\<rangle>"
-    using group0_valid_in_tgroup group0.group0_2_L14A(1) by blast
-  thus "(x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3)) = x\<^sub>1\<ra> (\<rm>x\<^sub>3)" by simp 
-  from assms have "f`\<langle>GroupInv(G,f)`(x\<^sub>1),x\<^sub>3\<rangle> = f`\<langle>f`\<langle>GroupInv(G,f)`(x\<^sub>1),x\<^sub>2\<rangle>,f`\<langle>GroupInv(G,f)`(x\<^sub>2),x\<^sub>3\<rangle>\<rangle>"
-    using group0_valid_in_tgroup group0.group0_2_L14A(2) by blast
+  from assms have "x\<^sub>1\<ra> (\<rm>x\<^sub>3) = (x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3))"
+    using group0_2_L14A(1) by blast
+  thus "(x\<^sub>1\<ra>(\<rm>x\<^sub>2))\<ra>(x\<^sub>2\<ra>(\<rm>x\<^sub>3)) = x\<^sub>1\<ra> (\<rm>x\<^sub>3)" by simp
+  from assms have "(\<rm>x\<^sub>1)\<ra> x\<^sub>3 = ((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3)"
+    using group0_2_L14A(2) by blast
   thus "((\<rm>x\<^sub>1)\<ra>x\<^sub>2)\<ra>((\<rm>x\<^sub>2)\<ra>x\<^sub>3) = (\<rm>x\<^sub>1)\<ra> x\<^sub>3" by simp
   from assms show "(\<rm> (x\<^sub>1\<ra>x\<^sub>2)) \<ra> (x\<^sub>1\<ra>x\<^sub>3) = (\<rm>x\<^sub>2)\<ra>x\<^sub>3"
     using cancel_middle(1) by simp
