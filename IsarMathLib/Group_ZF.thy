@@ -1016,4 +1016,19 @@ next
   qed
 qed
 
+text\<open>Transitivity for "is a subgroup of" relation. The proof (probably) uses the lemma 
+  \<open>restrict_restrict\<close> from standard Isabelle/ZF library which states that 
+  \<open>restrict(restrict(f,A),B) = restrict(f,A\<inter>B)\<close>. That lemma is added to the simplifier, so it does
+  not have to be referenced explicitly in the proof below. \<close>
+
+lemma subgroup_transitive: 
+  assumes "IsAgroup(G\<^sub>3,P)" "IsAsubgroup(G\<^sub>2,P)" "IsAsubgroup(G\<^sub>1,restrict(P,G\<^sub>2\<times>G\<^sub>2))"
+  shows "IsAsubgroup(G\<^sub>1,P)"
+proof -
+  from assms(2) have "group0(G\<^sub>2,restrict(P,G\<^sub>2\<times>G\<^sub>2))" unfolding IsAsubgroup_def group0_def by simp
+  with assms(3) have "G\<^sub>1\<subseteq>G\<^sub>2" using group0.group0_3_L2 by simp
+  hence "G\<^sub>2\<times>G\<^sub>2 \<inter> G\<^sub>1\<times>G\<^sub>1 = G\<^sub>1\<times>G\<^sub>1" by auto
+  with assms(3) show "IsAsubgroup(G\<^sub>1,P)" unfolding IsAsubgroup_def by simp
+qed
+
 end
