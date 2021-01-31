@@ -26,25 +26,27 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
-section \<open> Metric spaces - definitions and basic properties \<close>
+section \<open> Metric spaces \<close>
 
 theory MetricSpace_ZF imports Topology_ZF_1 OrderedGroup_ZF Lattice_ZF
 begin
 
 text\<open>A metric space is a set on which a distance between points is defined as a function
-  $d:X \times X \to [0,\infty)$. Each metric space is a topological space which is paracompact 
-  and Hausdorff ($T_2$), hence normal (in fact even perfectly normal).\<close>
+  $d:X \times X \to [0,\infty)$. With this definition each metric space is a topological space 
+  which is paracompact and Hausdorff ($T_2$), hence normal (in fact even perfectly normal).\<close>
+
+subsection\<open> Pseudometric - definition and basic properties \<close>
 
 text\<open>A metric on $X$ is usually defined as a function $d:X \times X \to [0,\infty)$ that satisfies
   the conditions $d(x,x) = 0$, $d(x, y) = 0 \Rightarrow  x = y$ (identity of indiscernibles), 
-  $d(x, y)  = d(y, x)$ (symmetry) and $d(x, y) \le d(x, z) + d(z, y)$ (triangle inequality) for all $x,y \in X$. 
-  Here we are going to be a bit more general and define metric as a function valued in an ordered group. 
-  First we define a preudo-metric, which has the axioms of a metric, but without the second part
-  of the identity of indiscernibles.
-  In our definition \<open>IsApseudoMetric\<close> is a predicate on five sets: the function $d$, 
+  $d(x, y)  = d(y, x)$ (symmetry) and $d(x, y) \le d(x, z) + d(z, y)$ (triangle inequality) 
+  for all $x,y \in X$.  Here we are going to be a bit more general and define metric and 
+  pseudo-metric as a  function valued in an ordered group. \<close>
+
+text\<open> First we define a pseudo-metric, which has the axioms of a metric, but without the second part
+  of the identity of indiscernibles. In our definition \<open>IsApseudoMetric\<close> is a predicate on five sets: the function $d$, 
   the set $X$ on which the metric is defined, the group carrier $G$, the group operation $A$ 
   and the order $r$ on $G$.\<close>
-
 
 definition 
   "IsApseudoMetric(d,X,G,A,r) \<equiv> d:X\<times>X \<rightarrow> Nonnegative(G,A,r) 
@@ -58,7 +60,7 @@ text\<open>We add the full axiom of identity of indiscernibles to the definition
 definition 
   "IsAmetric(d,X,G,A,r) \<equiv> IsApseudoMetric(d,X,G,A,r) \<and> (\<forall>x\<in>X.\<forall>y\<in>X. d`\<langle>x,y\<rangle> = 0 \<longrightarrow> x=y)"
 
-text\<open>A disk is defined as set of points located less than the radius from the center\<close>
+text\<open>A disk is defined as set of points located less than the radius from the center.\<close>
 
 definition "Disk(X,d,r,c,R) \<equiv> {x\<in>X. \<langle>d`\<langle>c,x\<rangle>,R\<rangle> \<in> StrictVersion(r)}"
 
@@ -140,7 +142,7 @@ proof -
   ultimately show ?thesis by auto
 qed
 
-text\<open>If the radius is positive then center is in disk.\<close>
+text\<open>If the radius is positive then the center is in disk.\<close>
 
 lemma (in pmetric_space) center_in_disk: assumes "c\<in>X" and "R\<in>G\<^sub>+" shows "c \<in> disk(c,R)"
   using pmetricAssum assms IsApseudoMetric_def PositiveSet_def disk_definition by simp
@@ -198,7 +200,7 @@ proof -
     fix x assume "x\<in>U\<inter>V"
     have "\<exists>W\<in>B. x\<in>W \<and> W\<subseteq>U\<inter>V"
     proof -
-      from assms(2) \<open>U\<in>B\<close> \<open>V\<in>B\<close> obtain "c\<^sub>U"  "c\<^sub>V" "R\<^sub>U"  "R\<^sub>V" 
+      from assms(2) \<open>U\<in>B\<close> \<open>V\<in>B\<close> obtain c\<^sub>U  c\<^sub>V R\<^sub>U  R\<^sub>V 
         where "c\<^sub>U \<in> X" "R\<^sub>U \<in> G\<^sub>+" "c\<^sub>V \<in> X" "R\<^sub>V \<in> G\<^sub>+" "U = disk(c\<^sub>U,R\<^sub>U)" "V = disk(c\<^sub>V,R\<^sub>V)"
         by auto
       with \<open>x\<in>U\<inter>V\<close> have "x \<in> disk(c\<^sub>U,R\<^sub>U)" and "x \<in> disk(c\<^sub>V,R\<^sub>V)" by auto

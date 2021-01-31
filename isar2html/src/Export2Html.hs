@@ -293,10 +293,14 @@ exportProofStep repls mfii (LongReasoning rs mbs) =
 exportProofStep repls _ (FixStep v) = pd $
    (bf "fix ") ++ (unwords $ map (isar2latex repls) v)
 
-exportProofStep repls _ (LetStep v d) = pd $
-   (bf "let ") ++ ( isar2latex repls (v ++ " = " ++ d) )
+exportProofStep repls _ (LetStep v s d) = pd $
+   (bf "let ") ++ ( isar2latex repls (v ++ (exportSubScript s) ++ " = " ++ d) )
 
 exportProofStep _ _ Next = pd $ bf "next "
+
+
+exportSubScript :: String -> String
+exportSubScript s = if s=="" then "" else "_{" ++ s ++ "}"
 
 
 -- | exports a MoreoverBody (same)

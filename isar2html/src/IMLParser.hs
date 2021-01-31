@@ -618,9 +618,17 @@ letstep :: Parser ProofStep
 letstep = do
    string "let ?"
    v <- varname
+   s <- option "" subscript
    string " = "
    d <- innerText
-   return (LetStep v d)
+   return (LetStep v s d)
+   
+-- parses a subscript in the let expression
+subscript :: Parser String
+subscript = do
+    string "\\<^sub>"
+    v <- varname
+    return v
 
 -- | parses a connected step
 connectedStep :: Parser ConnectedStep

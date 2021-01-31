@@ -186,6 +186,6 @@ data MoreoverBody = MoreoverBody { mrvalso :: String -- indicates if this is a m
 -- have the "moreover" construct but just a chain of connected steps.
 data ProofStep =  LongReasoning Reasoning [MoreoverBody] -- maybe short as the list may be empty, covers also the also construct
                | FixStep [String]
-               | LetStep String String
+               | LetStep String String String  -- variable name, optional subscript, definition
                | Next
                deriving (Eq, Show)
