@@ -196,6 +196,13 @@ lemma (in group3) OrderedGroup_ZF_1_L4:
   assumes "a\<lsq>b" shows "a\<in>G" "b\<in>G"
   using ordGroupAssum assms IsAnOrdGroup_def by auto
 
+text\<open>Similarly in this context $a \le b$ implies that both $a$ and $b$ belong 
+  to $G$.\<close>
+
+lemma (in group3) less_are_members: 
+  assumes "a\<ls>b" shows "a\<in>G" "b\<in>G"
+  using ordGroupAssum assms IsAnOrdGroup_def by auto
+
 text\<open>It is good to have transitivity handy.\<close>
 
 lemma (in group3) Group_order_transitive:

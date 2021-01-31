@@ -208,7 +208,7 @@ subsection\<open>Equations and identities\<close>
 text\<open>This section deals with more specialized identities that are true in 
   fields.\<close>
 
-text\<open>$a/(a^2) = 1/a$.\<close>
+text\<open>$a/(a^2) = 1/a $ .\<close>
 
 lemma (in field0) Field_ZF_2_L1: assumes A1: "a\<in>K"  "a\<noteq>\<zero>"
   shows "a\<cdot>(a\<inverse>)\<^sup>2 = a\<inverse>"

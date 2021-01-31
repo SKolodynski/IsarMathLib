@@ -89,13 +89,21 @@ proof -
 qed
 
 text\<open> The value of \<open>Join(L,r)\<close> on a pair $\langle x,y\rangle$ is the supremum
-  of the set $\{ x,y\}$. \<close>
+  of the set $\{ x,y\}$, hence its is greater or equal than both. \<close>
 
-lemma join_val: assumes "IsJoinSemilattice(L,r)" "x\<in>L" "y\<in>L"
-  shows "Join(L,r)`\<langle>x,y\<rangle> = Supremum(r,{x,y})"
+lemma join_val: 
+  assumes "IsJoinSemilattice(L,r)" "x\<in>L" "y\<in>L"
+  defines "j \<equiv> Join(L,r)`\<langle>x,y\<rangle>"
+  shows "j\<in>L" "j = Supremum(r,{x,y})" "\<langle>x,j\<rangle> \<in> r" "\<langle>y,j\<rangle> \<in> r"
 proof -
   from assms(1) have "Join(L,r) :  L\<times>L \<rightarrow> L" using join_is_binop by simp
-  with assms(2,3) show ?thesis unfolding Join_def using ZF_fun_from_tot_val by auto
+  with assms(2,3,4) show "j = Supremum(r,{x,y})" unfolding Join_def using ZF_fun_from_tot_val 
+    by auto
+  from assms(2,3,4) \<open>Join(L,r) : L\<times>L \<rightarrow> L\<close>  show "j\<in>L" using apply_funtype by simp
+  from assms(1,2,3) have "r \<subseteq> L\<times>L" "antisym(r)" "HasAminimum(r,\<Inter>z\<in>{x,y}. r``{z})"
+    unfolding IsJoinSemilattice_def IsPartOrder_def HasAsupremum_def by auto
+  with \<open>j = Supremum(r,{x,y})\<close> show "\<langle>x,j\<rangle> \<in> r" and "\<langle>y,j\<rangle> \<in> r"
+    using sup_in_space(2) by auto
 qed
 
 text\<open> In a meet-semilattice meet is indeed a binary operation. \<close>
@@ -110,14 +118,23 @@ proof -
 qed
 
 text\<open> The value of \<open>Meet(L,r)\<close> on a pair $\langle x,y\rangle$ is the infimum
-  of the set $\{ x,y\}$. \<close>
+  of the set $\{ x,y\}$, hence is less or equal than both. \<close>
 
-lemma meet_val: assumes "IsMeetSemilattice(L,r)" "x\<in>L" "y\<in>L"
-  shows "Meet(L,r)`\<langle>x,y\<rangle> = Infimum(r,{x,y})"
+lemma meet_val: 
+  assumes "IsMeetSemilattice(L,r)" "x\<in>L" "y\<in>L"
+  defines "m \<equiv> Meet(L,r)`\<langle>x,y\<rangle>"
+  shows "m\<in>L" "m = Infimum(r,{x,y})" "\<langle>m,x\<rangle> \<in> r" "\<langle>m,y\<rangle> \<in> r"
 proof -
-  from assms(1) have "Meet(L,r) :  L\<times>L \<rightarrow> L" using meet_is_binop by simp
-  with assms(2,3) show ?thesis unfolding Meet_def using ZF_fun_from_tot_val by auto
+  from assms(1) have "Meet(L,r) : L\<times>L \<rightarrow> L" using meet_is_binop by simp
+  with assms(2,3,4) show  "m = Infimum(r,{x,y})" unfolding Meet_def using ZF_fun_from_tot_val 
+    by auto
+  from assms(2,3,4) \<open>Meet(L,r) : L\<times>L \<rightarrow> L\<close>  show "m\<in>L" using apply_funtype by simp
+  from assms(1,2,3) have "r \<subseteq> L\<times>L" "antisym(r)" "HasAmaximum(r,\<Inter>z\<in>{x,y}. r-``{z})"
+    unfolding IsMeetSemilattice_def IsPartOrder_def HasAnInfimum_def by auto
+  with \<open>m = Infimum(r,{x,y})\<close> show "\<langle>m,x\<rangle> \<in> r" and "\<langle>m,y\<rangle> \<in> r"
+    using inf_in_space(2) by auto
 qed
+
 
 text\<open> The next locale defines a a notation for join-semilattice. We will use the $\sqcup$ symbol
   rather than more common $\vee$ to avoid confusion with logical "or". \<close>
@@ -139,7 +156,8 @@ proof -
   from joinLatt assms have "Join(L,r)`\<langle>x,y\<rangle> \<in> L" using join_is_binop apply_funtype 
     by blast
   thus "x\<squnion>y \<in> L" by simp
-  from joinLatt assms have "Join(L,r)`\<langle>x,y\<rangle> = Supremum(r,{x,y})" using join_val by simp
+  from joinLatt assms have "Join(L,r)`\<langle>x,y\<rangle> = Supremum(r,{x,y})" using join_val(2) 
+    by simp
   thus "x\<squnion>y = sup {x,y}" by simp
 qed
 
@@ -148,7 +166,7 @@ text\<open> Join is associative. \<close>
 lemma (in join_semilatt) join_assoc: assumes "x\<in>L" "y\<in>L" "z\<in>L"
   shows "x\<squnion>(y\<squnion>z) = x\<squnion>y\<squnion>z"
 proof -
-  from joinLatt assms(2,3) have "x\<squnion>(y\<squnion>z) = x\<squnion>(sup {y,z})" using join_val by simp
+  from joinLatt assms(2,3) have "x\<squnion>(y\<squnion>z) = x\<squnion>(sup {y,z})" using join_val(2) by simp
   also from assms joinLatt have "... = sup {sup {x}, sup {y,z}}"
     unfolding IsJoinSemilattice_def IsPartOrder_def using join_props sup_inf_singl(2) 
     by auto
@@ -187,14 +205,14 @@ proof -
     by auto
   also from assms joinLatt have "... = (sup {x,y}) \<squnion> z "
     unfolding IsJoinSemilattice_def IsPartOrder_def using join_props by auto
-  also from joinLatt assms(1,2) have "... = x\<squnion>y\<squnion>z" using join_val by simp
+  also from joinLatt assms(1,2) have "... = x\<squnion>y\<squnion>z" using join_val(2) by simp
   finally show "x\<squnion>(y\<squnion>z) = x\<squnion>y\<squnion>z" by simp
 qed
 
 text\<open> Join is idempotent. \<close>
 
 lemma (in join_semilatt) join_idempotent: assumes "x\<in>L" shows "x\<squnion>x = x" 
-  using joinLatt assms join_val IsJoinSemilattice_def IsPartOrder_def sup_inf_singl(2)
+  using joinLatt assms join_val(2) IsJoinSemilattice_def IsPartOrder_def sup_inf_singl(2)
   by auto
 
 text\<open> The \<open>meet_semilatt\<close> locale is the dual of the join-semilattice locale defined above.
@@ -217,7 +235,7 @@ proof -
   from meetLatt assms have "Meet(L,r)`\<langle>x,y\<rangle> \<in> L" using meet_is_binop apply_funtype 
     by blast
   thus "x\<sqinter>y \<in> L" by simp
-  from meetLatt assms have "Meet(L,r)`\<langle>x,y\<rangle> = Infimum(r,{x,y})" using meet_val by simp
+  from meetLatt assms have "Meet(L,r)`\<langle>x,y\<rangle> = Infimum(r,{x,y})" using meet_val(2) by blast
   thus "x\<sqinter>y = inf {x,y}" by simp
 qed
 
