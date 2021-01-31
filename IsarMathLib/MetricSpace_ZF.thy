@@ -36,13 +36,12 @@ text\<open>A metric space is a set on which a distance between points is defined
   and Hausdorff ($T_2$), hence normal (in fact even perfectly normal).\<close>
 
 text\<open>A metric on $X$ is usually defined as a function $d:X \times X \to [0,\infty)$ that satisfies
-  the conditions $d(x,x) = 0", $d(x, y) = 0 \Rightarrow  x = y$ (identity of indiscernibles), 
-  $d(x, y)  = d(y, x)$ (symmetry) and  $d(x, y) \le d(x, z) + d(z, y)$ (triangle inequality) for all $x,y \in X$. 
-  Here we are going to be a bit more general and define metric as a function valued in a 
-  linearly ordered group. 
+  the conditions $d(x,x) = 0$, $d(x, y) = 0 \Rightarrow  x = y$ (identity of indiscernibles), 
+  $d(x, y)  = d(y, x)$ (symmetry) and $d(x, y) \le d(x, z) + d(z, y)$ (triangle inequality) for all $x,y \in X$. 
+  Here we are going to be a bit more general and define metric as a function valued in an ordered group. 
   First we define a preudo-metric, which has the axioms of a metric, but without the second part
   of the identity of indiscernibles.
-  In our definition \<IsApseudoMetric> is a predicate on five sets: the function $d$, 
+  In our definition \<open>IsApseudoMetric\<close> is a predicate on five sets: the function $d$, 
   the set $X$ on which the metric is defined, the group carrier $G$, the group operation $A$ 
   and the order $r$ on $G$.\<close>
 
