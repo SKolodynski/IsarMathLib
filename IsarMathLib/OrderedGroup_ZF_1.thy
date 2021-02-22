@@ -208,7 +208,7 @@ proof -
   ultimately show "a \<lsq> |a|" by blast
 qed
 
-text\<open>$a^{-1}\leq |a|$ (in additive notation it would be $-a\leq |a|$.\<close>
+text\<open> $a^{-1}\leq |a|$ (in additive notation it would be $-a\leq |a|$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L6: 
   assumes A1: "a\<in>G" shows "a\<inverse> \<lsq> |a|"
@@ -244,7 +244,7 @@ lemma (in group3) OrderedGroup_ZF_3_L6A:
   using assms OrderedGroup_ZF_3_L5 OrderedGroup_ZF_3_L6
     OrderedGroup_ZF_1_L5B by auto
 
-text\<open>$|a^{-1}|\leq |a|$.\<close>
+text\<open> $|a^{-1}|\leq |a|$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L7:
   assumes "r {is total on} G" and "a\<in>G"
@@ -267,7 +267,7 @@ proof -
   then show ?thesis by (rule group_order_antisym)
 qed
 
-text\<open>$|a\cdot b^{-1}| = |b\cdot a^{-1}|$. It doesn't look so strange in the 
+text\<open> $|a\cdot b^{-1}| = |b\cdot a^{-1}|$. It doesn't look so strange in the 
   additive notation: $|a-b| = |b-a|$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L7B:

@@ -58,7 +58,8 @@ text\<open>We add the full axiom of identity of indiscernibles to the definition
   to get the definition of metric.\<close>
 
 definition 
-  "IsAmetric(d,X,G,A,r) \<equiv> IsApseudoMetric(d,X,G,A,r) \<and> (\<forall>x\<in>X.\<forall>y\<in>X. d`\<langle>x,y\<rangle> = 0 \<longrightarrow> x=y)"
+  "IsAmetric(d,X,G,A,r) \<equiv> 
+    IsApseudoMetric(d,X,G,A,r) \<and> (\<forall>x\<in>X.\<forall>y\<in>X. d`\<langle>x,y\<rangle> = TheNeutralElement(G,A) \<longrightarrow> x=y)"
 
 text\<open>A disk is defined as set of points located less than the radius from the center.\<close>
 

@@ -556,7 +556,8 @@ proof -
     using inf_glb unfolding HasAnInfimum_def refl_def by blast
 qed
   
-text\<open>If a set has a maximum, then the maximum is the supremum.\<close>
+text\<open>If a set has a maximum, then the maximum is the supremum. This lemma is obsolete, use
+  \<open>max_is_sup\<close> instead.\<close>
 
 lemma Order_ZF_5_L6: 
   assumes A1:  "antisym(r)" and A2: "A\<noteq>0" and 
@@ -575,6 +576,51 @@ proof -
   from A1 A2 II III show "?M = Supremum(r,A)"
     by (rule Order_ZF_5_L5)
 qed
+
+text\<open>Another version of \<open>Order_ZF_5_L6\<close> that: if a sat has a maximum then it has a supremum and 
+  the maximum is the supremum. \<close>
+
+lemma max_is_sup: assumes "antisym(r)" "A\<noteq>0" "HasAmaximum(r,A)"
+  shows "HasAsupremum(r,A)" and "Maximum(r,A) = Supremum(r,A)"
+proof -
+  let ?M = "Maximum(r,A)"
+  from assms(1,3) have "?M \<in> A" and I: "\<forall>x\<in>A. \<langle>x,?M\<rangle> \<in> r" using Order_ZF_4_L3 
+    by auto
+  with assms(1,2) have "HasAminimum(r,\<Inter>a\<in>A. r``{a})" using Order_ZF_5_L5(1) 
+    by blast
+  then show "HasAsupremum(r,A)" unfolding HasAsupremum_def by simp
+  from assms(1,2) \<open>?M \<in> A\<close> I show "?M = Supremum(r,A)" using Order_ZF_5_L5(2) 
+    by blast
+qed
+
+text\<open> Minimum is the infimum if it exists.\<close>
+
+lemma min_is_inf: assumes "antisym(r)" "A\<noteq>0" "HasAminimum(r,A)"
+  shows "HasAnInfimum(r,A)" and "Minimum(r,A) = Infimum(r,A)"
+proof -
+  let ?M = "Minimum(r,A)"
+  from assms(1,3) have "?M\<in>A" and I: "\<forall>x\<in>A. \<langle>?M,x\<rangle> \<in> r" using  Order_ZF_4_L4 
+    by auto
+  with assms(1,2) have "HasAmaximum(r,\<Inter>a\<in>A. r-``{a})" using inf_glb(1) by blast
+  then show "HasAnInfimum(r,A)" unfolding HasAnInfimum_def by simp
+  from assms(1,2) \<open>?M \<in> A\<close> I show "?M = Infimum(r,A)" using inf_glb(2) by blast
+qed
+
+text\<open>For reflexive and total relations two-element set has a minimum and a maximum. \<close>
+
+lemma min_max_two_el: assumes "refl(X,r)" "r {is total on} X" "x\<in>X" "y\<in>X"
+  shows "HasAminimum(r,{x,y})" and "HasAmaximum(r,{x,y})"
+  using assms unfolding refl_def IsTotal_def HasAminimum_def HasAmaximum_def by auto
+
+text\<open>For antisymmetric, reflexive and total relations two-element set has a supremum and infimum. \<close>
+
+lemma inf_sup_two_el:assumes "antisym(r)" "refl(X,r)" "r {is total on} X" "x\<in>X" "y\<in>X"
+  shows 
+    "HasAnInfimum(r,{x,y})"
+    "Minimum(r,{x,y}) = Infimum(r,{x,y})"
+    "HasAsupremum(r,{x,y})"
+    "Maximum(r,{x,y}) = Supremum(r,{x,y})"
+  using assms min_max_two_el max_is_sup min_is_inf by auto
 
 text\<open>A sufficient condition for the supremum to be in the space.\<close>
 

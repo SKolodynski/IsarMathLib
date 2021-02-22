@@ -601,6 +601,7 @@ lemma (in group0) cancel_middle:
     "(a\<cdot>b)\<cdot>(c\<cdot>b)\<inverse> = a\<cdot>c\<inverse>"
     "a\<inverse>\<cdot>(a\<cdot>b\<cdot>c)\<cdot>c\<inverse> = b"
     "a\<cdot>(b\<cdot>c\<inverse>)\<cdot>c = a\<cdot>b"
+    "a\<cdot>b\<inverse>\<cdot>(b\<cdot>c\<inverse>) = a\<cdot>c\<inverse>"
 proof -
   from assms have "(a\<cdot>b)\<inverse>\<cdot>(a\<cdot>c) = b\<inverse>\<cdot>(a\<inverse>\<cdot>(a\<cdot>c))"
     using group_inv_of_two inverse_in_group group_oper_assoc group_op_closed by auto
@@ -614,6 +615,9 @@ proof -
   from assms have "a\<cdot>(b\<cdot>c\<inverse>)\<cdot>c = a\<cdot>b\<cdot>(c\<inverse>\<cdot>c)" using inverse_in_group group_oper_assoc group_op_closed
     by simp
   with assms show "a\<cdot>(b\<cdot>c\<inverse>)\<cdot>c = a\<cdot>b" using group_op_closed group0_2_L6 group0_2_L2 by simp
+  from assms have "a\<cdot>b\<inverse>\<cdot>(b\<cdot>c\<inverse>) = a\<cdot>(b\<inverse>\<cdot>b)\<cdot>c\<inverse>" using inverse_in_group group_oper_assoc group_op_closed
+    by simp
+  with assms  show "a\<cdot>b\<inverse>\<cdot>(b\<cdot>c\<inverse>) = a\<cdot>c\<inverse>" using group0_2_L6 group0_2_L2 by simp
 qed
 
 text\<open>Adding a neutral element to a set that is 
