@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Theory DirectProduct_ZF (Isabelle2020: April 2020)</title>
-<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><link rel="stylesheet" type="text/css" href="isabelle.css"/>
+<title>Theory DirectProduct_ZF</title>
 </head>
 
+
 <body>
-<div class="head"><h1>Theory DirectProduct_ZF</h1>
-
-<span class="command">theory</span> <span class="name">DirectProduct_ZF</span><br/>
-<span class="keyword">imports</span> <a href="func_ZF.html"><span class="name">func_ZF</span></a><br/>
-
+<div class="head">
+<h1>Theory DirectProduct_ZF</h1>
 </div>
-<div class="source">
-<pre class="source"><span class="comment"><span class="delete"><span class="delete"><span class="delete"><span class="delete">(* 
+
+<pre class="source"><span class="comment1">(* 
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
@@ -32,7 +29,7 @@
    3. The name of the author may not be used to endorse or promote products 
    derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&#39;&#39; AND ANY EXPRESS OR IMPLIED 
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
 WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
 MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
 IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
@@ -43,107 +40,106 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*)</span></span></span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">section</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Direct product&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>DirectProduct_ZF</span><span> </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>func_ZF</span><span>
-</span><span>
-</span><span class="keyword2"><span class="keyword">begin</span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;This theory considers the direct product of binary operations. 
-  Contributed by Seo Sanghyeon.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Definition&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;In group theory the notion of direct product provides a natural 
-  way of creating a new group from two given groups.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Given $(G,\cdot)$  and $(H,\circ)$
+*)</span>
+
+<span class="keyword1"><span class="command">section</span></span> <span class="quoted"><span class="plain_text">‹Direct product›</span></span>
+
+<span class="keyword1"><span class="command">theory</span></span> DirectProduct_ZF <span class="keyword2"><span class="keyword">imports</span></span> <a href="func_ZF.html">func_ZF</a>
+
+<span class="keyword2"><span class="keyword">begin</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹This theory considers the direct product of binary operations. 
+  Contributed by Seo Sanghyeon.›</span></span>
+
+<span class="keyword1"><span class="command">subsection</span></span><span class="quoted"><span class="plain_text">‹Definition›</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹In group theory the notion of direct product provides a natural 
+  way of creating a new group from two given groups.›</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹Given $(G,\cdot)$  and $(H,\circ)$
   a new operation $(G\times H, \times )$ is defined as
-  $(g, h) \times (g&#39;, h&#39;) = (g \cdot g&#39;, h \circ h&#39;)$.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">definition</span></span><span>
-</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;DirectProduct(P,Q,G,H) &#8801; 
-  {&#10216;x,&#10216;P`&#10216;fst(fst(x)),fst(snd(x))&#10217; , Q`&#10216;snd(fst(x)),snd(snd(x))&#10217;&#10217;&#10217;.
-  x &#8712; (G&#215;H)&#215;(G&#215;H)}&quot;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;We define a context called &#8249;direct0&#8250; which
+  $(g, h) \times (g', h') = (g \cdot g', h \circ h')$.›</span></span>
+
+<span class="keyword1"><span class="command">definition</span></span>
+  <span class="quoted"><span class="quoted">"<span class="free">DirectProduct</span><span class="main">(</span><span class="free"><span class="bound"><span class="entity">P</span></span></span><span class="main">,</span><span class="free"><span class="bound"><span class="entity">Q</span></span></span><span class="main">,</span><span class="free"><span class="bound"><span class="entity">G</span></span></span><span class="main">,</span><span class="free"><span class="bound"><span class="entity">H</span></span></span><span class="main">)</span> <span class="main">≡</span> 
+  <span class="main">{</span><span class="main">⟨</span><span class="bound">x</span><span class="main">,</span><span class="main">⟨</span><span class="free"><span class="bound"><span class="entity">P</span></span></span><span class="main">`</span><span class="main">⟨</span>fst<span class="main">(</span>fst<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">)</span><span class="main">,</span>fst<span class="main">(</span>snd<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">)</span><span class="main">⟩</span> <span class="main">,</span> <span class="free"><span class="bound"><span class="entity">Q</span></span></span><span class="main">`</span><span class="main">⟨</span>snd<span class="main">(</span>fst<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">)</span><span class="main">,</span>snd<span class="main">(</span>snd<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">)</span><span class="main">⟩</span><span class="main">⟩</span><span class="main">⟩</span><span class="main">.</span>
+  <span class="bound">x</span> <span class="main">∈</span> <span class="main">(</span><span class="free"><span class="bound"><span class="entity">G</span></span></span><span class="main">×</span><span class="free"><span class="bound"><span class="entity">H</span></span></span><span class="main">)</span><span class="main">×</span><span class="main">(</span><span class="free"><span class="bound"><span class="entity">G</span></span></span><span class="main">×</span><span class="free"><span class="bound"><span class="entity">H</span></span></span><span class="main">)</span><span class="main">}</span>"</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹We define a context called <span class="antiquoted"><span class="raw_text"><span class="antiquoted"><span class="raw_text"><span class="operator"><span class="operator">‹</span></span>direct0›</span></span></span></span> which
   holds an assumption that $P, Q$ are binary operations on
   $G,H$, resp. and denotes $R$ as the direct product of 
-  $(G,P)$ and $(H,Q)$.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">locale</span></span><span> </span><span>direct0</span><span> </span><span class="delimiter">=</span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>P</span><span> </span><span>Q</span><span> </span><span>G</span><span> </span><span>H</span><span> 
-</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>Pfun</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P : G&#215;G&#8594;G&quot;</span></span></span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span>Qfun</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Q : H&#215;H&#8594;H&quot;</span></span></span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">fixes</span></span><span> </span><span>R</span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">defines</span></span><span> </span><span>Rdef</span><span> </span><span class="delimiter">[</span><span>simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R &#8801; DirectProduct(P,Q,G,H)&quot;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;The direct product of binary operations is a binary operation.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>direct0</span><span class="delimiter">)</span><span> </span><span>DirectProduct_ZF_1_L1</span><span class="delimiter">:</span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R : (G&#215;H)&#215;(G&#215;H)&#8594;G&#215;H&quot;</span></span></span><span>
-</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>Pfun</span><span> </span><span>Qfun</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;(G&#215;H)&#215;(G&#215;H).
-    &#10216;P`&#10216;fst(fst(x)),fst(snd(x))&#10217;,Q`&#10216;snd(fst(x)),snd(snd(x))&#10217;&#10217; &#8712; G&#215;H&quot;</span></span></span><span>
-</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>ZF_fun_from_total</span><span> </span><span>DirectProduct_def</span><span>
-</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span class="keyword1"><span class="command">qed</span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;And it has the intended value.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>direct0</span><span class="delimiter">)</span><span> </span><span>DirectProduct_ZF_1_L2</span><span class="delimiter">:</span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;(G&#215;H). &#8704;y&#8712;(G&#215;H). 
-  R`&#10216;x,y&#10217; = &#10216;P`&#10216;fst(x),fst(y)&#10217;,Q`&#10216;snd(x),snd(y)&#10217;&#10217;&quot;</span></span></span><span>
-</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>DirectProduct_def</span><span> </span><span>DirectProduct_ZF_1_L1</span><span> </span><span>ZF_fun_from_tot_val</span><span> 
-</span><span>  </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;And the value belongs to the set the operation is defined on.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>direct0</span><span class="delimiter">)</span><span> </span><span>DirectProduct_ZF_1_L3</span><span class="delimiter">:</span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;(G&#215;H). &#8704;y&#8712;(G&#215;H). R`&#10216;x,y&#10217; &#8712; G&#215;H&quot;</span></span></span><span>
-</span><span>  </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>DirectProduct_ZF_1_L1</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Associative and commutative operations&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;If P and Q are both associative or commutative operations,
-  the direct product of P and Q has the same property.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Direct product of commutative operations is commutative.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>direct0</span><span class="delimiter">)</span><span> </span><span>DirectProduct_ZF_2_L1</span><span class="delimiter">:</span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P {is commutative on} G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Q {is commutative on} H&quot;</span></span></span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R {is commutative on} G&#215;H&quot;</span></span></span><span>
-</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">from</span></span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;(G&#215;H). &#8704;y&#8712;(G&#215;H). R`&#10216;x,y&#10217; = R`&#10216;y,x&#10217;&quot;</span></span></span><span>
-</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>DirectProduct_ZF_1_L2</span><span> </span><span>IsCommutative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span> </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>IsCommutative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span class="keyword1"><span class="command">qed</span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Direct product of associative operations is associative.&#8250;</span></span></span><span>
-</span><span>
-</span><span class="keyword1"><span class="command">lemma</span></span><span> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>direct0</span><span class="delimiter">)</span><span> </span><span>DirectProduct_ZF_2_L2</span><span class="delimiter">:</span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;P {is associative on} G&quot;</span></span></span><span> </span><span class="keyword2"><span class="keyword">and</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;Q {is associative on} H&quot;</span></span></span><span>
-</span><span>  </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;R {is associative on} G&#215;H&quot;</span></span></span><span>
-</span><span class="keyword1"><span class="command">proof</span></span><span> </span><span>-</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;G&#215;H. &#8704;y&#8712;G&#215;H. &#8704;z&#8712;G&#215;H. R`&#10216;R`&#10216;x,y&#10217;,z&#10217; =
-    &#10216;P`&#10216;P`&#10216;fst(x),fst(y)&#10217;,fst(z)&#10217;,Q`&#10216;Q`&#10216;snd(x),snd(y)&#10217;,snd(z)&#10217;&#10217;&quot;</span></span></span><span>
-</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>DirectProduct_ZF_1_L2</span><span> </span><span>DirectProduct_ZF_1_L3</span><span> 
-</span><span>    </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">moreover</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;G&#215;H. &#8704;y&#8712;G&#215;H. &#8704;z&#8712;G&#215;H. R`&#10216;x,R`&#10216;y,z&#10217;&#10217; =
-    &#10216;P`&#10216;fst(x),P`&#10216;fst(y),fst(z)&#10217;&#10217;,Q`&#10216;snd(x),Q`&#10216;snd(y),snd(z)&#10217;&#10217;&#10217;&quot;</span></span></span><span>
-</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>DirectProduct_ZF_1_L2</span><span> </span><span>DirectProduct_ZF_1_L3</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>auto</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">ultimately</span></span><span> </span><span class="keyword1"><span class="command">have</span></span><span> </span><span class="string"><span class="delete"><span class="delete">&quot;&#8704;x&#8712;G&#215;H. &#8704;y&#8712;G&#215;H. &#8704;z&#8712;G&#215;H. R`&#10216;R`&#10216;x,y&#10217;,z&#10217; = R`&#10216;x,R`&#10216;y,z&#10217;&#10217;&quot;</span></span></span><span>
-</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>assms</span><span> </span><span>IsAssociative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span>  </span><span class="keyword1"><span class="command">then</span></span><span> </span><span class="keyword3"><span class="command">show</span></span><span> </span><span class="var">?thesis</span><span>
-</span><span>    </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>DirectProduct_ZF_1_L1</span><span> </span><span>IsAssociative_def</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>simp</span><span>
-</span><span class="keyword1"><span class="command">qed</span></span><span>
-</span><span>
-</span><span class="keyword2"><span class="keyword">end</span></span><span>
-</span></pre>
+  $(G,P)$ and $(H,Q)$.›</span></span>
 
-</div>
+<span class="keyword1"><span class="command">locale</span></span> direct0 <span class="main">=</span>
+  <span class="keyword2"><span class="keyword">fixes</span></span> <span class="free">P</span> <span class="free">Q</span> <span class="free">G</span> <span class="free">H</span> 
+  <span class="keyword2"><span class="keyword">assumes</span></span> Pfun<span class="main">:</span> <span class="quoted"><span class="quoted">"<span class="free">P</span> <span class="main">:</span> <span class="free">G</span><span class="main">×</span><span class="free">G</span><span class="main">→</span><span class="free">G</span>"</span></span>
+  <span class="keyword2"><span class="keyword">assumes</span></span> Qfun<span class="main">:</span> <span class="quoted"><span class="quoted">"<span class="free">Q</span> <span class="main">:</span> <span class="free">H</span><span class="main">×</span><span class="free">H</span><span class="main">→</span><span class="free">H</span>"</span></span>
+  <span class="keyword2"><span class="keyword">fixes</span></span> <span class="free">R</span>
+  <span class="keyword2"><span class="keyword">defines</span></span> Rdef <span class="main">[</span><span class="operator">simp</span><span class="main">]</span><span class="main">:</span> <span class="quoted"><span class="quoted">"<span class="free">R</span> <span class="main">≡</span> DirectProduct<span class="main">(</span><span class="free">P</span><span class="main">,</span><span class="free">Q</span><span class="main">,</span><span class="free">G</span><span class="main">,</span><span class="free">H</span><span class="main">)</span>"</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹The direct product of binary operations is a binary operation.›</span></span>
+
+<span class="keyword1"><span class="command">lemma</span></span> <span class="main">(</span><span class="keyword2"><span class="keyword">in</span></span> direct0<span class="main">)</span> DirectProduct_ZF_1_L1<span class="main">:</span>
+  <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="free">R</span> <span class="main">:</span> <span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">×</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">→</span><span class="free">G</span><span class="main">×</span><span class="free">H</span>"</span></span>
+<span class="keyword1"><span class="command">proof</span></span> <span class="operator">-</span>
+  <span class="keyword1"><span class="command">from</span></span> Pfun Qfun <span class="keyword1"><span class="command">have</span></span> <span class="quoted"><span class="quoted">"<span class="main">∀</span><span class="bound">x</span><span class="main">∈</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">×</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">.</span>
+    <span class="main">⟨</span><span class="free">P</span><span class="main">`</span><span class="main">⟨</span>fst<span class="main">(</span>fst<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">)</span><span class="main">,</span>fst<span class="main">(</span>snd<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">)</span><span class="main">⟩</span><span class="main">,</span><span class="free">Q</span><span class="main">`</span><span class="main">⟨</span>snd<span class="main">(</span>fst<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">)</span><span class="main">,</span>snd<span class="main">(</span>snd<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">)</span><span class="main">⟩</span><span class="main">⟩</span> <span class="main">∈</span> <span class="free">G</span><span class="main">×</span><span class="free">H</span>"</span></span>
+    <span class="keyword1"><span class="command">by</span></span> <span class="operator">auto</span>
+  <span class="keyword1"><span class="command">then</span></span> <span class="keyword3"><span class="command">show</span></span> <span class="var"><span class="quoted"><span class="var">?thesis</span></span></span> <span class="keyword1"><span class="command">using</span></span> ZF_fun_from_total DirectProduct_def
+    <span class="keyword1"><span class="command">by</span></span> <span class="operator">simp</span>
+<span class="keyword1"><span class="command">qed</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹And it has the intended value.›</span></span>
+
+<span class="keyword1"><span class="command">lemma</span></span> <span class="main">(</span><span class="keyword2"><span class="keyword">in</span></span> direct0<span class="main">)</span> DirectProduct_ZF_1_L2<span class="main">:</span>
+  <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="main">∀</span><span class="bound">x</span><span class="main">∈</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">.</span> <span class="main">∀</span><span class="bound">y</span><span class="main">∈</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">.</span> 
+  <span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">x</span><span class="main">,</span><span class="bound">y</span><span class="main">⟩</span> <span class="main">=</span> <span class="main">⟨</span><span class="free">P</span><span class="main">`</span><span class="main">⟨</span>fst<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">,</span>fst<span class="main">(</span><span class="bound">y</span><span class="main">)</span><span class="main">⟩</span><span class="main">,</span><span class="free">Q</span><span class="main">`</span><span class="main">⟨</span>snd<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">,</span>snd<span class="main">(</span><span class="bound">y</span><span class="main">)</span><span class="main">⟩</span><span class="main">⟩</span>"</span></span>
+  <span class="keyword1"><span class="command">using</span></span> DirectProduct_def DirectProduct_ZF_1_L1 ZF_fun_from_tot_val 
+  <span class="keyword1"><span class="command">by</span></span> <span class="operator">simp</span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹And the value belongs to the set the operation is defined on.›</span></span>
+
+<span class="keyword1"><span class="command">lemma</span></span> <span class="main">(</span><span class="keyword2"><span class="keyword">in</span></span> direct0<span class="main">)</span> DirectProduct_ZF_1_L3<span class="main">:</span>
+  <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="main">∀</span><span class="bound">x</span><span class="main">∈</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">.</span> <span class="main">∀</span><span class="bound">y</span><span class="main">∈</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">.</span> <span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">x</span><span class="main">,</span><span class="bound">y</span><span class="main">⟩</span> <span class="main">∈</span> <span class="free">G</span><span class="main">×</span><span class="free">H</span>"</span></span>
+  <span class="keyword1"><span class="command">using</span></span> DirectProduct_ZF_1_L1 <span class="keyword1"><span class="command">by</span></span> <span class="operator">simp</span>
+
+<span class="keyword1"><span class="command">subsection</span></span><span class="quoted"><span class="plain_text">‹Associative and commutative operations›</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹If P and Q are both associative or commutative operations,
+  the direct product of P and Q has the same property.›</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹Direct product of commutative operations is commutative.›</span></span>
+
+<span class="keyword1"><span class="command">lemma</span></span> <span class="main">(</span><span class="keyword2"><span class="keyword">in</span></span> direct0<span class="main">)</span> DirectProduct_ZF_2_L1<span class="main">:</span>
+  <span class="keyword2"><span class="keyword">assumes</span></span> <span class="quoted"><span class="quoted">"<span class="free">P</span> <span class="keyword1">{is</span> <span class="keyword1">commutative</span> <span class="keyword1">on}</span> <span class="free">G</span>"</span></span> <span class="keyword2"><span class="keyword">and</span></span> <span class="quoted"><span class="quoted">"<span class="free">Q</span> <span class="keyword1">{is</span> <span class="keyword1">commutative</span> <span class="keyword1">on}</span> <span class="free">H</span>"</span></span>
+  <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="free">R</span> <span class="keyword1">{is</span> <span class="keyword1">commutative</span> <span class="keyword1">on}</span> <span class="free">G</span><span class="main">×</span><span class="free">H</span>"</span></span>
+<span class="keyword1"><span class="command">proof</span></span> <span class="operator">-</span>
+  <span class="keyword1"><span class="command">from</span></span> assms <span class="keyword1"><span class="command">have</span></span> <span class="quoted"><span class="quoted">"<span class="main">∀</span><span class="bound">x</span><span class="main">∈</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">.</span> <span class="main">∀</span><span class="bound">y</span><span class="main">∈</span><span class="main">(</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">)</span><span class="main">.</span> <span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">x</span><span class="main">,</span><span class="bound">y</span><span class="main">⟩</span> <span class="main">=</span> <span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">y</span><span class="main">,</span><span class="bound">x</span><span class="main">⟩</span>"</span></span>
+    <span class="keyword1"><span class="command">using</span></span> DirectProduct_ZF_1_L2 IsCommutative_def <span class="keyword1"><span class="command">by</span></span> <span class="operator">simp</span>
+  <span class="keyword1"><span class="command">then</span></span> <span class="keyword3"><span class="command">show</span></span> <span class="var"><span class="quoted"><span class="var">?thesis</span></span></span> <span class="keyword1"><span class="command">using</span></span> IsCommutative_def <span class="keyword1"><span class="command">by</span></span> <span class="operator">simp</span>
+<span class="keyword1"><span class="command">qed</span></span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹Direct product of associative operations is associative.›</span></span>
+
+<span class="keyword1"><span class="command">lemma</span></span> <span class="main">(</span><span class="keyword2"><span class="keyword">in</span></span> direct0<span class="main">)</span> DirectProduct_ZF_2_L2<span class="main">:</span>
+  <span class="keyword2"><span class="keyword">assumes</span></span> <span class="quoted"><span class="quoted">"<span class="free">P</span> <span class="keyword1">{is</span> <span class="keyword1">associative</span> <span class="keyword1">on}</span> <span class="free">G</span>"</span></span> <span class="keyword2"><span class="keyword">and</span></span> <span class="quoted"><span class="quoted">"<span class="free">Q</span> <span class="keyword1">{is</span> <span class="keyword1">associative</span> <span class="keyword1">on}</span> <span class="free">H</span>"</span></span>
+  <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="free">R</span> <span class="keyword1">{is</span> <span class="keyword1">associative</span> <span class="keyword1">on}</span> <span class="free">G</span><span class="main">×</span><span class="free">H</span>"</span></span>
+<span class="keyword1"><span class="command">proof</span></span> <span class="operator">-</span>
+  <span class="keyword1"><span class="command">have</span></span> <span class="quoted"><span class="quoted">"<span class="main">∀</span><span class="bound">x</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="main">∀</span><span class="bound">y</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="main">∀</span><span class="bound">z</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">x</span><span class="main">,</span><span class="bound">y</span><span class="main">⟩</span><span class="main">,</span><span class="bound">z</span><span class="main">⟩</span> <span class="main">=</span>
+    <span class="main">⟨</span><span class="free">P</span><span class="main">`</span><span class="main">⟨</span><span class="free">P</span><span class="main">`</span><span class="main">⟨</span>fst<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">,</span>fst<span class="main">(</span><span class="bound">y</span><span class="main">)</span><span class="main">⟩</span><span class="main">,</span>fst<span class="main">(</span><span class="bound">z</span><span class="main">)</span><span class="main">⟩</span><span class="main">,</span><span class="free">Q</span><span class="main">`</span><span class="main">⟨</span><span class="free">Q</span><span class="main">`</span><span class="main">⟨</span>snd<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">,</span>snd<span class="main">(</span><span class="bound">y</span><span class="main">)</span><span class="main">⟩</span><span class="main">,</span>snd<span class="main">(</span><span class="bound">z</span><span class="main">)</span><span class="main">⟩</span><span class="main">⟩</span>"</span></span>
+    <span class="keyword1"><span class="command">using</span></span> DirectProduct_ZF_1_L2 DirectProduct_ZF_1_L3 
+    <span class="keyword1"><span class="command">by</span></span> <span class="operator">auto</span>
+  <span class="keyword1"><span class="command">moreover</span></span> <span class="keyword1"><span class="command">have</span></span> <span class="quoted"><span class="quoted">"<span class="main">∀</span><span class="bound">x</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="main">∀</span><span class="bound">y</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="main">∀</span><span class="bound">z</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">x</span><span class="main">,</span><span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">y</span><span class="main">,</span><span class="bound">z</span><span class="main">⟩</span><span class="main">⟩</span> <span class="main">=</span>
+    <span class="main">⟨</span><span class="free">P</span><span class="main">`</span><span class="main">⟨</span>fst<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">,</span><span class="free">P</span><span class="main">`</span><span class="main">⟨</span>fst<span class="main">(</span><span class="bound">y</span><span class="main">)</span><span class="main">,</span>fst<span class="main">(</span><span class="bound">z</span><span class="main">)</span><span class="main">⟩</span><span class="main">⟩</span><span class="main">,</span><span class="free">Q</span><span class="main">`</span><span class="main">⟨</span>snd<span class="main">(</span><span class="bound">x</span><span class="main">)</span><span class="main">,</span><span class="free">Q</span><span class="main">`</span><span class="main">⟨</span>snd<span class="main">(</span><span class="bound">y</span><span class="main">)</span><span class="main">,</span>snd<span class="main">(</span><span class="bound">z</span><span class="main">)</span><span class="main">⟩</span><span class="main">⟩</span><span class="main">⟩</span>"</span></span>
+    <span class="keyword1"><span class="command">using</span></span> DirectProduct_ZF_1_L2 DirectProduct_ZF_1_L3 <span class="keyword1"><span class="command">by</span></span> <span class="operator">auto</span>
+  <span class="keyword1"><span class="command">ultimately</span></span> <span class="keyword1"><span class="command">have</span></span> <span class="quoted"><span class="quoted">"<span class="main">∀</span><span class="bound">x</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="main">∀</span><span class="bound">y</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="main">∀</span><span class="bound">z</span><span class="main">∈</span><span class="free">G</span><span class="main">×</span><span class="free">H</span><span class="main">.</span> <span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">x</span><span class="main">,</span><span class="bound">y</span><span class="main">⟩</span><span class="main">,</span><span class="bound">z</span><span class="main">⟩</span> <span class="main">=</span> <span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">x</span><span class="main">,</span><span class="free">R</span><span class="main">`</span><span class="main">⟨</span><span class="bound">y</span><span class="main">,</span><span class="bound">z</span><span class="main">⟩</span><span class="main">⟩</span>"</span></span>
+    <span class="keyword1"><span class="command">using</span></span> assms IsAssociative_def <span class="keyword1"><span class="command">by</span></span> <span class="operator">simp</span>
+  <span class="keyword1"><span class="command">then</span></span> <span class="keyword3"><span class="command">show</span></span> <span class="var"><span class="quoted"><span class="var">?thesis</span></span></span>
+    <span class="keyword1"><span class="command">using</span></span> DirectProduct_ZF_1_L1 IsAssociative_def <span class="keyword1"><span class="command">by</span></span> <span class="operator">simp</span>
+<span class="keyword1"><span class="command">qed</span></span>
+
+<span class="keyword2"><span class="keyword">end</span></span>
+</pre>
 </body>
+
 </html>
