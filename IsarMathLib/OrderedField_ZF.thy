@@ -211,7 +211,7 @@ proof -
     using OrdField_ZF_1_L7 by auto
 qed
 
-text\<open>If $a<b$, then $(b-a)^{-1}$ is positive.\<close>
+text\<open>If $a$ is smaller than $b$, then $(b-a)^{-1}$ is positive.\<close>
 
 lemma (in field1) OrdField_ZF_1_L9: assumes "a\<ls>b"
   shows  "(b\<rs>a)\<inverse> \<in> R\<^sub>+"  

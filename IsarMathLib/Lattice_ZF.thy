@@ -77,6 +77,19 @@ text\<open> Meet is a binary operation whose value on a pair $\langle x,y\rangle
 definition
   "Meet(L,r) \<equiv> {\<langle>p,Infimum(r,{fst(p),snd(p)})\<rangle> . p \<in> L\<times>L}"
 
+text\<open>Linear order is a lattice.\<close>
+
+lemma lin_is_latt: assumes "r\<subseteq>L\<times>L" and "IsLinOrder(L,r)"
+  shows "r {is a lattice on} L"
+proof -
+  from assms(2) have "IsPartOrder(L,r)" using Order_ZF_1_L2 by simp
+  with assms have "IsMeetSemilattice(L,r)" unfolding IsLinOrder_def IsMeetSemilattice_def
+    using inf_sup_two_el(1) by auto
+  moreover from assms \<open>IsPartOrder(L,r)\<close> have "IsJoinSemilattice(L,r)"
+    unfolding IsLinOrder_def IsJoinSemilattice_def using inf_sup_two_el(3) by auto
+  ultimately show ?thesis unfolding IsAlattice_def by simp
+qed
+
 text\<open> In a join-semilattice join is indeed a binary operation. \<close>
 
 lemma join_is_binop: assumes "IsJoinSemilattice(L,r)" 

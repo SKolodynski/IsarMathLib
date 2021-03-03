@@ -608,13 +608,13 @@ qed
 
 text\<open>For reflexive and total relations two-element set has a minimum and a maximum. \<close>
 
-lemma min_max_two_el: assumes "refl(X,r)" "r {is total on} X" "x\<in>X" "y\<in>X"
+lemma min_max_two_el: assumes "r {is total on} X" "x\<in>X" "y\<in>X"
   shows "HasAminimum(r,{x,y})" and "HasAmaximum(r,{x,y})"
-  using assms unfolding refl_def IsTotal_def HasAminimum_def HasAmaximum_def by auto
+  using assms unfolding IsTotal_def HasAminimum_def HasAmaximum_def by auto
 
 text\<open>For antisymmetric, reflexive and total relations two-element set has a supremum and infimum. \<close>
 
-lemma inf_sup_two_el:assumes "antisym(r)" "refl(X,r)" "r {is total on} X" "x\<in>X" "y\<in>X"
+lemma inf_sup_two_el:assumes "antisym(r)" "r {is total on} X" "x\<in>X" "y\<in>X"
   shows 
     "HasAnInfimum(r,{x,y})"
     "Minimum(r,{x,y}) = Infimum(r,{x,y})"

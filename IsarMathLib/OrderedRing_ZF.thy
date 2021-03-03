@@ -253,7 +253,7 @@ lemma OrdRing_ZF_1_L6:
   using assms IsAnOrdGroup_def Order_ZF_1_L3 IsAnOrdRing_def
   by simp
 
-text\<open>$a\leq b$ iff $a-b\leq 0$. This is a fact from 
+text\<open> $a\leq b$ iff $a-b\leq 0$. This is a fact from 
   \<open>OrderedGroup.thy\<close>, where it is stated in multiplicative notation.\<close>
 
 lemma (in ring1) OrdRing_ZF_1_L7:

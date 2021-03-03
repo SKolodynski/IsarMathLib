@@ -314,8 +314,15 @@ proof -
 qed
 
 text\<open>The nonnegative set is contained in the group.\<close>
+
 lemma (in group3) OrderedGroup_ZF_1_L4E: shows "G\<^sup>+ \<subseteq> G"
   using OrderedGroup_ZF_1_L2 OrderedGroup_ZF_1_L4 by auto
+
+text\<open>The positive set is contained in the nonnegative set, hence in the group.\<close>
+
+lemma (in group3) pos_set_in_gr: shows "G\<^sub>+ \<subseteq> G\<^sup>+" and "G\<^sub>+ \<subseteq> G"
+  using OrderedGroup_ZF_1_L2A OrderedGroup_ZF_1_L2 OrderedGroup_ZF_1_L4E
+  by auto  
 
 text\<open>Taking the inverse on both sides reverses the inequality.\<close>
 

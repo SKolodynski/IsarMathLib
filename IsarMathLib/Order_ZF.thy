@@ -203,11 +203,29 @@ lemma Order_ZF_1_L4: assumes "r {is total on} X" and "A\<subseteq>X"
   shows "r {is total on} A"
   using assms IsTotal_def by auto
 
-text\<open>A linear relation is linear on any subset.\<close>
+text\<open>We can restrict a partial order relation to the domain. \<close>
+
+lemma part_ord_restr: assumes "IsPartOrder(X,r)"
+  shows "IsPartOrder(X,r \<inter> X\<times>X)"
+  using assms unfolding IsPartOrder_def refl_def antisym_def trans_def by auto
+
+text\<open> We can restrict a total order relation to the domain. \<close>
+
+lemma total_ord_restr: assumes "r {is total on} X"
+  shows "(r \<inter> X\<times>X) {is total on} X"
+  using assms unfolding IsTotal_def by auto
+
+text\<open>A linear relation is linear on any subset and we can restrict it to any subset.\<close>
 
 lemma ord_linear_subset: assumes  "IsLinOrder(X,r)" and "A\<subseteq>X"
-  shows  "IsLinOrder(A,r)" 
-  using assms IsLinOrder_def Order_ZF_1_L4 by blast
+  shows  "IsLinOrder(A,r)" and  "IsLinOrder(A,r \<inter> A\<times>A)"
+proof -
+  from assms show "IsLinOrder(A,r)" using IsLinOrder_def Order_ZF_1_L4 by blast
+  then have "IsPartOrder(A,r \<inter> A\<times>A)" and "(r \<inter> A\<times>A) {is total on} A"
+    using Order_ZF_1_L2 part_ord_restr total_ord_restr unfolding IsLinOrder_def 
+    by auto
+  then show "IsLinOrder(A,r \<inter> A\<times>A)" using Order_ZF_1_L3 by simp
+qed
 
 text\<open>If the relation is total, then every set is a union of those elements
   that are nongreater than a given one and nonsmaller than a given one.\<close>
