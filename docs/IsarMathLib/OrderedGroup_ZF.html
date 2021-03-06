@@ -328,8 +328,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <span class="keyword1"><span class="command">qed</span></span>
 
 <span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹The nonnegative set is contained in the group.›</span></span>
+
 <span class="keyword1"><span class="command">lemma</span></span> <span class="main">(</span><span class="keyword2"><span class="keyword">in</span></span> group3<span class="main">)</span> OrderedGroup_ZF_1_L4E<span class="main">:</span> <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="keyword1"><span class="free">G<span class="hidden">⇧</span><sup>+</sup></span></span> <span class="main">⊆</span> <span class="free">G</span>"</span></span>
   <span class="keyword1"><span class="command">using</span></span> OrderedGroup_ZF_1_L2 OrderedGroup_ZF_1_L4 <span class="keyword1"><span class="command">by</span></span> <span class="operator">auto</span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹The positive set is contained in the nonnegative set, hence in the group.›</span></span>
+
+<span class="keyword1"><span class="command">lemma</span></span> <span class="main">(</span><span class="keyword2"><span class="keyword">in</span></span> group3<span class="main">)</span> pos_set_in_gr<span class="main">:</span> <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="keyword1"><span class="free">G<span class="hidden">⇩</span><sub>+</sub></span></span> <span class="main">⊆</span> <span class="keyword1"><span class="free">G<span class="hidden">⇧</span><sup>+</sup></span></span>"</span></span> <span class="keyword2"><span class="keyword">and</span></span> <span class="quoted"><span class="quoted">"<span class="keyword1"><span class="free">G<span class="hidden">⇩</span><sub>+</sub></span></span> <span class="main">⊆</span> <span class="free">G</span>"</span></span>
+  <span class="keyword1"><span class="command">using</span></span> OrderedGroup_ZF_1_L2A OrderedGroup_ZF_1_L2 OrderedGroup_ZF_1_L4E
+  <span class="keyword1"><span class="command">by</span></span> <span class="operator">auto</span>  
 
 <span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹Taking the inverse on both sides reverses the inequality.›</span></span>
 
