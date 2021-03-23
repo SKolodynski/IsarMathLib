@@ -252,8 +252,5 @@ proof -
   } with \<open>domain(?p) = X\<close> show "{\<langle>x, {b`(x)}\<rangle>. x \<in> X} {is partition}"
     using Partition_def by simp
 qed
-      
-  
-    
 
 end

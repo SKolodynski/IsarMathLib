@@ -20,8 +20,10 @@ session "IsarMathLib" = "ZF" +
     EquivClass1
     FiniteSeq_ZF
     InductiveSeq_ZF
+    Enumeration_ZF
     Fold_ZF
     Partitions_ZF
+    Quasigroup_ZF
     Semigroup_ZF
     CommutativeSemigroup_ZF
     Group_ZF
