@@ -45,7 +45,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <span class="keyword1"><span class="command">section</span></span> <span class="quoted"><span class="plain_text">‹Monoids›</span></span>
 
-<span class="keyword1"><span class="command">theory</span></span> Monoid_ZF <span class="keyword2"><span class="keyword">imports</span></span> <a href="func_ZF.html">func_ZF</a>
+<span class="keyword1"><span class="command">theory</span></span> Monoid_ZF <span class="keyword2"><span class="keyword">imports</span></span> <a href="func_ZF.html">func_ZF</a> <a href="Loop_ZF.html">Loop_ZF</a>
 
 <span class="keyword2"><span class="keyword">begin</span></span>
 
@@ -65,7 +65,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   $\langle x,y \rangle$, where $x\in G\times G$ and $y\in G$. In other words 
   the operation is a certain subset of $(G\times G)\times G$. We express
   all this by defing a predicate <span class="antiquoted"><span class="raw_text"><span class="antiquoted"><span class="raw_text"><span class="operator"><span class="operator">‹</span></span>IsAmonoid(G,f)›</span></span></span></span>. Here $G$ is the 
- ''carrier'' of the group and $f$ is the binary operation on it.
+ ''carrier'' of the monoid and $f$ is the binary operation on it.
 ›</span></span>
 
 <span class="keyword1"><span class="command">definition</span></span>
@@ -80,8 +80,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   no particular reason).›</span></span>
 
 <span class="keyword1"><span class="command">locale</span></span> monoid0 <span class="main">=</span>
-  <span class="keyword2"><span class="keyword">fixes</span></span> <span class="free">G</span> 
-  <span class="keyword2"><span class="keyword">fixes</span></span> <span class="free">f</span>
+  <span class="keyword2"><span class="keyword">fixes</span></span> <span class="free">G</span> <span class="free">f</span>
   <span class="keyword2"><span class="keyword">assumes</span></span> monoidAsssum<span class="main">:</span> <span class="quoted"><span class="quoted">"IsAmonoid<span class="main">(</span><span class="free">G</span><span class="main">,</span><span class="free">f</span><span class="main">)</span>"</span></span>
   
   <span class="keyword2"><span class="keyword">fixes</span></span> <span class="free">monoper</span> <span class="main">(</span><span class="keyword2"><span class="keyword">infixl</span></span> <span class="quoted">"<span class="keyword1">⊕</span>"</span> 70<span class="main">)</span>
@@ -108,13 +107,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <span class="quoted"><span class="quoted">"<span class="main">∃</span><span class="bound">e</span><span class="main">.</span> <span class="bound">e</span><span class="main">∈</span> <span class="free">G</span> <span class="main">∧</span> <span class="main">(</span><span class="main">∀</span> <span class="bound">g</span><span class="main">∈</span><span class="free">G</span><span class="main">.</span> <span class="bound">e</span><span class="main"><span class="free">⊕</span></span><span class="bound">g</span> <span class="main">=</span> <span class="bound">g</span> <span class="main">∧</span> <span class="bound">g</span><span class="main"><span class="free">⊕</span></span><span class="bound">e</span> <span class="main">=</span> <span class="bound">g</span><span class="main">)</span>"</span></span>
     <span class="keyword1"><span class="command">using</span></span> IsAmonoid_def <span class="keyword1"><span class="command">by</span></span> <span class="operator">auto</span>
 <span class="keyword1"><span class="command">qed</span></span>
-
-<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹We could put the definition of neutral element anywhere, 
-  but it is only usable in conjuction  with the above lemma.›</span></span>
-
-<span class="keyword1"><span class="command">definition</span></span> 
- <span class="quoted"><span class="quoted">"<span class="free">TheNeutralElement</span><span class="main">(</span><span class="free"><span class="bound"><span class="entity">G</span></span></span><span class="main">,</span><span class="free"><span class="bound"><span class="entity">f</span></span></span><span class="main">)</span> <span class="main">≡</span> 
-  <span class="main">(</span> <span class="keyword1">THE</span> <span class="bound">e</span><span class="main">.</span> <span class="bound">e</span><span class="main">∈</span><span class="free"><span class="bound"><span class="entity">G</span></span></span> <span class="main">∧</span> <span class="main">(</span><span class="main">∀</span> <span class="bound">g</span><span class="main">∈</span><span class="free"><span class="bound"><span class="entity">G</span></span></span><span class="main">.</span> <span class="free"><span class="bound"><span class="entity">f</span></span></span><span class="main">`</span><span class="main">⟨</span><span class="bound">e</span><span class="main">,</span><span class="bound">g</span><span class="main">⟩</span> <span class="main">=</span> <span class="bound">g</span> <span class="main">∧</span> <span class="free"><span class="bound"><span class="entity">f</span></span></span><span class="main">`</span><span class="main">⟨</span><span class="bound">g</span><span class="main">,</span><span class="bound">e</span><span class="main">⟩</span> <span class="main">=</span> <span class="bound">g</span><span class="main">)</span><span class="main">)</span>"</span></span>
 
 <span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹The neutral element is neutral.›</span></span>
 
