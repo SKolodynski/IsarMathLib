@@ -31,7 +31,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Monoids\<close>
 
-theory Monoid_ZF imports func_ZF
+theory Monoid_ZF imports func_ZF Loop_ZF
 
 begin
 
@@ -51,7 +51,7 @@ text\<open>Monoid is a set $G$ with an associative operation and a neutral eleme
   $\langle x,y \rangle$, where $x\in G\times G$ and $y\in G$. In other words 
   the operation is a certain subset of $(G\times G)\times G$. We express
   all this by defing a predicate \<open>IsAmonoid(G,f)\<close>. Here $G$ is the 
- ''carrier'' of the group and $f$ is the binary operation on it.
+ ''carrier'' of the monoid and $f$ is the binary operation on it.
 \<close>
 
 definition
@@ -66,8 +66,7 @@ text\<open>The next locale called ''monoid0'' defines a context for theorems
   no particular reason).\<close>
 
 locale monoid0 =
-  fixes G 
-  fixes f
+  fixes G f
   assumes monoidAsssum: "IsAmonoid(G,f)"
   
   fixes monoper (infixl "\<oplus>" 70)
@@ -94,13 +93,6 @@ next from monoidAsssum show
     "\<exists>e. e\<in> G \<and> (\<forall> g\<in>G. e\<oplus>g = g \<and> g\<oplus>e = g)"
     using IsAmonoid_def by auto
 qed
-
-text\<open>We could put the definition of neutral element anywhere, 
-  but it is only usable in conjuction  with the above lemma.\<close>
-
-definition 
- "TheNeutralElement(G,f) \<equiv> 
-  ( THE e. e\<in>G \<and> (\<forall> g\<in>G. f`\<langle>e,g\<rangle> = g \<and> f`\<langle>g,e\<rangle> = g))"
 
 text\<open>The neutral element is neutral.\<close>
 

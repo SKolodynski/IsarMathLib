@@ -24,6 +24,7 @@ session "IsarMathLib" = "ZF" +
     Fold_ZF
     Partitions_ZF
     Quasigroup_ZF
+    Loop_ZF
     Semigroup_ZF
     CommutativeSemigroup_ZF
     Group_ZF
