@@ -1,3 +1,34 @@
+(* 
+This file is a part of IsarMathLib - 
+a library of formalized mathematics for Isabelle/Isar.
+
+Copyright (C) 2021  Slawomir Kolodynski
+
+This program is free software; Redistribution and use in source and binary forms, 
+with or without modification, are permitted provided that the 
+following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*)
+
 section \<open> Loops \<close>
 
 theory Loop_ZF imports Quasigroup_ZF
@@ -39,6 +70,12 @@ text\<open> In the loop context the pair \<open>(G,A)\<close> forms a loop. \<cl
 
 lemma (in loop0) is_loop: shows "IsAloop(G,A)"
   unfolding IsAloop_def using ex_ident qgroupassum by simp
+
+text\<open>If we know that a pair \<open>(G,A)\<close> forms a loop then the assumptions of the \<open>loop0\<close> locale hold. \<close>
+
+lemma loop_loop0_valid: assumes "IsAloop(G,A)" shows "loop0(G,A)"
+  using assms unfolding IsAloop_def loop0_axioms_def quasigroup0_def loop0_def
+  by auto
 
 text\<open>The neutral element is unique in the loop. \<close>
 

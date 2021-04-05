@@ -1035,4 +1035,91 @@ proof -
   with assms(3) show "IsAsubgroup(G\<^sub>1,P)" unfolding IsAsubgroup_def by simp
 qed
 
+subsection\<open>Groups vs. loops\<close>
+
+text\<open>We defined groups as monoids with the inverse operation. An alternative way of defining a group
+  is as a loop whose operation is associative. \<close>
+
+text\<open> Groups have left and right division. \<close>
+
+lemma (in group0) gr_has_lr_div: shows "HasLeftDiv(G,P)" and "HasRightDiv(G,P)"
+proof -
+  { fix x y assume "x\<in>G" "y\<in>G" 
+    then have "x\<inverse>\<cdot>y \<in> G \<and> x\<cdot>(x\<inverse>\<cdot>y) = y" using group_op_closed inverse_in_group inv_cancel_two(4)
+      by simp
+    hence "\<exists>z. z\<in>G \<and> x\<cdot>z =y" by auto
+    moreover 
+    { fix z\<^sub>1 z\<^sub>2 assume "z\<^sub>1\<in>G \<and> x\<cdot>z\<^sub>1 =y" and "z\<^sub>2\<in>G \<and> x\<cdot>z\<^sub>2 =y"
+      with \<open>x\<in>G\<close> have "z\<^sub>1 = z\<^sub>2" using cancel_left by blast
+    }
+    ultimately have "\<exists>!z. z\<in>G \<and> x\<cdot>z =y" by auto
+  } then show "HasLeftDiv(G,P)" unfolding HasLeftDiv_def by simp
+  { fix x y assume "x\<in>G" "y\<in>G" 
+    then have "y\<cdot>x\<inverse> \<in> G \<and> (y\<cdot>x\<inverse>)\<cdot>x = y" using group_op_closed inverse_in_group inv_cancel_two(1)
+      by simp
+    hence "\<exists>z. z\<in>G \<and> z\<cdot>x =y" by auto
+    moreover 
+    { fix z\<^sub>1 z\<^sub>2 assume "z\<^sub>1\<in>G \<and> z\<^sub>1\<cdot>x =y" and "z\<^sub>2\<in>G \<and> z\<^sub>2\<cdot>x =y"
+      with \<open>x\<in>G\<close> have "z\<^sub>1 = z\<^sub>2" using cancel_right by blast
+    }
+    ultimately have "\<exists>!z. z\<in>G \<and> z\<cdot>x =y" by auto
+  } then show "HasRightDiv(G,P)" unfolding HasRightDiv_def by simp
+qed
+
+text\<open>A group is a quasigroup and a loop.\<close>
+
+lemma (in group0) group_is_loop: shows "IsAquasigroup(G,P)" and "IsAloop(G,P)"
+proof -
+  show "IsAquasigroup(G,P)" unfolding IsAquasigroup_def HasLatinSquareProp_def
+    using gr_has_lr_div group_oper_assocA by simp
+  then show "IsAloop(G,P)" unfolding IsAloop_def using group0_2_L2 by auto
+qed
+
+text\<open> An associative loop is a group.\<close>
+
+theorem assoc_loop_is_gr: assumes "IsAloop(G,P)" and "P {is associative on} G"
+  shows "IsAgroup(G,P)" 
+proof -
+  from assms(1) have "\<exists>e\<in>G. \<forall>x\<in>G. P`\<langle>e,x\<rangle> = x \<and> P`\<langle>x,e\<rangle> = x"
+    unfolding IsAloop_def by simp
+  with assms(2) have "IsAmonoid(G,P)" unfolding IsAmonoid_def by simp
+  { fix x assume "x\<in>G" 
+    let ?y = "RightInv(G,P)`(x)"
+    from assms(1) \<open>x\<in>G\<close> have "?y \<in> G" and "P`\<langle>x,?y\<rangle> = TheNeutralElement(G,P)"
+      using loop_loop0_valid loop0.lr_inv_props(3,4) by auto
+    hence "\<exists>y\<in>G. P`\<langle>x,y\<rangle> = TheNeutralElement(G,P)" by auto
+  }
+  with \<open>IsAmonoid(G,P)\<close> show "IsAgroup(G,P)" unfolding IsAgroup_def by simp
+qed
+
+text\<open>For groups the left and right inverse are the same as the group inverse. \<close>
+
+lemma (in group0) lr_inv_gr_inv: 
+  shows "LeftInv(G,P) = GroupInv(G,P)" and "RightInv(G,P) = GroupInv(G,P)"
+proof -
+  have "LeftInv(G,P):G\<rightarrow>G" using group_is_loop loop_loop0_valid loop0.lr_inv_fun(1)
+    by simp
+  moreover from groupAssum have "GroupInv(G,P):G\<rightarrow>G" using group0_2_T2 by simp
+  moreover
+  { fix x assume "x\<in>G"
+    let ?y = "LeftInv(G,P)`(x)"
+    from \<open>x\<in>G\<close> have "?y \<in> G" and "?y\<cdot>x = \<one>"
+      using group_is_loop(2) loop_loop0_valid loop0.lr_inv_props(1,2) by auto
+    with \<open>x\<in>G\<close> have "LeftInv(G,P)`(x) = GroupInv(G,P)`(x)" using group0_2_L9(1) by simp
+  }
+  ultimately show "LeftInv(G,P) = GroupInv(G,P)" using func_eq by blast
+  have "RightInv(G,P):G\<rightarrow>G" using group_is_loop loop_loop0_valid loop0.lr_inv_fun(2)
+    by simp
+  moreover from groupAssum have "GroupInv(G,P):G\<rightarrow>G" using group0_2_T2 by simp
+  moreover
+  { fix x assume "x\<in>G"
+    let ?y = "RightInv(G,P)`(x)"
+    from \<open>x\<in>G\<close> have "?y \<in> G" and "x\<cdot>?y = \<one>"
+      using group_is_loop(2) loop_loop0_valid loop0.lr_inv_props(3,4) by auto
+    with \<open>x\<in>G\<close> have "RightInv(G,P)`(x) = GroupInv(G,P)`(x)" using group0_2_L9(2) by simp
+  }
+  ultimately show "RightInv(G,P) = GroupInv(G,P)" using func_eq by blast  
+qed
+
+
 end
