@@ -286,7 +286,7 @@ lemma (in group0) Group_ZF_2_1_L7:
 proof-
   from A1 A2  have
     "F {is commutative on} (X\<rightarrow>range(P))"
-    using group_oper_assocA func_ZF_2_L2
+    using group_oper_fun func_ZF_2_L2
     by simp
   moreover from groupAssum have "range(P) = G"
     using group0_2_L1 monoid0.group0_1_L3B

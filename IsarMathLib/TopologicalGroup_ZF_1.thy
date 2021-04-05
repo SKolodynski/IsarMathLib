@@ -159,7 +159,7 @@ lemma (in topgroup) exist_basehoods_closed:
 proof-
   from assms obtain V where "V\<in>\<N>\<^sub>0" "V\<subseteq>U" "(V\<sad>V)\<subseteq>U" "(\<sm>V)=V" using exists_procls_zerohood by blast
   have inv_fun:"GroupInv(G,f)\<in>G\<rightarrow>G" using group0_2_T2 Ggroup by auto
-  have f_fun:"f\<in>G\<times>G\<rightarrow>G" using group0.group_oper_assocA group0_valid_in_tgroup by auto
+  have f_fun:"f\<in>G\<times>G\<rightarrow>G" using group0.group_oper_fun group0_valid_in_tgroup by auto
   {
     fix x assume "x\<in>cl(V)"
     with \<open>V\<in>\<N>\<^sub>0\<close> have "x\<in>\<Union>T" "V\<subseteq>\<Union>T" using Top_3_L11(1) unfolding zerohoods_def G_def by blast+
@@ -252,7 +252,7 @@ proof-
       from \<open>u\<in>Q\<close> have "(\<rm>u)\<in>(\<sm>Q)" unfolding setninv_def grinv_def using func_imagedef[OF group0_2_T2[OF Ggroup] \<open>Q\<subseteq>G\<close>] by auto
       then have "(\<rm>u)\<in>Q" using \<open>(\<sm>Q)=Q\<close> by auto
       with \<open>v\<in>Q\<close> have "\<langle>v,\<rm>u\<rangle>\<in>Q\<times>Q" by auto
-      then have "f`\<langle>v,\<rm>u\<rangle>\<in>Q\<sad>Q" using lift_subset_suff[OF group0.group_oper_assocA[OF group0_valid_in_tgroup] \<open>Q\<subseteq>G\<close> \<open>Q\<subseteq>G\<close>]
+      then have "f`\<langle>v,\<rm>u\<rangle>\<in>Q\<sad>Q" using lift_subset_suff[OF group0.group_oper_fun[OF group0_valid_in_tgroup] \<open>Q\<subseteq>G\<close> \<open>Q\<subseteq>G\<close>]
         unfolding setadd_def by auto
       with \<open>Q\<sad>Q\<subseteq>U\<close> have "v\<rs>u\<in>U" unfolding grsub_def grop_def by auto
       ultimately have "(\<rm>y)\<ra>x\<in>U" by auto

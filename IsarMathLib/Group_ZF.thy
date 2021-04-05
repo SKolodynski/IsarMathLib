@@ -117,7 +117,7 @@ lemma (in group0) group_oper_assoc:
 text\<open>The group operation maps $G\times G$ into $G$. It is conveniet to have
   this fact easily accessible in the \<open>group0\<close> context.\<close>
 
-lemma (in group0) group_oper_assocA: shows "P : G\<times>G\<rightarrow>G"
+lemma (in group0) group_oper_fun: shows "P : G\<times>G\<rightarrow>G"
   using groupAssum IsAgroup_def IsAmonoid_def IsAssociative_def
   by simp
   
@@ -1071,7 +1071,7 @@ text\<open>A group is a quasigroup and a loop.\<close>
 lemma (in group0) group_is_loop: shows "IsAquasigroup(G,P)" and "IsAloop(G,P)"
 proof -
   show "IsAquasigroup(G,P)" unfolding IsAquasigroup_def HasLatinSquareProp_def
-    using gr_has_lr_div group_oper_assocA by simp
+    using gr_has_lr_div group_oper_fun by simp
   then show "IsAloop(G,P)" unfolding IsAloop_def using group0_2_L2 by auto
 qed
 

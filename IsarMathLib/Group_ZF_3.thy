@@ -67,7 +67,7 @@ proof -
       "{r`(x). x\<in>X} \<in> Fin(G)"
       using Finite1_L18 by auto
     with A1 T1 T2 show ?thesis using 
-      group_oper_assocA Finite1_L15 Group_ZF_2_1_L3 func_imagedef
+      group_oper_fun Finite1_L15 Group_ZF_2_1_L3 func_imagedef
       by simp
   qed
   ultimately show ?thesis using FinRangeFunctions_def
@@ -624,12 +624,12 @@ proof
       by simp
     moreover from T1 have 
       "{s`(fst(x))\<cdot>s`(snd(x)). x\<in>G\<times>G} \<in> Fin(G)"
-      using group_oper_assocA  Finite1_L15 by simp
+      using group_oper_fun  Finite1_L15 by simp
     ultimately show ?thesis 
       by (rule Finite1_L6C)
   qed
   ultimately have "{\<delta>(s,x). x\<in>G\<times>G} \<in> Fin(G)"
-    using HomDiff_def Finite1_L15  group_oper_assocA 
+    using HomDiff_def Finite1_L15  group_oper_fun 
     by simp
   with A1 show "s \<in> AH" 
     using FinRangeFunctions_def AlmostHoms_def 
@@ -863,7 +863,7 @@ proof -
   qed
   ultimately have
     "{\<delta>(s,\<langle> r`(fst(x)),r`(snd(x))\<rangle>)\<cdot>s`(\<delta>(r,x)). x\<in>G\<times>G} \<in> Fin(G)"
-    using group_oper_assocA Finite1_L15 by simp
+    using group_oper_fun Finite1_L15 by simp
   moreover have 
     "{\<delta>(s,\<langle> (r`(fst(x))\<cdot>r`(snd(x))),\<delta>(r,x)\<rangle>).  x\<in>G\<times>G} \<in> Fin(G)"
   proof -
@@ -878,7 +878,7 @@ proof -
   ultimately have
     "{\<delta>(s,\<langle> r`(fst(x)),r`(snd(x))\<rangle>)\<cdot>s`(\<delta>(r,x))\<cdot>
     \<delta>(s,\<langle> (r`(fst(x))\<cdot>r`(snd(x))),\<delta>(r,x)\<rangle>). x\<in>G\<times>G} \<in> Fin(G)"
-    using group_oper_assocA Finite1_L15 by simp
+    using group_oper_fun Finite1_L15 by simp
   moreover from A1 have "{\<delta>(s\<circ>r,x). x\<in>G\<times>G} = 
     {\<delta>(s,\<langle> r`(fst(x)),r`(snd(x))\<rangle>)\<cdot>s`(\<delta>(r,x))\<cdot>
     \<delta>(s,\<langle> (r`(fst(x))\<cdot>r`(snd(x))),\<delta>(r,x)\<rangle>). x\<in>G\<times>G}"
@@ -1081,7 +1081,7 @@ proof -
   ultimately have
     "{s1`(r2`(n))\<cdot> (s2`(r2`(n)))\<inverse>\<cdot>s1`(r1`(n)\<cdot>(r2`(n))\<inverse>). 
     n\<in>G} \<in> Fin(G)"
-    using group_oper_assocA Finite1_L15 by simp
+    using group_oper_fun Finite1_L15 by simp
   moreover have 
     "{\<delta>(s1,\<langle> r2`(n),r1`(n)\<cdot>(r2`(n))\<inverse>\<rangle>). n\<in>G} \<in> Fin(G)"
   proof -
@@ -1094,7 +1094,7 @@ proof -
   ultimately have
     "{s1`(r2`(n))\<cdot> (s2`(r2`(n)))\<inverse>\<cdot>s1`(r1`(n)\<cdot>(r2`(n))\<inverse>)\<cdot>
     \<delta>(s1,\<langle> r2`(n),r1`(n)\<cdot>(r2`(n))\<inverse>\<rangle>). n\<in>G} \<in> Fin(G)"
-    using group_oper_assocA Finite1_L15 by simp
+    using group_oper_fun Finite1_L15 by simp
   with A1 show ?thesis using
     QuotientGroupRel_def Group_ZF_3_4_L9 
     Group_ZF_3_4_T1 Group_ZF_3_4_L12 by simp
@@ -1223,7 +1223,7 @@ proof -
       "{\<delta>(s,p). p \<in> G\<times>G} \<in> Fin(G)"   "c\<inverse>\<in>G"
       using AlmostHoms_def inverse_in_group by auto
     then have "{\<delta>(s,p)\<cdot>c\<inverse>. p \<in> G\<times>G} \<in> Fin(G)"
-      using group_oper_assocA Finite1_L16AA
+      using group_oper_fun Finite1_L16AA
       by simp
     moreover from III have
       "{\<delta>(r,p). p \<in> G\<times>G} = {\<delta>(s,p)\<cdot>c\<inverse>. p \<in> G\<times>G}"

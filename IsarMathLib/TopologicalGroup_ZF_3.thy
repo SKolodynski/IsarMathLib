@@ -60,7 +60,7 @@ proof-
   then have "f``(Closure(H\<times>H,ProductTopology(T,T)))=f``(cl(H)\<times>cl(H))" by auto
   with closure sub have clcl:"f``(cl(H)\<times>cl(H))\<subseteq>cl(f``(H\<times>H))" by force
   from assms have fun:"restrict(f,H\<times>H):H\<times>H\<rightarrow>H" unfolding IsAsubgroup_def using
-    group0.group_oper_assocA unfolding group0_def by auto
+    group0.group_oper_fun unfolding group0_def by auto
   then have "restrict(f,H\<times>H)``(H\<times>H)=f``(H\<times>H)" using restrict_image by auto
   moreover from fun have "restrict(f,H\<times>H)``(H\<times>H)\<subseteq>H" using func1_1_L6(2) by blast
   ultimately have "f``(H\<times>H)\<subseteq>H" by auto

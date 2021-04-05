@@ -266,7 +266,7 @@ lemma (in topgroup) prod_top_on_G:
 text\<open>Let's recall that $f$ is a binary operation on $G$ in this context.\<close>
 
 lemma (in topgroup) topgroup_f_binop: shows "f : G\<times>G \<rightarrow> G"
-  using Ggroup group0_def group0.group_oper_assocA by simp
+  using Ggroup group0_def group0.group_oper_fun by simp
 
 text\<open>A subgroup of a topological group is a topological group 
   with relative topology
@@ -684,7 +684,7 @@ proof-
   then have "\<zero>\<in>W" and "\<zero>\<in>V" by auto
   then have "\<zero>\<in>W\<inter>V" by auto
   have sub:"W\<inter>V\<subseteq>G" using wop vop G_def by auto
-  have assoc:"f\<in>G\<times>G\<rightarrow>G" using group_oper_assocA by auto
+  have assoc:"f\<in>G\<times>G\<rightarrow>G" using group_oper_fun by auto
   {
     fix t s assume "t\<in>W\<inter>V" and "s\<in>W\<inter>V"
     then have "t\<in>W" and "s\<in>V" by auto

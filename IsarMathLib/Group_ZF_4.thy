@@ -433,7 +433,7 @@ theorem(in group0) subgroupGen_is_subgroup:
   assumes "X\<subseteq>G"
   shows "IsAsubgroup(\<langle>X\<rangle>\<^sub>G,P)"
 proof-
-  have "restrict(P,G\<times>G)=P" using group_oper_assocA restrict_idem unfolding Pi_def by auto
+  have "restrict(P,G\<times>G)=P" using group_oper_fun restrict_idem unfolding Pi_def by auto
   then have "IsAsubgroup(G,P)" unfolding IsAsubgroup_def using groupAssum by auto
   with assms have "G\<in>{H\<in>Pow(G). X\<subseteq>H \<and> IsAsubgroup(H,P)}" by auto
   then have "{H\<in>Pow(G). X\<subseteq>H \<and> IsAsubgroup(H,P)}\<noteq>0" by auto

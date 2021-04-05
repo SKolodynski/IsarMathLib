@@ -71,7 +71,7 @@ lemma (in group0) group0_5_L1: assumes A1: "g\<in>G"
   shows "RightTranslation(G,P,g) : G\<rightarrow>G" and  "LeftTranslation(G,P,g) : G\<rightarrow>G"
 proof -
   from A1 have "\<forall>a\<in>G. a\<cdot>g \<in> G" and "\<forall>a\<in>G. g\<cdot>a \<in> G"
-    using group_oper_assocA apply_funtype by auto
+    using group_oper_fun apply_funtype by auto
   then show 
     "RightTranslation(G,P,g) : G\<rightarrow>G" 
     "LeftTranslation(G,P,g) : G\<rightarrow>G"
@@ -97,7 +97,7 @@ lemma (in group0) group0_5_L4: assumes A1: "g\<in>G" "h\<in>G" "a\<in>G" and
   "T\<^sub>g`(T\<^sub>h`(a)) = LeftTranslation(G,P,g\<cdot>h)`(a)"
 proof -
   from A1 have I: "h\<cdot>a\<in>G"  "g\<cdot>h\<in>G"
-    using group_oper_assocA apply_funtype by auto
+    using group_oper_fun apply_funtype by auto
   with A1 A2 show "T\<^sub>g`(T\<^sub>h`(a)) = g\<cdot>h\<cdot>a"
     using group0_5_L2 group_oper_assoc by simp
   with A1 A2 I show 
@@ -115,7 +115,7 @@ lemma (in group0) group0_5_L5: assumes A1: "g\<in>G" "h\<in>G" "a\<in>G" and
   "T\<^sub>g`(T\<^sub>h`(a)) = RightTranslation(G,P,h\<cdot>g)`(a)"
 proof -
   from A1 have I: "a\<cdot>h\<in>G" "h\<cdot>g \<in>G"
-    using group_oper_assocA apply_funtype by auto
+    using group_oper_fun apply_funtype by auto
   with A1 A2 show "T\<^sub>g`(T\<^sub>h`(a)) = a\<cdot>h\<cdot>g" 
     using group0_5_L2 group_oper_assoc by simp
   with A1 A2 I show 
@@ -276,17 +276,17 @@ proof -
   let ?T = "RightTranslation(G,P,g)"
   let ?F = "Fix2ndVar(P,g)"
   from assms have "?T: G\<rightarrow>G" and "?F: G\<rightarrow>G"
-    using group0_5_L1 group_oper_assocA fix_2nd_var_fun by auto
+    using group0_5_L1 group_oper_fun fix_2nd_var_fun by auto
   moreover from assms have "\<forall>a\<in>G. ?T`(a) = ?F`(a)"
-    using group0_5_L2 group_oper_assocA fix_var_val by simp
+    using group0_5_L2 group_oper_fun fix_var_val by simp
   ultimately show "?T = ?F" by (rule func_eq)
 next
   let ?T = "LeftTranslation(G,P,g)"
   let ?F = "Fix1stVar(P,g)"
   from assms have "?T: G\<rightarrow>G" and "?F: G\<rightarrow>G"
-    using group0_5_L1 group_oper_assocA fix_1st_var_fun by auto
+    using group0_5_L1 group_oper_fun fix_1st_var_fun by auto
   moreover from assms have "\<forall>a\<in>G. ?T`(a) = ?F`(a)"
-    using group0_5_L2 group_oper_assocA fix_var_val by simp
+    using group0_5_L2 group_oper_fun fix_var_val by simp
   ultimately show "?T = ?F" by (rule func_eq)
 qed
 
@@ -359,7 +359,7 @@ lemma (in group0) image_ltrans_union: assumes "A\<subseteq>G" "B\<subseteq>G" sh
   "(P {lifted to subsets of} G)`\<langle>A,B\<rangle> = (\<Union>a\<in>A.  LeftTranslation(G,P,a)``(B))"
 proof
   from assms have I: "(P {lifted to subsets of} G)`\<langle>A,B\<rangle> = {a\<cdot>b . \<langle>a,b\<rangle> \<in> A\<times>B}"
-    using group_oper_assocA lift_subsets_explained by simp
+    using group_oper_fun lift_subsets_explained by simp
   { fix c assume "c \<in> (P {lifted to subsets of} G)`\<langle>A,B\<rangle>"
     with I obtain a b where "c = a\<cdot>b" and "a\<in>A"  "b\<in>B" by auto
     hence "c \<in> {a\<cdot>b. b\<in>B}" by auto
@@ -386,7 +386,7 @@ lemma (in group0) image_rtrans_union: assumes "A\<subseteq>G" "B\<subseteq>G" sh
   "(P {lifted to subsets of} G)`\<langle>A,B\<rangle> = (\<Union>b\<in>B.  RightTranslation(G,P,b)``(A))"
 proof
   from assms have I: "(P {lifted to subsets of} G)`\<langle>A,B\<rangle> = {a\<cdot>b . \<langle>a,b\<rangle> \<in> A\<times>B}"
-    using group_oper_assocA lift_subsets_explained by simp
+    using group_oper_fun lift_subsets_explained by simp
   { fix c assume "c \<in> (P {lifted to subsets of} G)`\<langle>A,B\<rangle>"
     with I obtain a b where "c = a\<cdot>b" and "a\<in>A"  "b\<in>B" by auto
     hence "c \<in> {a\<cdot>b. a\<in>A}" by auto
@@ -501,7 +501,7 @@ text\<open>The next lemma shows a somewhat more explicit way of defining the pro
 
 lemma (in group4) interval_prod: assumes "A\<subseteq>G" "B\<subseteq>G" 
   shows "A\<sdot>B =  {x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B}"
-  using assms group_oper_assocA lift_subsets_explained by auto
+  using assms group_oper_fun lift_subsets_explained by auto
 
 text\<open>Product of elements of subsets of the group is in the set product of those subsets\<close>
 
