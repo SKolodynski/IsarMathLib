@@ -29,17 +29,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Ordered groups - introduction\<close>
 
-theory OrderedGroup_ZF imports Group_ZF_1 AbelianGroup_ZF Order_ZF Finite_ZF_1
+theory OrderedGroup_ZF imports Group_ZF_1 AbelianGroup_ZF Finite_ZF_1 OrderedLoop_ZF
 
 begin
 
 text\<open>This theory file defines and shows the basic properties of (partially
-  or linearly) ordered groups. We define the set of nonnegative elements 
-  and the absolute value function. 
+  or linearly) ordered groups. 
   We show that in linearly ordered groups finite sets are bounded 
   and provide a sufficient condition for bounded sets to be finite. This 
   allows to show in \<open>Int_ZF_IML.thy\<close> that subsets of integers are 
-  bounded iff they are finite.\<close>
+  bounded iff they are finite.
+  The development is independent from the material in the \<open>OrderedLoop_ZF\<close> theory,
+  we just import the definitions of \<open>NonnegativeSet\<close> and \<open>PositiveSet\<close> from there.\<close>
 
 subsection\<open>Ordered groups\<close>
 
@@ -54,18 +55,6 @@ definition
   (IsAgroup(G,P) \<and> r\<subseteq>G\<times>G \<and> IsPartOrder(G,r) \<and> (\<forall>g\<in>G. \<forall>a b. 
   \<langle> a,b\<rangle> \<in> r \<longrightarrow> \<langle> P`\<langle> a,g\<rangle>,P`\<langle> b,g\<rangle> \<rangle> \<in> r \<and> \<langle> P`\<langle> g,a\<rangle>,P`\<langle> g,b\<rangle> \<rangle> \<in> r ) )"
 
-text\<open>We define the set of nonnegative elements
-  in the obvious way as $G^+ =\{x\in G: 1 \leq x\}$.\<close>
-
-definition
-  "Nonnegative(G,P,r) \<equiv> {x\<in>G. \<langle> TheNeutralElement(G,P),x\<rangle> \<in> r}"
-
-text\<open>The \<open>PositiveSet(G,P,r)\<close> is a set similar to 
-  \<open>Nonnegative(G,P,r)\<close>, but without the unit.\<close>
-
-definition
-  "PositiveSet(G,P,r) \<equiv> 
-  {x\<in>G. \<langle> TheNeutralElement(G,P),x\<rangle> \<in> r \<and> TheNeutralElement(G,P)\<noteq> x}"
 
 text\<open>We also define 
   the absolute value as a ZF-function that is the 

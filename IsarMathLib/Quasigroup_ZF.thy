@@ -109,8 +109,8 @@ locale quasigroup0 =
   fixes leftdiv (infixl "\<ld>" 70)
   defines leftdiv_def[simp]: "x\<ld>y \<equiv>LeftDiv(G,A)`\<langle>x,y\<rangle>"
 
-  fixes rightdev (infixl "\<rd>" 70)
-  defines rightdev_def[simp]:"x\<rd>y \<equiv>RightDiv(G,A)`\<langle>y,x\<rangle>"
+  fixes rightdiv (infixl "\<rd>" 70)
+  defines rightdiv_def[simp]:"x\<rd>y \<equiv>RightDiv(G,A)`\<langle>y,x\<rangle>"
 
 text\<open> The quasigroup operation is closed on $G$. \<close>
 
