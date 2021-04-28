@@ -39,7 +39,8 @@ text\<open>This theory file defines and shows the basic properties of (partially
   and provide a sufficient condition for bounded sets to be finite. This 
   allows to show in \<open>Int_ZF_IML.thy\<close> that subsets of integers are 
   bounded iff they are finite.
-  The development is independent from the material in the \<open>OrderedLoop_ZF\<close> theory,
+  Some theorems proven here are properties of ordered loops rather that groups.
+  However, for now the development is independent from the material in the \<open>OrderedLoop_ZF\<close> theory,
   we just import the definitions of \<open>NonnegativeSet\<close> and \<open>PositiveSet\<close> from there.\<close>
 
 subsection\<open>Ordered groups\<close>
@@ -53,7 +54,7 @@ text\<open>An ordered group is a group equipped with a partial order that is
 definition
   "IsAnOrdGroup(G,P,r) \<equiv> 
   (IsAgroup(G,P) \<and> r\<subseteq>G\<times>G \<and> IsPartOrder(G,r) \<and> (\<forall>g\<in>G. \<forall>a b. 
-  \<langle> a,b\<rangle> \<in> r \<longrightarrow> \<langle> P`\<langle> a,g\<rangle>,P`\<langle> b,g\<rangle> \<rangle> \<in> r \<and> \<langle> P`\<langle> g,a\<rangle>,P`\<langle> g,b\<rangle> \<rangle> \<in> r ) )"
+  \<langle>a,b\<rangle> \<in> r \<longrightarrow> \<langle>P`\<langle> a,g\<rangle>,P`\<langle> b,g\<rangle> \<rangle> \<in> r \<and> \<langle> P`\<langle> g,a\<rangle>,P`\<langle> g,b\<rangle> \<rangle> \<in> r ) )"
 
 
 text\<open>We also define 
@@ -241,15 +242,18 @@ proof -
   ultimately show "a\<ls>c" by simp
 qed
 
+text\<open>The order is translation invariant. \<close>
+
+lemma (in group3) ord_transl_inv: assumes "a\<lsq>b" "c\<in>G"
+  shows "a\<cdot>c \<lsq> b\<cdot>c" and "c\<cdot>a \<lsq> c\<cdot>b"
+  using ordGroupAssum assms unfolding IsAnOrdGroup_def by auto
+
 text\<open>Strict order is preserved by translations.\<close>
 
 lemma (in group3) group_strict_ord_transl_inv: 
   assumes "a\<ls>b" and "c\<in>G"
-  shows 
-  "a\<cdot>c \<ls> b\<cdot>c"
-  "c\<cdot>a \<ls> c\<cdot>b"
-  using ordGroupAssum assms IsAnOrdGroup_def
-    OrderedGroup_ZF_1_L4 OrderedGroup_ZF_1_L1 group0.group0_2_L19
+  shows "a\<cdot>c \<ls> b\<cdot>c" and "c\<cdot>a \<ls> c\<cdot>b"
+  using assms ord_transl_inv OrderedGroup_ZF_1_L4 OrderedGroup_ZF_1_L1 group0.group0_2_L19 
   by auto
 
 text\<open>If the group order is total, then the group is ordered linearly.\<close>
@@ -411,11 +415,23 @@ lemma (in group3) OrderedGroup_ZF_1_L5AE:
   shows "b\<lsq>c"
 proof -
   from ordGroupAssum A1 A2 have "a\<inverse>\<cdot>(a\<cdot>b) \<lsq> a\<inverse>\<cdot>(a\<cdot>c)"
-    using OrderedGroup_ZF_1_L1 group0.inverse_in_group
-      IsAnOrdGroup_def by simp
+    using OrderedGroup_ZF_1_L1 group0.inverse_in_group IsAnOrdGroup_def 
+    by simp
   with A1 show "b\<lsq>c" 
     using OrderedGroup_ZF_1_L1 group0.inv_cancel_two
     by simp
+qed
+
+text\<open>We can cancel the same element on both sides of an inequality, right side.\<close>
+
+lemma (in group3) ineq_cancel_right:
+  assumes "a\<in>G"  "b\<in>G"  "c\<in>G" and "a\<cdot>b \<lsq> c\<cdot>b"
+  shows "a\<lsq>c"
+proof -
+  from assms(2,4) have "(a\<cdot>b)\<cdot>b\<inverse> \<lsq> (c\<cdot>b)\<cdot>b\<inverse>"
+    using OrderedGroup_ZF_1_L1 group0.inverse_in_group ord_transl_inv(1) by simp
+  with assms(1,2,3) show "a\<lsq>c" using OrderedGroup_ZF_1_L1 group0.inv_cancel_two(2) 
+    by auto
 qed
 
 text\<open>We can cancel the same element on both sides of an inequality,

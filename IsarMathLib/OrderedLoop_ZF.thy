@@ -44,20 +44,18 @@ text\<open> An ordered loop $(G,A)$ is a loop with a partial order relation r th
   "translation invariant" with respect to the loop operation $A$.\<close>
   
 text\<open> A triple $(G,A,r)$ is an ordered loop if $(G,A)$ is a loop and $r$ is a relation
-  on $G$ (i.e. a subset of $G\times G$ with is a partial order and for all elements $z \in G$
-  the condition $\langle x,y\rangle \in r$ implies 
+  on $G$ (i.e. a subset of $G\times G$ with is a partial order and for all elements $x,y,z \in G$
+  the condition $\langle x,y\rangle \in r$ is equivalent to both
   $\langle A\langle x,z\rangle, A\langle x,z\rangle\rangle \in r$ and 
   $\langle A\langle z,x\rangle, A\langle z,x\rangle\rangle \in r$. 
   This looks a bit awkward in the basic set theory notation, but using the additive notation 
   for the group operation and $x\leq y$ to instead of $\langle x,y \rangle \in r$ this just means that
-  $x+z\leq y+z$ and $z+x\leq z+y$ whenever $x\leq y$. Note also that since $r\subseteq G\times G$
-  we have $x\in G$ and $y\in G$ whenever $\langle x,y\rangle \in r$, we do not have to explicitly 
-  assume that $x\in G, y\in G$ in the definition. \<close>
+  $x\leq y$ if and only if $x+z\leq y+z$ and $x\leq y$ if and only if $z+x\leq z+y$. \<close>
 
 definition
   "IsAnOrdLoop(L,A,r) \<equiv> 
-  (IsAloop(L,A) \<and> r\<subseteq>L\<times>L \<and> IsPartOrder(L,r) \<and> (\<forall>z\<in>L. \<forall>x y. 
-  \<langle>x,y\<rangle> \<in> r \<longrightarrow> \<langle>A`\<langle> x,z\<rangle>,A`\<langle>y,z\<rangle> \<rangle> \<in> r \<and> \<langle> A`\<langle>z,x\<rangle>,A`\<langle>z,y\<rangle> \<rangle> \<in> r ) )"
+  IsAloop(L,A) \<and> r\<subseteq>L\<times>L \<and> IsPartOrder(L,r) \<and> (\<forall>x\<in>L. \<forall>y\<in>L. \<forall>z\<in>L. 
+  ((\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle> x,z\<rangle>,A`\<langle>y,z\<rangle>\<rangle> \<in> r) \<and> (\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle>z,x\<rangle>,A`\<langle>z,y\<rangle>\<rangle> \<in> r )))"
 
 text\<open>We define the set of nonnegative elements  in the obvious way as $L^+ =\{x\in L: 0 \leq x\}$.\<close>
 
@@ -70,25 +68,34 @@ definition
   "PositiveSet(L,A,r) \<equiv> 
   {x\<in>L. \<langle> TheNeutralElement(L,A),x\<rangle> \<in> r \<and> TheNeutralElement(L,A)\<noteq> x}"
 
-text\<open> We will use additive notation for ordered loops.\<close>
+text\<open> We will use the additive notation for ordered loops.\<close>
 
 locale loop1 =
   fixes L and A and r
+
   assumes ordLoopAssum: "IsAnOrdLoop(L,A,r)"
+
   fixes neut ("\<zero>")
   defines neut_def[simp]: "\<zero> \<equiv> TheNeutralElement(L,A)"
+  
   fixes looper (infixl "\<ra>" 69)
   defines looper_def[simp]: "x \<ra> y \<equiv> A`\<langle> x,y\<rangle>"
+  
   fixes lesseq (infix "\<lsq>" 68)
-  defines lesseq_def [simp]: "x \<lsq> y \<equiv> \<langle> x,y\<rangle> \<in> r"
+  defines lesseq_def [simp]: "x \<lsq> y \<equiv> \<langle>x,y\<rangle> \<in> r"
+  
   fixes sless (infix "\<ls>" 68)
   defines sless_def[simp]: "x \<ls> y \<equiv> x\<lsq>y \<and> x\<noteq>y"
+  
   fixes nonnegative ("L\<^sup>+")
   defines nonnegative_def [simp]: "L\<^sup>+ \<equiv> Nonnegative(L,A,r)"
+  
   fixes positive ("L\<^sub>+")
   defines positive_def[simp]: "L\<^sub>+ \<equiv> PositiveSet(L,A,r)"
+  
   fixes leftdiv ("\<rm> _ \<ad> _")
   defines leftdiv_def[simp]: "\<rm>x\<ad>y \<equiv> LeftDiv(L,A)`\<langle>x,y\<rangle>"
+  
   fixes rightdiv (infixl "\<rs>" 69)
   defines rightdiv_def[simp]:"x\<rs>y \<equiv> RightDiv(L,A)`\<langle>y,x\<rangle>"
     
@@ -97,11 +104,194 @@ text\<open>Theorems proven in the \<open>loop0\<close> locale are valid in the \
 sublocale loop1 < loop0 L A looper  
   using ordLoopAssum loop_loop0_valid unfolding IsAnOrdLoop_def by auto
 
-text\<open> In an ordered loop the order is translation invariant. This is in the definition, here
-  we just show it in the additive notation used in the \<open>loop1\<close> locale.\<close>
+text\<open>In this context $x \leq y$ implies that both $x$ and $y$ belong
+  to $L$.\<close>
+
+lemma (in loop1) lsq_members: assumes "x\<lsq>y" shows "x\<in>L" and "y\<in>L" 
+  using ordLoopAssum assms IsAnOrdLoop_def by auto
+
+text\<open>In this context $x < y$ implies that both $x$ and $y$ belong
+  to $L$.\<close>
+
+lemma (in loop1) less_members: assumes "x\<ls>y" shows "x\<in>L" and "y\<in>L" 
+  using ordLoopAssum assms IsAnOrdLoop_def by auto
+
+text\<open> In an ordered loop the order is translation invariant. \<close>
 
 lemma (in loop1) ord_trans_inv: assumes "x\<lsq>y" "z\<in>L"
   shows "x\<ra>z \<lsq> y\<ra>z" and "z\<ra>x \<lsq> z\<ra>y"
-  using assms ordLoopAssum IsAnOrdLoop_def by auto
+proof -
+  from ordLoopAssum assms have 
+    "(\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle> x,z\<rangle>,A`\<langle>y,z\<rangle>\<rangle> \<in> r) \<and> (\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle>z,x\<rangle>,A`\<langle>z,y\<rangle>\<rangle> \<in> r )"
+    using lsq_members unfolding IsAnOrdLoop_def by blast
+  with assms(1) show "x\<ra>z \<lsq> y\<ra>z" and "z\<ra>x \<lsq> z\<ra>y" by auto
+qed
 
+text\<open> In an ordered loop the strict order is translation invariant. \<close>
+
+lemma (in loop1) strict_ord_trans_inv: assumes "x\<ls>y" "z\<in>L"
+  shows "x\<ra>z \<ls> y\<ra>z" and "z\<ra>x \<ls> z\<ra>y"
+proof -
+  from assms have "x\<ra>z \<lsq> y\<ra>z" and "z\<ra>x \<lsq> z\<ra>y"
+    using ord_trans_inv by auto
+  moreover have "x\<ra>z \<noteq> y\<ra>z" and "z\<ra>x \<noteq> z\<ra>y"
+  proof -
+    { assume "x\<ra>z = y\<ra>z"
+      with assms have "x=y" using less_members qg_cancel_right by blast
+      with assms(1) have False by simp
+    } thus "x\<ra>z \<noteq> y\<ra>z" by auto
+    { assume "z\<ra>x = z\<ra>y"
+      with assms have "x=y" using less_members qg_cancel_left by blast
+      with assms(1) have False by simp
+    } thus "z\<ra>x \<noteq> z\<ra>y" by auto
+  qed
+  ultimately show "x\<ra>z \<ls> y\<ra>z" and "z\<ra>x \<ls> z\<ra>y"
+    by auto
+qed
+
+text\<open>We can cancel an element from both sides of an inequality on the right side. \<close>
+
+lemma (in loop1) ineq_cancel_right: assumes "x\<in>L" "y\<in>L" "z\<in>L" and "x\<ra>z \<lsq> y\<ra>z" 
+  shows  "x\<lsq>y"
+proof -
+  from ordLoopAssum assms(1,2,3) have "\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle> x,z\<rangle>,A`\<langle>y,z\<rangle>\<rangle> \<in> r"
+    unfolding IsAnOrdLoop_def by blast
+  with assms(4) show "x\<lsq>y" by simp
+qed
+
+text\<open>We can cancel an element from both sides of a strict inequality on the right side. \<close>
+
+lemma (in loop1) strict_ineq_cancel_right: assumes "x\<in>L" "y\<in>L" "z\<in>L" and "x\<ra>z \<ls> y\<ra>z" 
+  shows  "x\<ls>y"
+  using assms ineq_cancel_right by auto
+
+text\<open>We can cancel an element from both sides of an inequality on the left side. \<close>
+
+lemma (in loop1) ineq_cancel_left: assumes "x\<in>L" "y\<in>L" "z\<in>L" and "z\<ra>x \<lsq> z\<ra>y" 
+  shows  "x\<lsq>y"
+proof -
+  from ordLoopAssum assms(1,2,3) have "\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle>z,x\<rangle>,A`\<langle>z,y\<rangle>\<rangle> \<in> r"
+    unfolding IsAnOrdLoop_def by blast
+  with assms(4) show "x\<lsq>y" by simp
+qed
+
+text\<open>We can cancel an element from both sides of a strict inequality on the left side. \<close>
+
+lemma (in loop1) strict_ineq_cancel_left: assumes "x\<in>L" "y\<in>L" "z\<in>L" and "z\<ra>x \<ls> z\<ra>y" 
+  shows  "x\<ls>y"
+  using assms ineq_cancel_left by auto
+
+text\<open>The definition of the nonnegative set in the notation used in the \<open>loop1\<close> locale: \<close>
+
+lemma (in loop1) nonneg_definition: 
+  shows "x \<in> L\<^sup>+ \<longleftrightarrow> \<zero> \<lsq> x" using ordLoopAssum IsAnOrdLoop_def Nonnegative_def by auto
+
+text\<open>The nonnegative set is contained in the loop.\<close>
+
+lemma (in loop1) nonneg_subset: shows "L\<^sup>+ \<subseteq> L"
+  using Nonnegative_def by auto 
+
+text\<open>The positive set is contained in the loop.\<close>
+
+lemma (in loop1) positive_subset: shows "L\<^sub>+ \<subseteq> L"
+  using PositiveSet_def by auto
+
+text\<open>The definition of the positive set in the notation used in the \<open>loop1\<close> locale: \<close>
+
+lemma (in loop1) posset_definition: 
+  shows "x \<in> L\<^sub>+ \<longleftrightarrow> (\<zero>\<lsq>x \<and> x\<noteq>\<zero>)" 
+  using ordLoopAssum IsAnOrdLoop_def PositiveSet_def by auto
+
+text\<open>Another form of the definition of the positive set in the notation used in the \<open>loop1\<close> locale: \<close>
+
+lemma (in loop1) posset_definition1: 
+  shows "x \<in> L\<^sub>+ \<longleftrightarrow> \<zero>\<ls>x" 
+  using ordLoopAssum IsAnOrdLoop_def PositiveSet_def by auto
+
+
+text\<open> The order in an ordered loop is antisymmeric. \<close>
+
+lemma (in loop1) loop_ord_antisym: assumes "x\<lsq>y" and "y\<lsq>x"
+  shows "x=y"
+proof -
+  from ordLoopAssum assms have "antisym(r)" "\<langle>x,y\<rangle> \<in> r" "\<langle>y,x\<rangle> \<in> r" 
+    unfolding IsAnOrdLoop_def IsPartOrder_def by auto
+  then show "x=y" by (rule Fol1_L4)
+qed
+
+text\<open> The loop order is transitive. \<close>
+
+lemma (in loop1) loop_ord_trans: assumes "x\<lsq>y" and "y\<lsq>z" shows "x\<lsq>z"
+proof - 
+  from ordLoopAssum assms have "trans(r)" and "\<langle>x,y\<rangle> \<in> r \<and> \<langle>y,z\<rangle> \<in> r"
+    unfolding IsAnOrdLoop_def IsPartOrder_def by auto
+  then have "\<langle>x,z\<rangle> \<in> r" by (rule Fol1_L3)
+  thus ?thesis by simp
+qed
+
+text\<open> A form of mixed transitivity for the strict order: \<close>
+
+lemma (in loop1) loop_strict_ord_trans: assumes "x\<lsq>y" and "y\<ls>z"
+  shows "x\<ls>z"
+proof -
+  from assms have "x\<lsq>y" and "y\<lsq>z" by auto
+  then have "x\<lsq>z" by (rule loop_ord_trans)
+  with assms show "x\<ls>z" using loop_ord_antisym by auto
+qed
+
+text\<open> Another form of mixed transitivity for the strict order: \<close>
+
+lemma (in loop1) loop_strict_ord_trans1: assumes "x\<ls>y" and "y\<lsq>z"
+  shows "x\<ls>z"
+proof -
+  from assms have "x\<lsq>y" and "y\<lsq>z" by auto
+  then have "x\<lsq>z" by (rule loop_ord_trans)
+  with assms show "x\<ls>z" using loop_ord_antisym by auto
+qed
+
+
+text\<open> We can move an element to the other side of an inequality. Well, not exactly, but
+  our notation creates an illusion to that effect. \<close>
+
+lemma (in loop1) lsq_other_side: assumes "x\<lsq>y" 
+  shows "\<zero> \<lsq> \<rm>x\<ad>y"  "(\<rm>x\<ad>y) \<in> L\<^sup>+" "\<zero> \<lsq> y\<rs>x" "(y\<rs>x) \<in> L\<^sup>+"
+proof -
+  from assms have "x\<in>L" "y\<in>L" "\<zero>\<in>L" "(\<rm>x\<ad>y) \<in> L" "(y\<rs>x) \<in> L" 
+    using lsq_members neut_props_loop(1) lrdiv_props(2,5) by auto
+  then have "x = x\<ra>\<zero>" and "y = x\<ra>(\<rm>x\<ad>y)" using neut_props_loop(2) lrdiv_props(6)
+    by auto
+  with assms have "x\<ra>\<zero> \<lsq> x\<ra>(\<rm>x\<ad>y)" by simp
+  with \<open>x\<in>L\<close> \<open>\<zero>\<in>L\<close> \<open>(\<rm>x\<ad>y) \<in> L\<close> show "\<zero> \<lsq> \<rm>x\<ad>y" using ineq_cancel_left
+    by simp
+  then show "(\<rm>x\<ad>y) \<in> L\<^sup>+" using nonneg_definition by simp
+  from \<open>x\<in>L\<close> \<open>y\<in>L\<close> have "x = \<zero>\<ra>x" and "y = (y\<rs>x)\<ra>x"
+    using neut_props_loop(2) lrdiv_props(3) by auto
+  with assms have "\<zero>\<ra>x \<lsq> (y\<rs>x)\<ra>x" by simp
+  with \<open>x\<in>L\<close> \<open>\<zero>\<in>L\<close> \<open>(y\<rs>x) \<in> L\<close> show "\<zero> \<lsq> y\<rs>x" using ineq_cancel_right
+    by simp
+  then show "(y\<rs>x) \<in> L\<^sup>+" using  nonneg_definition by simp
+qed
+
+text\<open> We can move an element to the other side of a strict inequality. \<close>
+
+lemma (in loop1) ls_other_side: assumes "x\<ls>y" 
+  shows "\<zero> \<ls> \<rm>x\<ad>y"  "(\<rm>x\<ad>y) \<in> L\<^sub>+" "\<zero> \<ls> y\<rs>x" "(y\<rs>x) \<in> L\<^sub>+"
+proof -
+  from assms have "x\<in>L" "y\<in>L" "\<zero>\<in>L" "(\<rm>x\<ad>y) \<in> L" "(y\<rs>x) \<in> L" 
+    using lsq_members neut_props_loop(1) lrdiv_props(2,5) by auto
+  then have "x = x\<ra>\<zero>" and "y = x\<ra>(\<rm>x\<ad>y)" using neut_props_loop(2) lrdiv_props(6)
+    by auto
+  with assms have "x\<ra>\<zero> \<ls> x\<ra>(\<rm>x\<ad>y)" by simp
+  with \<open>x\<in>L\<close> \<open>\<zero>\<in>L\<close> \<open>(\<rm>x\<ad>y) \<in> L\<close> show "\<zero> \<ls> \<rm>x\<ad>y" using strict_ineq_cancel_left
+    by simp
+  then show "(\<rm>x\<ad>y) \<in> L\<^sub>+" using posset_definition1 by simp
+  from \<open>x\<in>L\<close> \<open>y\<in>L\<close> have "x = \<zero>\<ra>x" and "y = (y\<rs>x)\<ra>x"
+    using neut_props_loop(2) lrdiv_props(3) by auto
+  with assms have "\<zero>\<ra>x \<ls> (y\<rs>x)\<ra>x" by simp
+  with \<open>x\<in>L\<close> \<open>\<zero>\<in>L\<close> \<open>(y\<rs>x) \<in> L\<close> show "\<zero> \<ls> y\<rs>x" using strict_ineq_cancel_right
+    by simp
+  then show "(y\<rs>x) \<in> L\<^sub>+" using posset_definition1 by simp
+qed
+
+  
 end

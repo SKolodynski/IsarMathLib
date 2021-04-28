@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open> Metric spaces \<close>
 
-theory MetricSpace_ZF imports Topology_ZF_1 OrderedGroup_ZF Lattice_ZF
+theory MetricSpace_ZF imports Topology_ZF_1 OrderedLoop_ZF Lattice_ZF
 begin
 
 text\<open>A metric space is a set on which a distance between points is defined as a function
@@ -41,11 +41,11 @@ text\<open>A metric on $X$ is usually defined as a function $d:X \times X \to [0
   the conditions $d(x,x) = 0$, $d(x, y) = 0 \Rightarrow  x = y$ (identity of indiscernibles), 
   $d(x, y)  = d(y, x)$ (symmetry) and $d(x, y) \le d(x, z) + d(z, y)$ (triangle inequality) 
   for all $x,y \in X$.  Here we are going to be a bit more general and define metric and 
-  pseudo-metric as a  function valued in an ordered group. \<close>
+  pseudo-metric as a function valued in an ordered loop. \<close>
 
 text\<open> First we define a pseudo-metric, which has the axioms of a metric, but without the second part
   of the identity of indiscernibles. In our definition \<open>IsApseudoMetric\<close> is a predicate on five sets: the function $d$, 
-  the set $X$ on which the metric is defined, the group carrier $G$, the group operation $A$ 
+  the set $X$ on which the metric is defined, the loop carrier $G$, the loop operation $A$ 
   and the order $r$ on $G$.\<close>
 
 definition 
@@ -66,67 +66,26 @@ text\<open>A disk is defined as set of points located less than the radius from 
 definition "Disk(X,d,r,c,R) \<equiv> {x\<in>X. \<langle>d`\<langle>c,x\<rangle>,R\<rangle> \<in> StrictVersion(r)}"
 
 
-text\<open>Next we define notation for metric spaces. We will use additive notation for the group 
-  operation but we do not  assume that the group is abelian. 
+text\<open>Next we define notation for metric spaces. We will reuse the additive notation defined in 
+  the \<open>loop1\<close> locale adding only the assumption about $d$ being a pseudometric and notation
+  for a disk centered at $c$ with radius $R$.
   Since for many theorems it is sufficient to assume the pseudometric axioms we will
-  assume in this context that the sets $d,X,G,A,r$ form a pseudometric raher than a metric.\<close>
+  assume in this context that the sets $d,X,L,A,r$ form a pseudometric raher than a metric.\<close>
 
-locale pmetric_space = 
-  fixes d and X and G and A and r
+locale pmetric_space =  loop1 +
+  fixes d and X 
+
+  assumes pmetricAssum: "IsApseudoMetric(d,X,L,A,r)"
   
-  assumes ordGroupAssum: "IsAnOrdGroup(G,A,r)"
-
-  assumes pmetricAssum: "IsApseudoMetric(d,X,G,A,r)"
-  
-  fixes zero ("\<zero>")
-  defines zero_def [simp]: "\<zero> \<equiv> TheNeutralElement(G,A)"
-
-  fixes grop (infixl "\<ra>" 80)
-  defines grop_def [simp]: "x\<ra>y \<equiv> A`\<langle>x,y\<rangle>"
-
-  fixes grinv ("\<rm> _" 89)
-  defines grinv_def [simp]: "(\<rm>x) \<equiv> GroupInv(G,A)`(x)"
-
-  fixes lesseq (infix "\<lsq>" 68)
-  defines lesseq_def [simp]: "x \<lsq> y \<equiv> \<langle> x,y\<rangle> \<in> r"
-
-  fixes sless (infix "\<ls>" 68)
-  defines sless_def [simp]: "x \<ls> y \<equiv> x\<lsq>y \<and> x\<noteq>y"
-
-  fixes nonnegative ("G\<^sup>+")
-  defines nonnegative_def [simp]: "G\<^sup>+ \<equiv> Nonnegative(G,A,r)"
-
-  fixes positive ("G\<^sub>+")
-  defines positive_def [simp]: "G\<^sub>+ \<equiv> PositiveSet(G,A,r)"
-
-  fixes setinv ("\<sm> _" 72)
-  defines setninv_def [simp]: "\<sm>C \<equiv> GroupInv(G,A)``(C)"
-
-  fixes abs 
-  defines abs_def [simp]: "abs(x) \<equiv> AbsoluteValue(G,A,r)`(x)"
-
-  fixes oddext ("_ \<degree>")
-  defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(G,A,r,f)"
-
   fixes disk
   defines disk_def [simp]: "disk(c,R) \<equiv> Disk(X,d,r,c,R)"
 
-text\<open> The theorems proven the in the \<open>group3\<close> locale are valid in the \<open>pmetric_space\<close> locale. \<close>
-
-sublocale 
-  pmetric_space < group3 G A r zero grop grinv lesseq sless nonnegative positive setinv abs oddext 
-  using ordGroupAssum unfolding group3_def by auto
-
-text\<open> The theorems proven the in the \<open>group0\<close> locale are valid in the \<open>pmetric_space\<close> locale. \<close>
-
-sublocale pmetric_space < group0 G A zero grop grinv
-   using ordGroupAssum unfolding group0_def IsAnOrdGroup_def by auto
 
 text\<open> The next lemma shows the definition of the pseudometric in the notation used in the 
   \<open>metric_space\<close> context.\<close>
 
 lemma (in pmetric_space) pmetric_properties: shows 
-  "d: X\<times>X \<rightarrow> G\<^sup>+"
+  "d: X\<times>X \<rightarrow> L\<^sup>+"
   "\<forall>x\<in>X. d`\<langle>x,x\<rangle> = \<zero>"
   "\<forall>x\<in>X.\<forall>y\<in>X. d`\<langle>x,y\<rangle> = d`\<langle>y,x\<rangle>"
   "\<forall>x\<in>X.\<forall>y\<in>X.\<forall>z\<in>X. d`\<langle>x,z\<rangle> \<lsq> d`\<langle>x,y\<rangle> \<ra> d`\<langle>y,z\<rangle>"
@@ -145,45 +104,40 @@ qed
 
 text\<open>If the radius is positive then the center is in disk.\<close>
 
-lemma (in pmetric_space) center_in_disk: assumes "c\<in>X" and "R\<in>G\<^sub>+" shows "c \<in> disk(c,R)"
+lemma (in pmetric_space) center_in_disk: assumes "c\<in>X" and "R\<in>L\<^sub>+" shows "c \<in> disk(c,R)"
   using pmetricAssum assms IsApseudoMetric_def PositiveSet_def disk_definition by simp
   
 text\<open>A technical lemma that allows us to shorten some proofs: \<close>
 
-lemma (in pmetric_space) radius_in_group: assumes "c\<in>X" and "x \<in> disk(c,R)"
-  shows "R\<in>G" "\<zero>\<ls>R" "R\<in>G\<^sub>+" "((\<rm>d`\<langle>c,x\<rangle>) \<ra> R) \<in> G\<^sub>+"
+lemma (in pmetric_space) radius_in_loop: assumes "c\<in>X" and "x \<in> disk(c,R)"
+  shows "R\<in>L" "\<zero>\<ls>R" "R\<in>L\<^sub>+" "(\<rm>d`\<langle>c,x\<rangle> \<ad> R) \<in> L\<^sub>+"
 proof -
   from assms(2) have "x\<in>X" and "d`\<langle>c,x\<rangle> \<ls> R" using disk_definition by auto
   with assms(1) show "\<zero>\<ls>R" using pmetric_properties(1) apply_funtype 
-      OrderedGroup_ZF_1_L2 group_strict_ord_transit by blast
-  then show "R\<in>G" and "R\<in>G\<^sub>+" using OrderedGroup_ZF_1_L2A less_are_members by auto
-  from assms(1) \<open>x\<in>X\<close> have "d`\<langle>c,x\<rangle> \<in> G" 
-    using pmetric_properties(1) apply_funtype OrderedGroup_ZF_1_L4E by auto
-  then have "(\<rm>d`\<langle>c,x\<rangle>) \<in> G" using inverse_in_group by simp
-  with \<open>R\<in>G\<close> \<open>d`\<langle>c,x\<rangle> \<ls> R\<close> have "(\<rm>d`\<langle>c,x\<rangle>) \<ra> d`\<langle>c,x\<rangle> \<ls> (\<rm>d`\<langle>c,x\<rangle>) \<ra> R"
-    using group_strict_ord_transl_inv(2) by simp
-  with \<open>d`\<langle>c,x\<rangle> \<in> G\<close> show "((\<rm>d`\<langle>c,x\<rangle>) \<ra> R) \<in> G\<^sub>+" 
-    using group0_2_L6 OrderedGroup_ZF_1_L2A less_are_members by auto
+      nonneg_definition loop_strict_ord_trans by blast
+  then show "R\<in>L" and "R\<in>L\<^sub>+" using posset_definition PositiveSet_def by auto
+  from \<open>d`\<langle>c,x\<rangle> \<ls> R\<close> show "(\<rm>d`\<langle>c,x\<rangle> \<ad> R) \<in> L\<^sub>+"
+    using ls_other_side(2) by simp
 qed
 
 text\<open>If a point $x$ is inside a disk $B$ and $m\leq R-d(c,x)$ then the disk centered 
   at the point $x$ and with radius $m$ is contained in the disk $B$. \<close>
 
 lemma (in pmetric_space) disk_in_disk: 
-  assumes "c\<in>X"  and "x \<in> disk(c,R)" and "m \<lsq> (\<rm>d`\<langle>c,x\<rangle>) \<ra> R"
+  assumes "c\<in>X"  and "x \<in> disk(c,R)" and "m \<lsq> (\<rm>d`\<langle>c,x\<rangle> \<ad> R)"
   shows "disk(x,m) \<subseteq> disk(c,R)"
 proof
   fix y assume "y \<in> disk(x,m)"
   then have "d`\<langle>x,y\<rangle> \<ls> m" using disk_definition by simp
-  from assms(1,2) \<open>y \<in> disk(x,m)\<close> have "R\<in>G" "x\<in>X" "y\<in>X" using radius_in_group(1) disk_definition
-    by auto
+  from assms(1,2) \<open>y \<in> disk(x,m)\<close> have "R\<in>L" "x\<in>X" "y\<in>X" 
+    using radius_in_loop(1) disk_definition by auto
   with assms(1) have "d`\<langle>c,y\<rangle> \<lsq> d`\<langle>c,x\<rangle> \<ra> d`\<langle>x,y\<rangle>" using pmetric_properties(4) by simp
-  from assms(1) \<open>x\<in>X\<close> have "d`\<langle>c,x\<rangle> \<in> G" 
-    using pmetric_properties(1) apply_funtype OrderedGroup_ZF_1_L4E by auto
-  with \<open>d`\<langle>x,y\<rangle> \<ls> m\<close> assms(3) have "d`\<langle>c,x\<rangle> \<ra> d`\<langle>x,y\<rangle> \<ls> d`\<langle>c,x\<rangle> \<ra> ((\<rm>d`\<langle>c,x\<rangle>) \<ra> R)"
-    using OrderedGroup_ZF_1_L4A group_strict_ord_transl_inv(2) by blast
-  with \<open>d`\<langle>c,x\<rangle> \<in> G\<close> \<open>R\<in>G\<close> \<open>d`\<langle>c,y\<rangle> \<lsq> d`\<langle>c,x\<rangle> \<ra> d`\<langle>x,y\<rangle>\<close> \<open>y\<in>X\<close> show "y \<in> disk(c,R)"
-    using inv_cancel_two(4) group_strict_ord_transit disk_definition by simp
+  from assms(1) \<open>x\<in>X\<close> have "d`\<langle>c,x\<rangle> \<in> L" 
+    using pmetric_properties(1) apply_funtype nonneg_subset by auto
+  with \<open>d`\<langle>x,y\<rangle> \<ls> m\<close> assms(3) have "d`\<langle>c,x\<rangle> \<ra> d`\<langle>x,y\<rangle> \<ls> d`\<langle>c,x\<rangle> \<ra> (\<rm>d`\<langle>c,x\<rangle> \<ad> R)"
+    using loop_strict_ord_trans1 strict_ord_trans_inv(2) by blast
+  with \<open>d`\<langle>c,x\<rangle> \<in> L\<close> \<open>R\<in>L\<close> \<open>d`\<langle>c,y\<rangle> \<lsq> d`\<langle>c,x\<rangle> \<ra> d`\<langle>x,y\<rangle>\<close> \<open>y\<in>X\<close> show "y \<in> disk(c,R)"
+    using lrdiv_props(6) loop_strict_ord_trans disk_definition by simp
 qed
 
 text\<open> If we assume that the order on the group makes the positive set a meet semi-lattice (i.e.
@@ -193,8 +147,8 @@ text\<open> If we assume that the order on the group makes the positive set a me
   to "each two-element subset of $G_+$ has a lower bound in $G_+$", but we don't do that here. \<close>
 
 lemma (in pmetric_space) disks_form_base: 
-  assumes "IsMeetSemilattice(G\<^sub>+,r \<inter> G\<^sub>+\<times>G\<^sub>+)"
-  defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>G\<^sub>+}"
+  assumes "IsMeetSemilattice(L\<^sub>+,r \<inter> L\<^sub>+\<times>L\<^sub>+)"
+  defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}"
   shows "B {satisfies the base condition}"
 proof -
   { fix U V assume "U\<in>B" "V\<in>B"
@@ -202,26 +156,26 @@ proof -
     have "\<exists>W\<in>B. x\<in>W \<and> W\<subseteq>U\<inter>V"
     proof -
       from assms(2) \<open>U\<in>B\<close> \<open>V\<in>B\<close> obtain c\<^sub>U  c\<^sub>V R\<^sub>U  R\<^sub>V 
-        where "c\<^sub>U \<in> X" "R\<^sub>U \<in> G\<^sub>+" "c\<^sub>V \<in> X" "R\<^sub>V \<in> G\<^sub>+" "U = disk(c\<^sub>U,R\<^sub>U)" "V = disk(c\<^sub>V,R\<^sub>V)"
+        where "c\<^sub>U \<in> X" "R\<^sub>U \<in> L\<^sub>+" "c\<^sub>V \<in> X" "R\<^sub>V \<in> L\<^sub>+" "U = disk(c\<^sub>U,R\<^sub>U)" "V = disk(c\<^sub>V,R\<^sub>V)"
         by auto
       with \<open>x\<in>U\<inter>V\<close> have "x \<in> disk(c\<^sub>U,R\<^sub>U)" and "x \<in> disk(c\<^sub>V,R\<^sub>V)" by auto
       then have "x\<in>X" "d`\<langle>c\<^sub>U,x\<rangle> \<ls> R\<^sub>U" "d`\<langle>c\<^sub>V,x\<rangle> \<ls> R\<^sub>V" using disk_definition by auto
-      let ?m\<^sub>U = "(\<rm> d`\<langle>c\<^sub>U,x\<rangle>) \<ra> R\<^sub>U"
-      let ?m\<^sub>V = "(\<rm> d`\<langle>c\<^sub>V,x\<rangle>) \<ra> R\<^sub>V"
-      from \<open>c\<^sub>U\<in>X\<close> \<open>x\<in>disk(c\<^sub>U,R\<^sub>U)\<close> \<open>c\<^sub>V\<in>X\<close> \<open>x\<in>disk(c\<^sub>V,R\<^sub>V)\<close> have "?m\<^sub>U\<in>G\<^sub>+" and "?m\<^sub>V\<in>G\<^sub>+" 
-        using radius_in_group(4) by auto
-      let ?m = "Meet(G\<^sub>+,r \<inter> G\<^sub>+\<times>G\<^sub>+)`\<langle>?m\<^sub>U,?m\<^sub>V\<rangle>"
+      let ?m\<^sub>U = "\<rm> d`\<langle>c\<^sub>U,x\<rangle> \<ad> R\<^sub>U"
+      let ?m\<^sub>V = "\<rm> d`\<langle>c\<^sub>V,x\<rangle> \<ad> R\<^sub>V"
+      from \<open>c\<^sub>U\<in>X\<close> \<open>x\<in>disk(c\<^sub>U,R\<^sub>U)\<close> \<open>c\<^sub>V\<in>X\<close> \<open>x\<in>disk(c\<^sub>V,R\<^sub>V)\<close> have "?m\<^sub>U\<in>L\<^sub>+" and "?m\<^sub>V\<in>L\<^sub>+" 
+        using radius_in_loop(4) by auto
+      let ?m = "Meet(L\<^sub>+,r \<inter> L\<^sub>+\<times>L\<^sub>+)`\<langle>?m\<^sub>U,?m\<^sub>V\<rangle>"
       let ?W = "disk(x,?m)"
-      from assms(1) \<open>?m\<^sub>U \<in> G\<^sub>+\<close> \<open>?m\<^sub>V \<in> G\<^sub>+\<close> have  "\<langle>?m,?m\<^sub>U\<rangle> \<in> r \<inter> G\<^sub>+\<times>G\<^sub>+" 
+      from assms(1) \<open>?m\<^sub>U \<in> L\<^sub>+\<close> \<open>?m\<^sub>V \<in> L\<^sub>+\<close> have  "\<langle>?m,?m\<^sub>U\<rangle> \<in> r \<inter> L\<^sub>+\<times>L\<^sub>+" 
         using meet_val(3) by blast
-      moreover from assms(1) \<open>?m\<^sub>U \<in> G\<^sub>+\<close> \<open>?m\<^sub>V \<in> G\<^sub>+\<close> have  "\<langle>?m,?m\<^sub>V\<rangle> \<in> r \<inter> G\<^sub>+\<times>G\<^sub>+" 
+      moreover from assms(1) \<open>?m\<^sub>U \<in> L\<^sub>+\<close> \<open>?m\<^sub>V \<in> L\<^sub>+\<close> have  "\<langle>?m,?m\<^sub>V\<rangle> \<in> r \<inter> L\<^sub>+\<times>L\<^sub>+" 
         using meet_val(4) by blast
-      moreover from assms(1) \<open>?m\<^sub>U \<in> G\<^sub>+\<close> \<open>?m\<^sub>V \<in> G\<^sub>+\<close> have "?m \<in> G\<^sub>+"
+      moreover from assms(1) \<open>?m\<^sub>U \<in> L\<^sub>+\<close> \<open>?m\<^sub>V \<in> L\<^sub>+\<close> have "?m \<in> L\<^sub>+"
         using meet_val(1) by simp
-      ultimately have "?m \<in> G\<^sub>+" "?m \<lsq> ?m\<^sub>U" "?m \<lsq> ?m\<^sub>V" by auto
+      ultimately have "?m \<in> L\<^sub>+" "?m \<lsq> ?m\<^sub>U" "?m \<lsq> ?m\<^sub>V" by auto
       with \<open>c\<^sub>U \<in> X\<close> \<open>x \<in> disk(c\<^sub>U,R\<^sub>U)\<close> \<open>c\<^sub>V \<in> X\<close> \<open>x \<in> disk(c\<^sub>V,R\<^sub>V)\<close> \<open>U = disk(c\<^sub>U,R\<^sub>U)\<close> \<open>V = disk(c\<^sub>V,R\<^sub>V)\<close>
       have "?W \<subseteq> U\<inter>V" using disk_in_disk by blast
-      moreover from assms(2) \<open>x\<in>X\<close> \<open>?m \<in> G\<^sub>+\<close> have "?W \<in> B" and "x\<in>?W" using center_in_disk
+      moreover from assms(2) \<open>x\<in>X\<close> \<open>?m \<in> L\<^sub>+\<close> have "?W \<in> B" and "x\<in>?W" using center_in_disk
         by auto
       ultimately show ?thesis by auto
     qed      
@@ -234,8 +188,8 @@ text\<open>Unions of disks form a topology, hence (pseudo)metric spaces are topo
   so far. \<close>
 
 theorem (in pmetric_space) pmetric_is_top: 
-  assumes "IsMeetSemilattice(G\<^sub>+,r \<inter> G\<^sub>+\<times>G\<^sub>+)" "G\<^sub>+\<noteq>0"
-  defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>G\<^sub>+}" 
+  assumes "IsMeetSemilattice(L\<^sub>+,r \<inter> L\<^sub>+\<times>L\<^sub>+)" "L\<^sub>+\<noteq>0"
+  defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}" 
   defines "T \<equiv> {\<Union>A. A \<in> Pow(B)}"
   shows "T {is a topology}"  "B {is a base for} T"  "\<Union>T = X"
 proof -
@@ -246,7 +200,7 @@ proof -
   proof
     from assms(3) show "\<Union>B \<subseteq> X" using disk_definition by auto
     { fix x assume "x\<in>X" 
-      from assms(2) obtain R where "R\<in>G\<^sub>+" by auto
+      from assms(2) obtain R where "R\<in>L\<^sub>+" by auto
       with assms(3) \<open>x\<in>X\<close> have "x \<in> \<Union>B" using center_in_disk by auto
     } thus "X \<subseteq> \<Union>B" by auto
   qed 
