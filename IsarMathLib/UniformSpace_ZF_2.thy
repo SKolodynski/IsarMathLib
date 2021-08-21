@@ -1,6 +1,6 @@
 section \<open> Uniformizability \<close>
 
-theory UniformSpace_ZF_2 imports UniformSpace_ZF_1 Real_ZF_2
+theory UniformSpace_ZF_2 imports UniformSpace_ZF_1
 begin
 
 text\<open> The \<open>UniformSpace_ZF\<close> theory defines uniform spaces based on entourages (also called surroundings 
@@ -42,34 +42,50 @@ text\<open> A cover $\mathcal{R}$ is a "star refinement" of a cover $\mathcal{C}
 definition
   IsStarRefinement ("_ <\<^sup>* _" 90)
   where "\<R> <\<^sup>* \<C> \<equiv> \<forall>R\<in>\<R>.\<exists>C\<in>\<C>. Star(R,\<R>) \<subseteq> C"
-  
+
+text\<open>Every cover star-refines the trivial cover $\{ X\}$. \<close>
+
+lemma cover_stref_triv: assumes "\<C> \<in> Covers(X)" shows "\<C> <\<^sup>* {X}"
+  using assms unfolding Star_def IsStarRefinement_def Covers_def by auto
+
 text\<open>The notion of filter defined in \<open>Topology_ZF_4\<close> is not sufficiently general to use it to 
-  define uniform covers, so we write the conditions directly. In this case a collection $\Theta$ of
-  covers of $X$ is a family of uniform covers if 
+  define uniform covers, so we write the conditions directly. In this case a nonempty 
+  collection $\Theta$ of covers of $X$ is a family of uniform covers if  
   
-  a) the trivial cover $\{ X\}$ belongs to $\Theta$, 
-  
-  b) if $\mathcal{R} \in \Theta$ and $\mathcal{C}$ is any cover of $X$ such that $\mathcal{R}$ is 
+  a) if $\mathcal{R} \in \Theta$ and $\mathcal{C}$ is any cover of $X$ such that $\mathcal{R}$ is 
   a star refinement of $\mathcal{C}$, then $\mathcal{C} \in \Theta$.
   
-  c) For any $\mathcal{C},\mathcal{D} \in \Theta$ there is some $\mathcal{R}\in\Theta$ 
+  b) For any $\mathcal{C},\mathcal{D} \in \Theta$ there is some $\mathcal{R}\in\Theta$ 
   such that $\mathcal{R}$ is a star refinement of $\mathcal{C}$ and $\mathcal{R}$ is a 
-  star refinement of $\mathcal{D}$. 
-  
-  The first condition can be (probably) replaced by the requirement that $\Theta$ is not empty.\<close>
+  star refinement of $\mathcal{D}$.
+
+  This departs slightly from Wikipedia definition that requires that $\Theta$ contains the
+  trivial cover $\{ X\}$. As we show in lemma \<open>unicov_contains_trivial\<close> below we don't loose 
+  anything by weakening the definition this way.
+  \<close>
 
 definition
   AreUniformCovers ("_ {are uniform covers of} _" 90)
-  where "\<Theta> {are uniform covers of} X \<equiv>  (\<Theta> \<subseteq> Covers(X)) \<and> ({X}\<in>\<Theta>) \<and> 
+  where "\<Theta> {are uniform covers of} X \<equiv>  (\<Theta> \<subseteq> Covers(X)) \<and> (\<Theta>\<noteq>0) \<and> 
   (\<forall>\<R>\<in>\<Theta>.\<forall>\<C>\<in>Covers(X). ((\<R> <\<^sup>* \<C>) \<longrightarrow> \<C>\<in>\<Theta>)) \<and>
   (\<forall>\<C>\<in>\<Theta>.\<forall>\<D>\<in>\<Theta>.\<exists>\<R>\<in>\<Theta>.(\<R> <\<^sup>* \<C>) \<and> (\<R> <\<^sup>* \<D>))"
+
+text\<open>A family of uniform covers contain the trivial cover $\{ X\}$.\<close>
+
+lemma unicov_contains_triv: assumes "\<Theta> {are uniform covers of} X" shows "{X} \<in> \<Theta>"
+proof -
+  from assms obtain \<R> where "\<R>\<in>\<Theta>" unfolding AreUniformCovers_def by blast
+  with assms show ?thesis using cover_stref_triv unfolding AreUniformCovers_def Covers_def
+    by auto
+qed
 
 text\<open>If $\Theta$ are uniform covers of $X$ then we can recover $X$ from $\Theta$ by taking 
   $\bigcup\bigcup \Theta$. \<close>
 
 lemma space_from_unicov: assumes "\<Theta> {are uniform covers of} X" shows "X = \<Union>\<Union>\<Theta>"
 proof
-  from assms show "X \<subseteq> \<Union>\<Union>\<Theta>" unfolding AreUniformCovers_def by auto
+  from assms show "X \<subseteq> \<Union>\<Union>\<Theta>" using unicov_contains_triv unfolding AreUniformCovers_def 
+    by auto
   from assms show "\<Union>\<Union>\<Theta> \<subseteq> X" unfolding AreUniformCovers_def Covers_def by auto
 qed
 
@@ -97,7 +113,7 @@ lemma rel_square_starr: shows
   "(\<Union>{U\<times>U. U\<in>P}) O (\<Union>{U\<times>U. U\<in>P}) = \<Union>{U\<times>Star(U,P). U\<in>P}"
   unfolding Star_def by blast
 
-text\<open> A formula similar to \<open>rel_square_starr\<close> but with \<open>Star\<close> on the left side of the Cartesian 
+text\<open> An identity similar to \<open>rel_square_starr\<close> but with \<open>Star\<close> on the left side of the Cartesian 
   product: \<close>
 
 lemma rel_square_starl: shows 
@@ -132,7 +148,8 @@ proof -
     qed
     moreover have "X\<times>X \<in> ?\<Phi>"
     proof -
-      from assms have "X\<times>X \<in> {\<Union>{U\<times>U. U\<in>P}. P\<in>\<Theta>}" unfolding AreUniformCovers_def 
+      from assms have "X\<times>X \<in> {\<Union>{U\<times>U. U\<in>P}. P\<in>\<Theta>}" 
+        using unicov_contains_triv unfolding AreUniformCovers_def 
         by auto
       then show ?thesis unfolding Supersets_def UniformityFromUniCov_def by blast
     qed
@@ -211,7 +228,8 @@ proof -
       ultimately show ?thesis by auto
     qed
     moreover from assms(2) \<open>A\<in>?\<Phi>\<close> \<open>P\<in>\<Theta>\<close> \<open>\<Union>{U\<times>U. U\<in>P} \<subseteq> A\<close> have "converse(A) \<in> ?\<Phi>"
-      unfolding AreUniformCovers_def UniformityFromUniCov_def Supersets_def by auto
+      unfolding AreUniformCovers_def UniformityFromUniCov_def Supersets_def 
+      by auto
     ultimately show "id(X) \<subseteq> A \<and> (\<exists>B\<in>?\<Phi>. B O B \<subseteq> A) \<and> converse(A) \<in> ?\<Phi>" by simp
   qed
   ultimately show "?\<Phi>  {is a uniformity on} X" unfolding IsUniformity_def by simp
