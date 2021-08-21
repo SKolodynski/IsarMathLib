@@ -42,7 +42,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <span class="keyword1"><span class="command">section</span></span> <span class="quoted"><span class="plain_text">‹ZF set theory basics›</span></span>
 
-<span class="keyword1"><span class="command">theory</span></span> ZF1 <span class="keyword2"><span class="keyword">imports</span></span> <a href="../../ZF/ZF/equalities.html">ZF.equalities</a>
+<span class="keyword1"><span class="command">theory</span></span> ZF1 <span class="keyword2"><span class="keyword">imports</span></span> <a href="../../ZF/ZF/Perm.html">ZF.Perm</a>
 
 <span class="keyword2"><span class="keyword">begin</span></span>
 
@@ -349,9 +349,28 @@ lemma rem_point_empty: assumes "a∈A" and "A-{a} = 0"
   <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="main">(</span><span class="free">U</span> <span class="main">∪</span> <span class="free">C</span><span class="main">×</span><span class="free">C</span><span class="main">)</span><span class="main">``</span><span class="main">{</span><span class="free">x</span><span class="main">}</span> <span class="main">=</span> <span class="free">C</span>"</span></span>
   <span class="keyword1"><span class="command">using</span></span> assms image_Un_left <span class="keyword1"><span class="command">by</span></span> <span class="operator">blast</span> 
 
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹Reformulation of the definition of composition of two relations: ›</span></span>
+
+<span class="keyword1"><span class="command">lemma</span></span> rel_compdef<span class="main">:</span> 
+  <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="main">⟨</span><span class="free">x</span><span class="main">,</span><span class="free">z</span><span class="main">⟩</span> <span class="main">∈</span> <span class="free">r</span> <span class="keyword1">O</span> <span class="free">s</span>  <span class="main">⟷</span> <span class="free">x</span><span class="main">∈</span>domain<span class="main">(</span><span class="free">s</span><span class="main">)</span> <span class="main">∧</span> <span class="free">z</span><span class="main">∈</span>range<span class="main">(</span><span class="free">r</span><span class="main">)</span> <span class="main">∧</span> <span class="main">(</span><span class="main">∃</span><span class="bound">y</span><span class="main">.</span> <span class="main">⟨</span><span class="free">x</span><span class="main">,</span><span class="bound">y</span><span class="main">⟩</span> <span class="main">∈</span> <span class="free">s</span> <span class="main">∧</span> <span class="main">⟨</span><span class="bound">y</span><span class="main">,</span><span class="free">z</span><span class="main">⟩</span> <span class="main">∈</span> <span class="free">r</span><span class="main">)</span>"</span></span> 
+  <span class="keyword1"><span class="command">unfolding</span></span> comp_def <span class="keyword1"><span class="command">by</span></span> <span class="operator">auto</span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹Domain and range of the relation of the form $\bigcup \{U\times U : U\in P\}$
+  is $\bigcup P$: ›</span></span>
+
+<span class="keyword1"><span class="command">lemma</span></span> domain_range_sym<span class="main">:</span> <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"domain<span class="main">(</span><span class="main">⋃</span><span class="main">{</span><span class="bound">U</span><span class="main">×</span><span class="bound">U</span><span class="main">.</span> <span class="bound">U</span><span class="main">∈</span><span class="free">P</span><span class="main">}</span><span class="main">)</span> <span class="main">=</span> <span class="main">⋃</span><span class="free">P</span>"</span></span> <span class="keyword2"><span class="keyword">and</span></span> <span class="quoted"><span class="quoted">"range<span class="main">(</span><span class="main">⋃</span><span class="main">{</span><span class="bound">U</span><span class="main">×</span><span class="bound">U</span><span class="main">.</span> <span class="bound">U</span><span class="main">∈</span><span class="free">P</span><span class="main">}</span><span class="main">)</span> <span class="main">=</span> <span class="main">⋃</span><span class="free">P</span>"</span></span> 
+  <span class="keyword1"><span class="command">by</span></span> <span class="operator">auto</span>
+
 <span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹ It's hard to believe but there are cases where we have to reference this rule. ›</span></span>
 
 <span class="keyword1"><span class="command">lemma</span></span> set_mem_eq<span class="main">:</span> <span class="keyword2"><span class="keyword">assumes</span></span> <span class="quoted"><span class="quoted">"<span class="free">x</span><span class="main">∈</span><span class="free">A</span>"</span></span> <span class="quoted"><span class="quoted">"<span class="free">A</span><span class="main">=</span><span class="free">B</span>"</span></span> <span class="keyword2"><span class="keyword">shows</span></span> <span class="quoted"><span class="quoted">"<span class="free">x</span><span class="main">∈</span><span class="free">B</span>"</span></span> <span class="keyword1"><span class="command">using</span></span> assms <span class="keyword1"><span class="command">by</span></span> <span class="operator">simp</span>
+
+<span class="keyword1"><span class="command">text</span></span><span class="quoted"><span class="plain_text">‹Given some family $\mathcal{A}$ of subsets of $X$ we can define the family of supersets of
+  $\mathcal{A}$. ›</span></span>
+
+<span class="keyword1"><span class="command">definition</span></span>
+  <span class="quoted"><span class="quoted">"<span class="free">Supersets</span><span class="main">(</span><span class="free"><span class="bound"><span class="entity">X</span></span></span><span class="main">,</span><span class="free"><span class="bound"><span class="entity">𝒜</span></span></span><span class="main">)</span> <span class="main">≡</span> <span class="main">{</span><span class="bound">B</span><span class="main">∈</span>Pow<span class="main">(</span><span class="free"><span class="bound"><span class="entity">X</span></span></span><span class="main">)</span><span class="main">.</span> <span class="main">∃</span><span class="bound">A</span><span class="main">∈</span><span class="free"><span class="bound"><span class="entity">𝒜</span></span></span><span class="main">.</span> <span class="bound">A</span><span class="main">⊆</span><span class="bound">B</span><span class="main">}</span>"</span></span>
+
 
 <span class="keyword2"><span class="keyword">end</span></span>
 
