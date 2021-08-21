@@ -28,7 +28,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>ZF set theory basics\<close>
 
-theory ZF1 imports ZF.equalities
+theory ZF1 imports ZF.Perm
 
 begin
 
@@ -335,9 +335,28 @@ lemma image_greater_rel:
   shows "(U \<union> C\<times>C)``{x} = C"
   using assms image_Un_left by blast 
 
+text\<open>Reformulation of the definition of composition of two relations: \<close>
+
+lemma rel_compdef: 
+  shows "\<langle>x,z\<rangle> \<in> r O s  \<longleftrightarrow> x\<in>domain(s) \<and> z\<in>range(r) \<and> (\<exists>y. \<langle>x,y\<rangle> \<in> s \<and> \<langle>y,z\<rangle> \<in> r)" 
+  unfolding comp_def by auto
+
+text\<open>Domain and range of the relation of the form $\bigcup \{U\times U : U\in P\}$
+  is $\bigcup P$: \<close>
+
+lemma domain_range_sym: shows "domain(\<Union>{U\<times>U. U\<in>P}) = \<Union>P" and "range(\<Union>{U\<times>U. U\<in>P}) = \<Union>P" 
+  by auto
+
 text\<open> It's hard to believe but there are cases where we have to reference this rule. \<close>
 
 lemma set_mem_eq: assumes "x\<in>A" "A=B" shows "x\<in>B" using assms by simp
+
+text\<open>Given some family $\mathcal{A}$ of subsets of $X$ we can define the family of supersets of
+  $\mathcal{A}$. \<close>
+
+definition
+  "Supersets(X,\<A>) \<equiv> {B\<in>Pow(X). \<exists>A\<in>\<A>. A\<subseteq>B}"
+
 
 end
 
