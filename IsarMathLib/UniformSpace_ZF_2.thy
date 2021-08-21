@@ -1,6 +1,34 @@
-section \<open> Uniformizability \<close>
+(* 
+    This file is a part of IsarMathLib - 
+    a library of formalized mathematics written for Isabelle/Isar.
 
-theory UniformSpace_ZF_2 imports UniformSpace_ZF_1
+    Copyright (C) 2021 Slawomir Kolodynski
+
+    This program is free software; Redistribution and use in source and binary forms, 
+    with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions and the following disclaimer in the documentation and/or 
+   other materials provided with the distribution.
+   3. The name of the author may not be used to endorse or promote products 
+   derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
+
+section \<open> Alternative definitions of uniformity \<close>
+
+theory UniformSpace_ZF_2 imports UniformSpace_ZF
 begin
 
 text\<open> The \<open>UniformSpace_ZF\<close> theory defines uniform spaces based on entourages (also called surroundings 
@@ -18,8 +46,7 @@ text\<open> Given a set $X$ we can consider collections of subsets of $X$ whose 
   has meaning only in the contexts a the whole family of uniform covers. Looking at a specific cover
   in isolation we can not say whether it is a uniform cover or not.  \<close>
 
-text\<open>A cover of a set $X$ is a collection subsets of $X$ whose union is equal to $X$. 
-  The set of all covers of $X$ is called \<open>Covers(X)\<close>. \<close>
+text\<open> The set of all covers of $X$ is called \<open>Covers(X)\<close>. \<close>
 
 definition 
   "Covers(X) \<equiv> {A \<in> Pow(Pow(X)). \<Union>A = X}" 
@@ -48,35 +75,35 @@ text\<open>Every cover star-refines the trivial cover $\{ X\}$. \<close>
 lemma cover_stref_triv: assumes "\<C> \<in> Covers(X)" shows "\<C> <\<^sup>* {X}"
   using assms unfolding Star_def IsStarRefinement_def Covers_def by auto
 
-text\<open>The notion of filter defined in \<open>Topology_ZF_4\<close> is not sufficiently general to use it to 
-  define uniform covers, so we write the conditions directly. In this case a nonempty 
+text\<open>The notion of a filter defined in \<open>Topology_ZF_4\<close> is not sufficiently general to use it to 
+  define uniform covers, so we write the conditions directly. A nonempty 
   collection $\Theta$ of covers of $X$ is a family of uniform covers if  
   
   a) if $\mathcal{R} \in \Theta$ and $\mathcal{C}$ is any cover of $X$ such that $\mathcal{R}$ is 
   a star refinement of $\mathcal{C}$, then $\mathcal{C} \in \Theta$.
   
   b) For any $\mathcal{C},\mathcal{D} \in \Theta$ there is some $\mathcal{R}\in\Theta$ 
-  such that $\mathcal{R}$ is a star refinement of $\mathcal{C}$ and $\mathcal{R}$ is a 
-  star refinement of $\mathcal{D}$.
+  such that $\mathcal{R}$ is a star refinement of both $\mathcal{C}$ and $\mathcal{R}$.
 
-  This departs slightly from Wikipedia definition that requires that $\Theta$ contains the
+  This departs slightly from the definition in Wikipedia that requires that $\Theta$ contains the
   trivial cover $\{ X\}$. As we show in lemma \<open>unicov_contains_trivial\<close> below we don't loose 
   anything by weakening the definition this way.
   \<close>
 
 definition
   AreUniformCovers ("_ {are uniform covers of} _" 90)
-  where "\<Theta> {are uniform covers of} X \<equiv>  (\<Theta> \<subseteq> Covers(X)) \<and> (\<Theta>\<noteq>0) \<and> 
+  where "\<Theta> {are uniform covers of} X \<equiv>  \<Theta> \<subseteq> Covers(X) \<and> \<Theta>\<noteq>0 \<and> 
   (\<forall>\<R>\<in>\<Theta>.\<forall>\<C>\<in>Covers(X). ((\<R> <\<^sup>* \<C>) \<longrightarrow> \<C>\<in>\<Theta>)) \<and>
   (\<forall>\<C>\<in>\<Theta>.\<forall>\<D>\<in>\<Theta>.\<exists>\<R>\<in>\<Theta>.(\<R> <\<^sup>* \<C>) \<and> (\<R> <\<^sup>* \<D>))"
 
 text\<open>A family of uniform covers contain the trivial cover $\{ X\}$.\<close>
 
-lemma unicov_contains_triv: assumes "\<Theta> {are uniform covers of} X" shows "{X} \<in> \<Theta>"
+lemma unicov_contains_triv: assumes "\<Theta> {are uniform covers of} X" 
+  shows "{X} \<in> \<Theta>"
 proof -
   from assms obtain \<R> where "\<R>\<in>\<Theta>" unfolding AreUniformCovers_def by blast
-  with assms show ?thesis using cover_stref_triv unfolding AreUniformCovers_def Covers_def
-    by auto
+  with assms show ?thesis using cover_stref_triv 
+    unfolding AreUniformCovers_def Covers_def by auto
 qed
 
 text\<open>If $\Theta$ are uniform covers of $X$ then we can recover $X$ from $\Theta$ by taking 
@@ -84,20 +111,22 @@ text\<open>If $\Theta$ are uniform covers of $X$ then we can recover $X$ from $\
 
 lemma space_from_unicov: assumes "\<Theta> {are uniform covers of} X" shows "X = \<Union>\<Union>\<Theta>"
 proof
-  from assms show "X \<subseteq> \<Union>\<Union>\<Theta>" using unicov_contains_triv unfolding AreUniformCovers_def 
+  from assms show "X \<subseteq> \<Union>\<Union>\<Theta>" using unicov_contains_triv 
+    unfolding AreUniformCovers_def by auto
+  from assms show "\<Union>\<Union>\<Theta> \<subseteq> X" unfolding AreUniformCovers_def Covers_def 
     by auto
-  from assms show "\<Union>\<Union>\<Theta> \<subseteq> X" unfolding AreUniformCovers_def Covers_def by auto
 qed
 
 text\<open> Every uniform cover has a star refinement. \<close>
 
-lemma unicov_has_star_ref: assumes "\<Theta> {are uniform covers of} X" and "P\<in>\<Theta>"
+lemma unicov_has_star_ref: 
+  assumes "\<Theta> {are uniform covers of} X" and "P\<in>\<Theta>"
   shows "\<exists>Q\<in>\<Theta>. (Q <\<^sup>* P)"
   using assms unfolding AreUniformCovers_def by blast
 
 text\<open> A technical lemma to simplify proof of the \<open> uniformity_from_unicov \<close> theorem. \<close>
 
-lemma star_ref_mem: assumes "U\<in>P" "P<\<^sup>*Q" "\<Union>{W\<times>W. W\<in>Q} \<subseteq> A"
+lemma star_ref_mem: assumes "U\<in>P" "P<\<^sup>*Q" and "\<Union>{W\<times>W. W\<in>Q} \<subseteq> A"
   shows "U\<times>U \<subseteq> A"
 proof -
   from assms(1,2) obtain W where "W\<in>Q" and "\<Union>{S\<in>P. S\<inter>U \<noteq> 0} \<subseteq> W"
@@ -130,7 +159,8 @@ definition
 text\<open>If $\Theta$ is a family of uniform covers of $X$ then 
   \<open>UniformityFromUniCov(X,\<Theta>)\<close> is a unformity on $X$ \<close> 
 
-theorem uniformity_from_unicov: assumes "X\<noteq>0" "\<Theta> {are uniform covers of} X"
+theorem uniformity_from_unicov: 
+  assumes "X\<noteq>0" "\<Theta> {are uniform covers of} X"
   shows "UniformityFromUniCov(X,\<Theta>) {is a uniformity on} X"
 proof -
   let ?\<Phi> = "UniformityFromUniCov(X,\<Theta>)"
@@ -151,32 +181,35 @@ proof -
       from assms have "X\<times>X \<in> {\<Union>{U\<times>U. U\<in>P}. P\<in>\<Theta>}" 
         using unicov_contains_triv unfolding AreUniformCovers_def 
         by auto
-      then show ?thesis unfolding Supersets_def UniformityFromUniCov_def by blast
+      then show ?thesis unfolding Supersets_def UniformityFromUniCov_def 
+        by blast
     qed
-    moreover have "?\<Phi> \<subseteq> Pow(X\<times>X)" unfolding UniformityFromUniCov_def Supersets_def 
-      by auto
+    moreover have "?\<Phi> \<subseteq> Pow(X\<times>X)" 
+      unfolding UniformityFromUniCov_def Supersets_def by auto
     moreover have "\<forall>A\<in>?\<Phi>.\<forall>B\<in>?\<Phi>. A\<inter>B \<in> ?\<Phi>"
     proof -
       { fix A B assume "A\<in>?\<Phi>" "B\<in>?\<Phi>"
         then have "A\<inter>B \<subseteq> X\<times>X" unfolding UniformityFromUniCov_def Supersets_def
           by auto
         from \<open>A\<in>?\<Phi>\<close> \<open>B\<in>?\<Phi>\<close> obtain P\<^sub>A P\<^sub>B where 
-          "\<Union>{U\<times>U. U\<in>P\<^sub>A} \<subseteq> A" "P\<^sub>A\<in>\<Theta>" "\<Union>{U\<times>U. U\<in>P\<^sub>B} \<subseteq> B" "P\<^sub>B\<in>\<Theta>"
+          "P\<^sub>A\<in>\<Theta>" "P\<^sub>B\<in>\<Theta>" and I:"\<Union>{U\<times>U. U\<in>P\<^sub>A} \<subseteq> A"  "\<Union>{U\<times>U. U\<in>P\<^sub>B} \<subseteq> B" 
           unfolding UniformityFromUniCov_def Supersets_def by auto
-        from assms(2) \<open>P\<^sub>A\<in>\<Theta>\<close> \<open>P\<^sub>B\<in>\<Theta>\<close> obtain P where "P\<in>\<Theta>" and "P<\<^sup>*P\<^sub>A" and "P<\<^sup>*P\<^sub>B"
+        from assms(2) \<open>P\<^sub>A\<in>\<Theta>\<close> \<open>P\<^sub>B\<in>\<Theta>\<close> obtain P 
+          where "P\<in>\<Theta>" and "P<\<^sup>*P\<^sub>A" and "P<\<^sup>*P\<^sub>B"
           unfolding AreUniformCovers_def by blast
         have "\<Union>{U\<times>U. U\<in>P} \<subseteq> A\<inter>B"
         proof -
           { fix U assume "U\<in>P" 
-            with \<open>P<\<^sup>*P\<^sub>A\<close>  \<open>P<\<^sup>*P\<^sub>B\<close> \<open>\<Union>{W\<times>W. W\<in>P\<^sub>A} \<subseteq> A\<close> \<open>\<Union>{W\<times>W. W\<in>P\<^sub>B} \<subseteq> B\<close> 
-            have "U\<times>U \<subseteq> A" and "U\<times>U \<subseteq> B" using star_ref_mem by auto
+            with \<open>P<\<^sup>*P\<^sub>A\<close>  \<open>P<\<^sup>*P\<^sub>B\<close> I have "U\<times>U \<subseteq> A" and "U\<times>U \<subseteq> B" 
+              using star_ref_mem by auto
           } thus ?thesis by blast
         qed
         with \<open>A\<inter>B \<subseteq> X\<times>X\<close> \<open>P\<in>\<Theta>\<close> have "A\<inter>B \<in> ?\<Phi>" 
           unfolding Supersets_def UniformityFromUniCov_def by auto
       } thus ?thesis by auto
     qed
-    moreover have "\<forall>B\<in>?\<Phi>.\<forall>C\<in>Pow(X\<times>X). B\<subseteq>C \<longrightarrow> C\<in>?\<Phi>"
+    moreover have 
+      "\<forall>B\<in>?\<Phi>.\<forall>C\<in>Pow(X\<times>X). B\<subseteq>C \<longrightarrow> C\<in>?\<Phi>"
     proof -
       { fix B C assume "B\<in>?\<Phi>" "C\<in>Pow(X\<times>X)" "B\<subseteq>C"
         from \<open>B\<in>?\<Phi>\<close> obtain P\<^sub>B where  "\<Union>{U\<times>U. U\<in>P\<^sub>B} \<subseteq> B" "P\<^sub>B\<in>\<Theta>"
@@ -211,7 +244,8 @@ proof -
         by auto
       moreover have "?B O ?B \<subseteq> A"
       proof -
-        have I: "?B O ?B = \<Union>{U\<times>Star(U,Q). U\<in>Q}" using rel_square_starr by simp
+        have II: "?B O ?B = \<Union>{U\<times>Star(U,Q). U\<in>Q}" using rel_square_starr 
+          by simp
         have "\<forall>U\<in>Q. \<exists>V\<in>P. U\<times>Star(U,Q) \<subseteq> V\<times>V"
         proof
           fix U assume "U\<in>Q"
@@ -223,16 +257,18 @@ proof -
         qed
         hence "\<Union>{U\<times>Star(U,Q). U\<in>Q} \<subseteq> \<Union>{V\<times>V. V\<in>P}" by blast 
         with \<open>\<Union>{V\<times>V. V\<in>P} \<subseteq> A\<close> have "\<Union>{U\<times>Star(U,Q). U\<in>Q} \<subseteq> A" by blast
-        with I show ?thesis by simp
+        with II show ?thesis by simp
       qed
       ultimately show ?thesis by auto
     qed
     moreover from assms(2) \<open>A\<in>?\<Phi>\<close> \<open>P\<in>\<Theta>\<close> \<open>\<Union>{U\<times>U. U\<in>P} \<subseteq> A\<close> have "converse(A) \<in> ?\<Phi>"
       unfolding AreUniformCovers_def UniformityFromUniCov_def Supersets_def 
       by auto
-    ultimately show "id(X) \<subseteq> A \<and> (\<exists>B\<in>?\<Phi>. B O B \<subseteq> A) \<and> converse(A) \<in> ?\<Phi>" by simp
+    ultimately show "id(X) \<subseteq> A \<and> (\<exists>B\<in>?\<Phi>. B O B \<subseteq> A) \<and> converse(A) \<in> ?\<Phi>" 
+      by simp
   qed
-  ultimately show "?\<Phi>  {is a uniformity on} X" unfolding IsUniformity_def by simp
+  ultimately show "?\<Phi>  {is a uniformity on} X" unfolding IsUniformity_def 
+    by simp
 qed
 
 end
