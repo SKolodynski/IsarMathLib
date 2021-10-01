@@ -338,7 +338,7 @@ lemma image_greater_rel:
 text\<open>Reformulation of the definition of composition of two relations: \<close>
 
 lemma rel_compdef: 
-  shows "\<langle>x,z\<rangle> \<in> r O s  \<longleftrightarrow> x\<in>domain(s) \<and> z\<in>range(r) \<and> (\<exists>y. \<langle>x,y\<rangle> \<in> s \<and> \<langle>y,z\<rangle> \<in> r)" 
+  shows "\<langle>x,z\<rangle> \<in> r O s  \<longleftrightarrow>  (\<exists>y. \<langle>x,y\<rangle> \<in> s \<and> \<langle>y,z\<rangle> \<in> r)" 
   unfolding comp_def by auto
 
 text\<open>Domain and range of the relation of the form $\bigcup \{U\times U : U\in P\}$
@@ -347,6 +347,46 @@ text\<open>Domain and range of the relation of the form $\bigcup \{U\times U : U
 lemma domain_range_sym: shows "domain(\<Union>{U\<times>U. U\<in>P}) = \<Union>P" and "range(\<Union>{U\<times>U. U\<in>P}) = \<Union>P" 
   by auto
 
+text\<open>An identity for the square (in the sense of composition) of a symmetric relation.\<close>
+
+lemma symm_sq_prod_image: assumes "converse(r) = r" 
+  shows "r O r = \<Union>{(r``{x})\<times>(r``{x}). x \<in> domain(r)}"
+proof
+  { fix p assume "p \<in> r O r"
+    then obtain y z where "\<langle>y,z\<rangle> = p" by auto
+    with \<open>p \<in> r O r\<close> obtain x where "\<langle>y,x\<rangle> \<in> r" and "\<langle>x,z\<rangle> \<in> r"
+      using rel_compdef by auto
+    from \<open>\<langle>y,x\<rangle> \<in> r\<close> have "\<langle>x,y\<rangle> \<in> converse(r)" by simp
+    with assms \<open>\<langle>x,z\<rangle> \<in> r\<close> \<open>\<langle>y,z\<rangle> = p\<close> have "\<exists>x\<in>domain(r). p \<in> (r``{x})\<times>(r``{x})"
+      by auto
+  } thus "r O r \<subseteq> (\<Union>{(r``{x})\<times>(r``{x}). x \<in> domain(r)})"
+    by blast
+  { fix x assume "x \<in> domain(r)"
+    have "(r``{x})\<times>(r``{x}) \<subseteq> r O r"
+    proof -
+      { fix p assume "p \<in> (r``{x})\<times>(r``{x})"
+        then obtain y z where "\<langle>y,z\<rangle> = p" "y \<in> r``{x}" "z \<in> r``{x}"
+          by auto
+        from \<open>y \<in> r``{x}\<close> have "\<langle>x,y\<rangle> \<in> r" by auto
+        then have "\<langle>y,x\<rangle> \<in> converse(r)" by simp
+        with assms \<open>z \<in> r``{x}\<close> \<open>\<langle>y,z\<rangle> = p\<close> have "p \<in> r O r" by auto
+      } thus ?thesis  by auto
+    qed
+  } thus "(\<Union>{(r``{x})\<times>(r``{x}). x \<in> domain(r)}) \<subseteq> r O r" 
+    by blast
+qed 
+
+text\<open>A reflexive relation is contained in the union of products of its singleton images. \<close>
+
+lemma refl_union_singl_image: 
+  assumes "A \<subseteq> X\<times>X" and "id(X)\<subseteq>A" shows "A \<subseteq> \<Union>{A``{x}\<times>A``{x}. x \<in> X}" 
+proof -
+  { fix p assume "p\<in>A"
+    with assms(1) obtain x y where "x\<in>X" "y\<in>X" and "p=\<langle>x,y\<rangle>" by auto
+    with assms(2) \<open>p\<in>A\<close> have "\<exists>x\<in>X. p \<in> A``{x}\<times>A``{x}" by auto
+  } thus ?thesis by auto
+qed
+    
 text\<open> It's hard to believe but there are cases where we have to reference this rule. \<close>
 
 lemma set_mem_eq: assumes "x\<in>A" "A=B" shows "x\<in>B" using assms by simp
@@ -357,6 +397,10 @@ text\<open>Given some family $\mathcal{A}$ of subsets of $X$ we can define the f
 definition
   "Supersets(X,\<A>) \<equiv> {B\<in>Pow(X). \<exists>A\<in>\<A>. A\<subseteq>B}"
 
+text\<open>The family itself is in its supersets. \<close>
+
+lemma superset_gen: assumes "A\<subseteq>X" "A\<in>\<A>" shows "A \<in> Supersets(X,\<A>)"
+  using assms Supersets_def by auto 
 
 end
 

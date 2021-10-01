@@ -56,7 +56,30 @@ definition
     "\<Phi> {is a uniformity on} X \<equiv>(\<Phi> {is a filter on} (X\<times>X))
     \<and> (\<forall>U\<in>\<Phi>. id(X) \<subseteq> U \<and> (\<exists>V\<in>\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> \<Phi>)"
 
-text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Phi$ is a certain relation on $X$ (a subset of $X\times X$) and is called 
+text\<open>A Member of a uniformity on $X$ is a reflexive relation on $X$.\<close>
+
+lemma unif_props: assumes "\<Phi> {is a uniformity on} X" "A\<in>\<Phi>"
+  shows "A \<subseteq> X\<times>X" and "id(X) \<subseteq> A" 
+  using assms IsUniformity_def IsFilter_def by auto
+
+text\<open>The definition of uniformity states (among other things) that for every member $U$
+  of uniformity $\Phi$ there is another one, say $V$ such that $V\circ V\subseteq U$. Sometimes such $V$
+  is said to be half the size of $U$. The next lemma states that $V$ can be taken to be symmetric. \<close>
+
+lemma half_size_symm: assumes "\<Phi> {is a uniformity on} X" "U\<in>\<Phi>" 
+  shows "\<exists>W\<in>\<Phi>. W O W \<subseteq> U \<and> W=converse(W)"
+proof -
+  from assms obtain V where "V\<in>\<Phi>" and "V O V \<subseteq> U"
+    unfolding IsUniformity_def by auto
+  let ?W = "V \<inter> converse(V)"
+  from assms(1) \<open>V\<in>\<Phi>\<close> have "?W \<in> \<Phi>" and "?W = converse(?W)" 
+    unfolding IsUniformity_def IsFilter_def by auto
+  moreover from \<open>V O V \<subseteq> U\<close> have "?W O ?W \<subseteq> U" by auto
+  ultimately show ?thesis by blast
+qed
+
+text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Phi$ is a certain relation 
+  on $X$ (a subset of $X\times X$) and is called 
   an ''entourage''. For an $x\in X$ we call $V\{ x\}$ a neighborhood of $x$. 
   The first useful fact we will show is that neighborhoods are non-empty. \<close>
 
@@ -67,6 +90,23 @@ proof -
   from assms(1,2) have "id(X) \<subseteq> V" using IsUniformity_def IsFilter_def 
     by auto
   with \<open>x\<in>X\<close> show" x\<in>V``{x}" and "V``{x} \<noteq> 0" by auto
+qed
+
+text\<open>If $\Phi$ is a uniformity on $X$ then every element of $\Phi$ is a subset of $X\times X$ 
+  whose domain is $x$. \<close>
+
+lemma uni_domain: 
+  assumes "\<Phi> {is a uniformity on} X" "W\<in>\<Phi>" 
+  shows "W \<subseteq> X\<times>X" and "domain(W) = X" 
+proof -
+  from assms show "W \<subseteq> X\<times>X" unfolding IsUniformity_def IsFilter_def 
+    by blast
+  show "domain(W) = X"
+  proof 
+    from assms show "domain(W) \<subseteq> X" unfolding IsUniformity_def IsFilter_def 
+      by auto
+    from assms show "X \<subseteq> domain(W)" unfolding IsUniformity_def by blast
+  qed
 qed
 
 text\<open> Uniformity \<open>\<Phi>\<close>  defines a natural topology on its space $X$ via the neighborhood system 
