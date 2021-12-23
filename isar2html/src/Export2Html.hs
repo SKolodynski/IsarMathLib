@@ -93,13 +93,13 @@ hopt nm val = nm ++ "=\"" ++ val ++"\" "
 
 -- | makes an anchor for jumping inside page
 anchor :: String -> String
-anchor nm = "<a " ++ (hopt "name" nm) ++ "></a> "
+anchor nm = "<div " ++ (hopt "id" ("a_" ++ nm)) ++ "></div> "
 
 -- | makes formal item with a given name
-mkformal :: String -> String
-mkformal s =
+mkformal :: String -> String -> String
+mkformal nm s =
    "<div " ++
-   (hopt "class" "formal") ++ ">" ++
+   (hopt "class" "formal") ++ (if null nm then "" else (hopt "id" nm)) ++ ">" ++
    s ++ "\n</div>\n"
 
 -- | renders a locale name in the theorem
@@ -182,13 +182,13 @@ thrylink thn =
 exportTheory :: [(String,String)] -> M.Map String String -> [String] -> Theory -> String
 exportTheory repls mfii refs th =
    uniquefyids ["hstrigger", "hscontent", "hintref","pardiv"] $
-   ( mkformal $
+   ( mkformal "" $
    (bf "theory") ++ (name th) ++ (bf "imports") ++
    ( unwords $ imports th ) ) ++
-   ( mkformal $ bf "begin\n" ) ++
+   ( mkformal "" $ bf "begin\n" ) ++
    ( exp2inftext repls $ thIntro th ) ++
    ( unlines $ map (exportSubsection repls mfii) (thsections th) ) ++
-   ( mkformal (bf "end\n") ) ++
+   ( mkformal "" (bf "end\n") ) ++
    ( unlines $ map (createRefDiv mfii) refs )
 
 
@@ -203,22 +203,30 @@ exportSubsection repls m s =
 
 -- | exports an item in a section (same)
 exportItem :: [(String,String)] -> M.Map String String -> Item -> String
-exportItem repls mfii it = ( exp2inftext repls $ description it ) ++ "\n" ++
+exportItem repls mfii it = 
+                (anchor $ getId (formalItem it)) ++ "\n" ++
+                ( exp2inftext repls $ description it ) ++ "\n" ++
                 ( exportFormalItem repls mfii $ formalItem it )
 
+getId :: FormalItem -> String
+getId (Abbreviation nm _ df) = nm
+getId (Definition id c _ _ df) = id
+getId (Locale nm (parent,vars) itms) = nm
+getId (Sublocale sln ln _ pr) = ""
+getId (FormalItem p) = propname p
 
 -- | exports formal items
 exportFormalItem :: [(String,String)] -> M.Map String String -> FormalItem -> String
-exportFormalItem repls mfii (Abbreviation nm _ df) = mkformal $
+exportFormalItem repls mfii (Abbreviation nm _ df) = mkformal "" $
     ( par $ (bf "Abbreviation") ) ++ (par $ isar2latex repls df)
-exportFormalItem repls mfii (Definition id c _ _ df) = mkformal $
+exportFormalItem repls mfii (Definition id c _ _ df) = mkformal "" $
     ( par $ (bf "Definition")  ++ (if null c then "\n" else " (in " ++ c ++ ")") ) ++
     "\n" ++ (par $ isar2latex repls df )
-exportFormalItem repls mfii (Locale nm (parent,vars) itms) = mkformal $
+exportFormalItem repls mfii (Locale nm (parent,vars) itms) = mkformal "" $
    ( par $ (bf "Locale ") ++ nm ++
       ( if null parent then "" else " = " ++ parent ++ " " ++ (unwords vars) ++ " +") ) ++
    (unlines $ map (exportLocaleItem repls) itms)
-exportFormalItem repls mfii (Sublocale sln ln _ pr) = mkformal $
+exportFormalItem repls mfii (Sublocale sln ln _ pr) = mkformal "" $
   (bf "Sublocale") ++ sln ++ " &lt " ++ ln ++ 
   (par $ exportProof repls mfii pr)
 exportFormalItem repls mfii (FormalItem p) = exportProposition repls mfii p
@@ -246,13 +254,13 @@ exportPremise repls (PropAssumes prems) = par $ (bf "assumes ") ++ (exportClaims
 
 -- | exports proposition
 exportProposition :: [(String,String)] -> M.Map String String -> Proposition -> String
-exportProposition repls mfii p = anchor (propname p) ++ (mkformal $
+exportProposition repls mfii p = mkformal "" $
    par ( ( bf $ proptype p ) ++ " " ++
    ( inContext $ context p) ++
    ( propname p ) ++ ":\n") ++
    ( concatMap (exportPremise repls) $  propprems p) ++
    ( bf "   shows " ) ++ ( exportClaims repls $ claims p ) ++
-   ( exportProof repls mfii $ propproof p))
+   ( exportProof repls mfii $ propproof p)
 
 -- | exports a sequence of labelled claims (same)
 exportClaims :: [(String,String)] -> [(String,[String])] -> String
