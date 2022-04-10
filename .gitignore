@@ -14,6 +14,9 @@ isar2html/ih
 
 # vscode
 .vscode
+isar2html2.0/.vscode
+isar2html2.0/*/bin
+isar2html2.0/*/obj
 
 #intellij
 .idea
