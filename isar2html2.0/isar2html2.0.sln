@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{529540CB-1133-4E59-81D3-821BA906BB9B}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "isar2html", "src\isar2html\isar2html.fsproj", "{977182BD-73F3-4FFC-81BF-FE2429E5CC1D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{785C36B2-F992-4E67-B26A-01D515986FDB}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "isar2htmlTest", "test\isar2htmlTest\isar2htmlTest.fsproj", "{CF6E4A7B-258B-4B33-9BDC-2C087FEE6A16}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{977182BD-73F3-4FFC-81BF-FE2429E5CC1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{977182BD-73F3-4FFC-81BF-FE2429E5CC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{977182BD-73F3-4FFC-81BF-FE2429E5CC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{977182BD-73F3-4FFC-81BF-FE2429E5CC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF6E4A7B-258B-4B33-9BDC-2C087FEE6A16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF6E4A7B-258B-4B33-9BDC-2C087FEE6A16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF6E4A7B-258B-4B33-9BDC-2C087FEE6A16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF6E4A7B-258B-4B33-9BDC-2C087FEE6A16}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{977182BD-73F3-4FFC-81BF-FE2429E5CC1D} = {529540CB-1133-4E59-81D3-821BA906BB9B}
+		{CF6E4A7B-258B-4B33-9BDC-2C087FEE6A16} = {785C36B2-F992-4E67-B26A-01D515986FDB}
+	EndGlobalSection
+EndGlobal
