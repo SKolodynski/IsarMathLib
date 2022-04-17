@@ -1,19 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-	<Compile Include="IMLP_datatypes.fs" />
-	<Compile Include="IMLP_datatypes.fs" />
-	<Compile Include="IMLParser.fs" />
+    <Compile Include="IMLP_datatypes.fs" />
+    <Compile Include="ProcessThys.fs" />
+    <Compile Include="IMLP_datatypes.fs" />
+    <Compile Include="IMLParser.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="FParsec" Version="1.1.1" />
   </ItemGroup>
-
 </Project>

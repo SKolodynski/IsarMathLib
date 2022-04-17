@@ -18,8 +18,11 @@ namespace iml
 
 [<AutoOpen>]
 
-// TODO: check if we can replace all List<string> with string list
+// TODO: check if we can replace all string list with string list
 module IMLP_datatypes =
+
+    /// named string list: very often used pair of string and string list
+    type namedstrs = string*(string list)
 
     type Definition = { defname: string; // maybe explicit or extracted from the actual definition
                         defcontext: string; //  an optional locale
@@ -41,65 +44,65 @@ module IMLP_datatypes =
                         fixedNotation: string
     }
 
-    type Assumes = List<string*List<string>>
+    type Assumes = namedstrs list
 
 
-    type LocaleItem = Fixes of List<NameNotation>
+    type LocaleItem = Fixes of NameNotation list
                     | Defs of Defines
                     | Assms of Assumes 
 
     type Locale = { localename: string;
-                    inheritsFrom: string*List<string>; // we supportonly one parent: locale1 = locale0 + [localeItems]
-                    localeItems : List<LocaleItem> 
+                    inheritsFrom: namedstrs; // we support only one parent: locale1 = locale0 + [localeItems]
+                    localeItems : LocaleItem list 
                     }
 
     type ProofUsingBy = { useunfold: string; // "using" or "unfolding"
-                        usedprops: List<string>; // a list of references
+                        usedprops: string list; // a list of references
                         useunfold1: string; // "using" or "unfolding", optional second clause
-                        usedprops1: List<string>; // a list of references for the second clause
+                        usedprops1: string list; // a list of references for the second clause
                         ptactic: string // a method: simp, auto, blast etc
     }
 
     type HenceThusStep = { henceorthus: string;
-                        ttclaims: List<string*List<string>>;
+                        ttclaims: namedstrs list;
                         tttactic: string
                         }
 
     type Proof = UsingBy of ProofUsingBy | ByRule of string  | LongProof of ProofLongProof
-    and ProofLongProof = { dash: bool;(* does it have a dash or not?*) proofSteps: List<ProofStep> }
-    and ClaimProof = { cpclaims: List<string*List<string>>;  cpproof: Proof }
-    and ProofStep = LongReasoning of Reasoning*List<MoreoverBody>
-                    | FixStep of List<string>
+    and ProofLongProof = { dash: bool;(* does it have a dash or not?*) proofSteps: ProofStep list }
+    and ClaimProof = { cpclaims: namedstrs list;  cpproof: Proof }
+    and ProofStep = LongReasoning of Reasoning*(MoreoverBody list)
+                    | FixStep of string list
                     | LetStep of string*string*string  // variable name, optional subscript, definition
                     | Next
-    and Reasoning = InitStep * List<ConnectedStep>
+    and Reasoning = InitStep * ConnectedStep list
     and MoreoverBody = { mrvalso: string; // indicates if this is a moreover or also construct
-                        mrvMrvs: List<Reasoning>;
+                        mrvMrvs: Reasoning list;
                         ultimfinal: ProofCommand;
-                        followup: List<ConnectedStep> }
-    and InitStep = InitialStep of List<string>*ProofCommand 
-                    | StepBlock of List<ProofStep> 
-                    | Assume of List<string*List<string>> 
-                    | Note of List<string>
-    and ConnectedStep = WithStep of List<string>*ProofCommand
+                        followup: ConnectedStep list }
+    and InitStep = InitialStep of (string list)*ProofCommand 
+                    | StepBlock of ProofStep list 
+                    | Assume of namedstrs list 
+                    | Note of string list
+    and ConnectedStep = WithStep of (string list)*ProofCommand
                         | ThenStep of ProofCommand
                         | HenceThus of HenceThusStep
-    and ProofCommand = PChaveShow of string*ClaimProof | PCbtain of List<string>*ClaimProof // the list of strings is the list of variables to obtain
+    and ProofCommand = PChaveShow of string*ClaimProof | PCbtain of string list*ClaimProof // the list of strings is the list of variables to obtain
     
     type Sublocale = {  sublocalename: string;
                         localename: string;
-                        remapping: List<string>;
+                        remapping: string list;
                         sublocproof: Proof
                         }
 
-    type PropPremise = PropDefines of List<string*List<string>> | PropAssumes of List<string*List<string>>
+    type PropPremise = PropDefines of namedstrs list | PropAssumes of namedstrs list
 
 
     type Proposition = {    proptype: string; // may be "theorem", "lemma" or "corollary" 
                             context: string; // an optional locale
                             propname: string;
-                            propprem: List<PropPremise>
-                            claims:List<string*List<string>>;
+                            propprems: PropPremise list
+                            claims:namedstrs list;
                             propproof: Proof
     }
 
@@ -115,13 +118,39 @@ module IMLP_datatypes =
 
     type Subsection = { sectitle: string;
                         secIntro: string;
-                        items: List<Item>
+                        items: Item list
                         }
 
     type Theory = { header: string; 
                     name: string; 
-                    imports: List<string>; 
+                    imports: string list;
                     thintro: string;
-                    thsections: List<Subsection> 
+                    thsections: Subsection list 
                     }
-    
+
+    type SimpProp = { sproptype: string;
+                    scontext: string;
+                    spropname: string;
+                    sproprems: PropPremise list;
+                    sclaims: namedstrs list;
+                    sdeps: string list // names of dependencies
+                    }
+
+    type SimpleFormalItem = SimpleProp of SimpProp
+                            | SimpleDef of string*string
+                            | OtherSimpleItem
+
+    ///  short version of formal item structure for storing information in the theorem database
+    type FormalItemInfo = { fimTheoryName:string;
+                            fimitem:SimpleFormalItem
+                            }
+
+    type TheoryInfo = { tiname: string; // redundant, but useful
+                        titheory: Theory; // parsed theory
+                        tideps: string list // a list of all dependencies in theory
+                        }
+
+    /// useful data extracted from all theories
+    type KnowledgeBase = { kbformalitems: FormalItemInfo list; // common for all theories
+                            kbtheories: TheoryInfo list // a list of information about theories
+                            }

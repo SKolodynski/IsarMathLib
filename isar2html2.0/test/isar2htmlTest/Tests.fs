@@ -5,6 +5,7 @@ open FParsec
 
 open iml.IMLParser
 open iml.IMLP_datatypes
+open iml.ProcessThys
 
 /// converts parser to a debug parser 
 /// that returns position before and after
@@ -529,3 +530,7 @@ qed
 end
 """
     checkIfParses theoryParser teststr
+
+let ``test skipUntilAfterDot`` () =
+  Assert.Equal(skipUntilAfterDot "abc.def","def")
+  Assert.Equal(skipUntilAfterDot "abc","abc")

@@ -217,7 +217,7 @@ module IMLParser =
         sepEndBy1 varname whiteSpace .>> pstring "for" .>> whiteSpace .>> sepEndBy1 varname whiteSpace
 
     /// parses a part of locale definition that defines inheritance from another locale
-    let inheritedFrom : Parser<string*(string list),unit> =
+    let inheritedFrom : Parser<namedstrs,unit> =
         pipe2
             (itemName .>> whiteSpace)
             (poption [] renamedvars .>> whiteSpace .>> pchar '+')
@@ -247,14 +247,14 @@ module IMLParser =
 
     /// parses labelled statement list
     /// like A1: "a \<in> A"  "b \<in> B"
-    let labelledStatList : Parser<string*(string list),unit> = 
+    let labelledStatList : Parser<namedstrs,unit> = 
             (poption "" statLabel) .>>. (whiteSpace >>. sepEndBy1 innerText whiteSpace)
             
 
     /// parses a list of labelled statement lists
     /// TODO: maybe create a type of decorated string list
     /// TODO: and is ignored in the parsed form, fix?
-    let listLabStatLists : Parser<(string*(string list)) list,unit> = 
+    let listLabStatLists : Parser<(namedstrs) list,unit> = 
         sepBy1 labelledStatList (whiteSpace >>. attempt (pstring "and") >>. whiteSpace)
         
     /// parses an "assumes" locale item
@@ -323,7 +323,7 @@ module IMLParser =
 
     /// parses a short proof that has "using" or "unfolding" keyword with references,
     /// stops on either the "by" or the next "using" or "unfolding"
-    let shortProofRef : Parser<string*(string list),unit> =
+    let shortProofRef : Parser<namedstrs,unit> =
         pipe2
             (attempt (pstring "using") <|> pstring "unfolding")
             (whiteSpace >>. manyTill (itemName .>> whiteSpace) (anyOf ["using";"unfolding";"by"]))
@@ -340,7 +340,7 @@ module IMLParser =
                 UsingBy {useunfold = meth; usedprops = itms; useunfold1 = meth1; usedprops1 = itms1; ptactic = tac})
 
     /// parses a False constant. This is treated as a kind of claim
-    let claimfalse : Parser<(string*(string list)) list,unit> =
+    let claimfalse : Parser<(namedstrs) list,unit> =
         pstring "False" |>> (fun s -> [("",[s])])
 
     let letOrFixStep : Parser<ProofStep,unit> = attempt (letstep <|> fixstep)
@@ -482,7 +482,7 @@ module IMLParser =
             (fun (t,c) n ps cl pr -> Prop { proptype = t; // may be "theorem", "lemma" or "corollary" 
                                             context = c; // an optional locale
                                             propname = n;
-                                            propprem = ps;
+                                            propprems = ps;
                                             claims = cl;
                                             propproof = pr
                                         })
