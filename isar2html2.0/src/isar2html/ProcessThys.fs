@@ -20,10 +20,6 @@ namespace iml
     /// For now it extracts the list of definitions and theorems from the theories.
     module ProcessThys = 
 
-    /// F# does not have concatMap built in
-        let concatMap f m = 
-            List.concat( List.map (fun x -> f x) m )
-
     /// gets all dependencies from a proof
     /// TODO: definitions in unfolding
         let rec getDepsFromProof : Proof -> string list =
@@ -34,17 +30,17 @@ namespace iml
                         usedprops1=d1;
                         ptactic=_} -> d @ d1
             | ByRule s -> [s]
-            | LongProof { dash=_; proofSteps=pss} -> concatMap getDepsFromProofStep pss
+            | LongProof { dash=_; proofSteps=pss} -> List.collect getDepsFromProofStep pss
         
         and getDepsFromProofStep : ProofStep -> string list =
             function
             | LongReasoning (r,mbs) ->
-                (getDepsFromReasoning r) @ (concatMap getDepsFromMoreoverBody mbs)
+                (getDepsFromReasoning r) @ (List.collect getDepsFromMoreoverBody mbs)
             | _ -> []
         
         /// gets dependencies from reasoning
         and getDepsFromReasoning ((is,css): Reasoning) : string list =
-            (getDepsFromInitStep is) @ (concatMap getDepsFromConnectedStep css)
+            (getDepsFromInitStep is) @ (List.collect getDepsFromConnectedStep css)
         /// gets dependencies from InitStep
         and getDepsFromInitStep : InitStep -> string list =
             function
@@ -55,9 +51,9 @@ namespace iml
                                     mrvMrvs=rss;
                                     ultimfinal=pc;
                                     followup=css} : string list =
-                (concatMap getDepsFromReasoning rss) @ 
+                (List.collect getDepsFromReasoning rss) @ 
                 (getDepsFromProofCommand pc) @
-                (concatMap getDepsFromConnectedStep css)
+                (List.collect getDepsFromConnectedStep css)
         /// gets dependencies from a ConnectedStep
         and getDepsFromConnectedStep :  ConnectedStep -> string list =
             function
@@ -100,15 +96,15 @@ namespace iml
 
         /// gets all formal items from a theory in simple form
         let getThmsDefsFromThry (t:Theory) : FormalItemInfo list =
-            concatMap getThmsDefsFromSec t.thsections |> List.map (addTheoryName t.name)
+            List.collect getThmsDefsFromSec t.thsections |> List.map (addTheoryName t.name)
 
         let getThmsDefsFromTheories (ts:Theory list) : FormalItemInfo list =
-            concatMap getThmsDefsFromThry ts
+            List.collect getThmsDefsFromThry ts
 
         /// a helper function: skips all characters in a string until the last dot
         let skipUntilAfterDot (s:string) : string =
             let dotpos=s.LastIndexOf '.'
-            if dotpos=(-1) then s else (s.Remove (1+dotpos))
+            if dotpos=(-1) then s else (s.Remove (0,1+dotpos))
 
         /// get dependencies from formal Item
         let getDepsFromFormalItem : FormalItem -> string list =
@@ -118,12 +114,12 @@ namespace iml
 
         /// get dependencies from a Subsection
         let getDepsFromSubsection (sbs:Subsection) : string list =
-            concatMap (fun item -> getDepsFromFormalItem item.formalItem) sbs.items
+            List.collect (fun item -> getDepsFromFormalItem item.formalItem) sbs.items
 
         /// obtains dependecies from a Theory
         let getDepsFromTheory (t:Theory) : string list =
             let nmAfterDot = skipUntilAfterDot t.name
-            concatMap getDepsFromSubsection t.thsections
+            List.collect getDepsFromSubsection t.thsections
 
 
         /// extracts useful information from a single theory
@@ -135,3 +131,17 @@ namespace iml
         // with all kinds of information that is needed
         let processTheories (ts:Theory list) : KnowledgeBase =
             { kbformalitems = getThmsDefsFromTheories ts; kbtheories = List.map getTheoryInfo ts }
+
+        /// true if the formal item is a proposition
+        /// (rather than definition or locale)
+        let isProposition (item:FormalItemInfo) : bool =
+            match item.fimitem with 
+            | SimpleProp _ -> true
+            | _ -> false
+
+        /// true if the formal item is a definition
+        let isDefinition (item:FormalItemInfo) : bool =
+            match item.fimitem with 
+            | SimpleDef _ -> true
+            | _ -> false
+            

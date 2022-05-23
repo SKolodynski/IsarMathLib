@@ -458,7 +458,6 @@ module IMLParser =
     let propSynonim : Parser<string,unit> =
         pstring "theorem" <|> pstring "lemma" <|> pstring "corollary"
 
-
     /// parses an "assumes" statement
     let premassumes :  Parser<PropPremise,unit> =
         pstring "assumes" >>. whiteSpace >>. listLabStatLists |>> PropAssumes

@@ -1,3 +1,19 @@
+(*
+    This file is part of isar2html2.0 - a tool for rendering IsarMathLib
+	theories in in HTML.
+    Copyright (C) 2022  Slawomir Kolodynski
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
 module Tests
 
 open Xunit
@@ -6,6 +22,9 @@ open FParsec
 open iml.IMLParser
 open iml.IMLP_datatypes
 open iml.ProcessThys
+open iml.Export2Html
+open iml.Utils
+open iml.IsarSym2Latex
 
 /// converts parser to a debug parser 
 /// that returns position before and after
@@ -416,6 +435,7 @@ proof -
 qed"""
     checkIfParses proposition testr2
 
+[<Fact>]
 let ``test itemWdescription`` () =
     let testr1 = """text\<open>We will use the multiplicative notation for the group operation. To do this, we
   define a context (locale) that tells Isabelle
@@ -437,6 +457,7 @@ abbreviation NetConvTop("_ \<rightarrow>\<^sub>N _ {in} _")
 """
     checkIfParses itemWdescription teststr2
 
+[<Fact>]
 let ``test subsection`` () = 
     let teststr = """subsection\<open>Properties of enumerations\<close>
 
@@ -474,6 +495,7 @@ qed"""
 
     checkIfParses subsection teststr
 
+[<Fact>]
 let ``test parsing a theory`` () =
     let teststr = """(* License *) 
 section \<open>Order on natural numbers\<close>
@@ -531,6 +553,46 @@ end
 """
     checkIfParses theoryParser teststr
 
+[<Fact>]
 let ``test skipUntilAfterDot`` () =
-  Assert.Equal(skipUntilAfterDot "abc.def","def")
-  Assert.Equal(skipUntilAfterDot "abc","abc")
+  Assert.Equal("def",skipUntilAfterDot "abc.def")
+  Assert.Equal("abc",skipUntilAfterDot "abc")
+
+[<Fact>]
+let ``test uniquefy`` () =
+  let expected = 
+    "abc2 def abc1 abc0 ghi\n<div id=\"par_abc\" style=\"display:none\">3</div>"
+  Assert.Equal(expected,uniquefy "abc" "abc def abc abc ghi")
+
+[<Fact>]
+let ``test uniquefyids`` () =
+  let expected = "abc2 def1 abc1 def0 abc0 ghi\n<div id=\"par_abc\" style=\"display:none\">3</div>\n<div id=\"par_def\" style=\"display:none\">2</div>"
+  Assert.Equal(expected,uniquefyids ["abc";"def"] "abc def abc def abc ghi")
+
+[<Fact>]
+let ``test replaceAll`` () = 
+  let repls = [("abc","***");("abcd","####")]
+  let testStr = "abc def ghi def abcd"
+  let expected = "*** def ghi def ####"
+  Assert.Equal(expected,replaceAll repls testStr)
+
+[<Fact>]
+let ``test appToParts`` () =
+  // test appToParts by replacing multiple stars in a string with one
+  let testf = (=)'*'
+  let transf = fun _ -> ['*']
+  let teststr = "abc*** def ghi ** *"
+  let expected = "abc* def ghi * *"
+  // we have to convert the string to a list and back:
+  let res =  List.ofSeq teststr 
+            |> appToParts testf transf
+            |> List.map string 
+            |> String.concat ""
+  Assert.Equal(expected, res) 
+
+[<Fact>]
+let ``test converting predicate`` () =
+  let predicate = Seq.zip "{is a topology}" (Seq.replicate 15 1) |> Seq.toList
+  let converted = convPredicate 1 predicate
+  let expected = Seq.zip "\\text{ is a topology }" (Seq.replicate 22 1) |> Seq.toList
+  Assert.Equal<(char*int) list>(expected, converted) 
