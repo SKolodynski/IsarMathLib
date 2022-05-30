@@ -596,3 +596,40 @@ let ``test converting predicate`` () =
   let converted = convPredicate 1 predicate
   let expected = Seq.zip "\\text{ is a topology }" (Seq.replicate 22 1) |> Seq.toList
   Assert.Equal<(char*int) list>(expected, converted) 
+
+[<Fact>]
+let ``test detecting set comprehensions`` () =
+  let addLevel (level:int) (s:string) : (char*int) list =
+    level |> Seq.replicate s.Length |> Seq.zip s |> Seq.toList
+
+  let setcompr1 = "{x\<in>X. \<phi>(x)}" |> addLevel 1
+  Assert.True(isSetCompr setcompr1)
+
+  let setcompr2 = "{\<tau>\<^sub>1}" |> addLevel 1
+  Assert.True(isSetCompr setcompr2)
+
+  let notsetcomr = "{is a topology}" |> addLevel 1
+  Assert.False(isSetCompr notsetcomr)
+
+[<Fact>]
+let ``test nestLevel`` () =
+  //let testr = "c(d)f"
+  //let expected = [('c',0);('(',1);('d',1);(')',1);('f',0)]
+  let teststr = "ab(c(de)f)"
+  let expected = [('a',0);('b',0);('(',1);('c',1);('(',2);('d',2);('e',2);(')',2);('f',1);(')',1)]
+  let actual = nestLevel '(' ')' teststr
+  //printfn "%A" expected
+  //printfn "%A"  actual
+  Assert.Equal<(char*int) list> (expected,actual) 
+
+[<Fact>]
+let ``test convBraces`` () =
+  let teststr1 = "{x}"
+  Assert.Equal("\\{x\\}", convBraces teststr1)
+
+  let teststr2 = "{{x}.x\\<in>X}"
+  Assert.Equal("""\{\{x\}.x\<in>X\}""", convBraces teststr2)
+
+  let teststr3 = "{is a topology}"
+  Assert.Equal("\\text{ is a topology }",convBraces teststr3)
+  

@@ -18,6 +18,9 @@ open System.IO
 open iml.IMLParser
 open iml.ProcessThys
 
+// DBG
+open iml.IsarSym2Latex
+
 let names = File.ReadAllLines "theories.conf"
             |> Seq.filter (fun line -> 0 < String.length line) // Is it the best way to check if the string is empty?
             |> Seq.map (fun x -> x+".thy")            
@@ -30,13 +33,5 @@ printfn "number of propositions: %d, number of definitions: %d"
         (kb.kbformalitems |> List.filter isDefinition |> List.length)
 let templ = File.ReadAllText "isar2html_template.html"
 
-
-//open FParsec
-//let str = System.IO.File.ReadAllText "../IsarMathLib/test.thy"
-//printfn "loaded %d characters" str.Length
-
-// let str = """assume "0 \<in> leftUniformity"
-//    hence False by auto"""
-
-// printfn "parsing %s" str
-// run reasoning str |> printfn "%A"
+// let teststr = "{{x}. x\<in>X}"
+// printfn "%s" (convBraces teststr)

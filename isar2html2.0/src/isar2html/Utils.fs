@@ -48,3 +48,41 @@ namespace iml
 
         /// like Seq.append but with parameters flipped for better piping
         let thenAppend (x:'a seq) (y:'a seq) : 'a seq = Seq.append y x
+
+        /// any on a list, maybe there is a standard one?
+        let any (p:'a->bool) (s:'a list) : bool =
+             s |> List.map p |> List.contains true
+
+        /// drops first and last of a list, like tail . init in Haskell, converts result to seq
+        let dropEnds (s:'a list) :'a seq =
+            s |> List.toSeq |>  Seq.take (s.Length-1) |> Seq.tail 
+
+        /// a function that turns a list into a list of pairs that indicate the nesting level
+        /// example: nestLevel '(' ')' "ab(c(de)f)" = 
+        /// [('a',0);('b',0);('(',1);('c',1);('(',2);('d',2);('e',2);(')',1);('f',1);(')',0)]
+        /// text: "ab(c(de)f)"
+        /// levels 0011222211
+        // Less functional than the Haskell version as that one uses init on list 
+        // (all elements except the last) which F# does not have, but hopefully faster
+        let nestLevel (op:char) (cl:char) (x:string) : ((char*int) list) =
+            if x.Length=0 then []
+            else 
+                let res = Array.zeroCreate x.Length
+                res.[0] <- if x.[0]=op then 1 else 0 
+                for i in 1..x.Length-1 do
+                    res.[i] <- if x.[i] = op then res.[i-1]+1
+                                    else if x.[i-1] = cl then res.[i-1]-1
+                                        else res.[i-1]
+                Array.zip (x.ToCharArray()) res |> Array.toList
+                
+
+
+                
+                
+
+
+
+                    
+
+            
+        
