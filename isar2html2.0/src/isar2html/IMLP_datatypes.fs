@@ -138,7 +138,7 @@ module IMLP_datatypes =
 
     type SimpleFormalItem = SimpleProp of SimpProp
                             | SimpleDef of string*string
-                            | OtherSimpleItem
+                            | OtherSimpleItem // TODO: do we ever use that?
 
     ///  short version of formal item structure for storing information in the theorem database
     type FormalItemInfo = { fimTheoryName:string;

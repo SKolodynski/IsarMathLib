@@ -75,14 +75,29 @@ namespace iml
                                         else res.[i-1]
                 Array.zip (x.ToCharArray()) res |> Array.toList
                 
+        /// removes specified chars from a string
+        // TODO: rename to strip
+        let remElems (rems:string) : string -> string =
+             String.collect (fun c -> if Seq.exists ((=)c) rems then "" else string c)
 
+        /// Applies a function to that part of the string that is between to marks given as substrings
+        /// Example: 
+        /// appBetween (fun x -> "  ") "$" "$" "abs$cde$ghi$cd$ab" == "abs  ghi  ab" 
+        /// replaces all text between the dollar signs by two spaces. the dollar signs are removed
+        /// and the function is expected to not see them.
+        let rec appBetween (f:string->string) (start:string) (stop:string) (s:string) : string =
+            let startPos = s.IndexOf start
+            if startPos = -1 then s
+            else 
+                let stopPos=(s.[startPos+1..]).IndexOf stop 
+                if stopPos = -1 then s
+                else 
+                    s.[..startPos] + (f s.[startPos+1..startPos+stopPos])
+                        + (appBetween f start stop s.[startPos+stopPos+2..])
 
-                
-                
-
-
-
-                    
-
-            
+        /// remove double new lines
+        let rmdnl (s:string) : string = s.Replace("\n\n","\n")
         
+        /// concatenates lines
+        // TODO: this is only somewhat needed in Haskell, redundant in F#
+        let sunlines : (string list) -> string = String.concat ""

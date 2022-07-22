@@ -145,3 +145,10 @@ namespace iml
             | SimpleDef _ -> true
             | _ -> false
             
+        /// gets the name from a formal item in simple form
+        let getSFIname (sfi:SimpleFormalItem) : string =
+            match sfi with
+            | SimpleProp sp -> sp.spropname
+            | SimpleDef (nm,_) -> nm
+            | _ -> failwith "unimplemented kind of SimpleFormalItem)" 
+        

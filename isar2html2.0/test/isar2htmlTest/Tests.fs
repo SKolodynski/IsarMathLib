@@ -633,3 +633,32 @@ let ``test convBraces`` () =
   let teststr3 = "{is a topology}"
   Assert.Equal("\\text{ is a topology }",convBraces teststr3)
   
+[<Fact>]
+let ``test remElems`` () =
+  Assert.Equal("12345789",remElems "xyz" "123x4y5z789")
+
+[<Fact>]
+let ``test appendToInit`` () =
+  Assert.Equal<string list>(["abcx";"defx";"ghi"], appendToInit "x" ["abc";"def";"ghi"])
+
+[<Fact>]
+let ``test isIdentifier`` () =
+  Assert.True(isIdentifier "abc_def.ghi")
+  Assert.False(isIdentifier "\\frac{1}{2}")
+
+[<Fact>]
+let ``test appBetween`` =
+  let testStr = "abs$cde$ghi$cd$ab"
+  let expRes = "abs  ghi  ab"
+  Assert.Equal(expRes,appBetween (fun x -> "  ") "$" "$" testStr)
+  Assert.Equal("abscdeghicdab",appBetween id "$" "$" testStr)
+
+[<Fact>]
+let ``test afterDot`` () = 
+  Assert.Equal("abc", afterDot "abc")
+  Assert.Equal("abc()", afterDot "def.abc()")
+
+[<Fact>]
+let `` test beforeParen`` () =
+  Assert.Equal("abc",beforeParen "abc().test")
+  Assert.Equal("abc",beforeParen "abc")
