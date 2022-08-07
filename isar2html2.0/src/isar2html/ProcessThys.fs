@@ -150,5 +150,6 @@ namespace iml
             match sfi with
             | SimpleProp sp -> sp.spropname
             | SimpleDef (nm,_) -> nm
-            | _ -> failwith "unimplemented kind of SimpleFormalItem)" 
+            | OtherSimpleItem -> "a context"
+            
         

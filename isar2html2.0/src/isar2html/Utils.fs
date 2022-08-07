@@ -17,6 +17,7 @@
 namespace iml
 
     module Utils =
+        open System.IO
 
         /// replace a string by a string in a string. There is a standard function  
         /// for that but we want one that can be curied
@@ -100,4 +101,8 @@ namespace iml
         
         /// concatenates lines
         // TODO: this is only somewhat needed in Haskell, redundant in F#
-        let sunlines : (string list) -> string = String.concat ""
+        let sunlines : (string list) -> string = String.concat "\n"
+
+        ///  writes a list of files given a list of (name, contents) pairs
+        let writeFiles (ncs:(string*string) list) : unit=
+            List.map (fun (n,c) -> File.WriteAllText(n,c)) ncs |> ignore

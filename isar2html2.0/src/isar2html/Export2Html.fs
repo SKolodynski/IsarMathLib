@@ -328,7 +328,7 @@ namespace iml
             | Note refs -> 
                 (bf "note ") + (List.map (exportLocRef repls) refs |> String.concat ", ")
                 |> pd
-        and exportConnectedStep (repls:(string*string) list) (mfii:Map<string,string>) (cs:ConnectedStep) : string =
+        and exportConnectedStep (repls:(string*string) list) (mfii:Map<string,string>) (cs:ConnectedStep) =
             match cs with
             | WithStep (loclabs,pc) ->
                 (exportLocRefs repls "with " loclabs) +  (exportProofCommand repls mfii pc)
@@ -337,10 +337,80 @@ namespace iml
                             |> pd
             | HenceThus ht -> (bf ht.henceorthus) + " " + (exportClaims repls ht.ttclaims)
                             |> pd
-        and exportProofCommand (repls:(string*string) list) (mfii:Map<string,string>) (pc:ProofCommand) =
+        and exportProofCommand (repls:(string*string) list) (mfii:Map<string,string>) (pc:ProofCommand)  =
             match pc with
             | PChaveShow (hs,cp) -> (bf hs) + " " + (exportClaimProof repls mfii cp)
             | PCbtain (vars,cp) -> (bf "obtain" ) + (vars |> List.map (isar2latex repls) |> String.concat " ")
                                     + (bf "where ") +  (exportClaimProof repls mfii cp)
         and exportClaimProof (repls:(string*string) list) (mfii:Map<string,string>) (cp:ClaimProof) =
             (exportClaims repls cp.cpclaims) + (exportProof repls mfii cp.cpproof)
+
+        let exportProposition (repls:(string*string) list) (mfii:Map<string,string>) (p:Proposition) : string =
+            ((bf p.proptype) + " " + (inContext p.context) + p.propname + ":\n" |> par)
+            + (List.map (exportPremise repls) p.propprems |> String.concat "")
+            + (bf "   shows ") + ( exportClaims repls p.claims )
+            + (exportProof repls mfii p.propproof)
+
+
+        /// exports formal items
+        let exportFormalItem (repls:(string*string) list) (mfii:Map<string,string>) (fit:FormalItem) =
+            match fit with 
+            | Abbr abbr ->  (bf  "Abbreviation" |> par) + (isar2latex repls abbr.abbspec |> par)
+                            |> mkformal ""
+            | Def def ->    (bf  "Definition" |> par) 
+                            + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")") + "\n"
+                            +  (isar2latex repls def.def |> par)
+                            |> mkformal ""
+            | Loc loc ->    let (parent,vars) = loc.inheritsFrom
+                            (bf "Locale ") + loc.localename
+                            + (if parent.Length=0 then "" else " = " + parent
+                            + " " + (String.concat " " vars) + " +")
+                            + (List.map (exportLocaleItem repls) loc.localeItems |> String.concat " ")
+                            |> mkformal ""
+            | Subloc subloc ->  (bf "Sublocale") + subloc.sublocalename + " &lt " + subloc.localename 
+                                + (exportProof repls mfii subloc.sublocproof |> par)
+                                |> mkformal ""
+            | Prop prop ->  exportProposition repls mfii prop
+
+        /// exports an item in a section
+        let exportItem (repls:(string*string) list) (mfii:Map<string,string>) (it:Item) : string =
+            (getId it.formalItem |> anchor) + "\n" + (expInformalText repls it.description) + "\n" 
+            + (exportFormalItem repls mfii it.formalItem)
+ 
+        /// exports a section
+        let exportSubsection (repls:(string*string) list) (mfii:Map<string,string>) (s:Subsection) : string =
+            (hd s.sectitle) + "\n" + (expInformalText repls s.secIntro) 
+            + (List.map (exportItem repls mfii) s.items |> String.concat "\n")
+
+        /// <summary>converts Isar theory to HTML markup, the main function of this module</summary>
+        /// <param name="repls"> a list of string replacements in formal code to convert it to LaTeX</param>
+        /// <param name="mfii"> a map of all known theorems rendered in simplified form</param>
+        /// <param name="refs"> the list of all references in all proofs of the theory</param>
+        /// <param name="th"> a parsed theory</param>
+        /// <returns>The theory rendered in HTML</returns>
+        let exportTheory (repls:(string*string) list) (mfii:Map<string,string>) (refs:string list) (th:Theory) : string =
+            (bf "theory") + th.name + (bf "imports") + String.concat " " th.imports 
+            + ( bf "begin\n" |> mkformal "" )
+            + ( expInformalText repls th.thintro )
+            + ( List.map (exportSubsection repls mfii) th.thsections |> sunlines) 
+
+
+        /// takes the template and the database of theorems and renders to html
+        let exportTheories (templ:string) (kb:KnowledgeBase) : ((string*string) list) =
+            let fi = kb.kbformalitems
+            let repls = (extractDefs fi |> List.map def2replPair) @ inner2LatexSym
+            let mfii = getRefsInfo repls fi
+            let tinfos = kb.kbtheories
+            let tlinks = tinfos |> List.map (fun (tinfo:TheoryInfo) -> thrylink (tinfo.tiname))
+                                |> String.concat ""
+            let expThr (tinfo:TheoryInfo) = 
+                let exportedTheory = exportTheory repls mfii (tinfo.tideps) (tinfo.titheory)
+                let  thHtml = templ |> replaceAll [ ("this is theory placeholder", exportedTheory)
+                                                ; ("this is links placeholder", tlinks) ]
+                ("isarhtml/" + tinfo.tiname + ".html", thHtml)
+            List.map expThr tinfos
+            
+        
+
+        
+

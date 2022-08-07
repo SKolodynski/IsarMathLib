@@ -17,9 +17,8 @@
 open System.IO
 open iml.IMLParser
 open iml.ProcessThys
-
-// DBG
-open iml.IsarSym2Latex
+open iml.Export2Html
+open iml.Utils
 
 let names = File.ReadAllLines "theories.conf"
             |> Seq.filter (fun line -> 0 < String.length line) // Is it the best way to check if the string is empty?
@@ -32,6 +31,8 @@ printfn "number of propositions: %d, number of definitions: %d"
         (kb.kbformalitems |> List.filter isProposition |> List.length)
         (kb.kbformalitems |> List.filter isDefinition |> List.length)
 let templ = File.ReadAllText "isar2html_template.html"
+exportTheories templ kb |> writeFiles
+
 
 // let teststr = "{{x}. x\<in>X}"
 // printfn "%s" (convBraces teststr)

@@ -249,10 +249,8 @@ namespace iml
             nestLevel '{' '}' >> convTextsLevel 0 >> List.unzip 
             >> fst >> List.map string >> List.reduce (+)
         
-        
+        /// converts a definition name to a pair that can be used for replacements
+        let def2replPair (s:string) : string*string = (s+"("," \\text{" + s + "}(")
 
-            
-
-            
         
         
