@@ -66,8 +66,8 @@ namespace iml
 
         /// exports informal text
         let expInformalText (repls:(string*string) list) (s:string) : string =
-            "<div class=\"inftext\">\n<p>" +
-            ( appBetween (littext repls) "\\<open>" "\\<close>" s
+            "<div class=\"inftext\">\n<p>"
+            + ( appBetween (littext repls) "\\<open>" "\\<close>" s
                 |> appBetween convLatex "$" "$"
                 |> replace ("\n\n","</p>\n<p>"))
             + "</p>\n</div>\n"
@@ -116,13 +116,15 @@ namespace iml
         let uniquefy (id:string) (htmlstring:string) : string =
             let split = htmlstring.Split id // substrings ending with id, except the last one
             let n = (split.Length)-1 // number of occurences of id in htmlstring 
-            let u =  Array.rev [|0..n-1|] // create id numbers, TODO: check if works without rev
-                    |> Array.map (fun k -> id + (string k)) 
-                    |> Array.zip split.[0..n-1] 
-                    |> Array.map (fun (x,y) -> x+y)
-                    |> Array.reduce (+)
-            let countdiv = "\n<div id=\"par_" + id + "\" style=\"display:none\">" + (string n) + "</div>"
-            (u+split.[n]) + countdiv
+            if n=0 then htmlstring
+            else 
+                let u =  Array.rev [|0..n-1|] // create id numbers, TODO: check if works without rev
+                        |> Array.map (fun k -> id + (string k)) 
+                        |> Array.zip split.[0..n-1] 
+                        |> Array.map (fun (x,y) -> x+y)
+                        |> Array.reduce (+)
+                let countdiv = "\n<div id=\"par_" + id + "\" style=\"display:none\">" + (string n) + "</div>"
+                (u+split.[n]) + countdiv
 
         /// composes some number of uniquefy for a list of id strings
         /// i.e. applies uniquefy for each id in the parameter to the given string
@@ -389,10 +391,12 @@ namespace iml
         /// <param name="th"> a parsed theory</param>
         /// <returns>The theory rendered in HTML</returns>
         let exportTheory (repls:(string*string) list) (mfii:Map<string,string>) (refs:string list) (th:Theory) : string =
-            (bf "theory") + th.name + (bf "imports") + String.concat " " th.imports 
+            ( (bf "theory") + th.name + (bf "imports") + String.concat " " th.imports |> mkformal "")
             + ( bf "begin\n" |> mkformal "" )
             + ( expInformalText repls th.thintro )
-            + ( List.map (exportSubsection repls mfii) th.thsections |> sunlines) 
+            + ( List.map (exportSubsection repls mfii) th.thsections |> sunlines)
+            + ( bf "end\n" |> mkformal "")
+            |>  uniquefyids ["hstrigger"; "hscontent"; "hintref";"pardiv"]
 
 
         /// takes the template and the database of theorems and renders to html

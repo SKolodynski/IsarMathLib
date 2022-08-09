@@ -647,11 +647,14 @@ let ``test isIdentifier`` () =
   Assert.False(isIdentifier "\\frac{1}{2}")
 
 [<Fact>]
-let ``test appBetween`` =
+let ``test appBetween`` () =
   let testStr = "abs$cde$ghi$cd$ab"
   let expRes = "abs  ghi  ab"
   Assert.Equal(expRes,appBetween (fun x -> "  ") "$" "$" testStr)
   Assert.Equal("abscdeghicdab",appBetween id "$" "$" testStr)
+  let testStr1 = "abs\\<open>cde\\<close>ghi\\<open>cd\\<close>ab"
+  Assert.Equal(expRes,appBetween  (fun x -> "  ") "\\<open>" "\\<close>" testStr1)
+  Assert.Equal("abscdeghicdab",appBetween id "\\<open>" "\\<close>" testStr1)
 
 [<Fact>]
 let ``test afterDot`` () = 

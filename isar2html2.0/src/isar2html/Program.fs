@@ -34,5 +34,7 @@ let templ = File.ReadAllText "isar2html_template.html"
 exportTheories templ kb |> writeFiles
 
 
-// let teststr = "{{x}. x\<in>X}"
-// printfn "%s" (convBraces teststr)
+// let testStr = "abs$cde$ghi$cd$ab"
+// printfn "%s" (appBetween (fun x -> "  ") "$" "$" testStr)
+// let testStr1 = "abs\\<open>cde\\<close>ghi\\<open>cd\\<close>ab"
+// printfn "%s" (appBetween (fun x -> "  ") "\\<open>" "\\<close>" testStr1)

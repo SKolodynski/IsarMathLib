@@ -90,11 +90,15 @@ namespace iml
             let startPos = s.IndexOf start
             if startPos = -1 then s
             else 
-                let stopPos=(s.[startPos+1..]).IndexOf stop 
+                let stopPos=(s.[startPos+start.Length..]).IndexOf stop 
                 if stopPos = -1 then s
-                else 
-                    s.[..startPos] + (f s.[startPos+1..startPos+stopPos])
-                        + (appBetween f start stop s.[startPos+stopPos+2..])
+                else
+                    // DBG
+                    let s0=s.[..startPos-1]
+                    let s1=s.[startPos+start.Length..startPos+start.Length+stopPos-1]
+                    let s2=s.[startPos+start.Length+stopPos+stop.Length..]
+                    s.[..startPos-1] + (f s.[startPos+start.Length..startPos+start.Length+stopPos-1])
+                        + (appBetween f start stop s.[startPos+start.Length+stopPos+stop.Length..])
 
         /// remove double new lines
         let rmdnl (s:string) : string = s.Replace("\n\n","\n")
