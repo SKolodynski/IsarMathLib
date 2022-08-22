@@ -33,8 +33,18 @@ printfn "number of propositions: %d, number of definitions: %d"
 let templ = File.ReadAllText "isar2html_template.html"
 exportTheories templ kb |> writeFiles
 
+// open FParsec
+// let s = """proof -
+//   { assume "A+B=C"
+//     then have "A+B=C" using AreDisjoint_def by simp
+//   } thus ?thesis by simp
+// qed
+// """
 
-// let testStr = "abs$cde$ghi$cd$ab"
-// printfn "%s" (appBetween (fun x -> "  ") "$" "$" testStr)
-// let testStr1 = "abs\\<open>cde\\<close>ghi\\<open>cd\\<close>ab"
-// printfn "%s" (appBetween (fun x -> "  ") "\\<open>" "\\<close>" testStr1)
+// let parseRes = run longproof s
+// let res = match parseRes with
+//             | Success(result, _, _) -> result
+//             | Failure(errorMsg, _, _) -> 
+//                 raise (ParsingError errorMsg)
+
+// getDepsFromProof res |> printfn "%A" 

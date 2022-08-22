@@ -24,8 +24,10 @@ namespace iml
         let replace ((src,dest):string*string) (s:string) : string = s.Replace(src,dest)
              
         /// multiple replacement, last replacement in the list is performed first!
-        let replaceAll (srcdest: (string*string) list)  : string -> string=
-            srcdest |> List.map replace |> List.reduce (<<)
+        let replaceAll (srcdest: (string*string) list)  : string -> string =
+            if srcdest.Length>0 then 
+                srcdest |> List.map replace |> List.reduce (<<)
+            else id
         
         /// span splits a list into a part that satisfies a predicate and the rest
         /// (like Haskell's span)

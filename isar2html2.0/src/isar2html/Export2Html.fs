@@ -38,8 +38,8 @@ namespace iml
                         |> remElems "`?"
             "\\( " + formula + " \\)"
 
-        /// chars allowed in literal texts that are not LaTeX
-        let allowedInIds = Set.ofSeq "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwxyzZ0123456789_."
+        /// chars allowed in literal texts that are not LaTeX. TODO: doe we need to allows space?
+        let allowedInIds = Set.ofSeq "ABCDEFGHIJKLMNOPQRSTUVWXYabcdefghijklmnopqrstuvwxyzZ0123456789_. "
 
         /// checks if the text is an identifier. Those consist of alphanumeric characters and underscore
         // TODO: check if and why space is needed
@@ -129,7 +129,7 @@ namespace iml
         /// composes some number of uniquefy for a list of id strings
         /// i.e. applies uniquefy for each id in the parameter to the given string
         let uniquefyids (ids: string list) : string -> string =
-            List.map uniquefy ids |> List.reduce (>>)
+            List.map uniquefy ids |> List.reduce (<<)
 
         /// appends a suffix to all elements of a list of strings except the last one
         // TODO: try to avoid using this by using String.concat suffix 
@@ -294,17 +294,17 @@ namespace iml
             | LongProof plp -> 
                 slider "proof" ((plp.proofSteps 
                                 |> List.map (exportProofStep repls mfii)
-                                |> String.concat ""
+                                |> String.concat "\n"
                                 |> rmdnl)
-                                + (bf "qed"))
+                                + "\n" + (bf "qed"))
         and exportProofStep (repls:(string*string) list) (mfii:Map<string,string>) (ps:ProofStep) : string =
             match ps with
-            | LongReasoning (rs,mbs) -> 
+            | LongReasoning (rs,mbs) ->
                 (exportReasoning repls mfii rs) + "\n" +  (List.map (exportMoreoverBody repls mfii) mbs |> sunlines)
-                |> pd
 
             | FixStep v -> 
                 (bf "fix") + (List.map (isar2latex repls) v |> String.concat " ")
+                |> pd
             | LetStep (v,s,d) ->
                 (bf "let") + ( v + (exportSubScript s) + " = " + d |>  isar2latex repls)
                 |> pd
@@ -318,9 +318,13 @@ namespace iml
             (List.map ((exportReasoning repls mfii) >> prepKeyWord) mb.mrvMrvs |> String.concat "")
             + (bf ultfinal) + (exportProofCommand repls mfii (mb.ultimfinal)) + "\n" 
             + (List.map (exportConnectedStep repls mfii) mb.followup |> sunlines)
+            |> pd
         and exportInitStep (repls:(string*string) list) (mfii:Map<string,string>) (is:InitStep) =
             match is with
-            | InitialStep (loclabs,pc) -> if loclabs.Length>0 then exportLocRefs repls "from " loclabs else ""
+            | InitialStep (loclabs,pc) -> 
+                (if loclabs.Length>0 then exportLocRefs repls "from " loclabs else "")
+                + (exportProofCommand repls mfii pc)
+                |> pd
             | StepBlock pss -> 
                 (List.map  (exportProofStep repls mfii) pss 
                     |> String.concat ""
@@ -352,6 +356,7 @@ namespace iml
             + (List.map (exportPremise repls) p.propprems |> String.concat "")
             + (bf "   shows ") + ( exportClaims repls p.claims )
             + (exportProof repls mfii p.propproof)
+            |> mkformal ""
 
 
         /// exports formal items
@@ -359,8 +364,8 @@ namespace iml
             match fit with 
             | Abbr abbr ->  (bf  "Abbreviation" |> par) + (isar2latex repls abbr.abbspec |> par)
                             |> mkformal ""
-            | Def def ->    (bf  "Definition" |> par) 
-                            + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")") + "\n"
+            | Def def ->    ((bf  "Definition") + "\n" |> par) 
+                            + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")")
                             +  (isar2latex repls def.def |> par)
                             |> mkformal ""
             | Loc loc ->    let (parent,vars) = loc.inheritsFrom
@@ -396,6 +401,7 @@ namespace iml
             + ( expInformalText repls th.thintro )
             + ( List.map (exportSubsection repls mfii) th.thsections |> sunlines)
             + ( bf "end\n" |> mkformal "")
+            + (List.map (createRefDiv mfii) refs |> String.concat "\n")
             |>  uniquefyids ["hstrigger"; "hscontent"; "hintref";"pardiv"]
 
 

@@ -31,8 +31,9 @@ namespace iml
                         ptactic=_} -> d @ d1
             | ByRule s -> [s]
             | LongProof { dash=_; proofSteps=pss} -> List.collect getDepsFromProofStep pss
+
         
-        and getDepsFromProofStep : ProofStep -> string list =
+        and getDepsFromProofStep : ProofStep -> string list =        
             function
             | LongReasoning (r,mbs) ->
                 (getDepsFromReasoning r) @ (List.collect getDepsFromMoreoverBody mbs)
@@ -41,11 +42,14 @@ namespace iml
         /// gets dependencies from reasoning
         and getDepsFromReasoning ((is,css): Reasoning) : string list =
             (getDepsFromInitStep is) @ (List.collect getDepsFromConnectedStep css)
+            
         /// gets dependencies from InitStep
         and getDepsFromInitStep : InitStep -> string list =
             function
             | InitialStep (_,pc) -> getDepsFromProofCommand pc
+            | StepBlock sbs -> List.collect getDepsFromProofStep sbs
             | _ -> []
+        
         /// gets dependencies from a MoreoverBody
         and getDepsFromMoreoverBody { mrvalso=_;
                                     mrvMrvs=rss;
@@ -58,16 +62,17 @@ namespace iml
         and getDepsFromConnectedStep :  ConnectedStep -> string list =
             function
             | WithStep (_,pc) -> getDepsFromProofCommand pc
+            | ThenStep pc -> getDepsFromProofCommand pc
             | _ -> []
         /// gets dependencies from a ProofCommand
         and getDepsFromProofCommand :  ProofCommand -> string list =
             function
             | PChaveShow (_,cp) -> getDepsFromClaimProof cp
             | PCbtain (_,cp) -> getDepsFromClaimProof cp
-        /// gets dependencies from a ClaimProof
-        and getDepsFromClaimProof {cpclaims=_;cpproof=p} : string list = 
-            getDepsFromProof p
 
+        /// gets dependencies from a ClaimProof
+        and getDepsFromClaimProof {cpclaims=_;cpproof=p} : string list = getDepsFromProof p
+            
         /// get dependencies from a proposition (theorem, lemma or corollary)
         let getDepsFromProposition (prop:Proposition) : string list =
             getDepsFromProof prop.propproof
@@ -118,8 +123,10 @@ namespace iml
 
         /// obtains dependecies from a Theory
         let getDepsFromTheory (t:Theory) : string list =
-            let nmAfterDot = skipUntilAfterDot t.name
+            let nmAfterDot name = skipUntilAfterDot t.name
             List.collect getDepsFromSubsection t.thsections
+            |> List.map skipUntilAfterDot
+            |> List.distinct // like Haskell's nub
 
 
         /// extracts useful information from a single theory
@@ -128,7 +135,7 @@ namespace iml
 
         /// the main function exported from the module -
         /// takes a list of parsed theories and returns a structure
-        // with all kinds of information that is needed
+        /// with all kinds of information that is needed
         let processTheories (ts:Theory list) : KnowledgeBase =
             { kbformalitems = getThmsDefsFromTheories ts; kbtheories = List.map getTheoryInfo ts }
 
@@ -149,7 +156,7 @@ namespace iml
         let getSFIname (sfi:SimpleFormalItem) : string =
             match sfi with
             | SimpleProp sp -> sp.spropname
-            | SimpleDef (nm,_) -> nm
+            | SimpleDef (nm,_) -> nm + "_def"
             | OtherSimpleItem -> "a context"
             
         
