@@ -91,6 +91,16 @@ lemma (in pmetric_space) pmetric_properties: shows
   "\<forall>x\<in>X.\<forall>y\<in>X.\<forall>z\<in>X. d`\<langle>x,z\<rangle> \<lsq> d`\<langle>x,y\<rangle> \<ra> d`\<langle>y,z\<rangle>"
   using pmetricAssum unfolding IsApseudoMetric_def by auto
 
+text\<open>The values of the metric are in the loop.\<close>
+
+lemma (in pmetric_space) pmetric_loop_valued: assumes "x\<in>X" "y\<in>X"
+  shows "d`\<langle>x,y\<rangle> \<in> L\<^sup>+" "d`\<langle>x,y\<rangle> \<in> L"
+proof -
+  from assms show "d`\<langle>x,y\<rangle> \<in> L\<^sup>+" using pmetric_properties(1) apply_funtype
+    by simp
+  then show "d`\<langle>x,y\<rangle> \<in> L" using Nonnegative_def by auto
+qed
+  
 text\<open>The definition of the disk in the notation used in the \<open>pmetric_space\<close> context:\<close>
 
 lemma (in pmetric_space) disk_definition: shows "disk(c,R) = {x\<in>X. d`\<langle>c,x\<rangle> \<ls> R}"
@@ -174,12 +184,45 @@ proof -
         using meet_val(1) by simp
       ultimately have "?m \<in> L\<^sub>+" "?m \<lsq> ?m\<^sub>U" "?m \<lsq> ?m\<^sub>V" by auto
       with \<open>c\<^sub>U \<in> X\<close> \<open>x \<in> disk(c\<^sub>U,R\<^sub>U)\<close> \<open>c\<^sub>V \<in> X\<close> \<open>x \<in> disk(c\<^sub>V,R\<^sub>V)\<close> \<open>U = disk(c\<^sub>U,R\<^sub>U)\<close> \<open>V = disk(c\<^sub>V,R\<^sub>V)\<close>
-      have "?W \<subseteq> U\<inter>V" using disk_in_disk by blast
+        have "?W \<subseteq> U\<inter>V" using disk_in_disk by blast
       moreover from assms(2) \<open>x\<in>X\<close> \<open>?m \<in> L\<^sub>+\<close> have "?W \<in> B" and "x\<in>?W" using center_in_disk
         by auto
       ultimately show ?thesis by auto
     qed      
   } then show ?thesis unfolding SatisfiesBaseCondition_def by auto
+qed
+
+text\<open>Disks centered at points farther away than the sum of radii do not overlap. \<close>
+lemma (in pmetric_space) far_disks: 
+  assumes "x\<in>X" "y\<in>X"  "r\<^sub>x\<ra>r\<^sub>y \<lsq> d`\<langle>x,y\<rangle>"
+  shows "disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y) = 0"
+proof -
+  { assume "disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y) \<noteq> 0"
+    then obtain z where "z \<in> disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y)" by auto
+    then have "z\<in>X" and "d`\<langle>x,z\<rangle> \<ra> d`\<langle>y,z\<rangle> \<ls> r\<^sub>x\<ra>r\<^sub>y"
+      using disk_definition add_ineq_strict by auto
+    moreover from assms(1,2) \<open>z\<in>X\<close> have "d`\<langle>x,y\<rangle> \<lsq> d`\<langle>x,z\<rangle> \<ra> d`\<langle>y,z\<rangle>"
+      using pmetric_properties(3,4) by auto
+    ultimately have "d`\<langle>x,y\<rangle> \<ls> r\<^sub>x\<ra>r\<^sub>y" using loop_strict_ord_trans 
+      by simp
+    with assms(3) have False using loop_strict_ord_trans by auto
+  } thus ?thesis by auto
+qed
+
+text\<open> If we have a loop element that is smaller than the distance between two points, then
+  we can separate these points with disks.\<close>
+
+lemma (in pmetric_space) disjoint_disks:
+  assumes "x\<in>X" "y\<in>X" "r\<^sub>x\<ls>d`\<langle>x,y\<rangle>"
+  shows "(\<rm>r\<^sub>x\<ad>(d`\<langle>x,y\<rangle>)) \<in> L\<^sub>+" and "disk(x,r\<^sub>x)\<inter>disk(y,\<rm>r\<^sub>x\<ad>(d`\<langle>x,y\<rangle>)) = 0"
+proof -
+  from assms(3) show "(\<rm>r\<^sub>x\<ad>(d`\<langle>x,y\<rangle>)) \<in> L\<^sub>+"
+    using ls_other_side posset_definition1 by simp
+  from assms(1,2,3) have "r\<^sub>x\<in>L" and "d`\<langle>x,y\<rangle> \<in> L" 
+    using less_members(1) pmetric_loop_valued(2) by auto
+  then have "r\<^sub>x\<ra>(\<rm>r\<^sub>x\<ad>(d`\<langle>x,y\<rangle>)) = d`\<langle>x,y\<rangle>" using lrdiv_props(6) by simp
+  with assms(1,2) \<open>d`\<langle>x,y\<rangle> \<in> L\<close> show "disk(x,r\<^sub>x)\<inter>disk(y,\<rm>r\<^sub>x\<ad>(d`\<langle>x,y\<rangle>)) = 0"
+    using loop_ord_refl far_disks by simp
 qed
 
 text\<open>Unions of disks form a topology, hence (pseudo)metric spaces are topological spaces. We have
@@ -205,6 +248,84 @@ proof -
     } thus "X \<subseteq> \<Union>B" by auto
   qed 
   ultimately show "\<Union>T = X" by simp
+qed
+
+text\<open>To define the \<open>metric_space\<close> locale we take the \<open>pmetric_space\<close> and add 
+  the assumption of identity of indiscernibles.\<close>
+
+locale metric_space =  pmetric_space +
+  assumes ident_indisc: "\<forall>x\<in>X. \<forall>y\<in>X. d`\<langle>x,y\<rangle>=\<zero> \<longrightarrow> x=y"
+
+text\<open>In the \<open>metric_space\<close> locale $d$ is a metric.\<close>
+
+lemma (in metric_space) d_metric: shows "IsAmetric(d,X,L,A,r)"
+  using pmetricAssum ident_indisc unfolding IsAmetric_def by simp
+
+text\<open>Distance of different points is greater than zero. \<close>
+
+lemma (in metric_space) dist_pos: assumes "x\<in>X" "y\<in>X" "x\<noteq>y"
+  shows "\<zero>\<ls>d`\<langle>x,y\<rangle>" "d`\<langle>x,y\<rangle> \<in> L\<^sub>+"
+proof -
+  from assms(1,2) have "d`\<langle>x,y\<rangle> \<in> L\<^sup>+" 
+    using pmetric_properties(1) apply_funtype by simp  
+  then have "\<zero> \<lsq> d`\<langle>x,y\<rangle>" using Nonnegative_def by auto
+  with assms show "d`\<langle>x,y\<rangle> \<in> L\<^sub>+" and "\<zero>\<ls>d`\<langle>x,y\<rangle>" 
+    using ident_indisc posset_definition posset_definition1 by auto
+qed
+
+text\<open>An ordered loop valued metric space is $T_2$ (i.e. Hausdorff).\<close>
+
+theorem (in metric_space) metric_space_T2:
+    assumes "IsMeetSemilattice(L\<^sub>+,r \<inter> L\<^sub>+\<times>L\<^sub>+)" "L\<^sub>+\<noteq>0"
+    defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}" 
+    defines "T \<equiv> {\<Union>A. A \<in> Pow(B)}"
+    shows "T {is T\<^sub>2}"
+proof -
+  { fix x y assume "x\<in>\<Union>T" "y\<in>\<Union>T" "x\<noteq>y"
+    from assms have "B\<subseteq>T" using pmetric_is_top(2) base_sets_open by auto
+    moreover have "\<exists>U\<in>B. \<exists>V\<in>B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0"
+    proof -
+      let ?R = "d`\<langle>x,y\<rangle>"
+      from assms have "\<Union>T = X" using pmetric_is_top(3) by simp
+      with \<open>x\<in>\<Union>T\<close> \<open>y\<in>\<Union>T\<close> have "x\<in>X" "y\<in>X" by auto
+      with \<open>x\<noteq>y\<close> have "?R\<in>L\<^sub>+" using dist_pos by simp
+      with assms(3) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?R) \<in> B" and "disk(y,?R) \<in> B"
+        by auto
+      { assume "disk(x,?R) \<inter> disk(y,?R) = 0"
+        moreover from assms(3) \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>?R\<in>L\<^sub>+\<close> have 
+            "disk(x,?R)\<in>B" "disk(y,?R)\<in>B" "x\<in>disk(x,?R)" "y\<in>disk(y,?R)"
+          using center_in_disk by auto
+        ultimately have "\<exists>U\<in>B. \<exists>V\<in>B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
+      }
+      moreover
+      { assume "disk(x,?R) \<inter> disk(y,?R) \<noteq> 0"
+        then obtain z where "z \<in> disk(x,?R)" and "z \<in> disk(y,?R)" 
+          by auto
+        then have "d`\<langle>x,z\<rangle> \<ls> ?R" using disk_definition by simp
+        then have "\<zero> \<ls> \<rm>d`\<langle>x,z\<rangle>\<ad>?R" using ls_other_side(1) by simp
+        let ?r = "\<rm>d`\<langle>x,z\<rangle>\<ad>?R"
+        have "?r\<ls>?R"
+        proof -
+          from \<open>z \<in> disk(y,?R)\<close> \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "z\<in>X" "x\<noteq>z"
+            using disk_definition pmetric_properties(3) by auto
+          with \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>z\<in>X\<close> show ?thesis
+            using pmetric_loop_valued dist_pos(1) subtract_pos(2) by simp 
+        qed
+        with \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?r)\<inter>disk(y,\<rm>?r\<ad>?R) = 0"
+          by (rule disjoint_disks(2))
+        moreover 
+        from \<open>\<zero>\<ls>?r\<close> \<open>?r\<ls>?R\<close> have "?r\<in>L\<^sub>+" "(\<rm>?r\<ad>?R) \<in> L\<^sub>+"
+          using ls_other_side posset_definition1 by auto
+        with assms(3) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have 
+            "disk(x,?r)\<in>B" "disk(y,\<rm>?r\<ad>(d`\<langle>x,y\<rangle>))\<in>B" and
+            "x\<in>disk(x,?r)" "y\<in>disk(y,\<rm>?r\<ad>(d`\<langle>x,y\<rangle>))"
+          using center_in_disk by auto
+        ultimately have "\<exists>U\<in>B. \<exists>V\<in>B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
+      }
+      ultimately show ?thesis by auto
+    qed
+    ultimately have "\<exists>U\<in>T. \<exists>V\<in>T. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
+  } thus ?thesis unfolding isT2_def by simp
 qed
 
 end

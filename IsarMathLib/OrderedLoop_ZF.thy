@@ -177,7 +177,8 @@ qed
 
 text\<open>We can cancel an element from both sides of a strict inequality on the left side. \<close>
 
-lemma (in loop1) strict_ineq_cancel_left: assumes "x\<in>L" "y\<in>L" "z\<in>L" and "z\<ra>x \<ls> z\<ra>y" 
+lemma (in loop1) strict_ineq_cancel_left: 
+  assumes "x\<in>L" "y\<in>L" "z\<in>L" and "z\<ra>x \<ls> z\<ra>y" 
   shows  "x\<ls>y"
   using assms ineq_cancel_left by auto
 
@@ -208,7 +209,6 @@ lemma (in loop1) posset_definition1:
   shows "x \<in> L\<^sub>+ \<longleftrightarrow> \<zero>\<ls>x" 
   using ordLoopAssum IsAnOrdLoop_def PositiveSet_def by auto
 
-
 text\<open> The order in an ordered loop is antisymmeric. \<close>
 
 lemma (in loop1) loop_ord_antisym: assumes "x\<lsq>y" and "y\<lsq>x"
@@ -228,6 +228,11 @@ proof -
   then have "\<langle>x,z\<rangle> \<in> r" by (rule Fol1_L3)
   thus ?thesis by simp
 qed
+
+text\<open> The loop order is reflexive. \<close>
+lemma (in loop1) loop_ord_refl: assumes "x\<in>L" shows "x\<lsq>x"
+  using assms ordLoopAssum unfolding IsAnOrdLoop_def IsPartOrder_def refl_def 
+  by simp
 
 text\<open> A form of mixed transitivity for the strict order: \<close>
 
@@ -249,6 +254,15 @@ proof -
   with assms show "x\<ls>z" using loop_ord_antisym by auto
 qed
 
+text\<open> Yet another form of mixed transitivity for the strict order: \<close>
+
+lemma (in loop1) loop_strict_ord_trans2: assumes "x\<ls>y" and "y\<ls>z"
+  shows "x\<ls>z"
+proof -
+  from assms have "x\<lsq>y" and "y\<lsq>z" by auto
+  then have "x\<lsq>z" by (rule loop_ord_trans)
+  with assms show "x\<ls>z" using loop_ord_antisym by auto
+qed
 
 text\<open> We can move an element to the other side of an inequality. Well, not exactly, but
   our notation creates an illusion to that effect. \<close>
@@ -293,5 +307,66 @@ proof -
   then show "(y\<rs>x) \<in> L\<^sub>+" using posset_definition1 by simp
 qed
 
-  
+text\<open>We can add sides of inequalities.\<close>
+
+lemma (in loop1) add_ineq: assumes "x\<lsq>y" "z\<lsq>t" 
+  shows "x\<ra>z \<lsq> y\<ra>t"
+proof -
+  from assms have "x\<ra>z \<lsq> y\<ra>z" 
+    using lsq_members(1) ord_trans_inv(1) by simp
+  with assms show ?thesis using lsq_members(2) ord_trans_inv(2) loop_ord_trans
+    by simp
+qed
+
+text\<open>We can add sides of strict inequalities. The proof uses a lemma that
+  relies on the antisymmetry of the order relation.\<close>
+
+lemma (in loop1) add_ineq_strict: assumes "x\<ls>y" "z\<ls>t" 
+  shows "x\<ra>z \<ls> y\<ra>t"
+proof -
+  from assms have "x\<ra>z \<ls> y\<ra>z" 
+    using less_members(1) strict_ord_trans_inv(1) by auto
+  moreover from assms have "y\<ra>z \<ls> y\<ra>t"
+    using less_members(2) strict_ord_trans_inv(2) by auto
+  ultimately show ?thesis by (rule loop_strict_ord_trans2)
+qed
+
+text\<open>We can add sides of inequalities one of which is strict. \<close>
+
+lemma (in loop1) add_ineq_strict1: assumes "x\<lsq>y" "z\<ls>t" 
+  shows "x\<ra>z \<ls> y\<ra>t" and "z\<ra>x \<ls> t\<ra>y" 
+proof -
+    from assms have "x\<ra>z \<lsq> y\<ra>z" 
+      using less_members(1) ord_trans_inv(1) by auto
+    with assms show "x\<ra>z \<ls> y\<ra>t"
+      using lsq_members(2) strict_ord_trans_inv(2) loop_strict_ord_trans
+      by blast
+    from assms have "z\<ra>x \<ls> t\<ra>x"
+      using lsq_members(1) strict_ord_trans_inv(1) by simp
+    with assms show "z\<ra>x \<ls> t\<ra>y"
+      using less_members(2) ord_trans_inv(2) loop_strict_ord_trans1
+      by blast
+qed
+
+text\<open>Subtracting a positive element decreases the value. \<close>
+
+lemma (in loop1) subtract_pos: assumes "x\<in>L" "\<zero>\<ls>y"
+  shows "x\<rs>y \<ls> x" and "(\<rm>y\<ad>x) \<ls> x"
+proof -
+  from assms(2) have "y\<in>L" using less_members(2) by simp
+  from assms(1) have "x\<lsq>x" 
+    using ordLoopAssum unfolding IsAnOrdLoop_def IsPartOrder_def refl_def
+    by simp
+  with assms(2) have "x\<ra>\<zero> \<ls> x\<ra>y"
+    using add_ineq_strict1(1) by simp 
+  with assms \<open>y\<in>L\<close> show "x\<rs>y \<ls> x"
+    using neut_props_loop(2) lrdiv_props(3) lrdiv_props(2) strict_ineq_cancel_right
+    by simp
+  from assms(2) \<open>x\<lsq>x\<close> have "\<zero>\<ra>x \<ls> y\<ra>x"
+    using add_ineq_strict1(2) by simp
+  with assms \<open>y\<in>L\<close> show "(\<rm>y\<ad>x) \<ls> x"
+    using neut_props_loop(2) lrdiv_props(6) lrdiv_props(5) strict_ineq_cancel_left
+    by simp
+qed
+
 end
