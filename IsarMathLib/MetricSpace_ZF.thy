@@ -312,7 +312,7 @@ proof -
             using pmetric_loop_valued dist_pos(1) subtract_pos(2) by simp 
         qed
         with \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?r)\<inter>disk(y,\<rm>?r\<ad>?R) = 0"
-          by (rule disjoint_disks(2))
+          by (rule disjoint_disks)
         moreover 
         from \<open>\<zero>\<ls>?r\<close> \<open>?r\<ls>?R\<close> have "?r\<in>L\<^sub>+" "(\<rm>?r\<ad>?R) \<in> L\<^sub>+"
           using ls_other_side posset_definition1 by auto
@@ -325,7 +325,7 @@ proof -
       ultimately show ?thesis by auto
     qed
     ultimately have "\<exists>U\<in>T. \<exists>V\<in>T. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
-  } thus ?thesis unfolding isT2_def by simp
+  } then show ?thesis unfolding isT2_def by simp
 qed
 
 end

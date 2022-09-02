@@ -16,10 +16,12 @@ isar2html2.0/isarhtml/*.html
 isar2html2.0/src/isar2html/bin
 isar2html2.0/test/isar2htmlTest/bin
 
-
 # handy link to isar2html executable
 isar2html/ih
 isar2html2.0/ih
+
+#isabelle produced backup files
+IsarMathLib/*.thy~
 
 
 # vscode
