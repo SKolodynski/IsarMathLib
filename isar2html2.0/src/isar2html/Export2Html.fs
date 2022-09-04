@@ -364,8 +364,7 @@ namespace iml
             match fit with 
             | Abbr abbr ->  (bf  "Abbreviation" |> par) + (isar2latex repls abbr.abbspec |> par)
                             |> mkformal ""
-            | Def def ->    ((bf  "Definition") + "\n" |> par) 
-                            + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")")
+            | Def def ->    ((bf  "Definition ")  + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")") + "\n" |> par)
                             +  (isar2latex repls def.def |> par)
                             |> mkformal ""
             | Loc loc ->    let (parent,vars) = loc.inheritsFrom
