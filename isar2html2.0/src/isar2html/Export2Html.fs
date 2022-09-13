@@ -368,10 +368,10 @@ namespace iml
                             +  (isar2latex repls def.def |> par)
                             |> mkformal ""
             | Loc loc ->    let (parent,vars) = loc.inheritsFrom
-                            (bf "Locale ") + loc.localename
-                            + (if parent.Length=0 then "" else " = " + parent
-                            + " " + (String.concat " " vars) + " +")
-                            + (List.map (exportLocaleItem repls) loc.localeItems |> String.concat " ")
+                            ((bf "Locale ") + loc.localename 
+                            + (if parent.Length=0 then "" 
+                                else (" = " + parent + " " + (String.concat " " vars) + " +")) |> par)
+                            + (List.map (exportLocaleItem repls) loc.localeItems |> String.concat "\n")
                             |> mkformal ""
             | Subloc subloc ->  (bf "Sublocale") + subloc.sublocalename + " &lt " + subloc.localename 
                                 + (exportProof repls mfii subloc.sublocproof |> par)
