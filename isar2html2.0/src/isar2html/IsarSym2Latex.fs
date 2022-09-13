@@ -168,6 +168,8 @@ namespace iml
                  ("IncludedSet(","\\text{IncludedSet}(")
                  ("InfCard(","\\text{InfCard}(")
                  ("inj(","\\text{inj}(")
+                 ("\\{is T_0\\}","\\text{ is }T_0")
+                 ("\\{is T_1\\}","\\text{ is }T_1")
                  ("\\{is T_2\\}","\\text{ is }T_2")
                  ("range(","\\text{range}(")
                  ("restrict(","\\text{restrict}(")
