@@ -474,8 +474,7 @@ qed
 
 text\<open>Complement of an open set is closed.\<close>
 
-lemma (in topology0) Top_3_L9: 
-  assumes A1: "A\<in>T" 
+lemma (in topology0) Top_3_L9: assumes A1: "A\<in>T" 
   shows "(\<Union>T - A) {is closed in} T"
 proof -
   from topSpaceAssum A1 have "\<Union>T - (\<Union>T - A) = A" and "\<Union>T - A \<subseteq> \<Union>T"

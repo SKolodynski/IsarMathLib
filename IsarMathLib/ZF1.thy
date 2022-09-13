@@ -402,5 +402,10 @@ text\<open>The family itself is in its supersets. \<close>
 lemma superset_gen: assumes "A\<subseteq>X" "A\<in>\<A>" shows "A \<in> Supersets(X,\<A>)"
   using assms Supersets_def by auto 
 
+text\<open>This can be done by the auto method, but sometimes takes a long time. \<close>
+
+lemma witness_exists: assumes "x\<in>X" and "\<phi>(x)" shows "\<exists>x\<in>X. \<phi>(x)"
+  using assms by auto
+
 end
 

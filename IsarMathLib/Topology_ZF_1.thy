@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2008  Slawomir Kolodynski
+    Copyright (C) 2005 - 2022  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -36,7 +36,7 @@ text\<open>In this theory file we study separation axioms and the notion of base
   subbase. Using the products of open sets as a subbase we define a natural
   topology on a product of two topological spaces.\<close>
 
-subsection\<open>Separation axioms.\<close>
+subsection\<open>Separation axioms\<close>
 
 text\<open>Topological spaces cas be classified according to certain properties
   called "separation axioms". In this section we define what it means that a 
@@ -110,7 +110,7 @@ proof -
   } then show "x=y" by auto
 qed
 
-subsection\<open>Bases and subbases.\<close>
+subsection\<open>Bases and subbases\<close>
 
 text\<open>Sometimes it is convenient to talk about topologies in terms of their bases
   and subbases. These are certain collections of open sets that define
@@ -568,5 +568,53 @@ proof -
   ultimately show ?thesis by (rule topology0.open_neigh_open)
 qed
 
+subsection\<open>Hausdorff spaces\<close>
+
+text\<open>In this section we study properties of Hausdorff spaces (sometimes called separated spaces) 
+  These are topological spaces that are $T_2$ as defined above.\<close>
+
+text\<open>A space is Hausdorff if and only if the diagonal $\Delta = \{\langle x,x\rangle : x\in X\}$
+  is closed in the product topology on $X\times X$. \<close>
+
+theorem t2_iff_diag_closed: assumes "T {is a topology}"
+  shows "T {is T\<^sub>2} \<longleftrightarrow> {\<langle>x,x\<rangle>. x\<in>\<Union>T} {is closed in} ProductTopology(T,T)"
+proof
+  let ?X = "\<Union>T"
+  from assms(1) have I: "topology0(ProductTopology(T,T))" 
+    using Top_1_4_T1(1) topology0_def by simp
+  assume "T {is T\<^sub>2}" show "{\<langle>x,x\<rangle>. x\<in>?X} {is closed in} ProductTopology(T,T)"
+  proof -
+    let ?D\<^sub>c = "?X\<times>?X - {\<langle>x,x\<rangle>. x\<in>?X}"
+    have "\<forall>p\<in>?D\<^sub>c. \<exists>W\<in>ProductTopology(T,T). p\<in>W \<and> W\<subseteq>?D\<^sub>c"
+    proof -
+      { fix p assume "p\<in>?D\<^sub>c"
+        then obtain x y where "p=\<langle>x,y\<rangle>" "x\<in>?X" "y\<in>?X" "x\<noteq>y" by auto
+        with \<open>T {is T\<^sub>2}\<close> obtain U V where "U\<in>T" "V\<in>T" "x\<in>U" "y\<in>V" "U\<inter>V = 0"
+          unfolding isT2_def by blast
+        with assms \<open>p=\<langle>x,y\<rangle>\<close> 
+          have "U\<times>V \<in> ProductTopology(T,T)" and "p\<in>U\<times>V \<and> U\<times>V \<subseteq> ?D\<^sub>c"
+          using prod_open_open_prod by auto
+        then have "\<exists>W\<in>ProductTopology(T,T). p\<in>W \<and> W\<subseteq>?D\<^sub>c"
+          by (rule witness_exists)
+      } thus ?thesis by auto
+    qed
+    with assms I show ?thesis using Top_1_4_T1(3) topology0.open_neigh_open 
+      unfolding IsClosed_def by auto
+  qed
+next
+  let ?X = "\<Union>T"
+  assume A: "{\<langle>x,x\<rangle>. x\<in>?X} {is closed in} ProductTopology(T,T)" show "T {is T\<^sub>2}"
+  proof -
+    { let ?D\<^sub>c = "?X\<times>?X - {\<langle>x,x\<rangle>. x\<in>?X}"
+      fix x y assume "x\<in>?X" "y\<in>?X" "x\<noteq>y" 
+      with assms A have "?D\<^sub>c \<in> ProductTopology(T,T)" and "\<langle>x,y\<rangle> \<in> ?D\<^sub>c"
+        using Top_1_4_T1(3) unfolding IsClosed_def by auto
+      with assms obtain U V where "U\<in>T" "V\<in>T" "U\<times>V \<subseteq> ?D\<^sub>c" "\<langle>x,y\<rangle> \<in> U\<times>V"
+        using prod_top_point_neighb by blast
+      moreover from \<open>U\<times>V \<subseteq> ?D\<^sub>c\<close> have "U\<inter>V = 0" by auto
+      ultimately have "\<exists>U\<in>T.\<exists>V\<in>T. x\<in>U \<and> y\<in>V \<and> U\<inter>V=0" by auto
+    } then show "T {is T\<^sub>2}" unfolding isT2_def by simp
+  qed
+qed
 
 end
