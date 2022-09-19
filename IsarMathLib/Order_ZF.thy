@@ -1,7 +1,7 @@
 (*   This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2008  Slawomir Kolodynski
+    Copyright (C) 2005 - 2022  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -34,7 +34,7 @@ theory Order_ZF imports Fol1
 begin
 
 text\<open>This theory file considers various notion related to order. We redefine
-  the notions of a total order, linear order and partial order to have the 
+  the notions of a preorder, directed set, total order, linear order and partial order to have the 
   same terminology as Wikipedia (I found it very consistent across different 
   areas of math). We also define and study the notions of intervals and bounded
   sets. We show the inclusion relations between the intervals with endpoints
@@ -63,14 +63,46 @@ text\<open>A relation $r$ is a partial order on $X$ if it is reflexive on $X$
 \<close>
 
 definition
-  "IsPartOrder(X,r) \<equiv> (refl(X,r) \<and> antisym(r) \<and> trans(r))"
+  "IsPartOrder(X,r) \<equiv> refl(X,r) \<and> antisym(r) \<and> trans(r)"
+
+text\<open>A relation that is reflexive and transitive is called a \<open>preorder\<close>.\<close>
+
+definition
+  "IsPreorder(X,r) \<equiv> refl(X,r) \<and> trans(r)"
+
+text\<open>We say that a relation $r$ up-directs a set
+  if every two-element subset of $X$ has an upper bound. \<close>
+
+definition
+  UpDirects ("_ {up-directs} _" 90)
+  where "r {up-directs} X \<equiv> \<forall>x\<in>X.\<forall>y\<in>X.\<exists>z\<in>X. \<langle>x,z\<rangle> \<in> r \<and> \<langle>y,z\<rangle> \<in> r"
+
+text\<open>Analogously we say that a relation $r$ down-directs a set
+  if every two-element subset of $X$ has a lower bound. \<close>
+
+definition
+  DownDirects ("_ {down-directs} _" 90)
+  where "r {down-directs} X \<equiv> \<forall>x\<in>X.\<forall>y\<in>X.\<exists>z\<in>X. \<langle>z,x\<rangle> \<in> r \<and> \<langle>z,y\<rangle> \<in> r"
+
+text\<open>Typically the notion that is actually defined is the notion of a \<open>directed set\<close>. 
+  or an \<open>upward directed set\<close>. This is a nonempty set $X$ together which a preorder $r$ 
+  such that $r$ up-directs $X$. We set that up in separate definitions as we sometimes want to
+  use an upward or downward directed set with a partial order rather than a preorder. \<close>
+
+definition
+  "IsUpDirectedSet(X,r) \<equiv> IsPreorder(X,r) \<and> (r {up-directs} X)"
+
+text\<open>We define the notion of a \<open>downward directed set\<close> analogously.\<close>
+
+definition
+  "IsDownDirectedSet(X,r) \<equiv> IsPreorder(X,r) \<and> (r {down-directs} X)"
 
 text\<open>We define a linear order as a binary relation that is antisymmetric, 
   transitive and total. Note that this terminology is different than the
   one used the standard Order.thy file.\<close>
 
 definition
-  "IsLinOrder(X,r) \<equiv> ( antisym(r) \<and> trans(r) \<and> (r {is total on} X))"
+  "IsLinOrder(X,r) \<equiv> antisym(r) \<and> trans(r) \<and> (r {is total on} X)"
 
 text\<open>A set is bounded above if there is that is an upper
   bound for it,  i.e. there are some $u$ such that 

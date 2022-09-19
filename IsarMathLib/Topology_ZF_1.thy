@@ -423,7 +423,7 @@ proof -
     using base_sets_open by simp
 qed
 
-text\<open>Sets that are open in th product topology are contained in the product
+text\<open>Sets that are open in the product topology are contained in the product
   of the carrier.\<close>
 
 lemma prod_open_type: assumes A1: "T {is a topology}"  "S {is a topology}" and
@@ -432,6 +432,26 @@ lemma prod_open_type: assumes A1: "T {is a topology}"  "S {is a topology}" and
 proof -
   from A2 have "V \<subseteq> \<Union> ProductTopology(T,S)" by auto
   with A1 show ?thesis using Top_1_4_T1 by simp
+qed
+
+text\<open>A reverse of \<open>prod_top_point_neighb\<close>: if each point of set has an neighborhood in the set
+  that is a cartesian product of open sets, then the set is open.\<close>
+
+lemma point_neighb_prod_top: 
+  assumes "T {is a topology}"  "S {is a topology}"
+  and "\<forall>p\<in>V. \<exists>U\<in>T.\<exists>W\<in>S. p\<in>U\<times>W \<and> U\<times>W \<subseteq> V"
+shows "V \<in> ProductTopology(T,S)"
+proof -
+  from assms(1,2) have I: "topology0(ProductTopology(T,S))" 
+    using Top_1_4_T1(1) topology0_def by simp
+  moreover 
+  { fix p assume "p\<in>V"
+    with assms(3) obtain U W where "U\<in>T" "W\<in>S" "p\<in>U\<times>W" "U\<times>W \<subseteq> V"
+      by auto
+    with assms(1,2) have "\<exists>N\<in>ProductTopology(T,S). p\<in>N \<and> N\<subseteq>V"
+      using prod_open_open_prod by auto
+  } hence "\<forall>p\<in>V. \<exists>N\<in>ProductTopology(T,S). p\<in>N \<and> N\<subseteq>V" by blast
+  ultimately show ?thesis using topology0.open_neigh_open by simp
 qed
 
 text\<open>Suppose we have subsets $A\subseteq X, B\subseteq Y$, where
@@ -585,20 +605,17 @@ proof
   assume "T {is T\<^sub>2}" show "{\<langle>x,x\<rangle>. x\<in>?X} {is closed in} ProductTopology(T,T)"
   proof -
     let ?D\<^sub>c = "?X\<times>?X - {\<langle>x,x\<rangle>. x\<in>?X}"
-    have "\<forall>p\<in>?D\<^sub>c. \<exists>W\<in>ProductTopology(T,T). p\<in>W \<and> W\<subseteq>?D\<^sub>c"
+    have "\<forall>p\<in>?D\<^sub>c.\<exists>U\<in>T.\<exists>V\<in>T. p\<in>U\<times>V \<and> U\<times>V \<subseteq> ?D\<^sub>c"
     proof -
       { fix p assume "p\<in>?D\<^sub>c"
         then obtain x y where "p=\<langle>x,y\<rangle>" "x\<in>?X" "y\<in>?X" "x\<noteq>y" by auto
         with \<open>T {is T\<^sub>2}\<close> obtain U V where "U\<in>T" "V\<in>T" "x\<in>U" "y\<in>V" "U\<inter>V = 0"
           unfolding isT2_def by blast
-        with assms \<open>p=\<langle>x,y\<rangle>\<close> 
-          have "U\<times>V \<in> ProductTopology(T,T)" and "p\<in>U\<times>V \<and> U\<times>V \<subseteq> ?D\<^sub>c"
-          using prod_open_open_prod by auto
-        then have "\<exists>W\<in>ProductTopology(T,T). p\<in>W \<and> W\<subseteq>?D\<^sub>c"
-          by (rule witness_exists)
-      } thus ?thesis by auto
+        with assms \<open>p=\<langle>x,y\<rangle>\<close> have "\<exists>U\<in>T.\<exists>V\<in>T. p\<in>U\<times>V \<and> U\<times>V \<subseteq> ?D\<^sub>c" by auto
+      } hence "\<forall>p. p\<in>?D\<^sub>c \<longrightarrow> (\<exists>U\<in>T.\<exists>V\<in>T. p\<in>U\<times>V \<and> U\<times>V \<subseteq> ?D\<^sub>c)" by simp
+      then show ?thesis by (rule exists_in_set)
     qed
-    with assms I show ?thesis using Top_1_4_T1(3) topology0.open_neigh_open 
+    with assms show ?thesis using Top_1_4_T1(3) point_neighb_prod_top 
       unfolding IsClosed_def by auto
   qed
 next

@@ -171,6 +171,8 @@ namespace iml
                  ("\\{is T_0\\}","\\text{ is }T_0")
                  ("\\{is T_1\\}","\\text{ is }T_1")
                  ("\\{is T_2\\}","\\text{ is }T_2")
+                 ("\\{up-directs\\}","\\text{ up-directs }")
+                 ("\\{down-directs\\}","\\text{ down-directs }")
                  ("range(","\\text{range}(")
                  ("restrict(","\\text{restrict}(")
                  ("roelckeUniformity","\\text{roelckeUniformity}")

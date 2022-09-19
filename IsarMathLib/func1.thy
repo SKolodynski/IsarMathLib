@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2019  Slawomir Kolodynski
+    Copyright (C) 2005 - 2022  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -205,6 +205,7 @@ next
       using apply_equality by auto
   } thus "f \<subseteq> {\<langle>x, f`(x)\<rangle>. x \<in> X}" by auto
 qed
+
 
 text\<open>The range of function that maps $X$ into $Y$ is contained in $Y$.\<close>
 
@@ -514,7 +515,6 @@ proof
   qed
 qed
 
-
 text\<open>The inverse image of a set does not change when we intersect
   the set with the image of the domain.\<close>
 
@@ -603,6 +603,22 @@ proof
     with A1 A2 have "\<langle>x,y\<rangle> \<in> f" using apply_iff by force  
     with A1 A2 \<open>x\<in>A\<close> show "y \<in> f``(A)" using image_iff by auto
   qed
+qed  
+
+text\<open>A technical lemma about graphs of functions: if we have two disjoint sets $A$ and $B$
+  then the cartesian product of the inverse image of $A$ and $B$ is disjoint
+  with (the graph of) $f$.\<close>
+
+lemma vimage_prod_dis_graph: assumes "f:X\<rightarrow>Y" "A\<inter>B = 0"
+  shows "f-``(A)\<times>B \<inter> f = 0"
+proof -
+  { assume "f-``(A)\<times>B \<inter> f \<noteq> 0"
+    then obtain p where "p \<in> f-``(A)\<times>B" and "p\<in>f" by blast
+    from assms(1) \<open>p\<in>f\<close> have "p \<in> {\<langle>x, f`(x)\<rangle>. x \<in> X}" 
+      using fun_is_set_of_pairs by simp
+    then obtain x where "p = \<langle>x, f`(x)\<rangle>" by blast
+    with assms \<open>p \<in> f-``(A)\<times>B\<close> have False using func1_1_L15 by auto
+  } thus ?thesis by auto
 qed
 
 text\<open>The image of a set contained in domain under identity is the same set.\<close>
@@ -623,7 +639,7 @@ lemma singleton_image:
   using assms func_imagedef by auto
 
 text\<open>If an element of the domain of a function belongs to a set, 
-  then its value belongs to the imgage of that set.\<close>
+  then its value belongs to the image of that set.\<close>
 
 lemma func1_1_L15D: assumes "f:X\<rightarrow>Y"  "x\<in>A"  "A\<subseteq>X"
   shows "f`(x) \<in> f``(A)"

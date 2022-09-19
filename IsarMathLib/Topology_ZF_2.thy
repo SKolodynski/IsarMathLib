@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2008  Slawomir Kolodynski
+    Copyright (C) 2005 - 2022  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -302,6 +302,59 @@ lemma comp_cont3:
   assumes "IsContinuous(T,S,f)" and "IsContinuous(S,R,g)" and "IsContinuous(R,P,h)"
   shows "IsContinuous(T,P,h O g O f)"
   using assms IsContinuous_def vimage_comp by simp
+
+text\<open>The graph of a continuous function into a Hausdorff topological space is closed
+  in the product topology. Recall that in ZF a function is the same as its graph.\<close>
+
+lemma (in two_top_spaces0) into_T2_graph_closed:
+  assumes "f {is continuous}" "\<tau>\<^sub>2 {is T\<^sub>2}"
+  shows "f {is closed in} ProductTopology(\<tau>\<^sub>1,\<tau>\<^sub>2)"
+proof -
+  from fmapAssum have "f = {\<langle>x,f`(x)\<rangle>. x\<in>X\<^sub>1}" using fun_is_set_of_pairs
+    by simp
+  let ?f\<^sub>c = "X\<^sub>1\<times>X\<^sub>2 - f"
+  have "?f\<^sub>c \<in> ProductTopology(\<tau>\<^sub>1,\<tau>\<^sub>2)"
+  proof -
+    { fix p assume "p\<in>?f\<^sub>c"
+      then have "p \<in> X\<^sub>1\<times>X\<^sub>2" and "p \<notin> f" by auto
+      from \<open>p\<in>X\<^sub>1\<times>X\<^sub>2\<close> obtain x y where "x\<in>X\<^sub>1" "y\<in>X\<^sub>2" "p = \<langle>x,y\<rangle>"
+        by auto
+      have "y\<noteq>f`(x)"
+      proof -
+        { assume "y=f`(x)"
+          with \<open>x\<in>X\<^sub>1\<close> \<open>p = \<langle>x,y\<rangle>\<close> have "p \<in> {\<langle>x,f`(x)\<rangle>. x\<in>X\<^sub>1}" by auto
+          with \<open>f = {\<langle>x,f`(x)\<rangle>. x\<in>X\<^sub>1}\<close> \<open>p \<notin> f\<close> have False by auto
+        } thus "y\<noteq>f`(x)" by auto
+      qed
+      from fmapAssum \<open>x\<in>X\<^sub>1\<close> have "f`(x) \<in> X\<^sub>2" by (rule apply_funtype)
+      with \<open>y\<in>X\<^sub>2\<close>  have "y\<in>\<Union>\<tau>\<^sub>2" "f`(x) \<in> \<Union>\<tau>\<^sub>2" by auto
+      with assms(2) \<open>y\<noteq>f`(x)\<close> obtain U V 
+        where "U\<in>\<tau>\<^sub>2" "V\<in>\<tau>\<^sub>2" "y\<in>U" "f`(x)\<in>V" "U\<inter>V = 0"
+        unfolding isT2_def by blast
+      let ?W = "f-``(V)"
+      have "?W\<in>\<tau>\<^sub>1" "?W\<subseteq>X\<^sub>1" "U\<subseteq>X\<^sub>2" "x\<in>?W" "p\<in>?W\<times>U" "f``(?W) \<subseteq> V"
+      proof -
+        from assms(1) have "IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>2,f)" by simp
+        with \<open>V\<in>\<tau>\<^sub>2\<close> \<open>U\<in>\<tau>\<^sub>2\<close> show "?W\<in>\<tau>\<^sub>1" "?W\<subseteq>X\<^sub>1" "U\<subseteq>X\<^sub>2" 
+          unfolding IsContinuous_def by auto
+        from fmapAssum \<open>x\<in>X\<^sub>1\<close> \<open>f`(x)\<in>V\<close> show "x\<in>?W" using func1_1_L15 
+          by auto
+        with \<open>y\<in>U\<close> \<open>y\<in>U\<close> \<open>p = \<langle>x,y\<rangle>\<close> show  "p\<in>?W\<times>U" by simp
+        from fmapAssum show "f``(?W) \<subseteq> V" 
+          using fun_is_fun function_image_vimage by simp 
+      qed
+      from fmapAssum \<open>U\<inter>V = 0\<close> \<open>?W\<subseteq>X\<^sub>1\<close> \<open>U\<subseteq>X\<^sub>2\<close> have "?W\<times>U \<subseteq> ?f\<^sub>c"
+        using vimage_prod_dis_graph by blast 
+      with \<open>?W\<in>\<tau>\<^sub>1\<close> \<open>U\<in>\<tau>\<^sub>2\<close> \<open>p\<in>?W\<times>U\<close> have "\<exists>W\<in>\<tau>\<^sub>1.\<exists>U\<in>\<tau>\<^sub>2. p\<in>W\<times>U \<and> W\<times>U \<subseteq> ?f\<^sub>c" 
+        by blast
+    } 
+    with tau1_is_top tau2_is_top show "?f\<^sub>c \<in> ProductTopology(\<tau>\<^sub>1,\<tau>\<^sub>2)"
+      using point_neighb_prod_top by simp    
+  qed
+  with fmapAssum tau1_is_top tau2_is_top show ?thesis
+    using fun_subset_prod Top_1_4_T1(3) unfolding IsClosed_def
+    by auto
+qed
 
 subsection\<open>Homeomorphisms\<close>
 

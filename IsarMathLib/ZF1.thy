@@ -321,7 +321,11 @@ text\<open>A basic property of sets defined by comprehension.\<close>
 lemma comprehension: assumes "a \<in> {x\<in>X. p(x)}"
   shows "a\<in>X" and "p(a)" using assms by auto
 
-text\<open> The image of a set by a greater relation is greater. \<close>
+text\<open>A basic property of a set defined by another type of comprehension.\<close>
+lemma comprehension_repl: assumes "y \<in> {p(x). x\<in>X}" 
+  shows "\<exists>x\<in>X. y = p(x)" using assms by auto
+
+text\<open>The image of a set by a greater relation is greater. \<close>
 
 lemma image_rel_mono: assumes "r\<subseteq>s" shows "r``(A) \<subseteq> s``(A)" 
   using assms by auto 
@@ -406,6 +410,11 @@ text\<open>This can be done by the auto method, but sometimes takes a long time.
 
 lemma witness_exists: assumes "x\<in>X" and "\<phi>(x)" shows "\<exists>x\<in>X. \<phi>(x)"
   using assms by auto
+
+text\<open>The next lemma has to be used as a rule in some rare cases. \<close>
+
+lemma exists_in_set: assumes "\<forall>x. x\<in>A \<longrightarrow> \<phi>(x)" shows "\<forall>x\<in>A. \<phi>(x)"
+  using assms by simp
 
 end
 
