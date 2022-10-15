@@ -831,8 +831,75 @@ proof -
   ultimately show ?thesis by (rule cart_prod_cont)
 qed
 
+text\<open>Having two continuous mappings $f,g$ we can construct a third one with values
+  in the cartesian product of the codomains of $f,g$, 
+  defined by $x\mapsto \langle f(x),g(x) \rangle$. \<close>
 
- subsection\<open>Pasting lemma\<close>
+lemma (in prod_top_spaces0) cont_funcs_prod: 
+  assumes "f:X\<^sub>1\<rightarrow>X\<^sub>2" "g:X\<^sub>1\<rightarrow>X\<^sub>3" "IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>2,f)" "IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>3,g)"
+  defines "h \<equiv> {\<langle>x,\<langle>f`(x),g`(x)\<rangle>\<rangle>. x\<in>X\<^sub>1}"
+  shows "IsContinuous(\<tau>\<^sub>1,ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>3),h)"
+proof -
+  let ?B = "ProductCollection(\<tau>\<^sub>2,\<tau>\<^sub>3)"
+  have 
+    "two_top_spaces0(\<tau>\<^sub>1,ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>3),h)"
+    "?B {is a base for} ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>3)"
+     "\<forall>W\<in>?B. h-``(W) \<in> \<tau>\<^sub>1"
+  proof -
+    from tau1_is_top tau2_is_top tau3_is_top assms(1,2,5)
+      show "two_top_spaces0(\<tau>\<^sub>1,ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>3),h)"
+        using vimage_prod Top_1_4_T1(1,3) unfolding two_top_spaces0_def 
+        by simp
+    from tau2_is_top tau3_is_top show"?B {is a base for} ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>3)"
+      using Top_1_4_T1(2) by simp
+    from tau1_is_top assms show "\<forall>W\<in>?B. h-``(W) \<in> \<tau>\<^sub>1"
+      unfolding ProductCollection_def IsContinuous_def IsATopology_def
+      using vimage_prod by simp
+  qed
+  then show ?thesis by (rule two_top_spaces0.Top_ZF_2_1_L5)
+qed
+
+text\<open>Two continuous functions into a Hausdorff space are equal on a closed set.
+  Note that in the lemma below $f$ is assumed to map $X_1$ to $X_2$ in the locale, we only
+  need to add a similar assumption for the second function. \<close>
+
+lemma (in two_top_spaces0) two_fun_eq_closed:
+  assumes "g:X\<^sub>1\<rightarrow>X\<^sub>2" "f {is continuous}" "g {is continuous}"  "\<tau>\<^sub>2 {is T\<^sub>2}"
+  shows "{x\<in>X\<^sub>1. f`(x)=g`(x)} {is closed in} \<tau>\<^sub>1"
+proof -
+  let ?D = "{x\<in>X\<^sub>1. f`(x)=g`(x)}"
+  let ?h = "{\<langle>x,\<langle>f`(x),g`(x)\<rangle>\<rangle>. x\<in>X\<^sub>1}"
+  have "?h-``({\<langle>y,y\<rangle>. y\<in>X\<^sub>2}) {is closed in} \<tau>\<^sub>1"
+    proof -
+      have "two_top_spaces0(\<tau>\<^sub>1,ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>2),?h)"
+      proof
+        from tau1_is_top tau2_is_top
+        show "\<tau>\<^sub>1 {is a topology}" and "ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>2) {is a topology}"
+          using Top_1_4_T1(1) by auto
+        from tau1_is_top tau2_is_top fmapAssum assms(1)
+        show "?h : \<Union>\<tau>\<^sub>1 \<rightarrow> \<Union>ProductTopology(\<tau>\<^sub>2, \<tau>\<^sub>2)"
+          using vimage_prod(1) Top_1_4_T1(3) by simp
+      qed
+      moreover 
+      have "IsContinuous(\<tau>\<^sub>1,ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>2),?h)"
+      proof -
+        from tau1_is_top tau2_is_top have "prod_top_spaces0(\<tau>\<^sub>1,\<tau>\<^sub>2,\<tau>\<^sub>2)"
+          unfolding prod_top_spaces0_def by simp
+        with fmapAssum assms(1,2,3) show ?thesis
+          using prod_top_spaces0.cont_funcs_prod by simp 
+      qed
+      moreover 
+      from tau2_is_top assms(4) 
+        have "{\<langle>y,y\<rangle>. y\<in>X\<^sub>2} {is closed in} ProductTopology(\<tau>\<^sub>2,\<tau>\<^sub>2)"
+          using t2_iff_diag_closed by simp 
+      ultimately show ?thesis using two_top_spaces0.TopZF_2_1_L1 
+        by simp
+    qed 
+  with fmapAssum assms(1) show ?thesis using vimage_prod(4)
+    by simp
+qed
+
+subsection\<open>Pasting lemma\<close>
 
 text\<open>The classical pasting lemma states that if $U_1,U_2$ are both open (or closed) and a function
   is continuous when restricted to both $U_1$ and $U_2$ then it is continuous

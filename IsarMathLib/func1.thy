@@ -621,6 +621,32 @@ proof -
   } thus ?thesis by auto
 qed
 
+text\<open>Suppose we have two functions $f:X\rightarrow Y$ and $g:X\rightarrow Z$ and 
+  the third one is defined as $h:X\rightarrow Y\times Z$, $x\mapsto \langle f(x),g(x)\rangle$.
+  Given two sets $U$, $V$ we have $h^{-1}(U\times V) = (f^{-1}(U)) \inter (g^{-1}(V))$. 
+  We also show that the set where the function $f,g$ are equal is the same as 
+  $h^{-1}(\{ \langle y,y\rangle : y\in X\}$. 
+  It is a bit surprising that we get the last identity without the assumption that $Y=Z$. \<close>
+
+lemma vimage_prod: 
+  assumes "f:X\<rightarrow>Y" "g:X\<rightarrow>Z" 
+  defines "h \<equiv> {\<langle>x,\<langle>f`(x),g`(x)\<rangle>\<rangle>. x\<in>X}"
+  shows 
+    "h:X\<rightarrow>Y\<times>Z" 
+    "\<forall>x\<in>X. h`(x) = \<langle>f`(x),g`(x)\<rangle>" 
+    "h-``(U\<times>V) = f-``(U) \<inter> g-``(V)"
+    "{x\<in>X. f`(x) = g`(x)} = h-``({\<langle>y,y\<rangle>. y\<in>Y})"
+proof - 
+  from assms show "h:X\<rightarrow>Y\<times>Z" using apply_funtype ZF_fun_from_total
+    by simp
+  with assms(3) show I: "\<forall>x\<in>X. h`(x) = \<langle>f`(x),g`(x)\<rangle>" 
+    using ZF_fun_from_tot_val by simp
+  with assms(1,2) \<open>h:X\<rightarrow>Y\<times>Z\<close> show "h-``(U\<times>V) = f-``(U) \<inter> g-``(V)"
+    using func1_1_L15 by auto
+  from assms(1) I \<open>h:X\<rightarrow>Y\<times>Z\<close> show "{x\<in>X. f`(x) = g`(x)} = h-``({\<langle>y,y\<rangle>. y\<in>Y})"
+    using apply_funtype func1_1_L15 by auto
+qed
+
 text\<open>The image of a set contained in domain under identity is the same set.\<close>
 
 lemma image_id_same: assumes "A\<subseteq>X" shows "id(X)``(A) = A"
