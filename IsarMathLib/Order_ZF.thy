@@ -75,22 +75,23 @@ text\<open>We say that a relation $r$ up-directs a set
 
 definition
   UpDirects ("_ {up-directs} _" 90)
-  where "r {up-directs} X \<equiv> \<forall>x\<in>X.\<forall>y\<in>X.\<exists>z\<in>X. \<langle>x,z\<rangle> \<in> r \<and> \<langle>y,z\<rangle> \<in> r"
+  where "r {up-directs} X \<equiv> X\<noteq>0 \<and> (\<forall>x\<in>X.\<forall>y\<in>X.\<exists>z\<in>X. \<langle>x,z\<rangle> \<in> r \<and> \<langle>y,z\<rangle> \<in> r)"
 
 text\<open>Analogously we say that a relation $r$ down-directs a set
   if every two-element subset of $X$ has a lower bound. \<close>
 
 definition
   DownDirects ("_ {down-directs} _" 90)
-  where "r {down-directs} X \<equiv> \<forall>x\<in>X.\<forall>y\<in>X.\<exists>z\<in>X. \<langle>z,x\<rangle> \<in> r \<and> \<langle>z,y\<rangle> \<in> r"
+  where "r {down-directs} X \<equiv> X\<noteq>0 \<and> (\<forall>x\<in>X.\<forall>y\<in>X.\<exists>z\<in>X. \<langle>z,x\<rangle> \<in> r \<and> \<langle>z,y\<rangle> \<in> r)"
 
 text\<open>Typically the notion that is actually defined is the notion of a \<open>directed set\<close>. 
-  or an \<open>upward directed set\<close>. This is a nonempty set $X$ together which a preorder $r$ 
+  or an \<open>upward directed set\<close>, rather than $r$ down-directs $X$ (or $r$ up-directs $X$). 
+  This is a nonempty set $X$ together which a preorder $r$ 
   such that $r$ up-directs $X$. We set that up in separate definitions as we sometimes want to
   use an upward or downward directed set with a partial order rather than a preorder. \<close>
 
 definition
-  "IsUpDirectedSet(X,r) \<equiv> IsPreorder(X,r) \<and> (r {up-directs} X)"
+  "IsUpDirectedSet(X,r) \<equiv>  IsPreorder(X,r) \<and> (r {up-directs} X)"
 
 text\<open>We define the notion of a \<open>downward directed set\<close> analogously.\<close>
 
@@ -202,6 +203,18 @@ definition
   IsComplete ("_ {is complete}") where
   "r {is complete} \<equiv> 
   \<forall>A. IsBoundedAbove(A,r) \<and> A\<noteq>0 \<longrightarrow> HasAminimum(r,\<Inter>a\<in>A. r``{a})"
+
+text\<open>If a relation down-directs a set, then a larger one does as well.\<close>
+
+lemma down_dir_mono: assumes "r {down-directs} X" "r\<subseteq>R"
+  shows "R {down-directs} X" using assms unfolding DownDirects_def
+  by blast
+
+text\<open>If a relation up-directs a set, then a larger one does as well.\<close>
+
+lemma up_dir_mono: assumes "r {up-directs} X" "r\<subseteq>R"
+  shows "R {up-directs} X" using assms unfolding UpDirects_def
+  by blast
 
 text\<open>The essential condition to show that a total relation is reflexive.\<close>
 

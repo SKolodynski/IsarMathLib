@@ -148,6 +148,33 @@ proof -
     using inf_in_space(2) by auto
 qed
 
+text\<open>In a (nonempty) meet semi-lattice the relation down-directs the set. \<close>
+
+lemma meet_down_directs: assumes "IsMeetSemilattice(L,r)" "L\<noteq>0"
+  shows "r {down-directs} L"
+proof -
+  { fix x y assume "x\<in>L" "y\<in>L"
+    let ?m = "Meet(L,r)`\<langle>x,y\<rangle>"
+    from assms(1) \<open>x\<in>L\<close> \<open>y\<in>L\<close> have  "?m\<in>L" "\<langle>?m,x\<rangle> \<in> r" "\<langle>?m,y\<rangle> \<in> r"
+      using meet_val by auto
+  } hence "\<forall>x\<in>L. \<forall>y\<in>L. \<exists>m\<in>L. \<langle>m,x\<rangle> \<in> r \<and>\<langle>m,y\<rangle> \<in> r"
+    by blast
+  with assms(2) show ?thesis unfolding DownDirects_def by simp
+qed
+
+text\<open>In a (nonempty) join semi-lattice the relation up-directs the set. \<close>
+
+lemma join_up_directs: assumes "IsJoinSemilattice(L,r)" "L\<noteq>0"
+  shows "r {up-directs} L"
+proof -
+  { fix x y assume "x\<in>L" "y\<in>L"
+    let ?m = "Join(L,r)`\<langle>x,y\<rangle>"
+    from assms(1) \<open>x\<in>L\<close> \<open>y\<in>L\<close> have  "?m\<in>L" "\<langle>x,?m\<rangle> \<in> r" "\<langle>y,?m\<rangle> \<in> r"
+      using join_val by auto
+  } hence "\<forall>x\<in>L. \<forall>y\<in>L. \<exists>m\<in>L. \<langle>x,m\<rangle> \<in> r \<and>\<langle>y,m\<rangle> \<in> r"
+    by blast
+  with assms(2) show ?thesis unfolding UpDirects_def by simp
+qed
 
 text\<open> The next locale defines a a notation for join-semilattice. We will use the $\sqcup$ symbol
   rather than more common $\vee$ to avoid confusion with logical "or". \<close>

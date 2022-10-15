@@ -157,7 +157,7 @@ text\<open> If we assume that the order on the group makes the positive set a me
   to "each two-element subset of $G_+$ has a lower bound in $G_+$", but we don't do that here. \<close>
 
 lemma (in pmetric_space) disks_form_base: 
-  assumes "IsMeetSemilattice(L\<^sub>+,r \<inter> L\<^sub>+\<times>L\<^sub>+)"
+  assumes "r {down-directs} L\<^sub>+"
   defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}"
   shows "B {satisfies the base condition}"
 proof -
@@ -174,18 +174,14 @@ proof -
       let ?m\<^sub>V = "\<rm> d`\<langle>c\<^sub>V,x\<rangle> \<ad> R\<^sub>V"
       from \<open>c\<^sub>U\<in>X\<close> \<open>x\<in>disk(c\<^sub>U,R\<^sub>U)\<close> \<open>c\<^sub>V\<in>X\<close> \<open>x\<in>disk(c\<^sub>V,R\<^sub>V)\<close> have "?m\<^sub>U\<in>L\<^sub>+" and "?m\<^sub>V\<in>L\<^sub>+" 
         using radius_in_loop(4) by auto
-      let ?m = "Meet(L\<^sub>+,r \<inter> L\<^sub>+\<times>L\<^sub>+)`\<langle>?m\<^sub>U,?m\<^sub>V\<rangle>"
-      let ?W = "disk(x,?m)"
-      from assms(1) \<open>?m\<^sub>U \<in> L\<^sub>+\<close> \<open>?m\<^sub>V \<in> L\<^sub>+\<close> have  "\<langle>?m,?m\<^sub>U\<rangle> \<in> r \<inter> L\<^sub>+\<times>L\<^sub>+" 
-        using meet_val(3) by blast
-      moreover from assms(1) \<open>?m\<^sub>U \<in> L\<^sub>+\<close> \<open>?m\<^sub>V \<in> L\<^sub>+\<close> have  "\<langle>?m,?m\<^sub>V\<rangle> \<in> r \<inter> L\<^sub>+\<times>L\<^sub>+" 
-        using meet_val(4) by blast
-      moreover from assms(1) \<open>?m\<^sub>U \<in> L\<^sub>+\<close> \<open>?m\<^sub>V \<in> L\<^sub>+\<close> have "?m \<in> L\<^sub>+"
-        using meet_val(1) by simp
-      ultimately have "?m \<in> L\<^sub>+" "?m \<lsq> ?m\<^sub>U" "?m \<lsq> ?m\<^sub>V" by auto
-      with \<open>c\<^sub>U \<in> X\<close> \<open>x \<in> disk(c\<^sub>U,R\<^sub>U)\<close> \<open>c\<^sub>V \<in> X\<close> \<open>x \<in> disk(c\<^sub>V,R\<^sub>V)\<close> \<open>U = disk(c\<^sub>U,R\<^sub>U)\<close> \<open>V = disk(c\<^sub>V,R\<^sub>V)\<close>
+      with assms(1) obtain m where "m \<in> L\<^sub>+" "m \<lsq> ?m\<^sub>U" "m \<lsq> ?m\<^sub>V"
+        unfolding DownDirects_def by auto
+      let ?W = "disk(x,m)"
+      from \<open>m \<in> L\<^sub>+\<close> \<open>m \<lsq> ?m\<^sub>U\<close> \<open>m \<lsq> ?m\<^sub>V\<close> 
+        \<open>c\<^sub>U \<in> X\<close> \<open>x \<in> disk(c\<^sub>U,R\<^sub>U)\<close> \<open>c\<^sub>V \<in> X\<close> \<open>x \<in> disk(c\<^sub>V,R\<^sub>V)\<close> 
+        \<open>U = disk(c\<^sub>U,R\<^sub>U)\<close> \<open>V = disk(c\<^sub>V,R\<^sub>V)\<close>
         have "?W \<subseteq> U\<inter>V" using disk_in_disk by blast
-      moreover from assms(2) \<open>x\<in>X\<close> \<open>?m \<in> L\<^sub>+\<close> have "?W \<in> B" and "x\<in>?W" using center_in_disk
+      moreover from assms(2) \<open>x\<in>X\<close> \<open>m \<in> L\<^sub>+\<close> have "?W \<in> B" and "x\<in>?W" using center_in_disk
         by auto
       ultimately show ?thesis by auto
     qed      
@@ -225,26 +221,23 @@ proof -
     using loop_ord_refl far_disks by simp
 qed
 
-text\<open>Unions of disks form a topology, hence (pseudo)metric spaces are topological spaces. We have
-  to add the assumption that the positive set is not empty. This is necessary to show that we can
-  cover the space with disks and it does not look like it follows from anything we have assumed 
-  so far. \<close>
+text\<open>Unions of disks form a topology, hence (pseudo)metric spaces are topological spaces. \<close>
 
 theorem (in pmetric_space) pmetric_is_top: 
-  assumes "IsMeetSemilattice(L\<^sub>+,r \<inter> L\<^sub>+\<times>L\<^sub>+)" "L\<^sub>+\<noteq>0"
+  assumes  "r {down-directs} L\<^sub>+" 
   defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}" 
   defines "T \<equiv> {\<Union>A. A \<in> Pow(B)}"
   shows "T {is a topology}"  "B {is a base for} T"  "\<Union>T = X"
 proof -
-  from assms(1,3,4) show  "T {is a topology}"  "B {is a base for} T" 
+  from assms  show  "T {is a topology}"  "B {is a base for} T" 
     using disks_form_base Top_1_2_T1 by auto
   then have "\<Union>T = \<Union>B" using Top_1_2_L5 by simp
   moreover have "\<Union>B = X"
   proof
-    from assms(3) show "\<Union>B \<subseteq> X" using disk_definition by auto
-    { fix x assume "x\<in>X" 
-      from assms(2) obtain R where "R\<in>L\<^sub>+" by auto
-      with assms(3) \<open>x\<in>X\<close> have "x \<in> \<Union>B" using center_in_disk by auto
+    from assms(2) show "\<Union>B \<subseteq> X" using disk_definition by auto
+    { fix x assume "x\<in>X"
+      from assms(1) obtain R where "R\<in>L\<^sub>+" unfolding DownDirects_def by blast
+      with assms(2) \<open>x\<in>X\<close> have "x \<in> \<Union>B" using center_in_disk by auto
     } thus "X \<subseteq> \<Union>B" by auto
   qed 
   ultimately show "\<Union>T = X" by simp
@@ -276,7 +269,7 @@ qed
 text\<open>An ordered loop valued metric space is $T_2$ (i.e. Hausdorff).\<close>
 
 theorem (in metric_space) metric_space_T2:
-    assumes "IsMeetSemilattice(L\<^sub>+,r \<inter> L\<^sub>+\<times>L\<^sub>+)" "L\<^sub>+\<noteq>0"
+    assumes "r {down-directs} L\<^sub>+"
     defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}" 
     defines "T \<equiv> {\<Union>A. A \<in> Pow(B)}"
     shows "T {is T\<^sub>2}"
@@ -289,10 +282,10 @@ proof -
       from assms have "\<Union>T = X" using pmetric_is_top(3) by simp
       with \<open>x\<in>\<Union>T\<close> \<open>y\<in>\<Union>T\<close> have "x\<in>X" "y\<in>X" by auto
       with \<open>x\<noteq>y\<close> have "?R\<in>L\<^sub>+" using dist_pos by simp
-      with assms(3) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?R) \<in> B" and "disk(y,?R) \<in> B"
+      with assms(2) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?R) \<in> B" and "disk(y,?R) \<in> B"
         by auto
       { assume "disk(x,?R) \<inter> disk(y,?R) = 0"
-        moreover from assms(3) \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>?R\<in>L\<^sub>+\<close> have 
+        moreover from assms(2) \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>?R\<in>L\<^sub>+\<close> have 
             "disk(x,?R)\<in>B" "disk(y,?R)\<in>B" "x\<in>disk(x,?R)" "y\<in>disk(y,?R)"
           using center_in_disk by auto
         ultimately have "\<exists>U\<in>B. \<exists>V\<in>B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
@@ -316,7 +309,7 @@ proof -
         moreover 
         from \<open>\<zero>\<ls>?r\<close> \<open>?r\<ls>?R\<close> have "?r\<in>L\<^sub>+" "(\<rm>?r\<ad>?R) \<in> L\<^sub>+"
           using ls_other_side posset_definition1 by auto
-        with assms(3) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have 
+        with assms(2) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have 
             "disk(x,?r)\<in>B" "disk(y,\<rm>?r\<ad>(d`\<langle>x,y\<rangle>))\<in>B" and
             "x\<in>disk(x,?r)" "y\<in>disk(y,\<rm>?r\<ad>(d`\<langle>x,y\<rangle>))"
           using center_in_disk by auto
