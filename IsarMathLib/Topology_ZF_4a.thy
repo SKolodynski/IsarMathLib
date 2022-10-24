@@ -251,4 +251,94 @@ proof -
   ultimately show ?thesis unfolding IsNeighSystem_def by blast
 qed
 
+subsection\<open> Neighborhood systems are 1:1 with topologies \<close>
+
+text\<open>We can create a topology from a neighborhood system and neighborhood system from topology.
+  The question is then if we start from a neighborhood system, create a topology from it 
+  then create the topology's natural neighborhood system, do we get back the neighborhood system 
+  we started from? Similarly, if we start from a topology, create its neighborhood system and then
+  create a topology from that, do we get the original topology? This section provides 
+  the affirmative answer (for now only for the first question). 
+  This means that there is a one-to-one correspondence between the set of topologies on a set 
+  and the set of abstract neighborhood systems on the set. \<close>
+
+text\<open>Each abstract neighborhood of $x$ contains an open neighborhood of $x$.\<close>
+
+lemma open_nei_in_nei: 
+  assumes "\<M> {is a neighborhood system on} X" "x\<in>X" "N\<in>\<M>`(x)"
+  defines Tdef: "T \<equiv> {U\<in>Pow(X). \<forall>x\<in>U. U \<in> \<M>`(x)}"
+  shows "N\<in>Pow(X)" and "\<exists>U\<in>T. (x\<in>U \<and> U\<subseteq>N)"
+proof -
+  from assms(1) have "\<M>:X\<rightarrow>Pow(Pow(X))" unfolding IsNeighSystem_def 
+    by simp
+  with assms(2,3) show "N\<in>Pow(X)"using apply_funtype by blast
+  let ?U = "{y\<in>X. N \<in> \<M>`(y)}"
+  have "?U\<in>T"
+  proof -
+    have "?U \<in> Pow(X)" by auto
+    moreover have "\<forall>y\<in>?U. \<exists>V\<in>\<M>`(y). V\<subseteq>?U"
+    proof -
+      { fix y assume "y\<in>?U"
+        then have "y\<in>X" and "N\<in>\<M>`(y)" by auto
+        with assms(1) obtain V where "V\<in>\<M>`(y)" and II: "\<forall>z\<in>V. N \<in> \<M>`(z)"
+          unfolding IsNeighSystem_def by blast
+        have "V\<subseteq>?U"
+        proof -
+        { fix z assume "z\<in>V"
+          with II have "N \<in> \<M>`(z)" by simp
+          from assms(1) \<open>y\<in>X\<close> \<open>V\<in>\<M>`(y)\<close> have "V\<subseteq>X"
+          using neighborhood_subset(1) by simp
+          with \<open>z\<in>V\<close> \<open>N \<in> \<M>`(z)\<close> have "z\<in>?U" by blast
+          } thus ?thesis by auto
+        qed
+        with \<open>V\<in>\<M>`(y)\<close> have "\<exists>V\<in>\<M>`(y). V\<subseteq>?U" by blast
+      } thus ?thesis by simp
+    qed                
+    ultimately have "?U \<in> {U\<in>Pow(X).\<forall>y\<in>U. \<exists>V\<in>\<M>`(y). V\<subseteq>U}" by simp
+    with assms(1,4) show "?U\<in>T" using topology_from_neighs1 by simp
+  qed
+  moreover from assms(1,2) \<open>N\<in>\<M>`(x)\<close> have "x\<in>?U \<and> ?U \<subseteq> N"
+    using neighborhood_subset(2) by auto
+  ultimately show "\<exists>U\<in>T. (x\<in>U \<and> U\<subseteq>N)" by (rule witness_exists)
+qed
+
+text\<open>In the the next theorem we show that if we start from 
+  a neighborhood system, create a topology from it, then create it's natural neighborhood system,
+  we get back the original neighborhood system.\<close>
+
+theorem nei_top_nei_round_trip: 
+  assumes "\<M> {is a neighborhood system on} X"
+  defines Tdef: "T \<equiv> {U\<in>Pow(X). \<forall>x\<in>U. U \<in> \<M>`(x)}"
+  shows "({neighborhood system of} T) = \<M>"
+proof -
+  let ?M = "{neighborhood system of} T"
+  from assms have "T {is a topology}" and "\<Union>T = X" using topology_from_neighs 
+    by auto
+  then have "?M {is a neighborhood system on} X" using neigh_from_topology 
+    by blast
+  with assms(1) have "?M:X\<rightarrow>Pow(Pow(X))" and "\<M>:X\<rightarrow>Pow(Pow(X))"
+    unfolding IsNeighSystem_def by auto
+  moreover
+  { fix x assume "x\<in>X"
+    from \<open>\<Union>T = X\<close> \<open>x\<in>X\<close> have I: "?M`(x) = {V\<in>Pow(X).\<exists>U\<in>T.(x\<in>U \<and> U\<subseteq>V)}"
+      unfolding NeighSystem_def using ZF_fun_from_tot_val1 by simp
+    have "?M`(x) = \<M>`(x)"
+    proof
+      { fix V assume "V\<in>?M`(x)"
+        with I obtain U where "U\<in>T" "x\<in>U" "U\<subseteq>V" by auto
+        from assms(2) \<open>U\<in>T\<close> \<open>x\<in>U\<close> have "U \<in> \<M>`(x)" by simp
+        from assms(1) \<open>x\<in>X\<close> have "\<M>`(x) {is a filter on} X"
+          unfolding IsNeighSystem_def by simp
+        with \<open>U \<in> \<M>`(x)\<close> \<open>V\<in>?M`(x)\<close> I \<open>U\<subseteq>V\<close>  have "V \<in> \<M>`(x)"
+          unfolding IsFilter_def by simp
+      } thus "?M`(x) \<subseteq> \<M>`(x)" by auto
+      { fix N assume "N\<in>\<M>`(x)"
+        with assms \<open>x\<in>X\<close> \<open>\<Union>T = X\<close> I have "N\<in>?M`(x)" using open_nei_in_nei 
+          by auto
+      } thus "\<M>`(x) \<subseteq> ?M`(x)" by auto
+    qed
+  } hence "\<forall>x\<in>X. ?M`(x) = \<M>`(x)" by simp
+  ultimately show ?thesis by (rule func_eq)
+qed
+
 end

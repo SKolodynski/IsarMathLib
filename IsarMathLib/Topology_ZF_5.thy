@@ -407,10 +407,6 @@ qed
 text\<open>There are more separation axioms that just $T_0$, $T_1$ or $T_2$\<close>
 
 definition
-  IsRegular ("_{is regular}" 90)
-  where "T{is regular} \<equiv> \<forall>A. A{is closed in}T \<longrightarrow> (\<forall>x\<in>\<Union>T-A. \<exists>U\<in>T. \<exists>V\<in>T. A\<subseteq>U\<and>x\<in>V\<and>U\<inter>V=0)"
-
-definition
   isT3 ("_{is T\<^sub>3}" 90)
   where "T{is T\<^sub>3} \<equiv> (T{is T\<^sub>1}) \<and> (T{is regular})"
 

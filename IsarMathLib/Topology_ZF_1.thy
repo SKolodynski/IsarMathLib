@@ -68,6 +68,14 @@ definition
   "T {is T\<^sub>2} \<equiv> \<forall> x y. ((x \<in> \<Union>T \<and> y \<in> \<Union>T \<and>  x\<noteq>y) \<longrightarrow>
   (\<exists>U\<in>T. \<exists>V\<in>T. x\<in>U \<and> y\<in>V \<and> U\<inter>V=0))"
 
+text\<open>A topology is regular if every closed set can be separated from a point in its complement
+  by (disjoint) opens sets.\<close>
+
+definition
+  IsRegular ("_ {is regular}" 90)
+  where "T {is regular} \<equiv> \<forall>A. A {is closed in}T \<longrightarrow> (\<forall>x\<in>\<Union>T-A. \<exists>U\<in>T. \<exists>V\<in>T. A\<subseteq>U\<and>x\<in>V\<and>U\<inter>V=0)"
+
+
 text\<open>If a topology is $T_1$ then it is $T_0$. 
   We don't really assume here that $T$ is a topology on $X$. 
   Instead, we prove the relation between isT0 condition and isT1.\<close>
