@@ -623,7 +623,7 @@ qed
 
 text\<open>Suppose we have two functions $f:X\rightarrow Y$ and $g:X\rightarrow Z$ and 
   the third one is defined as $h:X\rightarrow Y\times Z$, $x\mapsto \langle f(x),g(x)\rangle$.
-  Given two sets $U$, $V$ we have $h^{-1}(U\times V) = (f^{-1}(U)) \inter (g^{-1}(V))$. 
+  Given two sets $U$, $V$ we have $h^{-1}(U\times V) = (f^{-1}(U)) \cap (g^{-1}(V))$. 
   We also show that the set where the function $f,g$ are equal is the same as 
   $h^{-1}(\{ \langle y,y\rangle : y\in X\}$. 
   It is a bit surprising that we get the last identity without the assumption that $Y=Z$. \<close>
