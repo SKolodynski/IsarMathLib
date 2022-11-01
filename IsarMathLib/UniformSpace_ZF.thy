@@ -256,7 +256,21 @@ text\<open> When we have a uniformity $\Phi$ on $X$ we can define a topology on 
   from (is determined by) $\Phi$. \<close>
 
 definition
-   "UniformTopology(\<Phi>,X) \<equiv> {U \<in> Pow(X). \<forall>x\<in>U. U \<in> {\<langle>t,{V``{t}.V\<in>\<Phi>}\<rangle>.t\<in>X}`(x)}"
+  "UniformTopology(\<Phi>,X) \<equiv> {U\<in>Pow(X). \<forall>x\<in>U. U\<in>{V``{x}. V\<in>\<Phi>}}"
+
+text\<open>An identity showing how the definition of uniform topology is constructed.
+  Here, the $M = \{\langle t,\{ V\{ t\} : V\in \Phi\}\rangle : t\in X\}$ is the neighborhood system
+  (a function on $X$) created from uniformity $\Phi$. 
+  Then for each $x\in X$, $M(x) = \{ V\{ t\} : V\in \Phi\}$ is the set of neigborhoods of $x$. \<close>
+
+lemma uniftop_def_alt: 
+  shows "UniformTopology(\<Phi>,X) = {U \<in> Pow(X). \<forall>x\<in>U. U \<in> {\<langle>t,{V``{t}.V\<in>\<Phi>}\<rangle>.t\<in>X}`(x)}"
+proof -
+  let ?\<M> = "{\<langle>x,{V``{x}. V\<in>\<Phi>}\<rangle>. x\<in>X}"
+  have "\<forall>U\<in>Pow(X).\<forall>x\<in>U. ?\<M>`(x) = {V``{x}. V\<in>\<Phi>}"
+    using ZF_fun_from_tot_val1 by auto
+  then show ?thesis unfolding UniformTopology_def by auto
+qed
 
 text\<open> The collection of sets constructed in the \<open> UniformTopology \<close> definition
   is indeed a topology on $X$. \<close>
@@ -265,7 +279,7 @@ theorem uniform_top_is_top:
   assumes "\<Phi> {is a uniformity on} X"
   shows 
   "UniformTopology(\<Phi>,X) {is a topology}" and "\<Union> UniformTopology(\<Phi>,X) = X"
-  using assms  neigh_from_uniformity UniformTopology_def topology_from_neighs
+  using assms neigh_from_uniformity uniftop_def_alt topology_from_neighs
   by auto 
 
 end

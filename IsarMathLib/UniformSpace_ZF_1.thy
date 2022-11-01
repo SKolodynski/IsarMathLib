@@ -60,7 +60,7 @@ proof -
       moreover 
       { fix x xa assume as:"\<langle>x,xa\<rangle> \<in> f" "xa \<in> U"
         with assms(1) have x:"x\<in>X" unfolding Pi_def by auto
-        from as(2) op have U:"U \<in> {\<langle>t,{V``{t}.V\<in>\<Gamma>}\<rangle>.t\<in>Y}`(xa)" unfolding UniformTopology_def by auto
+        from as(2) op have U:"U \<in> {\<langle>t,{V``{t}.V\<in>\<Gamma>}\<rangle>.t\<in>Y}`(xa)" using uniftop_def_alt by auto
         from as(1) assms(1) have xa:"xa \<in> Y" unfolding Pi_def by auto
         have "{\<langle>t,{V``{t}.V\<in>\<Gamma>}\<rangle>.t\<in>Y} \<in> Pi(Y,%t. {{V``{t}.V\<in>\<Gamma>}})" unfolding Pi_def function_def 
           by auto
@@ -84,7 +84,7 @@ proof -
         ultimately have "f-``(U) \<in> {\<langle>t, {V `` {t} . V \<in> \<Phi>}\<rangle> . t \<in> X}`(x)" using x apply_equality 
           by auto
       } 
-      ultimately show "f-``(U) \<in> UniformTopology(\<Phi>,X)" unfolding UniformTopology_def by blast
+      ultimately show "f-``(U) \<in> UniformTopology(\<Phi>,X)" using uniftop_def_alt by auto
     qed
   } then show ?thesis unfolding IsContinuous_def by simp
 qed

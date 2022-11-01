@@ -502,7 +502,7 @@ proof-
   "{U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V``{t} . V \<in> rightUniformity}\<rangle>. t \<in> G}`(x)} = T" 
     by auto
   then show "UniformTopology(leftUniformity,G) = T" and "UniformTopology(rightUniformity,G) = T"
-    unfolding UniformTopology_def by auto 
+    using uniftop_def_alt by auto 
 qed
 
 text\<open> The side uniformities are called this way because of how they affect left and right translations.
@@ -949,7 +949,7 @@ proof -
     by auto
   ultimately have 
     "{U \<in> Pow(G). \<forall>x\<in>U. U \<in> {\<langle>t, {V `` {t} . V \<in> roelckeUniformity}\<rangle> . t \<in> G}`(x)} = T" by auto
-  then show ?thesis unfolding UniformTopology_def by auto
+  then show ?thesis using uniftop_def_alt by simp
 qed
 
 text\<open>The inverse map is uniformly continuous in the Roelcke uniformity\<close>
