@@ -42,7 +42,7 @@ text\<open> Given a set $X$ we can consider collections of subsets of $X$ whose 
   Any such collection is called a cover of $X$. We can define relation on the set of covers
   of $X$, called "star refinement" (definition below). A collection of covers is a 
   "family of uniform covers" if it is a filter with respect to the start refinement ordering. 
-  The members of such family are called a "uniform cover", but one has to remember that this notion 
+  A member of such family is called a "uniform cover", but one has to remember that this notion 
   has meaning only in the contexts a the whole family of uniform covers. Looking at a specific cover
   in isolation we can not say whether it is a uniform cover or not.  \<close>
 
@@ -61,7 +61,7 @@ text\<open> A "star" of $R$ with respect to $\mathcal{R}$ is the union of all $S
   intersect $R$. \<close>
 
 definition
-  "Star(U,P) \<equiv> \<Union>{V\<in>P. V\<inter>U \<noteq> 0}"
+  "Star(R,\<R>) \<equiv> \<Union>{S\<in>\<R>. S\<inter>R \<noteq> 0}"
 
 text\<open>An element of $\mathcal{R}$ is a subset of its star with respect to $\mathcal{R}$. \<close>
 

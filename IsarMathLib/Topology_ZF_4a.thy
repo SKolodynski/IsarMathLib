@@ -41,10 +41,10 @@ An alternative of this approach is to define a collection of neighborhoods for e
 the space.  \<close>
 
 text\<open> We define a neighborhood system as a function that takes each point $x\in X$ and assigns it 
-a collection of subsets of $X$ which is called the neighborhoods of $x$. 
-The neighborhoods of a point $x$ form a filter that satisfies an additional
-axiom that for every neighborhood $N$ of $x$ we can find another one $U$ such that $N$ 
-is a neighborhood of every point of $U$. \<close>
+  a collection of subsets of $X$ which is called the neighborhoods of $x$. 
+  The neighborhoods of a point $x$ form a filter that satisfies an additional
+  axiom that for every neighborhood $N$ of $x$ we can find another one $U$ such that $N$ 
+  is a neighborhood of every point of $U$. \<close>
 
 definition
   IsNeighSystem ("_ {is a neighborhood system on} _" 90)
@@ -82,7 +82,7 @@ proof -
   ultimately show ?thesis by auto 
 qed
 
-subsection\<open> Topology from neighborhood systems \<close>
+subsection\<open> From a neighborhood system to topology \<close>
 
 text\<open>Given a neighborhood system $\{\mathcal{M}_x\}_{x\in X}$ we can define a topology on $X$.
 Namely, we consider a subset of $X$ open if $U \in \mathcal{M}_x$ for every element $x$ of $U$. \<close>
@@ -151,7 +151,7 @@ proof
   show "?T\<subseteq>?S" by auto
 qed
 
-subsection\<open> Neighborhood system from topology \<close>
+subsection\<open> From a topology to a neighborhood system \<close>
 
 text\<open> Once we have a topology $T$ we can define a natural neighborhood system on $X=\bigcup T$. 
   In this section we define such neighborhood system and prove its basic properties.  \<close>
@@ -162,7 +162,7 @@ We call that the "neighborhood system of $T$"\<close>
 
 definition
   NeighSystem ("{neighborhood system of} _" 91)
-  where "{neighborhood system of} T \<equiv> { \<langle>x,{V\<in>Pow(\<Union>T).\<exists>U\<in>T.(x\<in>U \<and> U\<subseteq>V)}\<rangle>. x \<in> \<Union>T }" 
+  where "{neighborhood system of} T \<equiv> { \<langle>x,{N\<in>Pow(\<Union>T).\<exists>U\<in>T.(x\<in>U \<and> U\<subseteq>N)}\<rangle>. x \<in> \<Union>T }" 
 
 text\<open> The next lemma shows that open sets are members of (what we will prove later to be) the natural 
   neighborhood system on $X=\bigcup T$. \<close>
@@ -276,26 +276,20 @@ proof -
   have "?U\<in>T"
   proof -
     have "?U \<in> Pow(X)" by auto
-    moreover have "\<forall>y\<in>?U. \<exists>V\<in>\<M>`(y). V\<subseteq>?U"
+    moreover have "\<forall>y\<in>?U. ?U\<in>\<M>`(y)"
     proof -
       { fix y assume "y\<in>?U"
         then have "y\<in>X" and "N\<in>\<M>`(y)" by auto
-        with assms(1) obtain V where "V\<in>\<M>`(y)" and II: "\<forall>z\<in>V. N \<in> \<M>`(z)"
+        with assms(1) obtain V where "V\<in>\<M>`(y)" and "\<forall>z\<in>V. N \<in> \<M>`(z)"
           unfolding IsNeighSystem_def by blast
-        have "V\<subseteq>?U"
-        proof -
-        { fix z assume "z\<in>V"
-          with II have "N \<in> \<M>`(z)" by simp
-          from assms(1) \<open>y\<in>X\<close> \<open>V\<in>\<M>`(y)\<close> have "V\<subseteq>X"
-          using neighborhood_subset(1) by simp
-          with \<open>z\<in>V\<close> \<open>N \<in> \<M>`(z)\<close> have "z\<in>?U" by blast
-          } thus ?thesis by auto
-        qed
-        with \<open>V\<in>\<M>`(y)\<close> have "\<exists>V\<in>\<M>`(y). V\<subseteq>?U" by blast
+        with assms(1) \<open>y\<in>X\<close> \<open>V\<in>\<M>`(y)\<close> have "V\<subseteq>?U"
+          using neighborhood_subset(1) by blast
+        with assms(1) \<open>y\<in>X\<close> \<open>V\<in>\<M>`(y)\<close> \<open>?U \<in> Pow(X)\<close> have "?U\<in>\<M>`(y)"
+          unfolding IsNeighSystem_def using is_filter_def_split(5) by blast
       } thus ?thesis by simp
-    qed                
-    ultimately have "?U \<in> {U\<in>Pow(X).\<forall>y\<in>U. \<exists>V\<in>\<M>`(y). V\<subseteq>U}" by simp
-    with assms(1,4) show "?U\<in>T" using topology_from_neighs1 by simp
+    qed
+    ultimately have "?U \<in> {U\<in>Pow(X). \<forall>x\<in>U. U \<in> \<M>`(x)}" by simp
+    with assms(4) show "?U\<in>T" by simp
   qed
   moreover from assms(1,2) \<open>N\<in>\<M>`(x)\<close> have "x\<in>?U \<and> ?U \<subseteq> N"
     using neighborhood_subset(2) by auto
@@ -341,4 +335,31 @@ proof -
   ultimately show ?thesis by (rule func_eq)
 qed
 
+subsection\<open>Set neighborhoods\<close>
+
+text\<open>Some sources (like Metamath) take a somewhat different approach where instead of defining
+  the collection of neighborhoods of a point $x\in X$ they define a collection of neighborhoods
+  of a subset of $X$ (where $X$ is the carrier of a topology  $T$, i.e. ($X=\bigcup T$).
+  In this approach a neighborhood system is a function whose domain is the powerset of $X$, i.e.
+  the set of subsets of $X$. The two approaches are equivalent in a sense as
+  having a neighborhood system we can create a set neighborhood system and vice versa. \<close>
+
+text\<open>We defines a set neighborhood system as a function that takes a subset $A$ of the carrier of the
+  topology and assigns it the collection of supersets of all open sets that contain $A$. \<close>
+
+definition
+  SetNeighSystem ( "{set neighborhood system of} _" 91)
+  where "{set neighborhood system of} T 
+          \<equiv> {\<langle>A,{N\<in>Pow(\<Union>T). \<exists>U\<in>T. (A\<subseteq>U \<and> U\<subseteq>N)}\<rangle>. A\<in>Pow(\<Union>T)}" 
+
+text\<open>Given a set neighborhood system we can recover the (standard)
+  neighborhood system by taking the values of the set neighborhood system
+  at singletons ${x}$ where $x\in X=\bigcup T$.\<close>
+
+lemma neigh_from_nei: assumes "x\<in>\<Union>T"
+  shows "({neighborhood system of} T)`(x) = ({set neighborhood system of} T)`{x}"
+  using assms ZF_fun_from_tot_val1
+  unfolding NeighSystem_def SetNeighSystem_def
+  by simp
+  
 end

@@ -42,11 +42,16 @@ have a countable neighborhood base for each point. To solve this problem,
 nets were defined so that the behavior of any topological space can be
 thought in terms of convergence of nets.\<close>
 
-text\<open>First we need to define what a directed set is:\<close>
+text\<open>We say that a relation $r$ \<open>directs\<close> a set $X$ if the relation is reflexive, transitive
+  on $X$ and for every two elements $x,y$ of $X$ there is some element $z$ such that both
+  $x$ and $y$ are in the relation with $z$. Note that this naming is a bit inconsistent with what
+  is defined in \<open>Order_ZF\<close> where we define what it means that $r$ \<open>up-directs\<close> $X$ 
+  (the third condition in the definition below) or $r$ \<open>down-directs\<close> $X$. This naming inconsistency
+   will be fixed in the future (maybe).\<close>
 
 definition
   IsDirectedSet ("_ directs _" 90)
-  where "r directs D \<equiv> refl(D,r) \<and> trans(r) \<and> (\<forall>x\<in>D. \<forall>y\<in>D. \<exists>z\<in>D. \<langle>x,z\<rangle>\<in>r \<and> \<langle>y,z\<rangle>\<in>r)"
+  where "r directs X \<equiv> refl(X,r) \<and> trans(r) \<and> (\<forall>x\<in>X. \<forall>y\<in>X. \<exists>z\<in>X. \<langle>x,z\<rangle>\<in>r \<and> \<langle>y,z\<rangle>\<in>r)"
 
 text\<open>Any linear order is a directed set; in particular $(\mathbb{N},\leq)$.\<close>
 
@@ -195,8 +200,16 @@ text\<open>The topological tools to deal with convergence are what is called fil
 
 definition
   IsFilter ("_ {is a filter on} _" 90)
-  where "\<FF> {is a filter on} X \<equiv> (0\<notin>\<FF>) \<and> (X\<in>\<FF>) \<and> (\<FF>\<subseteq>Pow(X)) \<and> 
+  where "\<FF> {is a filter on} X \<equiv> (0\<notin>\<FF>) \<and> (X\<in>\<FF>) \<and> \<FF>\<subseteq>Pow(X) \<and> 
   (\<forall>A\<in>\<FF>. \<forall>B\<in>\<FF>. A\<inter>B\<in>\<FF>) \<and> (\<forall>B\<in>\<FF>. \<forall>C\<in>Pow(X). B\<subseteq>C \<longrightarrow> C\<in>\<FF>)"
+
+text\<open>The next lemma splits the the definition of a filter into four conditions
+to make it easier to reference each one separately in proofs.\<close>
+
+lemma is_filter_def_split: assumes "\<FF> {is a filter on} X"
+  shows "0\<notin>\<FF>" "X\<in>\<FF>" "\<FF>\<subseteq>Pow(X)" 
+    "\<forall>A\<in>\<FF>. \<forall>B\<in>\<FF>. A\<inter>B\<in>\<FF>" and "\<forall>B\<in>\<FF>. \<forall>C\<in>Pow(X). B\<subseteq>C \<longrightarrow> C\<in>\<FF>"
+  using assms unfolding IsFilter_def by auto
 
 text\<open>Not all the sets of a filter are needed to be consider at all times; as it happens
 with a topology we can consider bases.\<close>

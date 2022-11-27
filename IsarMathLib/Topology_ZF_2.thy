@@ -41,7 +41,7 @@ subsection\<open>Continuous functions.\<close>
 text\<open>In this section we define continuous functions and prove that certain 
   conditions are equivalent to a function being continuous.\<close>
 
-text\<open>In standard math we say that a function is contiuous with respect to two
+text\<open>In standard math we say that a function is continuous with respect to two
   topologies $\tau_1 ,\tau_2 $ if the inverse image of sets from topology 
   $\tau_2$ are in $\tau_1$. Here we define a predicate that is supposed
   to reflect that definition, with a difference that we don't require in the
@@ -55,6 +55,12 @@ text\<open>In standard math we say that a function is contiuous with respect to 
 definition
   "IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>2,f) \<equiv> (\<forall>U\<in>\<tau>\<^sub>2. f-``(U) \<in> \<tau>\<^sub>1)"
 
+text\<open>The space of continuous functions mapping $X=\bigcup \tau_1$ to $Y=\bigcup \tau_2$ 
+  will be denoted \<open>Cont(\<tau>\<^sub>1,\<tau>\<^sub>2)\<close>. \<close>
+
+definition 
+  "Cont(\<tau>\<^sub>1,\<tau>\<^sub>2) \<equiv> {f\<in>(\<Union>\<tau>\<^sub>1)\<rightarrow>(\<Union>\<tau>\<^sub>2). IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>2,f)}"
+
 text\<open>A trivial example of a continuous function - identity is continuous.\<close>
 
 lemma id_cont: shows "IsContinuous(\<tau>,\<tau>,id(\<Union>\<tau>))"
@@ -62,10 +68,52 @@ proof -
   { fix U assume "U\<in>\<tau>"
     then have "id(\<Union>\<tau>)-``(U) = U" using vimage_id_same by auto
     with \<open>U\<in>\<tau>\<close> have "id(\<Union>\<tau>)-``(U) \<in> \<tau>" by simp
-  } then show "IsContinuous(\<tau>,\<tau>,id(\<Union>\<tau>))" using IsContinuous_def
+  } then show "IsContinuous(\<tau>,\<tau>,id(\<Union>\<tau>))" unfolding IsContinuous_def
     by simp
 qed
 
+text\<open>Identity is in the space of continuous functions from $\bigcup \tau$ to itself.\<close>
+
+lemma id_cont_sp: shows "{\<langle>x,x\<rangle>. x\<in>\<Union>\<tau>} \<in> Cont(\<tau>,\<tau>)"
+proof -
+  have "id(\<Union>\<tau>) : \<Union>\<tau> \<rightarrow> \<Union>\<tau>" and "IsContinuous(\<tau>,\<tau>,id(\<Union>\<tau>))"
+    using id_type id_cont by auto
+  moreover have "id(\<Union>\<tau>) = {\<langle>x,x\<rangle>. x\<in>\<Union>\<tau>}" by blast
+  ultimately show ?thesis unfolding Cont_def by simp
+qed
+
+text\<open>A constant function is continuous.\<close>
+
+lemma const_cont: assumes "T {is a topology}"
+  shows "IsContinuous(T,\<tau>,ConstantFunction(\<Union>T,c))"
+proof -
+   let ?C = "ConstantFunction(\<Union>T,c)"
+   { fix U assume "U\<in>\<tau>"
+    have "?C-``(U) \<in> T"
+    proof -
+      { assume "c\<in>U"
+        with assms have "?C-``(U) \<in> T"  using carr_open const_vimage_domain 
+          by simp
+      }
+      moreover
+      { assume "c\<notin>U"
+        with assms have "?C-``(U) \<in> T" using empty_open const_vimage_empty 
+          by simp
+      }
+      ultimately show "?C-``(U) \<in> T" by auto
+    qed
+  } then show ?thesis unfolding IsContinuous_def
+    by simp
+qed
+
+text\<open>If $c\in Y =  \bigcup S$, then the constant function defined on $X=\bigcup T $ 
+  that is equal to $c$ is in the the space of continuous functions from $X$ to $Y$.  \<close>
+
+lemma const_cont_sp: assumes "T {is a topology}" "c\<in>\<Union>S"
+  shows "{\<langle>x,c\<rangle>. x\<in>\<Union>T} \<in> Cont(T,S)"
+  using assms ZF_fun_from_total const_fun_def_alt const_cont
+  unfolding Cont_def by simp
+  
 text\<open>We will work with a pair of topological spaces. The following 
   locale sets up our context that consists of 
   two topologies $\tau_1,\tau_2$ and 
@@ -209,6 +257,15 @@ proof -
   } then have "\<forall>U\<in>\<tau>\<^sub>2. f-``(U) \<in> \<tau>\<^sub>1" by simp
   then show ?thesis using IsContinuous_def by simp
 qed
+
+text\<open>For continuous functions the closure of the inverse image is contained in the
+  inverse image of the closure. This is a shortcut through a series of implications
+  provided by \<open>TopZF_2_1_L1\<close>, \<open>Top_ZF_2_1_L2\<close> and \<open>Top_ZF_2_1_L3\<close>. \<close>
+
+corollary (in two_top_spaces0) im_cl_in_cl_im: 
+  assumes "f {is continuous}" and "B \<subseteq> X\<^sub>2"
+  shows "cl\<^sub>1(f-``(B)) \<subseteq> f-``(cl\<^sub>2(B))"
+  using assms TopZF_2_1_L1 Top_ZF_2_1_L2 Top_ZF_2_1_L3 by simp
 
 text\<open>Another condition for continuity: it is sufficient to check if the 
   inverse image of every set in a base is open.\<close>
@@ -859,6 +916,58 @@ proof -
   then show ?thesis by (rule two_top_spaces0.Top_ZF_2_1_L5)
 qed
 
+text\<open>Having two continuous mappings $f,g$ we can construct a third one with values
+  in the cartesian product of the codomains of $f,g$, 
+  defined by $x\mapsto \langle f(x),g(x) \rangle$. This is essentially the same as 
+  \<open>cont_funcs_prod\<close> but formulated in a way that is sometimes easier to apply.
+  Recall that $\tau_2 \times_t \tau_3$ is a notation for the product topology 
+  of $\tau_1$ and $\tau_2$.  \<close>
+
+lemma cont_funcs_prod1: 
+  assumes "\<tau>\<^sub>1 {is a topology}" "\<tau>\<^sub>2 {is a topology}" "\<tau>\<^sub>3 {is a topology}" and
+  "{\<langle>x,p(x)\<rangle>. x\<in>\<Union>\<tau>\<^sub>1} \<in> Cont(\<tau>\<^sub>1,\<tau>\<^sub>2)" "{\<langle>x,q(x)\<rangle>. x\<in>\<Union>\<tau>\<^sub>1} \<in> Cont(\<tau>\<^sub>1,\<tau>\<^sub>3)"
+  shows "{\<langle>x,\<langle>p(x),q(x)\<rangle>\<rangle>. x\<in>\<Union>\<tau>\<^sub>1} \<in> Cont(\<tau>\<^sub>1,\<tau>\<^sub>2\<times>\<^sub>t\<tau>\<^sub>3)"
+proof -
+  let ?X = "\<Union>\<tau>\<^sub>1"
+  let ?Y = "\<Union>\<tau>\<^sub>2"
+  let ?Z = "\<Union>\<tau>\<^sub>3"
+  let ?f = "{\<langle>x,p(x)\<rangle>. x\<in>?X}"
+  let ?g = "{\<langle>x,q(x)\<rangle>. x\<in>?X}"
+  let ?h = "{\<langle>x,\<langle>p(x),q(x)\<rangle>\<rangle>. x\<in>?X}"
+  from assms(4,5) have "?f:?X\<rightarrow>?Y" and "?g:?X\<rightarrow>?Z" unfolding Cont_def 
+    by auto
+  with assms(2,3) have hFun: "?h:?X\<rightarrow>\<Union>(\<tau>\<^sub>2\<times>\<^sub>t\<tau>\<^sub>3)"
+    using prod_fun_val(1) using Top_1_4_T1(3) by simp
+  moreover have "IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>2\<times>\<^sub>t\<tau>\<^sub>3,?h)"
+  proof -
+    let ?B = "ProductCollection(\<tau>\<^sub>2,\<tau>\<^sub>3)"
+    from assms(1,2,3) hFun have "two_top_spaces0(\<tau>\<^sub>1,\<tau>\<^sub>2\<times>\<^sub>t\<tau>\<^sub>3,?h)"
+      using Top_1_4_T1(1) unfolding two_top_spaces0_def by simp
+    moreover from assms(2,3) have "?B {is a base for} (\<tau>\<^sub>2\<times>\<^sub>t\<tau>\<^sub>3)"
+      using Top_1_4_T1(2) by simp
+    moreover have "\<forall>W\<in>?B. ?h-``(W) \<in> \<tau>\<^sub>1"
+    proof -
+      { fix W assume "W\<in>?B"
+        then obtain U V where "U\<in>\<tau>\<^sub>2" "V\<in>\<tau>\<^sub>3" "W=U\<times>V"
+          unfolding ProductCollection_def by auto
+        have "\<forall>x\<in>?X. \<langle>p(x),q(x)\<rangle> = \<langle>?f`(x),?g`(x)\<rangle>" 
+        proof -
+          { fix x assume "x\<in>?X"
+            then have "\<langle>p(x),q(x)\<rangle> = \<langle>?f`(x),?g`(x)\<rangle>" 
+              using ZF_fun_from_tot_val1 by simp
+          } thus ?thesis by auto
+        qed
+        then have "?h = {\<langle>x,\<langle>?f`(x),?g`(x)\<rangle>\<rangle>. x\<in>?X}" by (rule set_comp_eq)
+        with assms(1,4,5) \<open>?f:?X\<rightarrow>?Y\<close> \<open>?g:?X\<rightarrow>?Z\<close> \<open>U\<in>\<tau>\<^sub>2\<close> \<open>V\<in>\<tau>\<^sub>3\<close> \<open>W=U\<times>V\<close>
+        have "?h-``(W) \<in> \<tau>\<^sub>1" using vimage_prod(3) 
+          unfolding Cont_def IsContinuous_def IsATopology_def by auto       
+      } thus ?thesis by simp
+    qed
+    ultimately show ?thesis by (rule two_top_spaces0.Top_ZF_2_1_L5) 
+  qed
+  ultimately show ?thesis unfolding Cont_def by simp
+qed
+
 text\<open>Two continuous functions into a Hausdorff space are equal on a closed set.
   Note that in the lemma below $f$ is assumed to map $X_1$ to $X_2$ in the locale, we only
   need to add a similar assumption for the second function. \<close>
@@ -897,6 +1006,42 @@ proof -
     qed 
   with fmapAssum assms(1) show ?thesis using vimage_prod(4)
     by simp
+qed
+
+text\<open>Closure of an image of a singleton by a relation in $X\times Y$ is contained in the 
+  image of this singleton by the closure of the relation (in the product topology).
+  Compare the proof of Metamath's theorem with the same name.\<close>
+
+lemma imasncls: 
+  assumes "T {is a topology}"  "S {is a topology}" "R \<subseteq> (\<Union>T)\<times>(\<Union>S)" "x\<in>\<Union>T"
+  shows "Closure(R``{x},S) \<subseteq> Closure(R,T\<times>\<^sub>tS)``{x}"
+proof -
+  let ?X = "\<Union>T"
+  let ?Y = "\<Union>S"
+  let ?f = "{\<langle>y,\<langle>x,y\<rangle>\<rangle>. y\<in>?Y}"
+  from assms(3) have "R``{x} = ?f-``(R)" by blast
+  hence "Closure(R``{x},S) = Closure(?f-``(R),S)" by simp
+  also have "Closure(?f-``(R),S) \<subseteq> ?f-``(Closure(R,T\<times>\<^sub>tS))"
+  proof -
+    from assms(1,2,4) have "?f \<in> Cont(S,T\<times>\<^sub>tS)"
+      using const_cont_sp id_cont_sp cont_funcs_prod1 by simp
+    with assms(1,2,3) have 
+      "two_top_spaces0(S,T\<times>\<^sub>tS,?f)" "IsContinuous(S,T\<times>\<^sub>tS,?f)" "R \<subseteq> \<Union>(T\<times>\<^sub>tS)"
+      unfolding Cont_def two_top_spaces0_def using Top_1_4_T1(1,3)
+      by auto
+    then show "Closure(?f-``(R),S) \<subseteq> ?f-``(Closure(R,T\<times>\<^sub>tS))"
+      using two_top_spaces0.im_cl_in_cl_im by simp
+  qed
+  also 
+  have "Closure(R,T\<times>\<^sub>tS) \<subseteq> ?X\<times>?Y"
+  proof -
+    from assms(1,2,3) have "topology0(T\<times>\<^sub>tS)" "R \<subseteq> \<Union>(T\<times>\<^sub>tS)" 
+      unfolding topology0_def using Top_1_4_T1(1,3) by auto
+    then have "Closure(R,T\<times>\<^sub>tS) \<subseteq> \<Union>(T\<times>\<^sub>tS)" by (rule topology0.Top_3_L11)
+    with assms(1,2) show ?thesis using Top_1_4_T1(3) by simp
+  qed
+  with assms(4) have "?f-``(Closure(R,T\<times>\<^sub>tS)) = Closure(R,T\<times>\<^sub>tS)``{x}" by blast
+  finally show "Closure(R``{x},S) \<subseteq> Closure(R,T\<times>\<^sub>tS)``{x}" by simp
 qed
 
 subsection\<open>Pasting lemma\<close>
@@ -1027,6 +1172,7 @@ proof -
   hence "restrict(f,0) {is continuous}" by simp
   moreover have "restrict(f,0) = 0" by simp
   ultimately show ?thesis by simp
-qed
+qed    
+
 
 end

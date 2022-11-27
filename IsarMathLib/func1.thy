@@ -206,7 +206,6 @@ next
   } thus "f \<subseteq> {\<langle>x, f`(x)\<rangle>. x \<in> X}" by auto
 qed
 
-
 text\<open>The range of function that maps $X$ into $Y$ is contained in $Y$.\<close>
 
 lemma func1_1_L5B: 
@@ -335,7 +334,7 @@ proof -
 qed
  
 text\<open>The value of a function defined by a meta-function is this 
-  meta-function.\<close>
+  meta-function (deprecated, use \<open>ZF_fun_from_tot_val(1)\<close> instead).\<close>
 
 lemma func1_1_L11B: 
   assumes A1: "f:X\<rightarrow>Y"   "x\<in>X"
@@ -349,12 +348,14 @@ qed
 text\<open>The next lemma will replace \<open>func1_1_L11B\<close> one day.\<close>
 
 lemma ZF_fun_from_tot_val: 
-  assumes A1: "f:X\<rightarrow>Y"   "x\<in>X"
-  and A2: "f = {\<langle>x,b(x)\<rangle>. x\<in>X}"
-  shows "f`(x) = b(x)"
+  assumes "f:X\<rightarrow>Y"   "x\<in>X"
+  and "f = {\<langle>x,b(x)\<rangle>. x\<in>X}"
+  shows "f`(x) = b(x)" and "b(x)\<in>Y"
 proof -
-  from A1 have "\<langle> x,f`(x)\<rangle> \<in> f" using apply_iff by simp
-   with A2 show ?thesis by simp
+  from assms(1,2) have "\<langle>x,f`(x)\<rangle> \<in> f" using apply_iff by simp
+  with assms(3) show "f`(x) = b(x)" by simp
+  from assms(1,2) have "f`(x)\<in>Y" by (rule apply_funtype)
+  with \<open>f`(x) = b(x)\<close> show "b(x)\<in>Y" by simp 
 qed
 
 text\<open>Identical meaning as \<open> ZF_fun_from_tot_val\<close>, but
@@ -364,6 +365,7 @@ lemma ZF_fun_from_tot_val0:
   assumes "f:X\<rightarrow>Y" and "f = {\<langle>x,b(x)\<rangle>. x\<in>X}"
   shows "\<forall>x\<in>X. f`(x) = b(x)"
   using assms ZF_fun_from_tot_val by simp
+  
 
 text\<open>Another way of expressing that lambda expression is a function.\<close>
 
@@ -385,6 +387,12 @@ proof -
   have "?f:X\<rightarrow>range(?f)" using lam_is_fun_range by simp
   with assms show ?thesis using ZF_fun_from_tot_val0 by simp
 qed
+
+text\<open>An hypotheses-free form of \<open>ZF_fun_from_tot_val1\<close>: the value of a function
+  $X\ni x \mapsto p(x)$ is $p(x)$ for all $x\in X$. \<close>
+
+lemma ZF_fun_from_tot_val2: shows "\<forall>x\<in>X. {\<langle>x,b(x)\<rangle>. x\<in>X}`(x) = b(x)"
+  using ZF_fun_from_tot_val1 by simp
 
 text\<open>We can extend a function by specifying its values on a set
   disjoint with the domain.\<close>
@@ -544,9 +552,20 @@ lemma func1_1_L14: assumes "f\<in>X\<rightarrow>Y"
 text\<open>A lemma that can be used instead \<open>fun_extension_iff\<close>
   to show that two functions are equal\<close>
 
-lemma func_eq: assumes "f: X\<rightarrow>Y"  "g: X\<rightarrow>Z"
-  and  "\<forall>x\<in>X. f`(x) = g`(x)"
+lemma func_eq: 
+  assumes "f: X\<rightarrow>Y"  "g: X\<rightarrow>Z"and  "\<forall>x\<in>X. f`(x) = g`(x)"
   shows "f = g" using assms fun_extension_iff by simp
+
+text\<open>If a function is equal to an expression $b(x)$ on $X$, then it has to be
+  of the form $\{ \langle x, b(x)\rangle | x\in X\}$. \<close>
+
+lemma func_eq_set_of_pairs: assumes "f:X\<rightarrow>Y" "\<forall>x\<in>X. f`(x) = b(x)"
+  shows "f = {\<langle>x, b(x)\<rangle>. x \<in> X}" 
+proof -
+  from assms(1) have "f = {\<langle>x, f`(x)\<rangle>. x \<in> X}" using fun_is_set_of_pairs
+    by simp
+  with assms(2) show ?thesis by simp
+qed
 
 text\<open>Function defined on a singleton is a single pair.\<close>
 
@@ -621,6 +640,21 @@ proof -
   } thus ?thesis by auto
 qed
 
+text\<open> For two functions with the same domain $X$ and the codomain $Y,Z$ resp., we can define
+  a third one that maps $X$ to the cartesian product of $Y$ and $Z$. \<close>
+
+lemma prod_fun_val: 
+  assumes "{\<langle>x,p(x)\<rangle>. x\<in>X}: X\<rightarrow>Y" "{\<langle>x,q(x)\<rangle>. x\<in>X}: X\<rightarrow>Z"
+  defines "h \<equiv> {\<langle>x,\<langle>p(x),q(x)\<rangle>\<rangle>. x\<in>X}"
+  shows "h:X\<rightarrow>Y\<times>Z" and "\<forall>x\<in>X. h`(x) = \<langle>p(x),q(x)\<rangle>"
+proof -
+  from assms(1,2) have "\<forall>x\<in>X. \<langle>p(x),q(x)\<rangle> \<in> Y\<times>Z"
+    using ZF_fun_from_tot_val(2) by auto
+  with assms(3) show "h:X\<rightarrow>Y\<times>Z" using ZF_fun_from_total by simp
+  with assms(3) show "\<forall>x\<in>X. h`(x) = \<langle>p(x),q(x)\<rangle>" using ZF_fun_from_tot_val0
+    by simp
+qed
+  
 text\<open>Suppose we have two functions $f:X\rightarrow Y$ and $g:X\rightarrow Z$ and 
   the third one is defined as $h:X\rightarrow Y\times Z$, $x\mapsto \langle f(x),g(x)\rangle$.
   Given two sets $U$, $V$ we have $h^{-1}(U\times V) = (f^{-1}(U)) \cap (g^{-1}(V))$. 
@@ -968,7 +1002,7 @@ text\<open>We define constant($=c$) functions on a set $X$
 definition
   "ConstantFunction(X,c) \<equiv> X\<times>{c}"
 
-text\<open>Constant function belongs to the function space.\<close>
+text\<open>Constant function is a function (i.e. belongs to a function space).\<close>
 
 lemma func1_3_L1: 
   assumes A1: "c\<in>Y" shows "ConstantFunction(X,c) : X\<rightarrow>Y"
@@ -986,9 +1020,39 @@ lemma func1_3_L2: assumes A1: "x\<in>X"
 proof -
   have "ConstantFunction(X,c) \<in> X\<rightarrow>{c}"
     using func1_3_L1 by simp
-  moreover from A1 have "\<langle> x,c\<rangle> \<in> ConstantFunction(X,c)"
+  moreover from A1 have "\<langle>x,c\<rangle> \<in> ConstantFunction(X,c)"
     using ConstantFunction_def by simp
   ultimately show ?thesis using apply_iff by simp
+qed
+
+text\<open>Another way of looking at the constant function - it's a set of pairs
+  $\langle x,c\rangle$ as $x$ ranges over $X$. \<close>
+
+lemma const_fun_def_alt: shows "ConstantFunction(X,c) = {\<langle>x,c\<rangle>. x\<in>X}"
+  unfolding ConstantFunction_def by auto
+
+text\<open>If $c\in A$ then the inverse image of $A$ by the constant function $x\mapsto c$ 
+  is the whole domain. \<close>
+
+lemma const_vimage_domain: assumes "c\<in>A" 
+  shows "ConstantFunction(X,c)-``(A) = X"
+proof -
+  let ?C = "ConstantFunction(X,c)"
+  have "?C-``(A) = {x\<in>X. ?C`(x) \<in> A}" using func1_3_L1 func1_1_L15 
+    by blast
+  with assms show ?thesis using func1_3_L2 by simp
+qed
+
+text\<open>If $c$ is not an element of $A$  then the inverse image of $A$ by the constant 
+  function $x\mapsto c$ is empty. \<close>
+
+lemma const_vimage_empty: assumes "c\<notin>A"
+  shows "ConstantFunction(X,c)-``(A) = 0"
+proof -
+  let ?C = "ConstantFunction(X,c)"
+  have "?C-``(A) = {x\<in>X. ?C`(x) \<in> A}" using func1_3_L1 func1_1_L15 
+    by blast
+  with assms show ?thesis using func1_3_L2 by simp
 qed
 
 subsection\<open>Injections, surjections, bijections etc.\<close>

@@ -93,7 +93,7 @@ proof -
 qed
 
 text\<open>If $\Phi$ is a uniformity on $X$ then every element of $\Phi$ is a subset of $X\times X$ 
-  whose domain is $x$. \<close>
+  whose domain is $X$. \<close>
 
 lemma uni_domain: 
   assumes "\<Phi> {is a uniformity on} X" "W\<in>\<Phi>" 
@@ -191,6 +191,16 @@ proof -
   qed
   ultimately show ?thesis unfolding IsFilter_def by simp
 qed
+
+text\<open>A frequently used property of filters is that they are "upward closed" i.e.  supersets 
+  of a filter element are also in the filter. The next lemma makes this explicit
+  for easy reference as applied to the natural filter created from a uniformity.\<close>
+
+corollary unif_filter_up_closed: 
+  assumes "\<Phi> {is a uniformity on} X" "x\<in>X" "U \<in> {V``{x}. V\<in>\<Phi>}" "W\<subseteq>X" "U\<subseteq>W"
+  shows "W \<in> {V``{x}.V\<in>\<Phi>}"
+  using assms filter_from_uniformity ZF_fun_from_tot_val1
+  unfolding IsFilter_def by auto
  
 text\<open> The function defined in the premises of lemma \<open>neigh_filt_fun\<close>
   (or \<open>filter_from_uniformity\<close>) is a neighborhood system. The proof uses the existence
@@ -247,10 +257,7 @@ proof -
 qed
 
 text\<open> When we have a uniformity $\Phi$ on $X$ we can define a topology on $X$ in a (relatively)
-  natural way. We will call that topology the \<open> UniformTopology(\<Phi>)\<close>. The definition may be a bit 
-  cryptic but it just combines the construction of a neighborhood system from uniformity as in 
-  the assumptions of lemma \<open>filter_from_uniformity\<close> and the construction of topology from 
-  a neighborhood system from theorem \<open>topology_from_neighs\<close>. 
+  natural way. We will call that topology the \<open> UniformTopology(\<Phi>)\<close>.
   We could probably reformulate the definition to skip 
   the $X$ parameter because if $\Phi$ is a uniformity on $X$ then $X$ can be recovered 
   from (is determined by) $\Phi$. \<close>
@@ -261,7 +268,7 @@ definition
 text\<open>An identity showing how the definition of uniform topology is constructed.
   Here, the $M = \{\langle t,\{ V\{ t\} : V\in \Phi\}\rangle : t\in X\}$ is the neighborhood system
   (a function on $X$) created from uniformity $\Phi$. 
-  Then for each $x\in X$, $M(x) = \{ V\{ t\} : V\in \Phi\}$ is the set of neigborhoods of $x$. \<close>
+  Then for each $x\in X$, $M(x) = \{ V\{ t\} : V\in \Phi\}$ is the set of neighborhoods of $x$. \<close>
 
 lemma uniftop_def_alt: 
   shows "UniformTopology(\<Phi>,X) = {U \<in> Pow(X). \<forall>x\<in>U. U \<in> {\<langle>t,{V``{t}.V\<in>\<Phi>}\<rangle>.t\<in>X}`(x)}"
@@ -281,5 +288,18 @@ theorem uniform_top_is_top:
   "UniformTopology(\<Phi>,X) {is a topology}" and "\<Union> UniformTopology(\<Phi>,X) = X"
   using assms neigh_from_uniformity uniftop_def_alt topology_from_neighs
   by auto 
+
+text\<open>If we have a uniformity $\Phi$ we can create a neighborhood system from it in two ways.
+  We can create a a neighborhood system directly from $\Phi$ using the formula 
+  $X \ni x \mapsto \{V\{x\} | x\in X\}$ (see theorem \<open>neigh_from_uniformity\<close>).
+  Alternatively we can construct a topology from $\Phi$ as in theorem 
+  \<open>uniform_top_is_top\<close> and then create a neighborhood system from this topology
+  as in theorem \<open>neigh_from_topology\<close>. The next theorem states that these two ways give the same 
+  result. \<close>
+
+theorem neigh_unif_same: assumes "\<Phi> {is a uniformity on} X"
+  shows "{\<langle>x,{V``{x}.V\<in>\<Phi>}\<rangle>. x\<in>X} = {neighborhood system of} UniformTopology(\<Phi>,X)"
+  using assms neigh_from_uniformity nei_top_nei_round_trip uniftop_def_alt
+  by simp
 
 end

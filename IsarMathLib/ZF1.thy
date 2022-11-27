@@ -416,5 +416,23 @@ text\<open>The next lemma has to be used as a rule in some rare cases. \<close>
 lemma exists_in_set: assumes "\<forall>x. x\<in>A \<longrightarrow> \<phi>(x)" shows "\<forall>x\<in>A. \<phi>(x)"
   using assms by simp
 
+text\<open>Set comprehensions defined by equal expressions are the equal. 
+  The second assertion is actually about functions, which are sets of pairs 
+  as illustrated in lemma \<open>fun_is_set_of_pairs\<close> in \<open>func1.thy\<close>  \<close>
+
+lemma set_comp_eq: assumes "\<forall>x\<in>X. p(x) = q(x)" 
+  shows "{p(x). x\<in>X} = {q(x). x\<in>X}" and "{\<langle>x,p(x)\<rangle>. x\<in>X} = {\<langle>x,q(x)\<rangle>. x\<in>X}"
+  using assms by auto
+
+(*lemma image_rel_singleton: 
+  assumes "R \<subseteq> X\<times>Y"  shows "R``{x} = {y\<in>Y. \<langle>x,y\<rangle> \<in> R}" 
+  using assms by auto
+
+lemma inv_img: assumes "R \<subseteq> X\<times>Y" shows "{\<langle>y,\<langle>x,y\<rangle>\<rangle>. y\<in>Y}-``(R) = {y\<in>Y. \<langle>x,y\<rangle> \<in> R}"
+  using assms by auto
+
+lemma together: assumes "R \<subseteq> X\<times>Y" shows "R``{x} = {\<langle>y,\<langle>x,y\<rangle>\<rangle>. y\<in>Y}-``(R)"
+  using assms by auto
+*)
 end
 

@@ -349,12 +349,12 @@ text\<open>In this section we consider a topology defined on a product of two se
 text\<open>Given two topological spaces we can define a topology on the product of 
   the carriers such that the cartesian products of the sets of the topologies 
   are a base for the product topology. Recall that for two collections $S,T$ 
-  of sets the product collection
-  is defined (in \<open>ZF1.thy\<close>) as the collections of cartesian 
-  products $A\times B$, where $A\in S, B\in T$.\<close>
+  of sets the product collection is defined (in \<open>ZF1.thy\<close>) as the collections of cartesian 
+  products $A\times B$, where $A\in S, B\in T$. The $T\times_tS$ notation is defined as
+  an alternative to the verbose  \<open>ProductTopology(T,S)\<close>). \<close>
 
-definition
-  "ProductTopology(T,S) \<equiv> {\<Union>W. W \<in> Pow(ProductCollection(T,S))}"
+definition ProductTopology (infixl "\<times>\<^sub>t" 65) where
+  "T \<times>\<^sub>t S  \<equiv> {\<Union>W. W \<in> Pow(ProductCollection(T,S))}"
 
 text\<open>The product collection satisfies the base condition.\<close>
 
