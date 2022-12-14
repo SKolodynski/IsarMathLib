@@ -83,6 +83,9 @@ text\<open>First we show a lemma that says that we can use theorems proven in
 lemma (in group0) group0_2_L1: shows "monoid0(G,P)"
   using groupAssum IsAgroup_def monoid0_def by simp
 
+sublocale group0 < monoid: monoid0 G P groper
+  unfolding groper_def using group0_2_L1 by auto
+
 text\<open>In some strange cases Isabelle has difficulties with applying
   the definition of a group. The next lemma defines a rule to be applied
   in such cases.\<close>
@@ -97,13 +100,13 @@ text\<open>A technical lemma that allows to use $1$ as the neutral element of
 
 lemma (in group0) group0_2_L2: 
   shows "\<one>\<in>G \<and> (\<forall>g\<in>G.(\<one>\<cdot>g = g \<and> g\<cdot>\<one> = g))"
-  using group0_2_L1 monoid0.unit_is_neutral by simp
+  using group0_2_L1 monoid.unit_is_neutral by simp
 
 text\<open>The group is closed under the group operation. Used all the time,
   useful to have handy.\<close>
 
 lemma (in group0) group_op_closed: assumes "a\<in>G"  "b\<in>G"
-  shows "a\<cdot>b \<in> G" using assms group0_2_L1 monoid0.group0_1_L1 
+  shows "a\<cdot>b \<in> G" using assms monoid.group0_1_L1 
   by simp
 
 text\<open>The group operation is associative. This is another technical lemma 
@@ -894,7 +897,7 @@ proof -
   with A4 I A2 have "\<one>\<in>H"
     using group0_2_L6 by blast
   with A3 A2 have T2: "IsAmonoid(H,?g)"
-    using group0_2_L1 monoid0.group0_1_T1
+    using monoid.group0_1_T1
     by simp
   moreover have "\<forall>h\<in>H.\<exists>b\<in>H. ?g`\<langle>h,b\<rangle> = ?n"
   proof
@@ -910,6 +913,16 @@ proof -
   qed
   ultimately show "IsAsubgroup(H,P)" using 
     IsAsubgroup_def IsAgroup_def by simp
+qed
+
+corollary (in group0) group0_3_T4:
+  shows "IsAsubgroup({\<one>},P)"
+proof (rule group0_3_T3)
+  show "{\<one>} \<noteq> 0" by simp
+  show "{\<one>} \<subseteq> G" using group0_2_L2 by auto
+  show "\<forall>x\<in>{\<one>}. x\<inverse>  \<in> {\<one>}" using group_inv_of_one by auto
+  show "{\<one>} {is closed under} P" unfolding IsOpClosed_def
+    using group0_2_L2 by auto
 qed
 
 text\<open>Intersection of subgroups is a subgroup. This lemma is obsolete and should be replaced by 
@@ -948,18 +961,44 @@ qed
 
 text\<open>Intersection of subgroups is a subgroup.\<close>
 
-lemma (in group0) subgroup_inter: assumes  "IsAsubgroup(H\<^sub>1,P)" and "IsAsubgroup(H\<^sub>2,P)"
-  shows "IsAsubgroup(H\<^sub>1\<inter>H\<^sub>2,P)"
+lemma (in group0) subgroup_inter: assumes "\<H>\<noteq>0"
+  and "\<forall>H\<in>\<H>. IsAsubgroup(H,P)"
+  shows "IsAsubgroup(\<Inter>\<H>,P)"
 proof -
-  from assms have "H\<^sub>1\<inter>H\<^sub>2 \<noteq> 0" using group0_3_L5 by auto
-  moreover from assms have "H\<^sub>1\<inter>H\<^sub>2 \<subseteq> G" using group0_3_L2 by auto
-  moreover from assms have "H\<^sub>1\<inter>H\<^sub>2 {is closed under} P"
-    unfolding IsOpClosed_def using group0_3_L6 func_ZF_4_L7 func_ZF_4_L5 by simp
-  moreover from assms have "\<forall>x \<in> H\<^sub>1\<inter>H\<^sub>2. x\<inverse> \<in> H\<^sub>1\<inter>H\<^sub>2"
-    using group0_3_T2 group0_3_T3A by simp
+  {
+    fix H assume "H:\<H>"
+    with assms(2) have "\<one>:H" using group0_3_L5 by auto
+  }
+  then have "\<Inter>\<H> \<noteq> 0" using assms(1) by auto moreover
+  {
+    fix t assume "t:\<Inter>\<H>"
+    then have "\<forall>H\<in>\<H>. t:H" by auto
+    with assms have "t:G" using group0_3_L2 by blast
+  }
+  then have "\<Inter>\<H> \<subseteq> G" by auto moreover
+  {
+    fix x y assume xy:"x:\<Inter>\<H>" "y:\<Inter>\<H>"
+    {
+      fix J assume J:"J:\<H>"
+      with xy have "x:J" "y:J" by auto
+      with J have "P`\<langle>x,y\<rangle>:J" using assms(2) group0_3_L6 by auto
+    }
+    then have "P`\<langle>x,y\<rangle>:\<Inter>\<H>" using assms(1) by auto
+  }
+  then have "\<Inter>\<H> {is closed under} P" unfolding IsOpClosed_def by simp
+  moreover
+  {
+    fix x assume x:"x:\<Inter>\<H>"
+    {
+      fix J assume J:"J:\<H>"
+      with x have "x:J" by auto
+      with J assms(2) have "x\<inverse> \<in> J" using group0_3_T3A by auto
+    }
+    then have "x\<inverse> \<in> \<Inter>\<H>" using assms(1) by auto
+  }
+  then have "\<forall>x \<in> \<Inter>\<H>. x\<inverse> \<in> \<Inter>\<H>" by simp
   ultimately show ?thesis using group0_3_T3 by auto
 qed
-
 
 text\<open>The range of the subgroup operation is the whole subgroup.\<close>
 
