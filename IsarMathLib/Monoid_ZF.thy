@@ -57,7 +57,7 @@ text\<open>Monoid is a set $G$ with an associative operation and a neutral eleme
 definition
   "IsAmonoid(G,f) \<equiv>
   f {is associative on} G \<and> 
-  (\<exists>e\<in>G. (\<forall> g\<in>G. ( (f`(\<langle>e,g\<rangle>) = g) \<and> (f`(\<langle>g,e\<rangle>) = g))))"
+  (\<exists>e\<in>G. (\<forall>g\<in>G. ( (f`(\<langle>e,g\<rangle>) = g) \<and> (f`(\<langle>g,e\<rangle>) = g))))"
 
 text\<open>The next locale called ''monoid0'' defines a context for theorems
   that concern monoids. In this contex we assume that the pair $(G,f)$
@@ -67,7 +67,7 @@ text\<open>The next locale called ''monoid0'' defines a context for theorems
 
 locale monoid0 =
   fixes G f
-  assumes monoidAsssum: "IsAmonoid(G,f)"
+  assumes monoidAssum: "IsAmonoid(G,f)"
   
   fixes monoper (infixl "\<oplus>" 70)
   defines monoper_def [simp]: "a \<oplus> b \<equiv> f`\<langle>a,b\<rangle>"
@@ -76,7 +76,7 @@ text\<open>The result of the monoid operation is in the monoid (carrier).\<close
 
 lemma (in monoid0) group0_1_L1: 
   assumes "a\<in>G"  "b\<in>G" shows "a\<oplus>b \<in> G" 
-  using assms monoidAsssum IsAmonoid_def IsAssociative_def apply_funtype
+  using assms monoidAssum IsAmonoid_def IsAssociative_def apply_funtype
   by auto
 
 text\<open>There is only one neutral element in a monoid.\<close>
@@ -89,7 +89,7 @@ proof
     and "y \<in> G \<and> (\<forall>g\<in>G. y \<oplus> g = g \<and> g \<oplus> y = g)"
   then have "y\<oplus>e = y" "y\<oplus>e = e" by auto
   thus "e = y" by simp
-next from monoidAsssum show 
+next from monoidAssum show 
     "\<exists>e. e\<in> G \<and> (\<forall> g\<in>G. e\<oplus>g = g \<and> g\<oplus>e = g)"
     using IsAmonoid_def by auto
 qed
@@ -122,7 +122,7 @@ text\<open>The range of the monoid operation is the whole monoid carrier.\<close
 
 lemma (in monoid0) group0_1_L3B: shows "range(f) = G"
 proof
-  from monoidAsssum have "f : G\<times>G\<rightarrow>G"
+  from monoidAssum have "f : G\<times>G\<rightarrow>G"
      using IsAmonoid_def IsAssociative_def by simp
   then show "range(f) \<subseteq> G" 
     using func1_1_L5B by simp
@@ -141,7 +141,7 @@ text\<open>Another way to state that the range of the monoid operation
   is the whole monoid carrier.\<close>
 
 lemma (in monoid0) range_carr: shows "f``(G\<times>G) = G"
-  using monoidAsssum IsAmonoid_def IsAssociative_def
+  using monoidAssum IsAmonoid_def IsAssociative_def
     group0_1_L3B range_image_domain by auto
       
 text\<open>In a monoid any neutral element is the neutral element.\<close>
@@ -194,7 +194,7 @@ theorem (in monoid0) group0_1_T1:
 proof -
   let ?g = "restrict(f,H\<times>H)"
   let ?e = "TheNeutralElement(G,f)"
-  from monoidAsssum have "f \<in> G\<times>G\<rightarrow>G" 
+  from monoidAssum have "f \<in> G\<times>G\<rightarrow>G" 
     using IsAmonoid_def IsAssociative_def by simp
   moreover from A2 have "H\<times>H \<subseteq> G\<times>G" by auto
   moreover from A1 have "\<forall>p \<in> H\<times>H. f`(p) \<in> H"
@@ -209,7 +209,7 @@ proof -
       using IsOpClosed_def restrict_if by simp
     moreover have "\<forall>x\<in>H.\<forall>y\<in>H.\<forall>z\<in>H. x\<oplus>y\<oplus>z = x\<oplus>(y\<oplus>z)"
     proof -
-      from monoidAsssum have 
+      from monoidAssum have 
 	"\<forall>x\<in>G.\<forall>y\<in>G.\<forall>z\<in>G. x\<oplus>y\<oplus>z = x\<oplus>(y\<oplus>z)"
 	using IsAmonoid_def IsAssociative_def 
 	by simp
@@ -276,5 +276,11 @@ lemma (in monoid0) sum_nonzero_elmnt_nonzero:
   assumes "a \<oplus> b \<noteq> TheNeutralElement(G,f)"
   shows "a \<noteq> TheNeutralElement(G,f) \<or> b \<noteq> TheNeutralElement(G,f)"
   using assms unit_is_neutral by auto
+
+lemma (in monoid0) sum_associative:
+  assumes "a\<in>G" "b\<in>G" "c\<in>G"
+  shows "(a\<oplus>b)\<oplus>c = a\<oplus>(b\<oplus>c)"
+  using assms monoidAssum unfolding IsAmonoid_def IsAssociative_def
+  by auto
 
 end

@@ -51,7 +51,7 @@ lemma (in monoid0) Group_ZF_2_1_L0A:
   assumes A1: "F = f {lifted to function space over} X"
   shows "F : (X\<rightarrow>G)\<times>(X\<rightarrow>G)\<rightarrow>(X\<rightarrow>G)"
 proof -
-  from monoidAsssum have "f : G\<times>G\<rightarrow>G"
+  from monoidAssum have "f : G\<times>G\<rightarrow>G"
     using IsAmonoid_def IsAssociative_def by simp
   with A1 show ?thesis
     using func_ZF_1_L3 group0_1_L3B by auto
@@ -84,7 +84,7 @@ proof
   show "\<forall>s\<in>X\<rightarrow>G. F`\<langle> E,s\<rangle> = s \<and> F`\<langle> s,E\<rangle> = s"
   proof
     fix s assume A3:"s:X\<rightarrow>G"
-    from monoidAsssum have T2:"f : G\<times>G\<rightarrow>G"
+    from monoidAssum have T2:"f : G\<times>G\<rightarrow>G"
       using IsAmonoid_def IsAssociative_def by simp
     from A3 A1 T1 have 
       "F`\<langle> E,s\<rangle> : X\<rightarrow>G" "F`\<langle> s,E\<rangle> : X\<rightarrow>G" "s : X\<rightarrow>G"
@@ -106,7 +106,7 @@ lemma (in monoid0) Group_ZF_2_1_T1:
   assumes A1: "F = f {lifted to function space over} X"
   shows "IsAmonoid(X\<rightarrow>G,F)"
 proof -
-  from monoidAsssum A1 have 
+  from monoidAssum A1 have 
     "F {is associative on} (X\<rightarrow>G)"
     using IsAmonoid_def func_ZF_2_L4 group0_1_L3B
     by auto
@@ -145,7 +145,7 @@ lemma (in monoid0) lifted_val:
   and "s:X\<rightarrow>G"  "r:X\<rightarrow>G"
   and "x\<in>X"
   shows "(F`\<langle>s,r\<rangle>)`(x) = s`(x) \<oplus> r`(x)"
-  using monoidAsssum assms IsAmonoid_def IsAssociative_def
+  using monoidAssum assms IsAmonoid_def IsAssociative_def
       group0_1_L3B func_ZF_1_L4
   by auto
 
@@ -340,7 +340,7 @@ proof -
   hence
     "\<exists>E\<in>G//r. \<forall> c\<in>G//r. F`\<langle> E,c\<rangle> = c \<and> F`\<langle> c,E\<rangle> = c"
     by auto
-  with monoidAsssum A1 A2 A3 show ?thesis
+  with monoidAssum A1 A2 A3 show ?thesis
     using IsAmonoid_def EquivClass_2_T2
     by simp
 qed

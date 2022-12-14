@@ -159,15 +159,15 @@ lemma (in reals) dist_is_metric: shows
   "IsApseudoMetric(dist,\<real>,\<real>,Add,ROrd)"
   "IsAmetric(dist,\<real>,\<real>,Add,ROrd)"
 proof -
-  show I: "dist : \<real>\<times>\<real> \<rightarrow> \<real>\<^sup>+" using group_op_closed inverse_in_group OrdRing_ZF_1_L4 
+  show I: "dist : \<real>\<times>\<real> \<rightarrow> \<real>\<^sup>+" using add_group.group_op_closed add_group.inverse_in_group OrdRing_ZF_1_L4 
       OrderedGroup_ZF_3_L3B  ZF_fun_from_total by simp
   then show II:"\<forall>x\<in>\<real>.\<forall>y\<in>\<real>. dist`\<langle>x,y\<rangle> = \<bar>x\<rs>y\<bar>" using ZF_fun_from_tot_val0 by auto
-  then show III: "\<forall>x\<in>\<real>.dist`\<langle>x,x\<rangle> = \<zero>" using group0_2_L6 OrderedGroup_ZF_3_L2A by simp
+  then show III: "\<forall>x\<in>\<real>.dist`\<langle>x,x\<rangle> = \<zero>" using add_group.group0_2_L6 OrderedGroup_ZF_3_L2A by simp
   { fix x y
     assume "x\<in>\<real>" "y\<in>\<real>"
-    then have "(\<rm>(x\<rs>y)) = y\<rs>x" using group0_2_L12 by simp
+    then have "(\<rm>(x\<rs>y)) = y\<rs>x" using add_group.group0_2_L12 by simp
     moreover from \<open>x\<in>\<real>\<close> \<open>y\<in>\<real>\<close> have "\<bar>\<rm>(x\<rs>y)\<bar> =\<bar>x\<rs>y\<bar>"
-      using group_op_closed inverse_in_group basic_props(1) OrderedGroup_ZF_3_L7A
+      using add_group.group_op_closed add_group.inverse_in_group basic_props(1) OrderedGroup_ZF_3_L7A
       by simp
     ultimately have "\<bar>y\<rs>x\<bar> = \<bar>x\<rs>y\<bar>" by simp
     with \<open>x\<in>\<real>\<close> \<open>y\<in>\<real>\<close> II have "dist`\<langle>x,y\<rangle> = dist`\<langle>y,x\<rangle>" by simp
@@ -176,14 +176,14 @@ proof -
     assume "x\<in>\<real>" "y\<in>\<real>" "dist`\<langle>x,y\<rangle> = \<zero>"  
     with II have "\<bar>x\<rs>y\<bar> = \<zero>" by simp
     with \<open>x\<in>\<real>\<close> \<open>y\<in>\<real>\<close> have "x\<rs>y = \<zero>" 
-      using group_op_closed inverse_in_group OrderedGroup_ZF_3_L3D by auto
-    with \<open>x\<in>\<real>\<close> \<open>y\<in>\<real>\<close> have"x=y" using group0_2_L11A by simp
+      using add_group.group_op_closed add_group.inverse_in_group OrderedGroup_ZF_3_L3D by auto
+    with \<open>x\<in>\<real>\<close> \<open>y\<in>\<real>\<close> have"x=y" using add_group.group0_2_L11A by simp
   } thus V: "\<forall>x\<in>\<real>.\<forall>y\<in>\<real>. dist`\<langle>x,y\<rangle> = \<zero> \<longrightarrow> x=y" by auto
   { fix x y z
     assume "x\<in>\<real>" "y\<in>\<real>" "z\<in>\<real>"
-    then have "\<bar>x\<rs>z\<bar> = \<bar>(x\<rs>y)\<ra>(y \<rs> z)\<bar>" using cancel_middle(5) by simp
+    then have "\<bar>x\<rs>z\<bar> = \<bar>(x\<rs>y)\<ra>(y \<rs> z)\<bar>" using add_group.cancel_middle(5) by simp
     with \<open>x\<in>\<real>\<close> \<open>y\<in>\<real>\<close> \<open>z\<in>\<real>\<close> have "\<bar>x\<rs>z\<bar>  \<lsq> \<bar>x\<rs>y\<bar> \<ra> \<bar>y \<rs> z\<bar>"
-      using group_op_closed inverse_in_group OrdRing_ZF_1_L4(2,3) OrdGroup_triangle_ineq
+      using add_group.group_op_closed add_group.inverse_in_group OrdRing_ZF_1_L4(2,3) OrdGroup_triangle_ineq
       by simp
   } thus  "\<forall>x\<in>\<real>.\<forall>y\<in>\<real>.\<forall>z\<in>\<real>. \<bar>x \<rs> z\<bar> \<lsq> \<bar>x \<rs> y\<bar> \<ra> \<bar>y \<rs> z\<bar>" by simp
   with II show "\<forall>x\<in>\<real>.\<forall>y\<in>\<real>.\<forall>z\<in>\<real>. dist`\<langle>x,z\<rangle> \<lsq> dist`\<langle>x, y\<rangle> \<ra> dist`\<langle>y,z\<rangle>" by auto
@@ -195,7 +195,7 @@ text\<open>Real numbers form an ordered loop.\<close>
 
 lemma (in reals) reals_loop: shows "IsAnOrdLoop(\<real>,Add,ROrd)"
 proof -
-  have "IsAloop(\<real>,Add)" using group_is_loop by simp
+  have "IsAloop(\<real>,Add)" using add_group.group_is_loop by simp
   moreover from R_are_reals have "ROrd \<subseteq> \<real> \<times> \<real>" and "IsPartOrder(\<real>,ROrd)"
     using IsAmodelOfReals_def IsAnOrdField_def IsAnOrdRing_def Order_ZF_1_L2 
     by auto

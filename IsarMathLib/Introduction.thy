@@ -214,7 +214,7 @@ text\<open>
   This is a suprisingly large theory for such relatively obscure topic.
   
   \<open>Ring_ZF\<close> defines rings. \<open>Ring_ZF_1\<close> covers 
-  the properties of  rings that are specific to the real numbers construction 
+  the properties of rings that are specific to the real numbers construction 
   in \<open>Real_ZF\<close>.
 
   The \<open>OrderedRing_ZF\<close> theory looks at the consequences of adding

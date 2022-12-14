@@ -107,6 +107,12 @@ lemma (in ring0) Ring_ZF_1_L1: shows
   "A {is commutative on} R"
   using ringAssum IsAring_def group0_def monoid0_def by auto
 
+sublocale ring0 < add_group: group0 R A \<zero> ringa ringminus
+  using Ring_ZF_1_L1(2) unfolding ringa_def ringminus_def ringzero_def by auto
+
+sublocale ring0 < mult_monoid: monoid0 R M ringm
+  using Ring_ZF_1_L1(1) unfolding ringm_def by auto
+
 text\<open>The additive operation in a ring is distributive with respect to the
   multiplicative operation.\<close>
 
@@ -121,8 +127,8 @@ text\<open>Zero and one of the ring are elements of the ring. The negative of ze
 
 lemma (in ring0) Ring_ZF_1_L2: 
   shows "\<zero>\<in>R"  "\<one>\<in>R"   "(\<rm>\<zero>) = \<zero>"
-  using Ring_ZF_1_L1 group0.group0_2_L2 monoid0.unit_is_neutral 
-    group0.group_inv_of_one by auto
+  using add_group.group0_2_L2 mult_monoid.unit_is_neutral 
+    add_group.group_inv_of_one by auto
   
 text\<open>The next lemma lists some properties of a ring that require one element
   of a ring.\<close>
@@ -139,8 +145,8 @@ lemma (in ring0) Ring_ZF_1_L3: assumes "a\<in>R"
   "a\<rs>\<zero> = a"
   "\<two>\<cdot>a = a\<ra>a"
   "(\<rm>a)\<ra>a = \<zero>"
-  using assms Ring_ZF_1_L1 group0.inverse_in_group group0.group_inv_of_inv 
-    group0.group0_2_L6 group0.group0_2_L2 monoid0.unit_is_neutral 
+  using assms add_group.inverse_in_group add_group.group_inv_of_inv 
+    add_group.group0_2_L6 add_group.group0_2_L2 mult_monoid.unit_is_neutral 
     Ring_ZF_1_L2 ring_oper_distr
   by auto
 
@@ -152,9 +158,10 @@ lemma (in ring0) Ring_ZF_1_L4: assumes A1: "a\<in>R" "b\<in>R"
   "a\<rs>b \<in> R" 
   "a\<cdot>b \<in> R" 
   "a\<ra>b = b\<ra>a"
-  using ringAssum assms Ring_ZF_1_L1 Ring_ZF_1_L3 
-    group0.group0_2_L1 monoid0.group0_1_L1 
-    IsAring_def IsCommutative_def
+  using assms Ring_ZF_1_L1(3) Ring_ZF_1_L3 
+    add_group.monoid.group0_1_L1 
+    mult_monoid.group0_1_L1
+    unfolding IsCommutative_def
   by auto
 
 text\<open>Cancellation of an element on both sides of equality. 
@@ -165,7 +172,7 @@ text\<open>Cancellation of an element on both sides of equality.
 lemma (in ring0) ring_cancel_add: 
   assumes A1: "a\<in>R" "b\<in>R" and A2: "a \<ra> b = a"
   shows "b = \<zero>"
-  using assms Ring_ZF_1_L1 group0.group0_2_L7 by simp
+  using assms add_group.group0_2_L7 by simp
 
 text\<open>Any element of a ring multiplied by zero is zero.\<close>
 
@@ -216,7 +223,7 @@ proof -
     moreover from A1 have 
       "((\<rm>a)\<ra> a)\<cdot>b = \<zero>" 
       "a\<cdot>((\<rm>b)\<ra>b) = \<zero>"
-      using Ring_ZF_1_L1 group0.group0_2_L6 Ring_ZF_1_L6
+      using add_group.group0_2_L6 Ring_ZF_1_L6
       by auto
     ultimately show 
       "(\<rm>a)\<cdot>b \<ra> a\<cdot>b = \<zero>" 
@@ -224,9 +231,9 @@ proof -
       by auto
   qed
   ultimately show "(\<rm>a)\<cdot>b = \<rm>(a\<cdot>b)"
-    using Ring_ZF_1_L1 group0.group0_2_L9 by simp
+    using add_group.group0_2_L9 by simp
   moreover from I II show "a\<cdot>(\<rm>b) = \<rm>(a\<cdot>b)"
-    using Ring_ZF_1_L1 group0.group0_2_L9 by simp   
+    using add_group.group0_2_L9 by simp   
   ultimately show "(\<rm>a)\<cdot>b = a\<cdot>(\<rm>b)" by simp
 qed
 
@@ -254,8 +261,7 @@ lemma (in ring0) Ring_ZF_1_L9: assumes "a\<in>R"  "b\<in>R"
   "(\<rm>(a\<ra>b)) = (\<rm>a)\<rs>b"  
   "(\<rm>(a\<rs>b)) = ((\<rm>a)\<ra>b)"
   "a\<rs>(\<rm>b) = a\<ra>b"
-  using assms ringAssum IsAring_def 
-    Ring_ZF_1_L1 group0.group0_4_L4  group0.group_inv_of_inv
+  using assms Ring_ZF_1_L1(3) add_group.group0_4_L4 add_group.group_inv_of_inv
   by auto
 
 text\<open>If the difference of two element is zero, then those elements
@@ -263,15 +269,7 @@ text\<open>If the difference of two element is zero, then those elements
 
 lemma (in ring0) Ring_ZF_1_L9A: 
   assumes A1: "a\<in>R"  "b\<in>R" and A2: "a\<rs>b = \<zero>"
-  shows "a=b"
-proof -
-  from A1 A2 have
-    "group0(R,A)"
-    "a\<in>R"  "b\<in>R"
-    "A`\<langle>a,GroupInv(R,A)`(b)\<rangle> = TheNeutralElement(R,A)"
-    using Ring_ZF_1_L1 by auto
-  then show "a=b" by (rule group0.group0_2_L11A)
-qed
+  shows "a=b" using add_group.group0_2_L11A assms by auto
 
 text\<open>Other basic properties involving three elements of a ring.\<close>
 
@@ -282,8 +280,8 @@ lemma (in ring0) Ring_ZF_1_L10:
   (*"a\<ra>(b\<rs>c) = a\<ra>b\<rs>c"*)
   "a\<rs>(b\<ra>c) = a\<rs>b\<rs>c"
   "a\<rs>(b\<rs>c) = a\<rs>b\<ra>c"
-  using assms ringAssum Ring_ZF_1_L1 group0.group_oper_assoc 
-    IsAring_def group0.group0_4_L4A by auto
+  using assms Ring_ZF_1_L1(3) add_group.group_oper_assoc 
+    add_group.group0_4_L4A by auto
 
 text\<open>Another property with three elements.\<close>
 
@@ -299,8 +297,7 @@ lemma (in ring0) Ring_ZF_1_L11:
   shows 
   "a\<ra>b\<ra>c = a\<ra>(b\<ra>c)"
   "a\<cdot>b\<cdot>c = a\<cdot>(b\<cdot>c)"
-  using assms ringAssum Ring_ZF_1_L1 group0.group_oper_assoc
-    IsAring_def IsAmonoid_def IsAssociative_def
+  using assms add_group.group_oper_assoc mult_monoid.sum_associative
   by auto
 
 text\<open>An interpretation of what it means that a ring has 
@@ -375,7 +372,7 @@ text\<open>Adding zero to a set that is closed under addition results
 lemma (in ring0) Ring_ZF_1_L15: 
   assumes "H \<subseteq> R" and "H {is closed under} A"
   shows "(H \<union> {\<zero>}) {is closed under} A"
-  using assms Ring_ZF_1_L1 group0.group0_2_L17 by simp
+  using assms add_group.group0_2_L17 by simp
 
 text\<open>Adding zero to a set that is closed under multiplication results
   in a set that is also closed under multiplication.\<close>
@@ -451,8 +448,8 @@ lemma (in ring0) Ring_ZF_2_L1A: assumes "a\<in>R" "b\<in>R"
   "(\<rm>a)\<ra>b\<ra>a = b"
   "(\<rm>a)\<ra>(b\<ra>a) = b"
   "a\<ra>(b\<rs>a) = b"
-  using assms Ring_ZF_1_L1 group0.inv_cancel_two group0.group0_4_L6A
-  by auto
+  using assms add_group.inv_cancel_two add_group.group0_4_L6A
+    Ring_ZF_1_L1(3) by auto
 
 text\<open>In commutative rings $a-(b+1)c = (a-d-c)+(d-bc)$. For unknown reasons 
   we have to use the raw set notation in the proof, otherwise all methods 
@@ -463,14 +460,14 @@ lemma (in ring0) Ring_ZF_2_L2:
   shows "a\<rs>(b\<ra>\<one>)\<cdot>c = (a\<rs>d\<rs>c)\<ra>(d\<rs>b\<cdot>c)"
 proof -
   let ?B = "b\<cdot>c" 
-  from ringAssum have "A {is commutative on} R"
+  from ringAssum have comm:"A {is commutative on} R"
     using IsAring_def by simp
-  moreover from A1 have "a\<in>R" "?B \<in> R" "c\<in>R" "d\<in>R"
+  from A1 have "a\<in>R" "?B \<in> R" "c\<in>R" "d\<in>R"
     using Ring_ZF_1_L4 by auto
-  ultimately have "A`\<langle>a, GroupInv(R,A)`(A`\<langle>?B, c\<rangle>)\<rangle> =
+  then have "A`\<langle>a, GroupInv(R,A)`(A`\<langle>?B, c\<rangle>)\<rangle> =
     A`\<langle>A`\<langle>A`\<langle>a, GroupInv(R, A)`(d)\<rangle>,GroupInv(R, A)`(c)\<rangle>,
     A`\<langle>d,GroupInv(R, A)`(?B)\<rangle>\<rangle>"
-    using Ring_ZF_1_L1 group0.group0_4_L8 by blast
+    using comm add_group.group0_4_L8(1)[of a ?B c d] by auto
   with A1 show ?thesis 
     using Ring_ZF_1_L2 ring_oper_distr Ring_ZF_1_L3 by simp
 qed
@@ -481,13 +478,12 @@ lemma (in ring0) Ring_ZF_2_L3:
   assumes A1: "a\<in>R"  "b\<in>R"  "c\<in>R"  "d\<in>R"  "x\<in>R"
   shows "(a\<cdot>x \<ra> b) \<ra> (c\<cdot>x \<ra> d) = (a\<ra>c)\<cdot>x \<ra> (b\<ra>d)"
 proof -
-  from A1 have 
-    "group0(R,A)"
+  from A1 have
     "A {is commutative on} R"
     "a\<cdot>x \<in> R"  "b\<in>R"  "c\<cdot>x \<in> R"  "d\<in>R" 
     using Ring_ZF_1_L1 Ring_ZF_1_L4 by auto
   then have "A`\<langle>A`\<langle> a\<cdot>x,b\<rangle>,A`\<langle> c\<cdot>x,d\<rangle>\<rangle> = A`\<langle>A`\<langle> a\<cdot>x,c\<cdot>x\<rangle>,A`\<langle> b,d\<rangle>\<rangle>"
-    by (rule group0.group0_4_L8)
+    using add_group.group0_4_L8(3) by auto
   with A1 show 
     "(a\<cdot>x \<ra> b) \<ra> (c\<cdot>x \<ra> d) = (a\<ra>c)\<cdot>x \<ra> (b\<ra>d)"
     using ring_oper_distr by simp
@@ -538,8 +534,8 @@ lemma (in ring0) Ring_ZF_2_L5:
   "a \<ra> b \<ra> c \<rs> d = a \<rs> d \<ra> b \<ra> c"
   "a \<ra> b \<rs> c \<rs> d = a \<rs> c \<ra> (b \<rs> d)"
   "a \<ra> b \<ra> c \<ra> d = a \<ra> c \<ra> (b \<ra> d)"
-  using assms Ring_ZF_1_L1 group0.rearr_ab_gr_4_elemB
-    group0.rearr_ab_gr_4_elemA by auto
+  using assms Ring_ZF_1_L1(3) add_group.rearr_ab_gr_4_elemB
+    add_group.rearr_ab_gr_4_elemA by auto
 
 text\<open>Two big rearranegements with six elements, useful for
   proving properties of complex addition and multiplication.\<close>
