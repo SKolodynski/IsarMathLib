@@ -322,8 +322,14 @@ lemma comprehension: assumes "a \<in> {x\<in>X. p(x)}"
   shows "a\<in>X" and "p(a)" using assms by auto
 
 text\<open>A basic property of a set defined by another type of comprehension.\<close>
-lemma comprehension_repl: assumes "y \<in> {p(x). x\<in>X}" 
+
+lemma comprehension_repl: assumes "y \<in> {p(x). x\<in>X}"
   shows "\<exists>x\<in>X. y = p(x)" using assms by auto
+
+text\<open>The inverse of the \<open>comprehension\<close> lemma.\<close>
+
+lemma mem_cond_in_set: assumes "\<phi>(c)" and "c\<in>X"
+  shows "c \<in> {x\<in>X. \<phi>(x)}" using assms by blast
 
 text\<open>The image of a set by a greater relation is greater. \<close>
 
@@ -390,7 +396,23 @@ proof -
     with assms(2) \<open>p\<in>A\<close> have "\<exists>x\<in>X. p \<in> A``{x}\<times>A``{x}" by auto
   } thus ?thesis by auto
 qed
-    
+
+text\<open>If the cartesian product of the images of $x$ and $y$ by a 
+  symmetric relation $W$ has a nonempty intersection with $R$
+  then $x$ is in relation $W\circ (R\circ W)$ with $y$. \<close>
+
+lemma sym_rel_comp: 
+  assumes "W=converse(W)" and "(W``{x})\<times>(W``{y}) \<inter> R \<noteq> 0"
+  shows "\<langle>x,y\<rangle> \<in> (W O (R O W))" 
+proof -
+  from assms(2) obtain s t where "s\<in>W``{x}" "t\<in>W``{y}" and "\<langle>s,t\<rangle>\<in>R"
+    by blast
+  then have "\<langle>x,s\<rangle> \<in> W" and "\<langle>y,t\<rangle> \<in> W" by auto
+  from \<open>\<langle>x,s\<rangle> \<in> W\<close> \<open>\<langle>s,t\<rangle> \<in> R\<close> have "\<langle>x,t\<rangle> \<in> R O W" by auto
+  from \<open>\<langle>y,t\<rangle> \<in> W\<close> have "\<langle>t,y\<rangle> \<in> converse(W)" by blast
+  with assms(1) \<open>\<langle>x,t\<rangle> \<in> R O W\<close> show ?thesis by auto
+qed
+
 text\<open> It's hard to believe but there are cases where we have to reference this rule. \<close>
 
 lemma set_mem_eq: assumes "x\<in>A" "A=B" shows "x\<in>B" using assms by simp
@@ -404,7 +426,7 @@ definition
 text\<open>The family itself is in its supersets. \<close>
 
 lemma superset_gen: assumes "A\<subseteq>X" "A\<in>\<A>" shows "A \<in> Supersets(X,\<A>)"
-  using assms Supersets_def by auto 
+  using assms unfolding Supersets_def by auto 
 
 text\<open>This can be done by the auto method, but sometimes takes a long time. \<close>
 
@@ -424,15 +446,11 @@ lemma set_comp_eq: assumes "\<forall>x\<in>X. p(x) = q(x)"
   shows "{p(x). x\<in>X} = {q(x). x\<in>X}" and "{\<langle>x,p(x)\<rangle>. x\<in>X} = {\<langle>x,q(x)\<rangle>. x\<in>X}"
   using assms by auto
 
-(*lemma image_rel_singleton: 
-  assumes "R \<subseteq> X\<times>Y"  shows "R``{x} = {y\<in>Y. \<langle>x,y\<rangle> \<in> R}" 
-  using assms by auto
+text\<open>If $z$ is a pair, then the cartesian product of the singletons of its 
+  elements is the same as the singleton $\{ z\}$.\<close> 
 
-lemma inv_img: assumes "R \<subseteq> X\<times>Y" shows "{\<langle>y,\<langle>x,y\<rangle>\<rangle>. y\<in>Y}-``(R) = {y\<in>Y. \<langle>x,y\<rangle> \<in> R}"
-  using assms by auto
+lemma pair_prod: assumes "z = \<langle>x,y\<rangle>" shows "{x}\<times>{y} = {z}"
+  using assms by blast
 
-lemma together: assumes "R \<subseteq> X\<times>Y" shows "R``{x} = {\<langle>y,\<langle>x,y\<rangle>\<rangle>. y\<in>Y}-``(R)"
-  using assms by auto
-*)
 end
 

@@ -430,17 +430,17 @@ proof -
   thus "(\<Union>N) {is closed in} T" by simp
 qed
 
-text\<open>Closure of a set is closed.\<close>
+text\<open>Closure of a set is closed, hence the complement of the closure is open.\<close>
 
 lemma (in topology0) cl_is_closed: assumes "A \<subseteq> \<Union>T"
-  shows "cl(A) {is closed in} T"
-  using assms Closure_def Top_3_L3 ClosedCovers_def Top_3_L4
-  by simp
+  shows "cl(A) {is closed in} T" and "\<Union>T - cl(A) \<in> T"
+  using assms Top_3_L3 Top_3_L4 Closure_def ClosedCovers_def IsClosed_def
+  by auto
 
 text\<open>Closure of a bigger sets is bigger.\<close>
 
 lemma (in topology0) top_closure_mono: 
-  assumes A1: "A \<subseteq> \<Union>T"  "B \<subseteq> \<Union>T"  and A2:"A\<subseteq>B"
+  assumes A1: "B \<subseteq> \<Union>T"  and A2:"A\<subseteq>B"
   shows "cl(A) \<subseteq> cl(B)"
 proof -
   from A2 have "ClosedCovers(B,T)\<subseteq> ClosedCovers(A,T)" 

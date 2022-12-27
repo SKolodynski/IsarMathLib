@@ -73,8 +73,67 @@ text\<open>A topology is regular if every closed set can be separated from a poi
 
 definition
   IsRegular ("_ {is regular}" 90)
-  where "T {is regular} \<equiv> \<forall>A. A {is closed in}T \<longrightarrow> (\<forall>x\<in>\<Union>T-A. \<exists>U\<in>T. \<exists>V\<in>T. A\<subseteq>U\<and>x\<in>V\<and>U\<inter>V=0)"
+  where "T {is regular} \<equiv> \<forall>D. D {is closed in} T \<longrightarrow> (\<forall>x\<in>\<Union>T-D.\<exists>U\<in>T.\<exists>V\<in>T. D\<subseteq>U\<and>x\<in>V\<and>U\<inter>V=0)"
 
+text\<open>Some sources (e.g. Metamath) use a different definition of regularity: 
+  any open neighborhood has a closed subneighborhood. The next lemma shows the equivalence
+  of this with our definition.\<close>
+
+lemma is_regular_def_alt: assumes "T {is a topology}" 
+  shows "T {is regular} \<longleftrightarrow> (\<forall>W\<in>T. \<forall>x\<in>W. \<exists>V\<in>T. x\<in>V \<and> Closure(V,T)\<subseteq>W)"
+proof 
+  let ?X = "\<Union>T"
+  from assms(1) have cntx: "topology0(T)"
+    unfolding topology0_def by simp
+  assume "T {is regular}"
+  { fix W x assume "W\<in>T" "x\<in>W"
+    have "\<exists>V\<in>T. x\<in>V \<and> Closure(V,T)\<subseteq>W"
+    proof -
+      let ?D = "?X-W"
+      from cntx \<open>W\<in>T\<close> \<open>T {is regular}\<close> \<open>x\<in>W\<close>
+      have "\<exists>U\<in>T.\<exists>V\<in>T. ?D\<subseteq>U\<and>x\<in>V\<and>U\<inter>V=0"
+        using topology0.Top_3_L9 unfolding IsRegular_def by auto
+      then obtain U V where "U\<in>T" "V\<in>T" "?D\<subseteq>U" "x\<in>V" "V\<inter>U=0"
+        by blast
+      from cntx \<open>V\<in>T\<close> have "Closure(V,T) \<subseteq> ?X"
+        using topology0.Top_3_L11(1) by blast      
+      from cntx \<open>V\<in>T\<close> \<open>U\<in>T\<close> \<open>V\<inter>U=0\<close> \<open>?D\<subseteq>U\<close>
+      have "Closure(V,T) \<inter> ?D = 0"
+        using topology0.disj_open_cl_disj by blast
+      with \<open>Closure(V,T) \<subseteq> ?X\<close> \<open>V\<in>T\<close> \<open>x\<in>V\<close> show ?thesis
+        by blast
+    qed
+  } thus "\<forall>W\<in>T. \<forall>x\<in>W. \<exists>V\<in>T. x\<in>V \<and> Closure(V,T)\<subseteq>W"
+    by simp
+next
+  let ?X = "\<Union>T"
+  from assms(1) have cntx: "topology0(T)"
+    unfolding topology0_def by simp
+  assume regAlt: "\<forall>W\<in>T. \<forall>x\<in>W. \<exists>V\<in>T. x\<in>V \<and> Closure(V,T)\<subseteq>W"
+  { fix A assume "A {is closed in} T"
+    have "\<forall>x\<in>?X-A.\<exists>U\<in>T.\<exists>V\<in>T. A\<subseteq>U \<and> x\<in>V \<and> U\<inter>V=0"
+    proof -
+      { let ?W = "?X-A"
+        from \<open>A {is closed in} T\<close> have "A\<subseteq>?X" and "?W\<in>T"
+          unfolding IsClosed_def by auto
+        fix x assume "x\<in>?W"
+        with regAlt \<open>?W\<in>T\<close> have "\<exists>V\<in>T. x\<in>V \<and> Closure(V,T)\<subseteq>?W"
+          by simp
+        then obtain V where "V\<in>T" "x\<in>V" "Closure(V,T)\<subseteq>?W"
+          by auto
+        let ?U = "?X-Closure(V,T)"        
+        from cntx \<open>V\<in>T\<close> have "V\<subseteq>?X" and "V\<subseteq>Closure(V,T)" 
+          using topology0.cl_contains_set by auto
+        with cntx \<open>A\<subseteq>?X\<close> \<open>Closure(V,T)\<subseteq>?W\<close>
+        have "?U\<in>T" "A\<subseteq>?U" "?U\<inter>V = 0"
+          using topology0.cl_is_closed(2) by auto
+        with \<open>V\<in>T\<close> \<open>x\<in>V\<close> have "\<exists>U\<in>T.\<exists>V\<in>T. A\<subseteq>U \<and> x\<in>V \<and> U\<inter>V=0"
+          by blast
+      } thus ?thesis by blast
+    qed
+  } then show "T {is regular}" unfolding IsRegular_def 
+    by blast
+qed
 
 text\<open>If a topology is $T_1$ then it is $T_0$. 
   We don't really assume here that $T$ is a topology on $X$. 
@@ -382,17 +441,17 @@ text\<open>The product topology is indeed a topology on the product.\<close>
 
 theorem Top_1_4_T1: assumes A1: "T {is a topology}"  "S {is a topology}"
   shows 
-  "ProductTopology(T,S) {is a topology}"
-  "ProductCollection(T,S) {is a base for} ProductTopology(T,S)"
-  "\<Union> ProductTopology(T,S) = \<Union>T \<times> \<Union>S"
+  "(T\<times>\<^sub>tS) {is a topology}"
+  "ProductCollection(T,S) {is a base for} (T\<times>\<^sub>tS)"
+  "\<Union>(T\<times>\<^sub>tS) = \<Union>T \<times> \<Union>S"
 proof -
   from A1 show 
-    "ProductTopology(T,S) {is a topology}"
-    "ProductCollection(T,S) {is a base for} ProductTopology(T,S)"
+    "(T\<times>\<^sub>tS) {is a topology}"
+    "ProductCollection(T,S) {is a base for} (T\<times>\<^sub>tS)"
     using Top_1_4_L1 ProductCollection_def 
       SatisfiesBaseCondition_def ProductTopology_def Top_1_2_T1 
     by auto
-  then show "\<Union> ProductTopology(T,S) = \<Union>T \<times> \<Union>S"
+  then show "\<Union>(T\<times>\<^sub>tS) = \<Union>T \<times> \<Union>S"
     using Top_1_2_L5 ZF1_1_L6 by simp
 qed
 
@@ -468,8 +527,7 @@ text\<open>Suppose we have subsets $A\subseteq X, B\subseteq Y$, where
   of cartesian products of sets open in $T_A, S_B$, (namely 
   $\{U\times V: U\in T_A, V\in S_B\}$. The next lemma states that
   this collection is a base of the product topology on $X\times Y$
-  restricted to the product $A\times B$.
-\<close>
+  restricted to the product $A\times B$.\<close>
 
 lemma prod_restr_base_restr:
   assumes A1: "T {is a topology}"  "S {is a topology}"

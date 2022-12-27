@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2021 Slawomir Kolodynski
+    Copyright (C) 2021-2022 Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -479,7 +479,7 @@ proof -
   have "?P \<in> Covers(X)"
   proof -
     from assms have "W \<subseteq> X\<times>X" and "?P \<in> Pow(Pow(X))" 
-      using unif_props(1) by auto
+      using entourage_props(1) by auto
     moreover have "\<Union>?P = X"
     proof
       from \<open>W \<subseteq> X\<times>X\<close> show "\<Union>?P \<subseteq> X" by auto
@@ -716,7 +716,7 @@ proof
       unfolding IsUniformity_def IsFilter_def by simp
   } thus "\<Phi>\<subseteq>?L" by auto
   { fix A assume "A\<in>?L" 
-    with II have "A \<subseteq> X\<times>X" using unif_props(1) by simp
+    with II have "A \<subseteq> X\<times>X" using entourage_props(1) by simp
     from \<open>A\<in>?L\<close> obtain P where "P\<in>?\<Theta>" and "\<Union>{U\<times>U. U\<in>P} \<subseteq> A"
       unfolding UniformityFromUniCov_def Supersets_def by blast
     from \<open>P\<in>?\<Theta>\<close> obtain B where "B\<in>\<Phi>" and III: "\<forall>x\<in>X. \<exists>V\<in>P. B``{x} \<subseteq> V"
@@ -724,7 +724,7 @@ proof
     have "B\<subseteq>A"
     proof -
       from assms(1) \<open>B\<in>\<Phi>\<close> have "B \<subseteq> \<Union>{B``{x}\<times>B``{x}. x\<in>X}"
-        using unif_props refl_union_singl_image by simp
+        using entourage_props(1,2) refl_union_singl_image by simp
       moreover have "\<Union>{B``{x}\<times>B``{x}. x\<in>X} \<subseteq> A"
       proof -
         { fix x assume "x\<in>X"

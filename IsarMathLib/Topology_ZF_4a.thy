@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2019 Slawomir Kolodynski
+    Copyright (C) 2019-2022 Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -87,7 +87,7 @@ subsection\<open> From a neighborhood system to topology \<close>
 text\<open>Given a neighborhood system $\{\mathcal{M}_x\}_{x\in X}$ we can define a topology on $X$.
 Namely, we consider a subset of $X$ open if $U \in \mathcal{M}_x$ for every element $x$ of $U$. \<close>
 
-text\<open> The collection of sets defined as above is indeed a topology. \<close>
+text\<open>The collection of sets defined as above is indeed a topology. \<close>
 
 theorem topology_from_neighs: 
   assumes "\<M> {is a neighborhood system on} X"
@@ -151,7 +151,7 @@ proof
   show "?T\<subseteq>?S" by auto
 qed
 
-subsection\<open> From a topology to a neighborhood system \<close>
+subsection\<open>From a topology to a neighborhood system\<close>
 
 text\<open> Once we have a topology $T$ we can define a natural neighborhood system on $X=\bigcup T$. 
   In this section we define such neighborhood system and prove its basic properties.  \<close>
@@ -164,8 +164,28 @@ definition
   NeighSystem ("{neighborhood system of} _" 91)
   where "{neighborhood system of} T \<equiv> { \<langle>x,{N\<in>Pow(\<Union>T).\<exists>U\<in>T.(x\<in>U \<and> U\<subseteq>N)}\<rangle>. x \<in> \<Union>T }" 
 
-text\<open> The next lemma shows that open sets are members of (what we will prove later to be) the natural 
-  neighborhood system on $X=\bigcup T$. \<close>
+text\<open>The way we defined the neighborhood system of $T$ means that
+  it is a function on $\bigcup T$. \<close>
+
+lemma neigh_fun: shows "({neighborhood system of} T): \<Union>T \<rightarrow> Pow(Pow(\<Union>T))"
+proof -
+  let ?X = "\<Union>T"
+  have "\<forall>x\<in>?X. {N\<in>Pow(?X).\<exists>U\<in>T.(x\<in>U \<and> U\<subseteq>N)} \<in> Pow(Pow(?X))"
+    by blast
+  then show ?thesis unfolding NeighSystem_def using ZF_fun_from_total
+    by simp
+qed 
+
+text\<open>The value of the neighborhood system of $T$ at $x\in \bigcup T$ 
+  is the collection of supersets of open sets containing $x$.\<close>
+
+lemma neigh_val: assumes "x\<in>\<Union>T"
+  shows "({neighborhood system of} T)`(x) = {N\<in>Pow(\<Union>T).\<exists>U\<in>T.(x\<in>U \<and> U\<subseteq>N)}"
+  using assms ZF_fun_from_tot_val1 unfolding NeighSystem_def
+  by simp
+  
+text\<open> The next lemma shows that open sets are members of (what we will prove later to be)
+   the natural neighborhood system on $X=\bigcup T$. \<close>
 
 lemma open_are_neighs:
   assumes "U\<in>T" "x\<in>U"
@@ -213,7 +233,7 @@ proof -
     by simp
 qed
 
-text\<open> The next theorem states that the the natural 
+text\<open>The next theorem states that the the natural 
   neighborhood system on $X=\bigcup T$ indeed is a neighborhood system. \<close>
 
 theorem neigh_from_topology:
@@ -249,6 +269,25 @@ proof -
     } thus ?thesis by auto 
   qed
   ultimately show ?thesis unfolding IsNeighSystem_def by blast
+qed
+
+text\<open>Any neighborhood of an element of the closure of a subset intersects the subset.\<close>
+
+lemma neigh_inter_nempty: 
+  assumes "T {is a topology}" "A\<subseteq>\<Union>T" "x \<in> Closure(A,T)" and
+  "N \<in> ({neighborhood system of} T)`(x)"
+  shows "N\<inter>A \<noteq> 0"
+proof -
+  let ?X = "\<Union>T"
+  from assms(1) have cntx: "topology0(T)" 
+    unfolding topology0_def by simp
+  with assms(2,3) have "x\<in>?X"
+    using topology0.Top_3_L11(1) by blast
+  with assms(4) obtain U where "U\<in>T" "x\<in>U" and "U\<subseteq>N"
+    using neigh_val by auto
+  from assms(2,3) cntx \<open>U\<in>T\<close> \<open>x\<in>U\<close> have "A\<inter>U \<noteq> 0"
+    using topology0.cl_inter_neigh by simp
+  with \<open>U\<subseteq>N\<close> show "N\<inter>A \<noteq> 0" by blast
 qed
 
 subsection\<open> Neighborhood systems are 1:1 with topologies \<close>
@@ -361,5 +400,198 @@ lemma neigh_from_nei: assumes "x\<in>\<Union>T"
   using assms ZF_fun_from_tot_val1
   unfolding NeighSystem_def SetNeighSystem_def
   by simp
-  
+
+text\<open>The set neighborhood system of $T$ is a function mapping subsets of $\bigcup T$
+  to collections of subsets of $\bigcup T$. \<close>
+
+lemma nei_fun: 
+  shows "({set neighborhood system of} T):Pow(\<Union>T) \<rightarrow>Pow(Pow(\<Union>T))"
+proof -
+  let ?X = "\<Union>T"
+  have "\<forall>A\<in>Pow(?X). {N\<in>Pow(?X). \<exists>U\<in>T. (A\<subseteq>U \<and> U\<subseteq>N)} \<in> Pow(Pow(?X))"
+    by blast
+  then have 
+    "{\<langle>A,{N\<in>Pow(?X). \<exists>U\<in>T. (A\<subseteq>U \<and> U\<subseteq>N)}\<rangle>. A\<in>Pow(?X)}:Pow(?X)\<rightarrow>Pow(Pow(?X))"
+    by (rule ZF_fun_from_total)
+  then show ?thesis unfolding SetNeighSystem_def by simp
+qed
+
+text\<open>The value of the set neighborhood system of $T$ at subset $A$ of $\bigcup T$
+  is the collection of subsets $N$ of $\bigcup T$ for which exists an open subset
+  $U\subseteq N$ that contains $A$. \<close>
+
+lemma nei_val: assumes "A \<subseteq> \<Union>T"
+  shows
+  "({set neighborhood system of} T)`(A) = {N\<in>Pow(\<Union>T). \<exists>U\<in>T. (A\<subseteq>U \<and> U\<subseteq>N)}"
+  using assms ZF_fun_from_tot_val1 unfolding SetNeighSystem_def by simp
+
+text\<open>A member of the value of the set neighborhood system of$T$ at $A$ is
+  a subset of $\bigcup T$. The interesting part is that we can show it without any
+  assumption on $A$. \<close>
+
+lemma nei_val_subset: 
+  assumes "N \<in> ({set neighborhood system of} T)`(A)"
+  shows "A \<subseteq> \<Union>T" and "N \<subseteq> \<Union>T"
+proof -
+  let ?f = "{set neighborhood system of} T"
+  have "?f:Pow(\<Union>T) \<rightarrow>Pow(Pow(\<Union>T))" using nei_fun by simp
+  with assms show "A \<subseteq> \<Union>T" using arg_in_domain by blast
+  with assms show "N \<subseteq> \<Union>T" using nei_val by simp
+qed
+
+text\<open>If $T$ is a topology, then every subset of its carrier (i.e. $\bigcup T$) 
+  is a (set) neighborhood of the empty set. \<close>
+
+lemma nei_empty: assumes "T {is a topology}" "N \<subseteq> \<Union>T"
+  shows "N \<in> ({set neighborhood system of} T)`(0)"
+  using assms empty_open nei_val by auto
+
+text\<open>If $T$ is a topology, then the (set) neighborhoods of a nonempty subset of 
+  $\bigcup T$ form a filter on $X=\bigcup T$.\<close>
+
+theorem nei_filter: assumes "T {is a topology}" "D \<subseteq> (\<Union>T)" "D\<noteq>0"
+  shows "({set neighborhood system of} T)`(D) {is a filter on} (\<Union>T)"
+proof -
+  let ?X = "\<Union>T"
+  let ?\<F> = "({set neighborhood system of} T)`(D)"
+  from assms(2) have I: "?\<F> = {N\<in>Pow(?X). \<exists>U\<in>T. (D\<subseteq>U \<and> U\<subseteq>N)}"
+    using nei_val by simp
+  with assms(3) have "0 \<notin> ?\<F>" by auto
+  moreover from assms(1,2) I have "?X\<in>?\<F>"
+    using carr_open by auto
+  moreover from I have "?\<F> \<subseteq> Pow(?X)" by auto
+  moreover have "\<forall>A\<in>?\<F>. \<forall>B\<in>?\<F>. A\<inter>B \<in> ?\<F>"
+  proof -
+    { fix A B assume "A\<in>?\<F>" "B\<in>?\<F>"
+      with I obtain U\<^sub>A U\<^sub>B where 
+        "U\<^sub>A\<in>T" "D\<subseteq>U\<^sub>A" "U\<^sub>A\<subseteq>A" and "U\<^sub>B\<in>T" "D\<subseteq>U\<^sub>B" "U\<^sub>B\<subseteq>B"
+        by auto
+      let ?U = "U\<^sub>A\<inter>U\<^sub>B"
+      from assms(1) \<open>U\<^sub>A\<in>T\<close> \<open>U\<^sub>B\<in>T\<close> \<open>D\<subseteq>U\<^sub>A\<close> \<open>D\<subseteq>U\<^sub>B\<close> \<open>U\<^sub>A\<subseteq>A\<close> \<open>U\<^sub>B\<subseteq>B\<close>
+      have "?U \<in> T" "D\<subseteq>?U" "?U \<subseteq> A\<inter>B"
+        unfolding IsATopology_def by auto
+      with I \<open>A\<in>?\<F>\<close> \<open>B\<in>?\<F>\<close> have "A\<inter>B \<in> ?\<F>" by auto
+    } thus ?thesis by simp
+  qed
+  moreover have "\<forall>B\<in>?\<F>. \<forall>C\<in>Pow(?X). B\<subseteq>C \<longrightarrow> C\<in>?\<F>"
+  proof -
+    { fix B C assume "B\<in>?\<F>" "C\<in>Pow(?X)" "B\<subseteq>C"
+      from I \<open>B\<in>?\<F>\<close> obtain U where "U\<in>T" "D\<subseteq>U" and "U\<subseteq>B"
+        by auto
+      with \<open>B\<subseteq>C\<close> have "\<exists>U\<in>T. (D\<subseteq>U \<and> U\<subseteq>C)" by blast
+      with I \<open>C\<in>Pow(?X)\<close> have "C\<in>?\<F>" by simp
+    } thus ?thesis by blast
+  qed
+  ultimately show "?\<F> {is a filter on} ?X"
+    unfolding IsFilter_def by simp
+qed  
+    
+text\<open>If $N$ is a (set) neighborhood of $A$ in $T$, then exist an open set $U$ such that
+  $N$ contains $U$ which contains $A$. This is similar to the Metamath's theorem
+  with the same name, except that here we do not need assume that $T$ is a topology
+  (which is a bit worrying).\<close>
+
+lemma neii2: assumes "N \<in> ({set neighborhood system of} T)`(A)"
+  shows "\<exists>U\<in>T. (A\<subseteq>U \<and> U\<subseteq>N)"
+proof -
+  from assms have "A\<in>Pow(\<Union>T)" using nei_fun arg_in_domain
+    by blast
+  with assms show ?thesis
+    unfolding SetNeighSystem_def using ZF_fun_from_tot_val1
+    by simp
+qed
+
+text\<open>An open set $U$ covering as set $A$ is a set neighborhood of $A$. \<close>
+
+lemma open_superset_nei: assumes "V\<in>T" "A\<subseteq>V"
+  shows "V \<in> ({set neighborhood system of} T)`(A)"
+proof -
+  from assms have 
+    "({set neighborhood system of} T)`(A) = {N\<in>Pow(\<Union>T). \<exists>U\<in>T. (A\<subseteq>U \<and> U\<subseteq>N)}"
+    using nei_val by blast
+  with assms show ?thesis by auto
+qed
+
+text\<open>An open set is a set neighborhood of itself.\<close>
+
+corollary open_is_nei: assumes "V\<in>T"
+  shows "V \<in> ({set neighborhood system of} T)`(V)"
+  using assms open_superset_nei by simp
+
+text\<open>An open neighborhood of $x$ is a set neighborhood of $\{ x\}$. \<close>
+
+corollary open_nei_singl: assumes "V\<in>T" "x\<in>V"
+  shows  "V \<in> ({set neighborhood system of} T)`{x}"
+  using assms open_superset_nei by simp
+
+text\<open>The Cartesian product of two neighborhoods is a neighborhood in the 
+  product topology. Similar to the Metamath's theorem with the same name. \<close>
+
+lemma neitx: 
+  assumes "T {is a topology}" "S {is a topology}" and
+  "A \<in> ({set neighborhood system of} T)`(C)" and
+  "B \<in> ({set neighborhood system of} S)`(D)"
+  shows "A\<times>B \<in> ({set neighborhood system of} (T\<times>\<^sub>tS))`(C\<times>D)"
+proof -
+  have "A\<times>B \<subseteq> \<Union>(T\<times>\<^sub>tS)"
+  proof -
+    from assms(3,4) have "A\<times>B \<subseteq> (\<Union>T)\<times>(\<Union>S)"
+      using nei_val_subset(2) by blast
+    with assms(1,2) show ?thesis using Top_1_4_T1 by simp
+  qed
+  { assume "C=0 \<or> D=0"
+    with assms(1,2) \<open>A\<times>B \<subseteq> \<Union>(T\<times>\<^sub>tS)\<close> have ?thesis
+      using Top_1_4_T1(1) nei_empty by auto
+  }
+  moreover
+  { assume "C\<noteq>0" "D\<noteq>0"
+    from assms(3) obtain U\<^sub>A where 
+      "U\<^sub>A\<in>T" "C\<subseteq>U\<^sub>A" "U\<^sub>A\<subseteq>A" using neii2 by blast
+    from assms(4) obtain U\<^sub>B where 
+      "U\<^sub>B\<in>S" "D\<subseteq>U\<^sub>B" "U\<^sub>B\<subseteq>B" using neii2 by blast
+    let ?\<F> = "({set neighborhood system of} (T\<times>\<^sub>tS))`(C\<times>D)"
+    from assms(1,2) \<open>U\<^sub>A\<in>T\<close> \<open>U\<^sub>B\<in>S\<close> \<open>C\<subseteq>U\<^sub>A\<close> \<open>D\<subseteq>U\<^sub>B\<close>
+    have "U\<^sub>A\<times>U\<^sub>B \<in> T\<times>\<^sub>tS" and "C\<times>D \<subseteq> U\<^sub>A\<times>U\<^sub>B"
+      using prod_open_open_prod by auto
+    then have "U\<^sub>A\<times>U\<^sub>B \<in> ?\<F>" using open_superset_nei 
+      by simp
+    from \<open>U\<^sub>A\<subseteq>A\<close> \<open>U\<^sub>B\<subseteq>B\<close> have "U\<^sub>A\<times>U\<^sub>B \<subseteq> A\<times>B" by auto
+    have "?\<F> {is a filter on} (\<Union>(T\<times>\<^sub>tS))"
+    proof -
+      from assms(1,2) have "(T\<times>\<^sub>tS) {is a topology}"
+        using Top_1_4_T1(1) by simp
+      moreover have "C\<times>D \<subseteq> \<Union>(T\<times>\<^sub>tS)"
+      proof -
+        from assms(3,4) have "C\<times>D \<subseteq> (\<Union>T)\<times>(\<Union>S)"
+          using nei_val_subset(1) by blast
+        with assms(1,2) show ?thesis using Top_1_4_T1(3) by simp
+      qed 
+      moreover from \<open>C\<noteq>0\<close> \<open>D\<noteq>0\<close> have "C\<times>D \<noteq> 0" by auto
+      ultimately show "?\<F> {is a filter on} (\<Union>(T\<times>\<^sub>tS))"
+        using nei_filter by simp
+    qed
+    with \<open>U\<^sub>A\<times>U\<^sub>B \<in> ?\<F>\<close> \<open>A\<times>B \<subseteq> \<Union>(T\<times>\<^sub>tS)\<close> \<open>U\<^sub>A\<times>U\<^sub>B \<subseteq> A\<times>B\<close> 
+    have "A\<times>B \<in> ?\<F>" using is_filter_def_split(5) by simp
+  }
+  ultimately show ?thesis by auto
+qed
+
+text\<open>Any neighborhood of an element of the closure of a subset intersects the subset.
+  This is practically the same as \<open>neigh_inter_nempty\<close>, just formulated in terms 
+  of set neighborhoods of singletons. 
+  Compare with Metamath's theorem with the same name.\<close>
+
+lemma neindisj: assumes "T {is a topology}" "A\<subseteq>\<Union>T" "x \<in> Closure(A,T)" and
+  "N \<in> ({set neighborhood system of} T)`{x}"
+  shows "N\<inter>A \<noteq> 0"
+proof -
+  let ?X = "\<Union>T"
+  from assms(1) have cntx: "topology0(T)" 
+    unfolding topology0_def by simp
+  with assms(2,3) have "x\<in>?X"
+    using topology0.Top_3_L11(1) by blast
+  with assms show ?thesis using neigh_from_nei neigh_inter_nempty
+    by simp
+qed
+
 end

@@ -442,14 +442,14 @@ lemma Real_ZF_1_L13: assumes "s \<in> Slopes"  "p \<in> Slopes"
   by blast
 
 text\<open>Identity function on integers is a slope.
-  Thislemma  concludes the easy part of the construction that follows from
+  This lemma  concludes the easy part of the construction that follows from
   the fact that slope equivalence classes form a ring. It is easy to see
   that multiplication of classes of almost homomorphisms is not 
   commutative in general.
   The remaining properties of real numbers, like commutativity of 
   multiplication and the existence of multiplicative inverses have to be 
   proven using properties of the group of integers, rather that in general
-  setting of abelian groups.\<close>
+  setting of abelian groups. This is done in the \<open>Real_ZF_1\<close> theory.\<close>
 
 lemma Real_ZF_1_L14: shows "id(int) \<in> Slopes"
 proof -

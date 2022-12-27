@@ -394,6 +394,17 @@ text\<open>An hypotheses-free form of \<open>ZF_fun_from_tot_val1\<close>: the v
 lemma ZF_fun_from_tot_val2: shows "\<forall>x\<in>X. {\<langle>x,b(x)\<rangle>. x\<in>X}`(x) = b(x)"
   using ZF_fun_from_tot_val1 by simp
 
+text\<open>In Isabelle/ZF and Metamath if $x$ is not in the domain of a function $f$
+  then $f(x)$ is the empty set. This allows us to conclude that if $y\in f(x)$, then
+  $x$ must be en element of the domain of $f$. \<close>
+
+lemma arg_in_domain: assumes "f:X\<rightarrow>Y" "y\<in>f`(x)" shows "x\<in>X"
+proof -
+  { assume "x\<notin>X"
+    with assms have False using func1_1_L1 apply_0 by simp
+  } thus ?thesis by auto
+qed
+
 text\<open>We can extend a function by specifying its values on a set
   disjoint with the domain.\<close>
 

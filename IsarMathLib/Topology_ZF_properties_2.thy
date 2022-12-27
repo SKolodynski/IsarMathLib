@@ -361,7 +361,7 @@ proof-
       have "?V\<subseteq>A" using Top_2_L1 by auto
       then have "cl(?V)\<subseteq>A" using Acl Top_3_L13 by auto
       then have "A\<inter>cl(?V)=cl(?V)" by auto moreover
-      have clcl:"cl(?V){is closed in}T" using cl_is_closed \<open>?V\<subseteq>A\<close> \<open>A\<subseteq>\<Union>T\<close> by auto
+      have clcl:"cl(?V){is closed in}T" using cl_is_closed(1) \<open>?V\<subseteq>A\<close> \<open>A\<subseteq>\<Union>T\<close> by auto
       ultimately have comp:"cl(?V){is compact in}T" using Acom compact_closed[of "A""nat""T""cl(?V)"] Compact_is_card_nat
         by auto
       {
@@ -394,7 +394,7 @@ proof-
       ultimately have A1:"x\<in>int(Closure(W,(T{restricted to}cl(?V))))" using Top_2_L6 cinW by auto
       from clcont have A2:"Closure(W,(T{restricted to}cl(?V)))\<subseteq>U" using Top_2_L1 by auto
       have clwcl:"Closure(W,(T{restricted to}cl(?V))) {is closed in}(T{restricted to}cl(?V))"
-        using topology0.cl_is_closed Top_1_L4 Wop unfolding topology0_def by auto
+        using topology0.cl_is_closed(1) Top_1_L4 Wop unfolding topology0_def by auto
       from comp have "cl(?V){is compact in}(T{restricted to}cl(?V))" using compact_imp_compact_subspace[of "cl(?V)""nat""T"] Compact_is_card_nat
           by auto
       with clwcl have "((cl(?V)\<inter>(Closure(W,(T{restricted to}cl(?V)))))){is compact in}(T{restricted to}cl(?V))"

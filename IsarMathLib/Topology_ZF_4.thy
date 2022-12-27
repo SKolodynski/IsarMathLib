@@ -204,7 +204,7 @@ definition
   (\<forall>A\<in>\<FF>. \<forall>B\<in>\<FF>. A\<inter>B\<in>\<FF>) \<and> (\<forall>B\<in>\<FF>. \<forall>C\<in>Pow(X). B\<subseteq>C \<longrightarrow> C\<in>\<FF>)"
 
 text\<open>The next lemma splits the the definition of a filter into four conditions
-to make it easier to reference each one separately in proofs.\<close>
+ to make it easier to reference each one separately in proofs.\<close>
 
 lemma is_filter_def_split: assumes "\<FF> {is a filter on} X"
   shows "0\<notin>\<FF>" "X\<in>\<FF>" "\<FF>\<subseteq>Pow(X)" 
