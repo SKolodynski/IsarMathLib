@@ -157,7 +157,7 @@ text\<open> Once we have a topology $T$ we can define a natural neighborhood sys
   In this section we define such neighborhood system and prove its basic properties.  \<close>
 
 text\<open>For a topology $T$ we define a neighborhood system of $T$ as a function that takes an $x\in X=\bigcup T$ 
-and assigns it a collection supersets of open sets containing $x$. 
+and assigns it the collection of supersets of open sets containing $x$. 
 We call that the "neighborhood system of $T$"\<close>
 
 definition
@@ -378,12 +378,12 @@ subsection\<open>Set neighborhoods\<close>
 
 text\<open>Some sources (like Metamath) take a somewhat different approach where instead of defining
   the collection of neighborhoods of a point $x\in X$ they define a collection of neighborhoods
-  of a subset of $X$ (where $X$ is the carrier of a topology  $T$, i.e. ($X=\bigcup T$).
+  of a subset of $X$ (where $X$ is the carrier of a topology  $T$ (i.e. $X=\bigcup T$).
   In this approach a neighborhood system is a function whose domain is the powerset of $X$, i.e.
   the set of subsets of $X$. The two approaches are equivalent in a sense as
   having a neighborhood system we can create a set neighborhood system and vice versa. \<close>
 
-text\<open>We defines a set neighborhood system as a function that takes a subset $A$ of the carrier of the
+text\<open>We define a set neighborhood system as a function that takes a subset $A$ of the carrier of the
   topology and assigns it the collection of supersets of all open sets that contain $A$. \<close>
 
 definition
@@ -425,7 +425,7 @@ lemma nei_val: assumes "A \<subseteq> \<Union>T"
   "({set neighborhood system of} T)`(A) = {N\<in>Pow(\<Union>T). \<exists>U\<in>T. (A\<subseteq>U \<and> U\<subseteq>N)}"
   using assms ZF_fun_from_tot_val1 unfolding SetNeighSystem_def by simp
 
-text\<open>A member of the value of the set neighborhood system of$T$ at $A$ is
+text\<open>A member of the value of the set neighborhood system of $T$ at $A$ is
   a subset of $\bigcup T$. The interesting part is that we can show it without any
   assumption on $A$. \<close>
 
@@ -501,7 +501,7 @@ proof -
     by simp
 qed
 
-text\<open>An open set $U$ covering as set $A$ is a set neighborhood of $A$. \<close>
+text\<open>An open set $U$ covering a set $A$ is a set neighborhood of $A$. \<close>
 
 lemma open_superset_nei: assumes "V\<in>T" "A\<subseteq>V"
   shows "V \<in> ({set neighborhood system of} T)`(A)"
@@ -539,8 +539,9 @@ proof -
       using nei_val_subset(2) by blast
     with assms(1,2) show ?thesis using Top_1_4_T1 by simp
   qed
+  let ?\<F> = "({set neighborhood system of} (T\<times>\<^sub>tS))`(C\<times>D)"
   { assume "C=0 \<or> D=0"
-    with assms(1,2) \<open>A\<times>B \<subseteq> \<Union>(T\<times>\<^sub>tS)\<close> have ?thesis
+    with assms(1,2) \<open>A\<times>B \<subseteq> \<Union>(T\<times>\<^sub>tS)\<close> have "A\<times>B \<in> ?\<F>"
       using Top_1_4_T1(1) nei_empty by auto
   }
   moreover
@@ -549,7 +550,6 @@ proof -
       "U\<^sub>A\<in>T" "C\<subseteq>U\<^sub>A" "U\<^sub>A\<subseteq>A" using neii2 by blast
     from assms(4) obtain U\<^sub>B where 
       "U\<^sub>B\<in>S" "D\<subseteq>U\<^sub>B" "U\<^sub>B\<subseteq>B" using neii2 by blast
-    let ?\<F> = "({set neighborhood system of} (T\<times>\<^sub>tS))`(C\<times>D)"
     from assms(1,2) \<open>U\<^sub>A\<in>T\<close> \<open>U\<^sub>B\<in>S\<close> \<open>C\<subseteq>U\<^sub>A\<close> \<open>D\<subseteq>U\<^sub>B\<close>
     have "U\<^sub>A\<times>U\<^sub>B \<in> T\<times>\<^sub>tS" and "C\<times>D \<subseteq> U\<^sub>A\<times>U\<^sub>B"
       using prod_open_open_prod by auto

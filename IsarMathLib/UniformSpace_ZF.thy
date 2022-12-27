@@ -56,6 +56,20 @@ definition
     "\<Phi> {is a uniformity on} X \<equiv>(\<Phi> {is a filter on} (X\<times>X))
     \<and> (\<forall>U\<in>\<Phi>. id(X) \<subseteq> U \<and> (\<exists>V\<in>\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> \<Phi>)"
 
+text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Phi$ 
+  is a certain relation on $X$ (a subset of $X\times X$) and is called 
+  an ''entourage''. For an $x\in X$ we call $V\{ x\}$ a neighborhood of $x$. 
+  The first useful fact we will show is that neighborhoods are non-empty. \<close>
+
+lemma neigh_not_empty: 
+  assumes "\<Phi> {is a uniformity on} X" "W\<in>\<Phi>" and "x\<in>X"
+  shows "W``{x} \<noteq> 0" and "x \<in> W``{x}"
+proof -
+  from assms(1,2) have "id(X) \<subseteq> W" 
+    unfolding IsUniformity_def IsFilter_def by auto
+  with \<open>x\<in>X\<close> show" x\<in>W``{x}" and "W``{x} \<noteq> 0" by auto
+qed
+
 text\<open>The filter part of the definition of uniformity for easier reference:\<close>
 
 lemma unif_filter: assumes "\<Phi> {is a uniformity on} X"
@@ -95,7 +109,7 @@ proof -
 qed
 
 text\<open>Inside every member $W$ of the uniformity $\Phi$ we can find one that is symmetric and 
-  smaller than a third of size $W$. Compare the Metamath's theorem with the same name.\<close>
+  smaller than a third of size $W$. Compare with the Metamath's theorem with the same name.\<close>
 
 lemma ustex3sym: assumes "\<Phi> {is a uniformity on} X" "A\<in>\<Phi>"
   shows "\<exists>B\<in>\<Phi>. B O (B O B) \<subseteq> A \<and> B=converse(B)"
@@ -109,20 +123,6 @@ proof -
   with assms(1) \<open>B\<in>\<Phi>\<close> have "B O (B O B) \<subseteq> A"
     using entourage_props(1,2) by blast
   with \<open>B\<in>\<Phi>\<close> \<open>B=converse(B)\<close> show ?thesis by blast
-qed
-
-text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Phi$ 
-  is a certain relation on $X$ (a subset of $X\times X$) and is called 
-  an ''entourage''. For an $x\in X$ we call $V\{ x\}$ a neighborhood of $x$. 
-  The first useful fact we will show is that neighborhoods are non-empty. \<close>
-
-lemma neigh_not_empty: 
-  assumes "\<Phi> {is a uniformity on} X" "W\<in>\<Phi>" and "x\<in>X"
-  shows "W``{x} \<noteq> 0" and "x \<in> W``{x}"
-proof -
-  from assms(1,2) have "id(X) \<subseteq> W" 
-    unfolding IsUniformity_def IsFilter_def by auto
-  with \<open>x\<in>X\<close> show" x\<in>W``{x}" and "W``{x} \<noteq> 0" by auto
 qed
 
 text\<open>If $\Phi$ is a uniformity on $X$ then every element of $\Phi$ is a subset of $X\times X$ 
@@ -380,7 +380,7 @@ proof
     by blast
 qed
 
-text\<open>Images of singletons by entourages are neighborhoods of those singletons\<close>
+text\<open>Images of singletons by entourages are neighborhoods of those singletons.\<close>
 
 lemma image_singleton_ent_nei: 
   assumes "\<Phi> {is a uniformity on} X" "V\<in>\<Phi>" "x\<in>X"
@@ -423,12 +423,10 @@ corollary utopsnnei: assumes "\<Phi> {is a uniformity on} X" "W\<in>\<Phi>" "x\<
   shows "W``{x} \<in> \<S>`{x}" using assms utopsnneip by auto
   
 text\<open>If $\Phi$ is a uniformity on $X$ that generates a topology $T$, $R$ is any relation
-  on $X$ (i.e. $R\subseteq X\times X$), $W$ is a symmetric entourage (i.e. $W\in Phi$,
-  and $W$ is equal to its converse), then the closure of $R$ in the product topology
+  on $X$ (i.e. $R\subseteq X\times X$), $W$ is a symmetric entourage (i.e. $W\in \Phi$,
+  and $W$ is symmetric (i.e. equal to its converse), then the closure of $R$ in the product topology
   is contained the the composition $V\circ (M \circ V)$. 
-  Metamath has a similar theorem with the same name. The only difference 
-  in our case is that we do not have the assumption that $W$ is symmetric
-  as this follows from our definition of an uniformity. \<close>
+  Metamath has a similar theorem with the same name.  \<close>
 
 lemma utop3cls: 
   assumes "\<Phi> {is a uniformity on} X" "R\<subseteq>X\<times>X" "W\<in>\<Phi>" "W=converse(W)"

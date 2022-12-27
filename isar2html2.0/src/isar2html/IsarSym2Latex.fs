@@ -86,6 +86,7 @@ namespace iml
                  ("\\<A>", "\\mathcal{A} ")
                  ("\\<B>", "\\mathcal{B} ")
                  ("\\<C>", "\\mathcal{C} ")
+                 ("\\<F>", "\\mathcal{F} ")
                  ("\\<R>", "\\mathcal{R} ")
                  ("\\<FF>", "\\mathfrak{F} ")
                  ("\\<UU>", "\\mathfrak{U} ")
