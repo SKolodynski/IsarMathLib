@@ -1,0 +1,13 @@
+name: Verify
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Verify
+      run: |
+        docker build -t isarmathlib .
+        docker run isarmathlib
