@@ -1,3 +1,5 @@
+![Verification badge](https://github.com/SKolodynski/IsarMathLib/actions/workflows/verification.yml/badge.svg)
+
 ## What is this?
 
 IsarMathLib is a library of formalized mathematics for Isabelle/ZF.
