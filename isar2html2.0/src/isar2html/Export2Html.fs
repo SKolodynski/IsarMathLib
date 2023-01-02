@@ -373,7 +373,9 @@ namespace iml
                                 else (" = " + parent + " " + (String.concat " " vars) + " +")) |> par)
                             + (List.map (exportLocaleItem repls) loc.localeItems |> String.concat "\n")
                             |> mkformal ""
-            | Subloc subloc ->  (bf "Sublocale") + subloc.sublocalename + " &lt " + subloc.localename 
+            | Subloc subloc ->  (bf "Sublocale") + subloc.sublocalename + " &lt " 
+                                + (if subloc.label.Length>0 then subloc.label + ": " else "")
+                                + subloc.localename 
                                 + (exportProof repls mfii subloc.sublocproof |> par)
                                 |> mkformal ""
             | Prop prop ->  exportProposition repls mfii prop

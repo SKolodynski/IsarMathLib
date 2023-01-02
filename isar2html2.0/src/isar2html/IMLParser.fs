@@ -443,12 +443,14 @@ module IMLParser =
 
     /// parses a sublocale     
     let sublocale : Parser<FormalItem,unit> =
-        pipe4
-            (pstring "sublocale" >>. whiteSpace >>. pureItemName)
-            (whiteSpace >>. pchar '<' >>. whiteSpace >>. pureItemName)
+        pipe5
+            (pstring "sublocale" >>. whiteSpace >>. pureItemName .>> whiteSpace .>> pchar '<')
+            (poption "" (attempt (whiteSpace >>. statLabel)))
+            (whiteSpace >>. pureItemName)
             (whiteSpace >>. manyTill (itemName .>> whiteSpace) (anyOf ["using";"unfolding";"proof";"by"]))
             (whiteSpace >>. proof)
-            (fun sln ln itms pr -> Subloc { sublocalename = sln;
+            (fun sln lbl ln itms pr -> Subloc { sublocalename = sln;
+                                            label = lbl;
                                             localename = ln;
                                             remapping = itms;
                                             sublocproof = pr

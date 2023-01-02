@@ -277,6 +277,8 @@ lemma (in monoid0) sum_nonzero_elmnt_nonzero:
   shows "a \<noteq> TheNeutralElement(G,f) \<or> b \<noteq> TheNeutralElement(G,f)"
   using assms unit_is_neutral by auto
 
+text\<open>The monoid operation is associative.\<close>
+
 lemma (in monoid0) sum_associative:
   assumes "a\<in>G" "b\<in>G" "c\<in>G"
   shows "(a\<oplus>b)\<oplus>c = a\<oplus>(b\<oplus>c)"

@@ -90,6 +90,7 @@ module IMLP_datatypes =
     and ProofCommand = PChaveShow of string*ClaimProof | PCbtain of string list*ClaimProof // the list of strings is the list of variables to obtain
     
     type Sublocale = {  sublocalename: string;
+                        label: string; // optional
                         localename: string;
                         remapping: string list;
                         sublocproof: Proof

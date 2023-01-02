@@ -83,6 +83,8 @@ text\<open>First we show a lemma that says that we can use theorems proven in
 lemma (in group0) group0_2_L1: shows "monoid0(G,P)"
   using groupAssum IsAgroup_def monoid0_def by simp
 
+text\<open>The theorems proven in the \<open>monoid\<close> context are valid in the \<open>group0\<close> context.\<close>
+
 sublocale group0 < monoid: monoid0 G P groper
   unfolding groper_def using group0_2_L1 by auto
 
@@ -915,15 +917,13 @@ proof -
     IsAsubgroup_def IsAgroup_def by simp
 qed
 
-corollary (in group0) group0_3_T4:
+text\<open>The singleton with the neutral element is a subgroup.\<close>
+
+corollary (in group0) unit_singl_subgr:
   shows "IsAsubgroup({\<one>},P)"
-proof (rule group0_3_T3)
-  show "{\<one>} \<noteq> 0" by simp
-  show "{\<one>} \<subseteq> G" using group0_2_L2 by auto
-  show "\<forall>x\<in>{\<one>}. x\<inverse>  \<in> {\<one>}" using group_inv_of_one by auto
-  show "{\<one>} {is closed under} P" unfolding IsOpClosed_def
-    using group0_2_L2 by auto
-qed
+  using group0_2_L2 group_inv_of_one group0_3_T3
+  unfolding IsOpClosed_def 
+  by auto
 
 text\<open>Intersection of subgroups is a subgroup. This lemma is obsolete and should be replaced by 
   \<open>subgroup_inter\<close>. \<close>

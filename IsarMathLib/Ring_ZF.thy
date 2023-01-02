@@ -107,8 +107,14 @@ lemma (in ring0) Ring_ZF_1_L1: shows
   "A {is commutative on} R"
   using ringAssum IsAring_def group0_def monoid0_def by auto
 
-sublocale ring0 < add_group: group0 R A \<zero> ringa ringminus
+text\<open>The theorems proven in in \<open>group0\<close> context (locale) are valid
+  in the \<open>ring0\<close> context when applied to the additive group of the ring. \<close>
+
+sublocale ring0 < add_group: group0 R A ringzero ringa ringminus
   using Ring_ZF_1_L1(2) unfolding ringa_def ringminus_def ringzero_def by auto
+
+text\<open>The theorem proven in the \<open>monoid0\<close> context are valid in the \<open>ring0\<close> context 
+  when applied to the multiplicative monoid of the ring.  \<close>
 
 sublocale ring0 < mult_monoid: monoid0 R M ringm
   using Ring_ZF_1_L1(1) unfolding ringm_def by auto
@@ -451,25 +457,21 @@ lemma (in ring0) Ring_ZF_2_L1A: assumes "a\<in>R" "b\<in>R"
   using assms add_group.inv_cancel_two add_group.group0_4_L6A
     Ring_ZF_1_L1(3) by auto
 
-text\<open>In commutative rings $a-(b+1)c = (a-d-c)+(d-bc)$. For unknown reasons 
-  we have to use the raw set notation in the proof, otherwise all methods 
-  fail.\<close>
+text\<open>In commutative rings $a-(b+1)c = (a-d-c)+(d-bc)$.\<close>
 
 lemma (in ring0) Ring_ZF_2_L2: 
-  assumes A1: "a\<in>R"  "b\<in>R"  "c\<in>R"  "d\<in>R"
+  assumes "a\<in>R"  "b\<in>R"  "c\<in>R"  "d\<in>R"
   shows "a\<rs>(b\<ra>\<one>)\<cdot>c = (a\<rs>d\<rs>c)\<ra>(d\<rs>b\<cdot>c)"
-proof -
-  let ?B = "b\<cdot>c" 
-  from ringAssum have comm:"A {is commutative on} R"
-    using IsAring_def by simp
-  from A1 have "a\<in>R" "?B \<in> R" "c\<in>R" "d\<in>R"
-    using Ring_ZF_1_L4 by auto
-  then have "A`\<langle>a, GroupInv(R,A)`(A`\<langle>?B, c\<rangle>)\<rangle> =
-    A`\<langle>A`\<langle>A`\<langle>a, GroupInv(R, A)`(d)\<rangle>,GroupInv(R, A)`(c)\<rangle>,
-    A`\<langle>d,GroupInv(R, A)`(?B)\<rangle>\<rangle>"
-    using comm add_group.group0_4_L8(1)[of a ?B c d] by auto
-  with A1 show ?thesis 
-    using Ring_ZF_1_L2 ring_oper_distr Ring_ZF_1_L3 by simp
+proof -    
+  let ?B = "b\<cdot>c"
+  from ringAssum assms have
+    "A {is commutative on} R" and "a\<in>R" "?B \<in> R" "c\<in>R" "d\<in>R"
+    unfolding IsAring_def using Ring_ZF_1_L4 by auto 
+  then have 
+    "a\<ra>(\<rm>?B\<ra>c) = a\<ra>(\<rm>d)\<ra>(\<rm>c)\<ra>(d\<ra>(\<rm>?B))"
+    by (rule add_group.group0_4_L8)
+  with assms show ?thesis
+    using Ring_ZF_1_L2 ring_oper_distr Ring_ZF_1_L3 by auto
 qed
 
 text\<open>Rerrangement about adding linear functions.\<close>
