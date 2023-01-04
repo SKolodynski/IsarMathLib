@@ -116,7 +116,7 @@ namespace iml
         let uniquefy (id:string) (htmlstring:string) : string =
             let split = htmlstring.Split id // substrings ending with id, except the last one
             let n = (split.Length)-1 // number of occurences of id in htmlstring 
-            if n=0 then htmlstring
+            if n=0 then htmlstring + "\n<div id=\"par_" + id + "\" style=\"display:none\">0</div>"
             else 
                 let u =  Array.rev [|0..n-1|] // create id numbers, TODO: check if works without rev
                         |> Array.map (fun k -> id + (string k)) 
