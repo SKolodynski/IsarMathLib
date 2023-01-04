@@ -42,6 +42,8 @@ session "IsarMathLib" = "ZF" +
     OrderedRing_ZF
     Group_ZF_4
     Group_ZF_5
+    Ring_ZF_2
+    Ring_ZF_3
     Field_ZF
     OrderedField_ZF
     Int_ZF_IML
@@ -54,7 +56,9 @@ session "IsarMathLib" = "ZF" +
     Real_ZF_2
     Complex_ZF
     Topology_ZF
+    Ring_Zariski_ZF
     Topology_ZF_1
+    Ring_Zariski_ZF_2
     Topology_ZF_1b
     Topology_ZF_2
     Topology_ZF_3
