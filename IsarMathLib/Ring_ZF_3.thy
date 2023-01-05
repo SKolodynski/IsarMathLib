@@ -121,8 +121,31 @@ sublocale ring_homo < target_ring:ring0 S U V ringas
 
 lemma (in ring_homo) homomor_dest_mult:
   assumes "x\<in>T" "y\<in>T"
-  shows "f`(M`\<langle>x,y\<rangle>) = V`\<langle>f`x,f`y\<rangle>"
+  shows "f`(x\<cdot>\<^sub>Ry) = (f`x)\<cdot>\<^sub>S(f`y)"
   using assms origin target homomorphism ringHomomor_def by auto
+
+lemma (in ring_homo) homomor_dest_add:
+  assumes "x\<in>T" "y\<in>T"
+  shows "f`(x\<ra>\<^sub>Ry) = (f`x)\<ra>\<^sub>S(f`y)"
+  using homomor_eq[of T A S U f x y]
+  origin target homomorphism assms
+  unfolding IsAring_def ringHomomor_def[OF origin target]
+  by auto
+
+lemma (in ring_homo) homomor_dest_minus:
+  assumes "x\<in>T"
+  shows "f`(\<rm>\<^sub>Rx) = \<rm>\<^sub>S(f`x)"
+  using image_inv[of T A S U f x]
+  origin target homomorphism assms fun
+  unfolding IsAring_def ringHomomor_def[OF origin target]
+  by auto
+
+lemma (in ring_homo) homomor_dest_subs:
+  assumes "x\<in>T" "y\<in>T"
+  shows "f`(x\<rs>\<^sub>Ry) = (f`x)\<rs>\<^sub>S(f`y)"
+  using assms homomor_dest_add[of x "\<rm>\<^sub>Ry"]
+    homomor_dest_minus[of y]
+  using origin_ring.Ring_ZF_1_L3(1) by auto
 
 lemma (in ring_homo) preimage_ideal:
   assumes "J\<triangleleft>R\<^sub>t"
@@ -254,6 +277,7 @@ proof(rule origin_ring.equivalent_prime_ideal_2)
   qed
 qed
 
+section\<open>Quotient ring with quotient map\<close>
 
 locale ring2 = ring0 +
   fixes I
@@ -277,6 +301,9 @@ locale ring2 = ring0 +
 abbreviation (in ring2) qideal ("_\<triangleleft>R\<^sub>I") where
   "J\<triangleleft>R\<^sub>I \<equiv> ring0.Ideal(R\<^sub>I,A\<^sub>I,M\<^sub>I,J)"
 
+abbreviation (in ring2) qprimeIdeal ("_\<triangleleft>\<^sub>pR\<^sub>I") where
+  "J\<triangleleft>\<^sub>pR\<^sub>I \<equiv> ring0.primeIdeal(R\<^sub>I,A\<^sub>I,M\<^sub>I,J)"
+
 sublocale ring2 < quotient_ring: ring0 quot qadd qmul
   "\<lambda>x y. ideal_radd(x,I,y)" "\<lambda>y. ideal_rmin(I,y)" 
   "\<lambda>x y. ideal_rsub(x,I,y)" "\<lambda>x y. ideal_rmult(x,I,y)"
@@ -289,6 +316,8 @@ sublocale ring2 < quotient_ring: ring0 quot qadd qmul
   using neutral_quotient[OF idealAssum] apply simp
   using one_quotient[OF idealAssum] apply simp
   using two_quotient[OF idealAssum] by simp
+
+text\<open>The quotient map is a homomorphism of rings\<close>
 
 theorem (in ring2) quotient_fun_homomor:
   shows "f\<^sub>I{is a ring homomorphism}{R,A,M}\<rightarrow>{R\<^sub>I,A\<^sub>I,M\<^sub>I}"
@@ -321,6 +350,8 @@ proof(safe)
     unfolding quot_def by auto
 qed
 
+text\<open>The quotient map is surjective\<close>
+
 lemma (in ring2) quot_fun:
   shows "f\<^sub>I\<in>surj(R,R\<^sub>I)" unfolding qfun_def using lam_funtype unfolding quot_def QuotientBy_def[OF idealAssum]
     quotient_def qrel_def surj_def by auto
@@ -331,6 +362,11 @@ sublocale ring2 < quot_homomorphism: ring_homo R A M quot qadd qmul qfun
   "\<zero>\<^sub>I" "\<one>\<^sub>I" "\<two>\<^sub>I" "\<lambda>x. (x\<^sup>2\<^sup>I)"
   unfolding ring_homo_def using ringAssum quotient_ring.ringAssum
     quotient_fun_homomor quot_fun unfolding surj_def by auto
+
+subsection\<open>Quotient ideals\<close>
+
+text\<open>The preimage of an ideal is an ideal, so it applies to the
+quotient map; but the preimage ideal contains the quotient ideal.\<close>
 
 lemma (in ring2) ideal_quot_preimage:
   assumes "J\<triangleleft>R\<^sub>I"
@@ -357,6 +393,8 @@ proof-
   }
   then show "I \<subseteq> f\<^sub>I-``J" by auto
 qed
+
+text\<open>Since the map is surjective, the image is also an ideal\<close>
 
 lemma (in ring2) quotient_of_ring:
   assumes "J\<triangleleft>R"
@@ -396,6 +434,94 @@ proof
   then show "\<forall>x\<in>f\<^sub>I `` J. \<forall>y\<in>R\<^sub>I. (y{\<cdot>I}x) \<in> f\<^sub>I `` J \<and> (x{\<cdot>I}y) \<in> f\<^sub>I `` J"
     by auto
 qed
-  
+
+text\<open>The ideals of the quotient ring are in bijection
+with the ideals of the original ring that contain the ideal
+by which we made the quotient.\<close>
+
+theorem (in ring2) ideal_quot_bijection:
+  defines "idealFun \<equiv> \<lambda>J\<in>quotient_ring.ideals. f\<^sub>I-``J"
+  shows "idealFun\<in>bij(quotient_ring.ideals,{K\<in>\<I>. I \<subseteq> K})"
+  unfolding bij_def inj_def surj_def
+proof(safe)
+  have "idealFun \<in> quotient_ring.ideals \<rightarrow> {f\<^sub>I-``J. J\<in>quotient_ring.ideals}"
+    unfolding idealFun_def
+    using lam_funtype by auto moreover
+  {
+    fix t assume "t\<in>{f\<^sub>I-``J. J\<in>quotient_ring.ideals}"
+    then obtain K where "K\<in>quotient_ring.ideals" "f\<^sub>I-``K = t" by auto
+    then have "I \<subseteq> t" "t\<triangleleft>R" "t \<subseteq> R" using ideal_quot_preimage[of K]
+      unfolding quotient_ring.ideals_def using func1_1_L3[of "f\<^sub>I" R "R\<^sub>I" K]
+      quot_fun unfolding surj_def by auto
+    then have "t\<in>{K\<in>\<I>. I \<subseteq> K}" unfolding ideals_def by auto
+  }
+  then have "{f\<^sub>I-``J. J\<in>quotient_ring.ideals} \<subseteq> {K\<in>\<I>. I \<subseteq> K}" by auto
+  ultimately show "idealFun \<in> quotient_ring.ideals \<rightarrow> {K\<in>\<I>. I \<subseteq> K}"
+    using func1_1_L1B by auto
+  then show "idealFun \<in> quotient_ring.ideals \<rightarrow> {K\<in>\<I>. I \<subseteq> K}".
+  {
+    fix w x assume as:"w\<in>quotient_ring.ideals" "x\<in>quotient_ring.ideals" "idealFun ` w = idealFun ` x"
+    then have "f\<^sub>I-``w = f\<^sub>I-``x" unfolding idealFun_def
+      using beta by auto
+    then have "f\<^sub>I``(f\<^sub>I-``w) = f\<^sub>I``(f\<^sub>I-``x)" by auto
+    then show "w = x" using surj_image_vimage quot_fun as
+      unfolding quotient_ring.ideals_def by auto
+  }
+  {
+    fix y assume y:"y\<in>\<I>" "I \<subseteq> y"
+    from y(1) have "y \<subseteq> f\<^sub>I-``(f\<^sub>I``y)" using func1_1_L9 quot_fun unfolding surj_def ideals_def by auto
+    moreover
+    {
+      fix t assume "t\<in>f\<^sub>I-``(f\<^sub>I``y)"
+      then have t:"f\<^sub>I`t\<in>f\<^sub>I``y" "t\<in>R" using func1_1_L15 quot_fun
+        unfolding surj_def by auto
+      from t(1) y(1) obtain s where s:"s\<in>y" "f\<^sub>I`t = f\<^sub>I`s" 
+        using func_imagedef[of "f\<^sub>I" R "R\<^sub>I" y] quot_fun unfolding surj_def 
+        ideals_def by auto
+      from s(1) have "s\<in>R" using y(1) unfolding ideals_def by auto
+      with t(2) have E:"f\<^sub>I`t : R\<^sub>I" "f\<^sub>I`s: R\<^sub>I" using apply_type[of "f\<^sub>I" R "\<lambda>u. R\<^sub>I"]
+        quot_fun unfolding surj_def by auto
+      with s(2) have "ideal_rsub(f\<^sub>I`t,I,f\<^sub>I`s) = \<zero>\<^sub>I"
+        using quotient_ring.Ring_ZF_1_L3(7) by auto
+      then have "f\<^sub>I`(t\<rs>s) = \<zero>\<^sub>I" using quot_homomorphism.homomor_dest_subs
+        t(2) `s:R` by auto
+      then have "r\<^sub>I``{t\<rs>s} = TheNeutralElement(R\<^sub>I,A\<^sub>I)"
+        using Ring_ZF_1_L4(2) t(2) `s\<in>R` unfolding qfun_def
+        using beta by auto
+      then have "t\<rs>s \<in>I" using add_group.Group_ZF_2_4_L5E[OF
+        ideal_normal_add_subgroup[OF idealAssum] Ring_ZF_1_L4(2)[OF t(2) `s\<in>R`]]
+        unfolding quot_def QuotientBy_def[OF idealAssum] by auto
+      with y(2) have "t\<rs>s \<in> y" by auto
+      then have "(t\<rs>s)\<ra>s \<in>y" using s(1) y(1) ideal_dest_sum
+        unfolding ideals_def by auto
+      then have "t \<in>y" using Ring_ZF_2_L1A(1) `t:R` `s:R` by auto
+    }
+    ultimately have "f\<^sub>I-``(f\<^sub>I``y) = y" by blast moreover
+    have "f\<^sub>I``y \<subseteq> R\<^sub>I" using func1_1_L6(2)[of "f\<^sub>I" R "R\<^sub>I"] quot_fun
+      unfolding surj_def by auto moreover
+    have "(f\<^sub>I``y)\<triangleleft>R\<^sub>I" using quotient_of_ring y(1) unfolding ideals_def
+      by auto
+    ultimately show "\<exists>x\<in>quotient_ring.ideals. idealFun ` x = y"
+      unfolding quotient_ring.ideals_def idealFun_def
+      by auto
+  }
+qed
+
+text\<open>Since the map is surjective, this bijection
+restricts to prime ideals on both sides.\<close>
+
+corollary (in ring2) prime_ideal_quot:
+  defines "idealFun \<equiv> \<lambda>J\<in>quotient_ring.ideals. f\<^sub>I-``J" 
+  assumes "K\<triangleleft>\<^sub>pR\<^sub>I"
+  shows "(idealFun`K)\<triangleleft>\<^sub>pR"
+proof-
+  have "(f\<^sub>I-``K)\<triangleleft>\<^sub>pR" using quot_homomorphism.preimage_prime_ideal_surj
+    quot_fun assms(2) by auto
+  then show ?thesis unfolding idealFun_def
+    using beta[of K quotient_ring.ideals]
+    unfolding quotient_ring.ideals_def using
+    quotient_ring.ideal_dest_subset[of K] assms(2)
+    unfolding quotient_ring.primeIdeal_def by auto
+qed
 
 end

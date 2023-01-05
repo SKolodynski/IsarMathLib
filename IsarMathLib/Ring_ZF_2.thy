@@ -1080,9 +1080,7 @@ theorem (in ring0) quotientBy_is_ring:
 
 
 text\<open>An import property satisfied by many important rings is
-being Noetherian: every ideal is finitely generated.
-
-We leave the definition here for future results.\<close>
+being Noetherian: every ideal is finitely generated.\<close>
 
 definition (in ring0) isFinGen ("_{is finitely generated}") where
 "I\<triangleleft>R \<Longrightarrow> I{is finitely generated} \<equiv> \<exists>S\<in>FinPow(R). I = \<langle>S\<rangle>\<^sub>I"
