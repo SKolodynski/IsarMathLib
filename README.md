@@ -1,4 +1,5 @@
 ![Verification badge](https://github.com/SKolodynski/IsarMathLib/actions/workflows/verification.yml/badge.svg)
+![Style-Check badge](https://github.com/SKolodynski/IsarMathLib/actions/workflows/style-check.yml/badge.svg)
 
 ## What is this?
 
