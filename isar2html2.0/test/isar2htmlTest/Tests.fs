@@ -566,7 +566,7 @@ let ``test uniquefy`` () =
 
 [<Fact>]
 let ``test uniquefyids`` () =
-  let expected = "abc2 def1 abc1 def0 abc0 ghi\n<div id=\"par_abc\" style=\"display:none\">3</div>\n<div id=\"par_def\" style=\"display:none\">2</div>"
+  let expected = "abc2 def1 abc1 def0 abc0 ghi\n<div id=\"par_def\" style=\"display:none\">2</div>\n<div id=\"par_abc\" style=\"display:none\">3</div>"
   Assert.Equal(expected,uniquefyids ["abc";"def"] "abc def abc def abc ghi")
 
 [<Fact>]
