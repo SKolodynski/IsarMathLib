@@ -35,7 +35,7 @@ module IMLP_datatypes =
                             abbnotation: string; // string defining notation, like "_ ->F _ {in} _"
                             abbspec: string // the actual abbreviation (after the "where" keyword)
                             }
-
+    
     type Defines = { locdefNameSimp:string*bool; // name may be with simp or not
                     locdef: string 
     }
@@ -96,6 +96,13 @@ module IMLP_datatypes =
                         sublocproof: Proof
                         }
 
+    type Interpretation = { interprname: string
+                            target: string
+                            parameters: string list
+                            interprproof: Proof
+                            }
+
+
     type PropPremise = PropDefines of namedstrs list | PropAssumes of namedstrs list
 
 
@@ -111,7 +118,8 @@ module IMLP_datatypes =
                     | Abbr of Abbreviation  
                     | Loc of Locale 
                     | Subloc of Sublocale 
-                    | Prop of Proposition 
+                    | Prop of Proposition
+                    | Interpretation of Interpretation 
 
     type Item = { description: string;
                   formalItem: FormalItem

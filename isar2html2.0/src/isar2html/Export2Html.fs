@@ -237,8 +237,9 @@ namespace iml
             | Def definition -> definition.defname
             | Abbr abbreviation -> abbreviation.abbname
             | Loc locale -> locale.localename
-            | Subloc sublocale -> ""
+            | Subloc sublocale -> sublocale.sublocalename
             | Prop proposition -> proposition.propname
+            | Interpretation i -> i.interprname
 
         ///  exports locale item - "fixes", "defines" and "assumes"
         let exportLocaleItem (repls:(string*string) list) (litem:LocaleItem) =
@@ -373,12 +374,18 @@ namespace iml
                                 else (" = " + parent + " " + (String.concat " " vars) + " +")) |> par)
                             + (List.map (exportLocaleItem repls) loc.localeItems |> String.concat "\n")
                             |> mkformal ""
-            | Subloc subloc ->  (bf "Sublocale") + subloc.sublocalename + " &lt " 
+            | Subloc subloc ->  (bf "Sublocale ") + subloc.sublocalename + " &lt " 
                                 + (if subloc.label.Length>0 then subloc.label + ": " else "")
                                 + subloc.localename 
                                 + (exportProof repls mfii subloc.sublocproof |> par)
                                 |> mkformal ""
             | Prop prop ->  exportProposition repls mfii prop
+            | Interpretation i -> 
+                (bf "Interpretation ") + i.interprname + ": " + i.target + "&emsp;"
+                + (i.parameters |> List.map (isar2latex repls)|> String.concat ", ")
+                + (exportProof repls mfii i.interprproof |> par)
+                |> mkformal ""
+
 
         /// exports an item in a section
         let exportItem (repls:(string*string) list) (mfii:Map<string,string>) (it:Item) : string =

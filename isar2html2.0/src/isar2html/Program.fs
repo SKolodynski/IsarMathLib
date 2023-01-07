@@ -34,14 +34,11 @@ let templ = File.ReadAllText "isar2html_template.html"
 exportTheories templ kb |> writeFiles
 
 // open FParsec
-// let s = """proof -
-//   { assume "A+B=C"
-//     then have "A+B=C" using AreDisjoint_def by simp
-//   } thus ?thesis by simp
-// qed
+// let s = """interpretation comp_monoid:monoid0 "X\<longrightarrow>X" "Composition(X)" "comp2(X)"
+//   unfolding monoid0_def comp2_def using Group_ZF_2_5_L2(1) by auto
 // """
 
-// let parseRes = run longproof s
+// let parseRes = run interpretation  s
 // let res = match parseRes with
 //             | Success(result, _, _) -> result
 //             | Failure(errorMsg, _, _) -> 

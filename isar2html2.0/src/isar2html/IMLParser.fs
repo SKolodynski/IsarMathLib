@@ -208,7 +208,7 @@ module IMLParser =
                 Def { defname = actName; defcontext = contxt; deftypespec = spec; deflabel = ls; def = d} )
     
     /// parses a list of variables with a "for" clause that appeared in Isabelle 2009.
-    /// looks like "K A M for K A M". This is the only for we support in the parser,
+    /// looks like "K A M for K A M". This is the only form we support in the parser,
     /// - a list of variables, then "for" then another list of variables that we ignore
     /// TODO: we should not be ignoring the other list as this breaks 
     /// the principle that we should be able to reconstruct the document 
@@ -455,7 +455,20 @@ module IMLParser =
                                             remapping = itms;
                                             sublocproof = pr
                                             })
-    
+    /// parses an interpretation
+    let interpretation : Parser<FormalItem,unit> =
+        pipe4
+            (pstring "interpretation" >>. whiteSpace >>. pureItemName .>> whiteSpace .>> pchar ':')
+            (whiteSpace >>. pureItemName)
+            (whiteSpace >>. manyTill (innerText .>> whiteSpace) (anyOf ["using";"unfolding";"proof";"by"]))
+            (whiteSpace >>. proof)
+            (fun iname target pars pr -> 
+                Interpretation {    interprname = iname
+                                    target = target
+                                    parameters = pars
+                                    interprproof = pr
+                                })
+
     /// various synonyms of theorem we use in IsarMathLib
     let propSynonim : Parser<string,unit> =
         pstring "theorem" <|> pstring "lemma" <|> pstring "corollary"
@@ -492,7 +505,8 @@ module IMLParser =
     let itemWdescription : Parser<Item,unit> =
         pipe2
             informalText
-            (whiteSpace >>. (abbreviation <|> definition <|> sublocale <|> attempt locale <|> proposition))
+            //(whiteSpace >>. (abbreviation <|> definition <|> interpretation <|> sublocale <|> attempt locale <|> proposition))
+            (whiteSpace >>. choice [abbreviation;definition;interpretation;sublocale;attempt locale;proposition])
             (fun desc fitem -> { description = desc; formalItem = fitem}) 
 
 
