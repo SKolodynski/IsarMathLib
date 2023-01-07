@@ -30,7 +30,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Rings - Ideals of quotient rings\<close>
 
-theory Ring_ZF_3 imports Ring_ZF_2 Group_ZF_4
+theory Ring_ZF_3 imports Ring_ZF_2 Group_ZF_5
 
 begin
 

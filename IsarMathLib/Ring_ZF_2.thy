@@ -58,7 +58,7 @@ lemma (in ring0) R_ideal:
 lemma (in ring0) zero_ideal:
   shows "{\<zero>} \<triangleleft>R" unfolding Ideal_def
   using
-   Ring_ZF_1_L6 add_group.group0_3_T4 by auto
+   Ring_ZF_1_L6 add_group.unit_singl_subgr by auto
 
 text\<open>Some small lemmas dividing the definition of ideal into small parts\<close>
 lemma (in ring0) ideal_dest_subset:
