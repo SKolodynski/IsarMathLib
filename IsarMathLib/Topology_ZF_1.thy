@@ -49,6 +49,7 @@ definition
   isT0 ("_ {is T\<^sub>0}" [90] 91) where
   "T {is T\<^sub>0} \<equiv> \<forall> x y. ((x \<in> \<Union>T \<and> y \<in> \<Union>T \<and>  x\<noteq>y) \<longrightarrow> 
   (\<exists>U\<in>T. (x\<in>U \<and> y\<notin>U) \<or> (y\<in>U \<and> x\<notin>U)))"
+    
 
 text\<open>A topology is $T_1$ if for every such pair there exist an open set that 
   contains the first point but not the second.\<close>
@@ -57,6 +58,50 @@ definition
   isT1 ("_ {is T\<^sub>1}" [90] 91) where
   "T {is T\<^sub>1} \<equiv> \<forall> x y. ((x \<in> \<Union>T \<and> y \<in> \<Union>T \<and>  x\<noteq>y) \<longrightarrow> 
   (\<exists>U\<in>T. (x\<in>U \<and> y\<notin>U)))"
+
+text\<open> $T_1$ topological spaces are exactly those in which all singletons are closed.\<close>
+
+lemma (in topology0) t1_def_alt:
+  shows "T {is T\<^sub>1} \<longleftrightarrow> (\<forall>x\<in>\<Union>T. {x} {is closed in} T)"
+proof
+  let ?X = "\<Union>T"
+  assume T1: "T {is T\<^sub>1}"
+  { fix x assume "x\<in>?X"
+    let ?U = "?X-{x}"
+    have "?U \<in> T"
+    proof -
+      let ?W = "\<Union>y\<in>?U.\<Union>{V\<in>T. y\<in>V \<and> x\<notin>V}" 
+      { fix y assume "y\<in>?U"
+        with topSpaceAssum have "(\<Union>{V\<in>T. y\<in>V \<and> x\<notin>V}) \<in> T"
+          unfolding IsATopology_def by blast
+      } hence "\<forall>y\<in>?U. (\<Union>{V\<in>T. y\<in>V \<and> x\<notin>V}) \<in> T" by blast
+      with topSpaceAssum have "?W\<in>T" by (rule union_indexed_open)
+      have "?U = ?W"
+      proof
+        show "?W\<subseteq>?U" by auto
+        { fix y assume "y\<in>?U"
+          hence "y\<in>?X" and "y\<noteq>x" by auto
+          with T1 \<open>x\<in>?X\<close> have  "y \<in> \<Union>{V\<in>T. y\<in>V \<and> x\<notin>V}"
+            unfolding isT1_def by blast
+          hence "y\<in>?W" by blast
+        } thus "?U \<subseteq> ?W" by blast
+      qed
+      with \<open>?W\<in>T\<close> show "?U\<in>T" by simp
+    qed
+    with \<open>x\<in>?X\<close> have "(?X-?U) {is closed in} T" and "?X-?U = {x}"
+      using Top_3_L9 by auto
+    hence "{x} {is closed in} T" by simp
+  } thus "\<forall>x\<in>?X. {x} {is closed in} T" by blast
+next
+  let ?X = "\<Union>T" 
+  assume scl: "\<forall>x\<in>\<Union>T. {x} {is closed in} T"
+  { fix x y assume "x\<in>?X" "y\<in>?X" "x\<noteq>y"
+    let ?U = "?X-{y}"
+    from scl \<open>x\<in>?X\<close> \<open>y\<in>?X\<close> \<open>x\<noteq>y\<close> have "?U \<in> T" "x\<in>?U \<and> y\<notin>?U"
+      unfolding IsClosed_def by auto
+    then have "\<exists>U\<in>T. (x\<in>U \<and> y\<notin>U)" by (rule witness_exists)
+  } then show "T {is T\<^sub>1}" unfolding isT1_def by blast
+qed
 
 text\<open>A topology is $T_2$ (Hausdorff) if for every pair of points there exist a 
   pair of disjoint open sets each containing one of the points. 

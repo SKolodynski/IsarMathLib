@@ -166,6 +166,16 @@ proof -
     using IsATopology_def by simp
 qed
 
+text\<open>Singletons are compact. Interestingly we do not have
+  to assume that $T$ is a topology for this.
+  Note singletons do not have to be closed, we need the
+  the space to be $T_0$ for that (see \<open>Topology_ZF_1)\<close>. \<close>
+
+lemma singl_compact: 
+  assumes "x\<in>\<Union>T" shows "{x} {is compact in} T"
+  using assms singleton_in_finpow unfolding IsCompact_def
+  by auto
+
 text\<open>We will now introduce some notation. In Isar, this is done by definining
   a "locale". Locale is kind of a context that holds some assumptions and 
   notation used in all theorems proven in it. In the locale (context)
@@ -240,7 +250,6 @@ proof -
   ultimately show "?S {is a topology}" using IsATopology_def
     by simp
 qed
-
 
 subsection\<open>Interior of a set\<close>
 
