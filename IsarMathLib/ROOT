@@ -87,7 +87,9 @@ session "IsarMathLib" = "ZF" +
     TopologicalGroup_ZF_3
     MMI_prelude
     MMI_examples
-theories [document = false]
+  theories [document = false]
+    Generalization_ZF
+    NatGenIntEx_ZF
     MMI_Complex_ZF
     MMI_Complex_ZF_1
     MMI_Complex_ZF_2
