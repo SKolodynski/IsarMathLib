@@ -751,7 +751,7 @@ qed
 subsection\<open>Compositions of almost homomorphisms\<close>
 
 text\<open>The goal of this section is to establish some facts about composition
-  of almost homomorphisms. needed for the real numbers construction in 
+  of almost homomorphisms that are needed for the real numbers construction in 
   \<open>Real_ZF_x\<close> series. In particular we show that the set of almost 
   homomorphisms is closed under composition and that composition
   is congruent with respect to the equivalence relation defined by the group
