@@ -596,15 +596,17 @@ proof -
   ultimately show "?C = ?A" by (rule func_eq)
 qed
 
-text\<open>A simple lemma about lists of length $1$.\<close>
+text\<open>If $x\in X$ then the singleton set with the pair $\langle 0,x\rangle$
+  as the only element is a list of length 1 and hence a nonempty list. \<close>
 
-lemma list_len1_singleton: assumes A1: "x\<in>X" 
-  shows "{\<langle>0,x\<rangle>} : 1 \<rightarrow> X"
+lemma list_len1_singleton: assumes "x\<in>X" 
+  shows "{\<langle>0,x\<rangle>} : 1 \<rightarrow> X" and "{\<langle>0,x\<rangle>} \<in> NELists(X)"
 proof -
-  from A1 have "{\<langle>0,x\<rangle>} : {0} \<rightarrow> X" using pair_func_singleton
+  from assms have "{\<langle>0,x\<rangle>} : {0} \<rightarrow> X" using pair_func_singleton
     by simp
   moreover have "{0} = 1" by auto
-  ultimately show ?thesis by simp
+  ultimately show "{\<langle>0,x\<rangle>} : 1 \<rightarrow> X" and "{\<langle>0,x\<rangle>} \<in> NELists(X)" 
+    unfolding NELists_def by auto  
 qed
 
 text\<open>A singleton list is in fact a singleton set with a pair as the only element.\<close>

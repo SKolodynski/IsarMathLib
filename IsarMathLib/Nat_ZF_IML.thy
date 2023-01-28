@@ -80,7 +80,7 @@ proof -
   with A2 show ?thesis by simp
 qed
 
-text\<open>What is \<open>succ\<close>, anyway?\<close>
+text\<open>What is \<open>succ\<close>, anyway? It's a union with the singleton of the set.\<close>
 
 lemma succ_explained: shows "succ(n) = n \<union> {n}"
   using succ_iff by auto
@@ -99,7 +99,13 @@ proof -
   } then have "\<forall>k \<in> nat. 0 \<in> succ(k) \<longrightarrow> 0 \<in> succ(succ(k))"
     by simp
   ultimately show "0 \<in> succ(n)" by (rule ind_on_nat)
-qed  
+qed
+
+text\<open>A more direct way of stating that empty set is an element of every non-zero natural number:\<close>
+
+lemma empty_in_non_empty: assumes "n\<in>nat" "n\<noteq>0"
+  shows "0\<in>n"
+  using assms Nat_ZF_1_L3 empty_in_every_succ by auto
 
 text\<open>If one natural number is less than another then their successors
   are in the same relation.\<close>
@@ -203,18 +209,26 @@ proof -
     by simp
 qed
 
-(*text{*Element of a natural number is less or equal than 
-  the number. *}
+text\<open>For natural numbers membership and inequality are the same.
+  and the $k \leq n$ the same as $k \in \textrm{succ}(n)$. 
+  The proof relies on lemmas in the standard Isabelle's \<open>Nat\<close> and \<open>Ordinal\<close> theories. \<close>
 
-lemma elem_nat_is_Le: assumes A1: "n \<in> nat"  and A2: "k\<in>n"
-  shows "k \<le> n" and "\<langle>k,n\<rangle> \<in> Le"
-proof -
-  from A1 A2 have "k < n" 
-    using elem_nat_is_nat by simp
-    and "k \<in> nat"
-    using elem_nat_is_nat by auto*)
-  
+lemma nat_mem_lt: assumes "n\<in>nat" 
+  shows "k<n \<longleftrightarrow> k\<in>n" and "k\<le>n \<longleftrightarrow> k \<in> succ(n)"
+  using assms nat_into_Ord Ord_mem_iff_lt by auto
 
+text\<open>The term $k \leq j$ the same as $k < \textrm{succ}(n)$.  \<close>
+
+lemma leq_mem_succ: shows "k\<le>n \<longleftrightarrow> k < succ(n)" by simp
+
+text\<open>If the successor of a natural number $k$ is an element of the successor
+  of $n$ then a similar relations holds for the numbers themselves.\<close>
+
+lemma succ_mem: 
+  assumes "n \<in> nat" "succ(k) \<in> succ(n)"
+  shows "k\<in>n"
+  using assms elem_nat_is_nat(1) succ_leE nat_into_Ord 
+    unfolding lt_def by blast
 
 text\<open>The set of natural numbers is the union of its elements.\<close>
 
@@ -321,6 +335,46 @@ lemma succ_plus: assumes "n \<in> nat"  "k \<in> nat"
   "succ(n) #+ succ(j) = succ(succ(n #+ j))"
   using assms by auto
 
+text\<open>If $k$ is in the successor of $n$, then the predecessor of $k$ is in $n$.\<close>
+
+lemma pred_succ_mem: assumes "n\<in>nat" "n\<noteq>0" "k\<in>succ(n)" shows "pred(k)\<in>n"
+proof -
+  from assms(1,3) have "k\<in>nat" using succnat_subset_nat by blast
+  { assume "k\<noteq>0"
+    with \<open>k\<in>nat\<close> obtain j where "j\<in>nat" and "k=succ(j)"
+      using Nat_ZF_1_L3 by auto
+    with assms(1,3) have "pred(k)\<in>n" using succ_mem pred_succ_eq
+      by simp
+  }
+  moreover
+  { assume "k=0"
+    with assms(1,2) have "pred(k)\<in>n" 
+      using pred_0 empty_in_non_empty by simp
+  } ultimately show ?thesis by blast
+qed
+
+text\<open>For non-zero natural numbers $\textrm{pred}(n) = n-1$.\<close>
+
+lemma pred_minus_one: assumes "n\<in>nat" "n\<noteq>0" 
+  shows "pred(n) = n #- 1"
+proof -
+  from assms obtain k where "n=succ(k)" 
+    using Nat_ZF_1_L3 by blast
+  with assms show "pred(n) = n #- 1"
+    using pred_succ_eq eq_succ_imp_eq_m1 by simp
+qed
+
+text\<open>For natural numbers taking the successor is the same as adding one. \<close>
+
+lemma succ_add_one: assumes "n\<in>nat" 
+  shows "succ(n) = n #+ 1" and "n #+ 1 \<in> nat"
+  using assms by auto
+
+text\<open>Adding and subtracting a natural number cancels each other.\<close>
+
+lemma add_subctract: assumes "m\<in>nat" shows "(m#+n) #- n = m"
+  using assms diff_add_inverse2 by simp
+  
 subsection\<open>Intervals\<close>
 
 text\<open>In this section we consider intervals of natural numbers i.e. sets

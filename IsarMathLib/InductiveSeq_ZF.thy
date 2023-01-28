@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2007  Slawomir Kolodynski
+    Copyright (C) 2007-2023  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -25,8 +25,8 @@ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 *)
+
 section \<open>Inductive sequences\<close>
 
 theory InductiveSeq_ZF imports Nat_ZF_IML FiniteSeq_ZF
@@ -762,17 +762,235 @@ proof -
   ultimately show "?b`(k) = ?a`(k)"
     by (rule fin_nat_ind)
 qed
-  
 
-(*text{*If we make the sequence of generating funtions shorter, the resulting
-  sequence will be shorter.*}
+subsection\<open>The Pascal's triangle\<close>
 
-lemma fin_indseq_var_f_restrict:
-  assumes A1: "n \<in> nat" and A2: "x\<in>X" and 
-  A3: "F: n \<rightarrow> (X\<rightarrow>X)" and A4: "k \<le> n" and
-  A5: "a = restrict(InductiveSeqVarFN(x,X,F,n),k)" and
-  A6: "b = InductiveSeqVarFN(x,X,restrict(F,k),k)"
-  shows "a = b"
-proof -*)
-  
+text\<open>One possible application of the inductive sequences is the definition of the Pascal's triangle.
+  The Pascal's triangle can be defined directly as $P_{n,k} = {n\choose k}$ 
+  for $n\geq k \geq 0$. Formalizing this definition (or explaining to a 10-years old) 
+  is quite difficult as it depends on the definition of factorial and 
+  some fact about factorizing natural numbers needed to show
+  that the quotient in $\frac{n!}{k!(n-k)!}$ is always a natural number. Another approach uses
+  induction and the property that each number in the array is the sum of the two numbers directly 
+  above it.\<close>
+
+text\<open>To shorten the definition of the function generating the Pascal's trangle we first
+  define expression for the k'th element in the row following given row $r$. 
+  The rows are represented as lists, i.e. functions $r:n\rightarrow \mathbb{N}$ (recall that
+  for natural numbers we have $n=\{ 0,1,2,...,n-1\})$.
+  The value of the next row is 1 at the beginning and equals $r(k-1)+r(k)$ 
+  otherwise. A careful reader might wonder why we do not require the values to be 1
+  on the right boundary of the Pascal's triangle. We are able to show this as a theorem 
+  (see \<open>binom_right_boundary\<close> below) using the fact that in Isabelle/ZF the value of a function
+  on an argument that is outside of the domain is the empty set, which is the same as zero of 
+  natural numbers. \<close>
+
+definition 
+  "BinomElem(r,k) \<equiv> if k=0 then 1 else r`(pred(k)) #+ r`(k)"  
+
+text\<open>Next we define a function that takes a row in a Pascal's triangle and returns the next row. \<close>
+
+definition 
+  "GenBinom \<equiv> {\<langle>r,{\<langle>k,BinomElem(r,k)\<rangle>. k\<in>succ(domain(r))}\<rangle>. r\<in>NELists(nat)}"
+
+text\<open>The function generating rows of the Pascal's triangle is indeed a function that maps
+  nonempty lists of natural numbers into nonempty lists of natural numbers. \<close>
+
+lemma gen_binom_fun: shows "GenBinom: NELists(nat) \<rightarrow> NELists(nat)"
+proof -
+  { fix r assume "r \<in> NELists(nat)"
+    then obtain n where "n\<in>nat" and "r:succ(n)\<rightarrow>nat" 
+      unfolding NELists_def by auto
+    then have "domain(r) = succ(n)" using func1_1_L1 by simp
+    let ?r\<^sub>1 = "{\<langle>k,BinomElem(r,k)\<rangle>. k\<in>succ(domain(r))}"
+    have "\<forall>k\<in>succ(domain(r)). BinomElem(r,k) \<in> nat"
+      unfolding BinomElem_def by simp
+    then have "?r\<^sub>1: succ(domain(r))\<rightarrow>nat"
+      by (rule ZF_fun_from_total)
+    with \<open>n\<in>nat\<close> \<open>domain(r) = succ(n)\<close> have "?r\<^sub>1\<in>NELists(nat)"
+      unfolding NELists_def by auto
+  } then show ?thesis using ZF_fun_from_total unfolding GenBinom_def 
+    by simp
+qed
+
+text\<open>The value of the function \<open>GenBinom\<close> at a nonempty list $r$ is a list of length
+  one greater than the length of $r$.\<close>
+
+lemma gen_binom_fun_val: assumes "n\<in>nat" "r:succ(n)\<rightarrow>nat"
+  shows "GenBinom`(r):succ(succ(n)) \<rightarrow> nat"
+proof -
+  let ?B = "{\<langle>r,{\<langle>k,BinomElem(r,k)\<rangle>. k\<in>succ(domain(r))}\<rangle>. r\<in>NELists(nat)}"
+  let ?r\<^sub>1 = "{\<langle>k,BinomElem(r,k)\<rangle>. k\<in>succ(domain(r))}"
+  from assms have "r\<in>NELists(nat)" unfolding NELists_def by blast
+  then have "?B`(r) = ?r\<^sub>1" using ZF_fun_from_tot_val1 by simp
+  have "\<forall>k\<in>succ(domain(r)). BinomElem(r,k) \<in> nat"
+    unfolding BinomElem_def by simp
+  then have "?r\<^sub>1: succ(domain(r))\<rightarrow>nat"
+    by (rule ZF_fun_from_total)
+  with assms(2) \<open>?B`(r) = ?r\<^sub>1\<close> show ?thesis
+    using func1_1_L1 unfolding GenBinom_def by simp
+qed
+
+text\<open>Now we are ready to define the Pascal's triangle as the inductive sequence that
+  starts at from a singleton list $0\mapsto 1$ and is generated by iterations of the 
+  \<open>GenBinom\<close> function. \<close>
+
+definition
+  "PascalTriangle \<equiv> InductiveSequence({\<langle>0,1\<rangle>},GenBinom)"
+
+text\<open>The singleton list containing 1 (i.e. the starting point of the inductive sequence 
+  that defines the \<open>PascalTriangle\<close>) is a finite list and 
+  the \<open>PascalTriangle\<close> is a sequence (an infinite list) of nonempty lists of natural numbers.\<close>
+
+lemma pascal_sequence: 
+  shows "{\<langle>0,1\<rangle>} \<in> NELists(nat)" and "PascalTriangle: nat \<rightarrow> NELists(nat)"
+  using list_len1_singleton(2) gen_binom_fun indseq_seq
+  unfolding PascalTriangle_def
+  by auto
+
+text\<open>The \<open>GenBinom\<close> function creates the next row of the Pascal's triangle
+  from the previous one. \<close>
+
+lemma binom_gen: assumes "n\<in>nat"
+  shows "PascalTriangle`(succ(n)) = GenBinom`(PascalTriangle`(n))"
+  using assms pascal_sequence gen_binom_fun indseq_vals
+  unfolding PascalTriangle_def by simp
+
+text\<open>The $n$'th row of the Pascal's triangle is a list of $n+1$ natural numbers. \<close>
+
+lemma pascal_row_list: 
+  assumes "n\<in>nat" shows "PascalTriangle`(n):succ(n)\<rightarrow>nat"
+proof -
+  from assms(1) have "n\<in>nat" and "PascalTriangle`(0):succ(0)\<rightarrow>nat"
+    using gen_binom_fun pascal_sequence(1) indseq_valat0 list_len1_singleton(1)
+    unfolding PascalTriangle_def by auto
+  moreover have 
+    "\<forall>k\<in>nat. PascalTriangle`(k):succ(k)\<rightarrow>nat \<longrightarrow> 
+      PascalTriangle`(succ(k)):succ(succ(k))\<rightarrow>nat"
+  proof -
+    { fix k assume "k\<in>nat" and "PascalTriangle`(k):succ(k)\<rightarrow>nat"
+      then have "PascalTriangle`(succ(k)):succ(succ(k))\<rightarrow>nat"
+        using gen_binom_fun_val gen_binom_fun pascal_sequence(1) indseq_vals 
+        unfolding NELists_def PascalTriangle_def
+        by auto        
+    } thus ?thesis by simp
+  qed
+  ultimately show ?thesis by (rule ind_on_nat)
+qed
+
+text\<open>In our approach the Pascal's triangle is a list of lists. The value
+  at index $n\in \mathbb{N}$ is a list of length $n+1$ (see \<open>pascal_row_list\<close> above).
+  Hence, the largest index in the domain of this list is $n$. However,  
+  we can still show that the value of that list at index $n+1$ is 0, because in Isabelle/ZF
+  (as well as in Metamath) the value of a function at a point outside of the domain is the empty
+  set, which happens to be the same as the natural number 0. \<close>
+
+lemma pascal_val_beyond: assumes "n\<in>nat" 
+  shows "(PascalTriangle`(n))`(succ(n)) = 0"
+proof -
+  from assms have "domain(PascalTriangle`(n)) = succ(n)"
+    using pascal_row_list func1_1_L1 by blast 
+  then show ?thesis using mem_self apply_0
+    by simp
+qed
+
+text\<open>For $n>0$ the Pascal's triangle values at $(n,k)$ are given by the \<open>BinomElem\<close> expression. \<close>
+
+lemma pascal_row_val: assumes "n\<in>nat" "k\<in>succ(succ(n))"
+  shows "(PascalTriangle`(succ(n)))`(k) = BinomElem(PascalTriangle`(n),k)"
+proof -
+  let ?B = "{\<langle>r,{\<langle>k,BinomElem(r,k)\<rangle>. k\<in>succ(domain(r))}\<rangle>. r\<in>NELists(nat)}"
+  let ?r = "PascalTriangle`(n)" 
+  let ?B\<^sub>r = "{\<langle>k,BinomElem(?r,k)\<rangle>. k\<in>succ(succ(n))}"
+  from assms(1) have "?r \<in> NELists(nat)" and "?r : succ(n)\<rightarrow>nat"
+    using pascal_sequence(2) apply_funtype pascal_row_list
+    by auto
+  then have "?B`(?r) = ?B\<^sub>r" using func1_1_L1 ZF_fun_from_tot_val1 
+    by simp
+  moreover from assms(1) have "?B`(?r) = PascalTriangle`(succ(n))"
+    using binom_gen unfolding GenBinom_def by simp
+  moreover from assms(2) have "?B\<^sub>r`(k) = BinomElem(?r,k)"
+    by (rule ZF_fun_from_tot_val1)
+  ultimately show ?thesis by simp
+qed
+
+text\<open>The notion that actually will actually be used is the binomial coefficient ${n\choose k}$
+  which we define as the value at the right place of the Pascal's triangle. \<close>
+
+definition
+  "Binom(n,k) \<equiv> (PascalTriangle`(n))`(k)"
+
+text\<open>The top of the Pascal's triangle is equal to 1 (i.e. ${0\choose 0}=1$).
+  This is an easy fact that it is useful to have handy as it  is at the start of a 
+  couple of inductive arguments. \<close>
+
+lemma binom_zero_zero: shows "Binom(0,0) = 1"
+  using gen_binom_fun pascal_sequence(1) indseq_valat0 pair_val
+    unfolding Binom_def PascalTriangle_def by auto
+
+text\<open>The binomial coefficient are 1 on the left boundary of the Pascal's triangle.\<close>
+
+theorem binom_left_boundary: assumes "n\<in>nat" shows "Binom(n,0) = 1"
+proof -
+  { assume "n\<noteq>0"
+    with assms obtain k where "k\<in>nat" and "n = succ(k)"
+      using Nat_ZF_1_L3 by blast
+    then have "Binom(n,0) = 1" using empty_in_every_succ pascal_row_val
+      unfolding BinomElem_def Binom_def by simp    
+  }
+  then show ?thesis using binom_zero_zero by blast
+qed
+
+text\<open>The main recursive property of binomial coefficients: 
+  each number in the ${n\choose k}, n>0, 0<k\leq n$ array (i.e. the Pascal's triangle 
+  is the sum of the two numbers directly  above it. \<close>
+
+theorem binom_prop: assumes "n\<in>nat" "k \<le> n #+ 1" "k\<noteq>0"
+  shows "Binom(n #+ 1,k) = Binom(n,k #- 1) #+ Binom(n,k)"
+proof -
+  let ?P = "PascalTriangle"
+  from assms(1,2) have "k\<in>nat" and "k \<in> succ(succ(n))"
+    using le_in_nat nat_mem_lt(2) by auto
+  with assms(1) have "Binom(n #+ 1,k) = BinomElem(?P`(n),k)"
+    unfolding Binom_def using pascal_row_val by simp
+  also from assms(3) \<open>k\<in>nat\<close> have
+    "BinomElem(?P`(n),k) = (?P`(n))`(k #- 1) #+ (?P`(n))`(k)"
+    unfolding BinomElem_def using pred_minus_one by simp
+  also have "(?P`(n))`(k #- 1) #+ (?P`(n))`(k) =  Binom(n,k #- 1) #+ Binom(n,k)"
+    unfolding Binom_def by simp
+  finally show ?thesis by simp
+qed
+
+text\<open>A special case of \<open>binom_prop\<close> when $n=k+1$ that helps with the induction step 
+  in the proof that the binomial coefficient are 1 on the right boundary of the Pascal's triangle.\<close>
+
+lemma binom_prop1: assumes "n\<in>nat" shows "Binom(n #+ 1,n #+ 1) = Binom(n,n)"
+proof -
+  let ?B = "Binom"
+  from assms have "?B(n,n) \<in> nat"
+    using pascal_row_list apply_funtype
+    unfolding Binom_def by blast
+  from assms have "(PascalTriangle`(n))`(succ(n)) = 0"
+    using pascal_val_beyond by simp
+  moreover from assms have "succ(n) = n #+ 1"
+    using succ_add_one(1) by simp
+  ultimately have "?B(n,n #+ 1) = 0"
+    unfolding Binom_def by simp
+  with assms \<open>?B(n,n) \<in> nat\<close> show ?thesis
+    using succ_add_one(2) binom_prop add_subctract add_0 add_commute
+    by simp
+qed
+
+text\<open>The binomial coefficient are 1 on the right boundary of the Pascal's triangle.\<close> 
+
+theorem binom_right_boundary: assumes "n\<in>nat" shows "Binom(n,n) = 1"
+proof -
+  from assms have "n\<in>nat" and "Binom(0,0) = 1"
+    using binom_zero_zero by auto
+  moreover have 
+    "\<forall>k\<in>nat. Binom(k,k) = 1 \<longrightarrow> Binom(succ(k),succ(k)) = 1"
+    using binom_prop1 by simp
+  ultimately show ?thesis by (rule ind_on_nat)  
+qed
+
 end

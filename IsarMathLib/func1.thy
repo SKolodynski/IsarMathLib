@@ -288,7 +288,7 @@ text\<open>A set defined by a lambda-type expression is a fuction. There is a
 \<close>
 
 lemma func1_1_L11A: assumes A1: "\<forall>x\<in>X. b(x) \<in> Y"
-  shows "{\<langle> x,y\<rangle> \<in> X\<times>Y. b(x) = y} : X\<rightarrow>Y"
+  shows "{\<langle>x,y\<rangle> \<in> X\<times>Y. b(x) = y} : X\<rightarrow>Y"
 proof -
   let ?f = "{\<langle> x,y\<rangle> \<in> X\<times>Y. b(x) = y}"
   have "?f \<subseteq> X\<times>Y" by auto
@@ -358,14 +358,13 @@ proof -
   with \<open>f`(x) = b(x)\<close> show "b(x)\<in>Y" by simp 
 qed
 
-text\<open>Identical meaning as \<open> ZF_fun_from_tot_val\<close>, but
+text\<open>Identical meaning as \<open>ZF_fun_from_tot_val\<close>, but
   phrased a bit differently.\<close>
 
 lemma ZF_fun_from_tot_val0: 
   assumes "f:X\<rightarrow>Y" and "f = {\<langle>x,b(x)\<rangle>. x\<in>X}"
   shows "\<forall>x\<in>X. f`(x) = b(x)"
   using assms ZF_fun_from_tot_val by simp
-  
 
 text\<open>Another way of expressing that lambda expression is a function.\<close>
 

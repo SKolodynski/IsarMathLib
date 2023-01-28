@@ -38,7 +38,12 @@ text\<open>The standard Isabelle distribution contains lots of facts about basic
 subsection\<open>Lemmas in Zermelo-Fraenkel set theory\<close>
 
 text\<open>Here we put lemmas from the set theory that we could not find in 
-the standard Isabelle distribution.\<close>
+  the standard Isabelle distribution or just so that they are easier to find.\<close>
+
+text\<open>A set cannot be a member of itself. This is exactly lemma \<open>mem_not_refl\<close>
+  from Isabelle/ZF \<open>upair.thy\<close>, we put it here for easy reference. \<close>
+
+lemma mem_self: shows "x\<notin>x" by (rule mem_not_refl)
 
 text\<open>If one collection is contained in another, then we can say the same
   about their unions.\<close>
@@ -49,7 +54,6 @@ proof
   then obtain X where "x\<in>X" and "X\<in>A" by auto
   with assms show "x \<in> \<Union>B" by auto
 qed
-
 
 text\<open>If all sets of a nonempty collection are the same, then its union 
   is the same.\<close>
