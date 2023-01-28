@@ -209,8 +209,8 @@ proof -
     by simp
 qed
 
-text\<open>For natural numbers membership and inequality are the same.
-  and the $k \leq n$ the same as $k \in \textrm{succ}(n)$. 
+text\<open>For natural numbers membership and inequality are the same
+  and $k \leq n$ is the same as $k \in \textrm{succ}(n)$. 
   The proof relies on lemmas in the standard Isabelle's \<open>Nat\<close> and \<open>Ordinal\<close> theories. \<close>
 
 lemma nat_mem_lt: assumes "n\<in>nat" 
@@ -370,9 +370,9 @@ lemma succ_add_one: assumes "n\<in>nat"
   shows "succ(n) = n #+ 1" and "n #+ 1 \<in> nat"
   using assms by auto
 
-text\<open>Adding and subtracting a natural number cancels each other.\<close>
+text\<open>Adding and subtracting a natural number cancel each other.\<close>
 
-lemma add_subctract: assumes "m\<in>nat" shows "(m#+n) #- n = m"
+lemma add_subctract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"
   using assms diff_add_inverse2 by simp
   
 subsection\<open>Intervals\<close>
@@ -380,10 +380,7 @@ subsection\<open>Intervals\<close>
 text\<open>In this section we consider intervals of natural numbers i.e. sets
   of the form $\{n+j : j \in 0..k-1\}$.\<close>
 
-text\<open>The interval is determined
-  by two parameters: starting point and length. Recall that in standard 
-  Isabelle's \<open>Arith.thy\<close> the symbol \<open>#+\<close> is defined
-  as the sum of natural numbers.\<close>
+text\<open>The interval is determined by two parameters: starting point and length.\<close>
 
 definition
 
@@ -438,7 +435,7 @@ proof -
   ultimately show "n \<union> NatInterval(n,k) = n #+ k" by auto
 qed
 
-text\<open>Sme properties of three adjacent intervals.\<close>
+text\<open>Some properties of three adjacent intervals.\<close>
 
 lemma adjacent_intervals3: assumes "n \<in> nat"  "k \<in> nat"  "m \<in> nat"
   shows 
