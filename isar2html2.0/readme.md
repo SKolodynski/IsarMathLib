@@ -1,2 +1,13 @@
-This is a rerwrite of the [isar2html tool](https://github.com/SKolodynski/IsarMathLib/tree/master/isar2html) in F#. 
+Isar2html is a Mathematical Knowledge Management tool for converting IsarMathLib sources to HTML. The inputs to the program are as follows:
+
+  * A file called theories.conf with the list of theories to process.
+
+  * The Isabelle theory files listed in theories.conf
+
+  *  A file called isar2html_template.html.
+  This is a template of a converted theory file. 
+
+The result of the conversion can be viewed at the [isarmathlib.org](http://isarmathlib.org) site. 
+
+Originally this tool was [written in Haskell](https://github.com/SKolodynski/IsarMathLib/tree/master/isar2html), but I rewrote it in F# as a way to learn the language. 
 
