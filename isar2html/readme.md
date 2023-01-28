@@ -1,3 +1,5 @@
+This tool is now obsolete, replaced by [isar2html2.0](https://github.com/SKolodynski/IsarMathLib/tree/master/isar2html2.0).
+
 Isar2html is a Mathematical Knowledge Management 
 tool for converting IsarMathLib sources to HTML. The inputs to the program are as follows:
 
