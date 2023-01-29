@@ -942,7 +942,8 @@ proof -
 qed
 
 text\<open>The main recursive property of binomial coefficients: 
-  each number in the ${n\choose k}$, $n>0, 0\neq k\leq n$ array (i.e. the Pascal's triangle) 
+  each number in the ${n\choose k}$, $n>0, 0\neq k\leq n$ array 
+  (i.e. the Pascal's triangle except the top) 
   is the sum of the two numbers directly  above it. The statement looks like it has an 
   off-by-one error in the assumptions, but it's ok and needed later. \<close>
 
@@ -962,10 +963,12 @@ proof -
   finally show ?thesis by simp
 qed
 
-text\<open>A special case of \<open>binom_prop\<close> when $n=k+1$ that helps with the induction step 
-  in the proof that the binomial coefficient are 1 on the right boundary of the Pascal's triangle.\<close>
+text\<open>A special case of \<open>binom_prop\<close> when $n=k+1$ that helps 
+  with the induction step in the proof that the binomial coefficient 
+  are 1 on the right boundary of the Pascal's triangle.\<close>
 
-lemma binom_prop1: assumes "n\<in>nat" shows "Binom(n #+ 1,n #+ 1) = Binom(n,n)"
+lemma binom_prop1: assumes "n\<in>nat" 
+  shows "Binom(n #+ 1,n #+ 1) = Binom(n,n)"
 proof -
   let ?B = "Binom"
   from assms have "?B(n,n) \<in> nat"
@@ -982,7 +985,7 @@ proof -
     by simp
 qed
 
-text\<open>The binomial coefficient are 1 on the right boundary of the Pascal's triangle.\<close> 
+text\<open>The binomial coefficients are 1 on the right boundary of the Pascal's triangle.\<close> 
 
 theorem binom_right_boundary: assumes "n\<in>nat" shows "Binom(n,n) = 1"
 proof -
