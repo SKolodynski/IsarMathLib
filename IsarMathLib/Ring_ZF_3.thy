@@ -180,7 +180,7 @@ proof-
 qed
 
 text\<open>Even more, if the target ring of the homomorphism is commutative
-or the homomorphism is surjective; we show that if the ideal es prime,
+or the homomorphism is surjective; we show that if the ideal is prime,
 then its preimage is also prime. Note that this is not true in general.\<close>
 
 lemma (in ring_homo) preimage_prime_ideal_comm:

@@ -200,17 +200,17 @@ next
   ultimately show "D(x) \<inter> D(xa)\<in>{D(J). J\<in>\<I>}" by auto
 qed
 
-text\<open>We include all the result of topology0
-into ring0 under the namespace "zariski"\<close>
+text\<open>We include all the results of topology0
+  into ring0 under the namespace "zariski"\<close>
 
 definition(in ring0) ZarInt ("int") where
-"int(U) \<equiv> Interior(U,{D(J). J\<in>\<I>})"
+  "int(U) \<equiv> Interior(U,{D(J). J\<in>\<I>})"
 
 definition (in ring0) ZarCl ("cl") where
-"cl(U) \<equiv> Closure(U,{D(J). J\<in>\<I>})"
+  "cl(U) \<equiv> Closure(U,{D(J). J\<in>\<I>})"
 
 definition (in ring0) ZarBound ("\<partial>_") where
-"\<partial>U \<equiv> Boundary(U,{D(J). J\<in>\<I>})"
+  "\<partial>U \<equiv> Boundary(U,{D(J). J\<in>\<I>})"
 
 sublocale ring0 < zariski:topology0 "{D(J). J\<in>\<I>}"
   ZarInt ZarCl ZarBound unfolding topology0_def
