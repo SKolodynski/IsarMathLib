@@ -17,6 +17,7 @@
 namespace iml
 
     module Utils =
+        open System
         open System.IO
 
         /// replace a string by a string in a string. There is a standard function  
@@ -95,12 +96,73 @@ namespace iml
                 let stopPos=(s.[startPos+start.Length..]).IndexOf stop 
                 if stopPos = -1 then s
                 else
-                    // DBG
-                    let s0=s.[..startPos-1]
-                    let s1=s.[startPos+start.Length..startPos+start.Length+stopPos-1]
-                    let s2=s.[startPos+start.Length+stopPos+stop.Length..]
                     s.[..startPos-1] + (f s.[startPos+start.Length..startPos+start.Length+stopPos-1])
                         + (appBetween f start stop s.[startPos+start.Length+stopPos+stop.Length..])
+
+        // converts a list of characters to string in the opposite order
+        let arrToString : (char list) -> string = 
+            Array.ofList >> Array.rev >> String
+
+        /// extracts the array of arguments separated by commas starting 
+        /// from the given position of the string. The starting position has to 
+        /// contain the open parenthesis. The function returns the extracted 
+        /// parameters and the position of the closing parenthesis.
+        /// for example: 
+        /// getPars "ab(a,ab,(dc)e)def" 2 
+        /// extracts parameters "a";"ab";"(dc)e" and the ending position 13
+        let getPars (s:string) (pos:int) : (string array * int ) =
+            let mutable (res:string list) = []
+            let mutable lev = 1
+            let mutable cpos = pos
+            let mutable sc = s[pos]
+            let mutable (cpar:char list) = []
+            if sc <> '(' then failwith "string should start at '('"
+            while lev > 0 do
+                cpos <- cpos+1
+                if cpos>s.Length-1 then 
+                    failwith $"unable to extract paramaters from {s}, unclosed parenthesis?"
+                sc <- s[cpos]
+                match sc with
+                | '(' -> 
+                    lev <- lev+1
+                    cpar <- '('::cpar
+                | ')' -> 
+                    lev <- lev-1
+                    if lev>0 then cpar <- ')'::cpar
+                | ',' -> 
+                    res <- (cpar |> arrToString)::res
+                    cpar <- []
+                | c -> cpar <- c::cpar
+            (cpar|>arrToString)::res |> Array.ofList |> Array.rev, cpos
+
+        /// takes an integer i and a replacement string
+        /// then replaces every occurence of "$<i>" in s by the replacement
+        let replOnePlaceholder (i:int) (r:string) (s:string) : string =
+            s.Replace("$"+ (string i),r)
+        
+        /// replaces substrings of the form "$1","$2","$3" etc. with
+        /// strings given in an array.
+        let fillPlaceholders (templ:string) (fillers:string array) : string =
+            let placeholders = Array.init fillers.Length (fun i -> i+1)
+            let replacer = (placeholders,fillers) 
+                                ||> Array.map2 (fun p f -> replOnePlaceholder p f)
+                                |> Array.reduce (<<)
+            replacer templ            
+
+        /// expands macro using the template
+        /// - mn - macro name e.g. "Binom"
+        /// - templ - template e.g. "{{$1}\\choose {2}}"
+        let rec expMacro (mn:string) (templ:string) (s:string) : string =
+            let macro = mn+"("
+            let pos = s.IndexOf(macro)
+            if pos < 0 then s
+            else
+                let pars,newpos = getPars s (pos+macro.Length-1) 
+                let fillers = Array.map (expMacro mn templ) pars
+                let s1 = s[0..pos-1]
+                let s2 = fillPlaceholders templ fillers
+                let s3 = expMacro (mn:string) (templ:string) s[newpos+1..]
+                s1+s2+s3
 
         /// remove double new lines
         let rmdnl (s:string) : string = s.Replace("\n\n","\n")

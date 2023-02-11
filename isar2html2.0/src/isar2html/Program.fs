@@ -14,25 +14,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
-open System.IO
-open iml.IMLParser
-open iml.ProcessThys
-open iml.Export2Html
+// open System.IO
+// open iml.IMLParser
+// open iml.ProcessThys
+// open iml.Export2Html
+// open iml.Utils
+
+// let names = File.ReadAllLines "theories.conf"
+//             |> Seq.filter (fun line -> 0 < String.length line) // Is it the best way to check if the string is empty?
+//             |> Seq.map (fun x -> x+".thy")            
+// let thstxt = Seq.map (fun name -> "../IsarMathLib/" + name |> System.IO.File.ReadAllText) names
+// let parsed = Seq.zip thstxt names |> Seq.toList |> parseTheories 
+// printfn "Parsed %i theories" parsed.Length 
+// let kb = processTheories parsed
+// printfn "number of propositions: %d, number of definitions: %d"
+//         (kb.kbformalitems |> List.filter isProposition |> List.length)
+//         (kb.kbformalitems |> List.filter isDefinition |> List.length)
+// let templ = File.ReadAllText "isar2html_template.html"
+// exportTheories templ kb |> writeFiles
+
 open iml.Utils
+let s = "ab+Binom(n,k) + c"
+let mn = "Binom"
+let templ = "{{$1}\\choose {2}}"
+let expanded = expMacro mn templ s 
 
-let names = File.ReadAllLines "theories.conf"
-            |> Seq.filter (fun line -> 0 < String.length line) // Is it the best way to check if the string is empty?
-            |> Seq.map (fun x -> x+".thy")            
-let thstxt = Seq.map (fun name -> "../IsarMathLib/" + name |> System.IO.File.ReadAllText) names
-let parsed = Seq.zip thstxt names |> Seq.toList |> parseTheories 
-printfn "Parsed %i theories" parsed.Length 
-let kb = processTheories parsed
-printfn "number of propositions: %d, number of definitions: %d"
-        (kb.kbformalitems |> List.filter isProposition |> List.length)
-        (kb.kbformalitems |> List.filter isDefinition |> List.length)
-let templ = File.ReadAllText "isar2html_template.html"
-exportTheories templ kb |> writeFiles
-
+printfn "%s" expanded
+    
 // open FParsec
 // let s = """interpretation comp_monoid:monoid0 "X\<longrightarrow>X" "Composition(X)" "comp2(X)"
 //   unfolding monoid0_def comp2_def using Group_ZF_2_5_L2(1) by auto

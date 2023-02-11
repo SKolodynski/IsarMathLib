@@ -662,6 +662,21 @@ let ``test afterDot`` () =
   Assert.Equal("abc()", afterDot "def.abc()")
 
 [<Fact>]
-let `` test beforeParen`` () =
+let ``test beforeParen`` () =
   Assert.Equal("abc",beforeParen "abc().test")
   Assert.Equal("abc",beforeParen "abc")
+
+[<Fact>]
+let ``test getPars`` () =
+  let expected = ([|"a";"ab";"dc(e)"|],13)
+  Assert.Equal(expected,getPars "ab(a,ab,dc(e))def" 2)
+
+[<Fact>]
+let ``test macro expansion`` () =
+  let s = "ab+Binom(n,k) + c"
+  let mn = "Binom"
+  let templ = "{{$1}\\choose {$2}}"
+  let expanded = "ab+{{n}\\choose {k}} + c"
+  Assert.Equal(expanded,expMacro mn templ s)
+  
+
