@@ -552,7 +552,7 @@ proof-
       with KR have "Q+\<^sub>II = R" by auto
       then have "\<one>\<in>Q+\<^sub>II " using Ring_ZF_1_L2(2) by auto
       then have "\<one>\<in>A``(Q\<times>I)"
-        using sum_ideals_is_sum_elements[OF MI ij(1)] by auto
+        using sum_ideals_is_sum_elements MI ij(1) by auto
       moreover have "Q\<times>I \<subseteq> R\<times>R" using MI ij(1) by auto
       ultimately obtain xm xi where mi1:"xm\<in>Q" "xi\<in>I" "\<one>=xm\<ra>xi"
         using func_imagedef[OF a, of "Q\<times>I"] by auto
