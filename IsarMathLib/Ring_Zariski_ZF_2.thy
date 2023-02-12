@@ -39,10 +39,10 @@ proof-
     fix x y assume ass:"x:Spec" "y:Spec" "x\<noteq>y"
     from ass(3) have "\<not>(x\<subseteq>y) \<or> \<not>(y\<subseteq>x)" by auto
     then have "y\<in>D(x) \<or> x\<in>D(y)" using ass(1,2)
-      unfolding Spec_def ideals_def using ass(1,2) openBasic_def
+      unfolding Spec_def using ass(1,2) openBasic_def
       by auto
     then have "(x \<in> D(y) \<and> y \<notin> D(y)) \<or> (y \<in> D(x) \<and> x \<notin> D(x))"
-      using ass(1,2) unfolding Spec_def ideals_def 
+      using ass(1,2) unfolding Spec_def
       using openBasic_def by auto
     then have "\<exists>U\<in>{D(I). I\<in>\<I>}. (x \<in> U \<and> y \<notin> U) \<or> (y \<in> U \<and> x \<notin> U)"
       using ass(1,2) unfolding Spec_def by auto
@@ -65,7 +65,7 @@ proof(safe)
   have m:"M = RepFun(?J,D)" using M(1) by auto
   then have mm:"\<Union>M = D(\<oplus>\<^sub>I?J)" using union_open_basic[of ?J] by auto
   obtain T where T:"T\<in>FinPow(?J)" "(\<oplus>\<^sub>I?J) = \<oplus>\<^sub>IT" using
-    sum_ideals_noetherian[OF assms(1)] by blast
+    sum_ideals_noetherian[OF assms(1), of ?J] by blast
   from T(2) have "D(\<oplus>\<^sub>I?J) = D(\<oplus>\<^sub>IT)" by auto
   moreover have "T\<subseteq>\<I>" using T(1) unfolding FinPow_def by auto
   ultimately have "D(\<oplus>\<^sub>I?J) = \<Union>RepFun(T,D)" using union_open_basic[of T]
