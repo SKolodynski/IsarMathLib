@@ -20,6 +20,11 @@ namespace iml
         open Utils
         open System
 
+        /// list of macros to be expanded, the first string is macro name, 
+        /// the second is the template
+        let macros : (string*string) array = 
+            [| "Binom", "{{$1}\\choose {$2}}"|]
+
         /// list of translations from Isar symbols to LaTeX symbols
         // TODO: read from a file maybe?
         let inner2LatexSym : (string*string) list =

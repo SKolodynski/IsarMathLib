@@ -163,7 +163,13 @@ namespace iml
                 let s2 = fillPlaceholders templ fillers
                 let s3 = expMacro (mn:string) (templ:string) s[newpos+1..]
                 s1+s2+s3
-
+        
+        /// expands all macros provided in the macros array
+        let expAllMacros (macros:(string*string) array) : string -> string =
+            Array.unzip macros
+            ||> Array.map2 expMacro
+            |> Array.reduce (<<)
+            
         /// remove double new lines
         let rmdnl (s:string) : string = s.Replace("\n\n","\n")
         
