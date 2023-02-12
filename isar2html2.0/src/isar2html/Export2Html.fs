@@ -32,7 +32,9 @@ namespace iml
 
         /// converts the inner syntax to LaTeX. 
         let isar2latex (repls:(string*string) list) (s:string) : string =
-            let formula = convBraces s 
+            let formula = s
+                        |> convBraces
+                        |> expAllMacros macros
                         |> replaceAll repls 
                         |> replace  ("\n","\\)\n\\(")
                         |> remElems "`?"
