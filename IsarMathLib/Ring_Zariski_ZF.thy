@@ -102,7 +102,7 @@ proof
       unfolding Spec_def by auto
     then have "\<not>(I\<subseteq>K)" "\<not>(J\<subseteq>K)" "\<forall>I\<in>\<I>. \<forall>J\<in>\<I>. I\<cdot>\<^sub>IJ\<subseteq>K \<longrightarrow> I \<subseteq> K \<or> J \<subseteq> K"
       unfolding primeIdeal_def by auto
-    then have "\<not>(I\<cdot>\<^sub>IJ\<subseteq>K)" using assms unfolding ideals_def
+    then have "\<not>(I\<cdot>\<^sub>IJ\<subseteq>K)" using assms
       using ideal_dest_subset[of I] ideal_dest_subset[of J] by auto
     moreover note K
     ultimately have "K\<in>D(I\<cdot>\<^sub>IJ)" using openBasic_def[of "I"]
@@ -134,22 +134,22 @@ lemma (in ring0) union_open_basic:
   shows "\<Union>{D(I). I\<in>\<J>} = D(\<oplus>\<^sub>I\<J>)"
 proof
   have S:"(\<oplus>\<^sub>I\<J>) \<subseteq> R" using generated_ideal_is_ideal[of "\<Union>\<J>"] assms
-      unfolding sumArbitraryIdeals_def[OF assms] ideals_def
+      unfolding sumArbitraryIdeals_def[OF assms]
       using ideal_dest_subset by auto
   {
     fix t assume "t\<in>\<Union>{D(I). I\<in>\<J>}"
     then obtain K where K:"K\<in>\<J>" "t\<in>D(K)" by auto
-    then have t:"t\<triangleleft>\<^sub>pR" "\<not>(K\<subseteq>t)" using assms openBasic_def unfolding ideals_def Spec_def by auto
+    then have t:"t\<triangleleft>\<^sub>pR" "\<not>(K\<subseteq>t)" using assms openBasic_def unfolding Spec_def by auto
     {
       assume "(\<oplus>\<^sub>I\<J>) \<subseteq> t"
       then have "\<Union>\<J> \<subseteq> t" using generated_ideal_contains_set[of "\<Union>\<J>"]
-        assms unfolding ideals_def sumArbitraryIdeals_def[OF assms] by auto
+        assms unfolding sumArbitraryIdeals_def[OF assms] by auto
       with K(1) have "K \<subseteq> t" by auto
       with t(2) have False by auto
     }
     then have "\<not>((\<oplus>\<^sub>I\<J>) \<subseteq> t)" by auto moreover
     note K S ultimately have "t\<in>D(\<oplus>\<^sub>I\<J>)" using openBasic_def[of K] openBasic_def[of "\<oplus>\<^sub>I\<J>"]
-      assms unfolding ideals_def by auto
+      assms by auto
   }
   then show "\<Union>{D(I). I\<in>\<J>} \<subseteq> D(\<oplus>\<^sub>I\<J>)" by auto
   {
@@ -165,7 +165,7 @@ proof
         by auto
     }
     then obtain J where J:"\<not>(J \<subseteq> t)" "J\<in>\<J>" by auto
-    note J(1) moreover have "J\<subseteq>R" using `J\<in>\<J>` assms unfolding ideals_def by auto
+    note J(1) moreover have "J\<subseteq>R" using `J\<in>\<J>` assms by auto
     moreover note t(1) ultimately have "t\<in>D(J)" using openBasic_def[of J]
       by auto
     then have "t:\<Union>{D(I). I\<in>\<J>}" using J(2) by auto
@@ -182,21 +182,21 @@ proof(safe)
   fix M assume "M \<subseteq> {D(J). J\<in>\<I>}"
   then have "M = {D(J). J\<in>{K\<in>\<I>. D(K)\<in>M}}" by auto
   then have "\<Union>M = \<Union>{D(J). J\<in>{K\<in>\<I>. D(K)\<in>M}}" by auto
-  then have "\<Union>M = D(\<oplus>\<^sub>I{K\<in>\<I>. D(K)\<in>M})" using union_open_basic by auto
+  then have "\<Union>M = D(\<oplus>\<^sub>I{K\<in>\<I>. D(K)\<in>M})" using union_open_basic[of "{K \<in> \<I> . D(K) \<in> M}"] by auto
   moreover have "(\<oplus>\<^sub>I{K\<in>\<I>. D(K)\<in>M})\<triangleleft>R" using
     generated_ideal_is_ideal[of "\<Union>{K\<in>\<I>. D(K)\<in>M}"]
     sumArbitraryIdeals_def [of "{K\<in>\<I>. D(K)\<in>M}"]
-    unfolding ideals_def by force
+    by force
   then have "(\<oplus>\<^sub>I{K\<in>\<I>. D(K)\<in>M})\<in>\<I>" using ideal_dest_subset
-    unfolding ideals_def by auto
+    by auto
   ultimately show "\<Union>M:{D(J). J\<in>\<I>}" by auto
 next
-  fix x xa assume as:"x\<in>\<I>" "xa\<in>\<I>"
+  fix x xa assume as:"x\<triangleleft>R" "xa\<triangleleft>R"
   then have "D(x) \<inter> D(xa) = D(x\<cdot>\<^sub>Ixa)" using intersection_open_basic
-    unfolding ideals_def by auto
+    by auto
   moreover have "(x\<cdot>\<^sub>Ixa) \<triangleleft>R" using product_in_intersection(2)
-    as unfolding ideals_def by auto
-  then have "(x\<cdot>\<^sub>Ixa):\<I>" unfolding ideals_def using ideal_dest_subset by auto
+    as by auto
+  then have "(x\<cdot>\<^sub>Ixa):\<I>" using ideal_dest_subset by auto
   ultimately show "D(x) \<inter> D(xa)\<in>{D(J). J\<in>\<I>}" by auto
 qed
 
@@ -229,7 +229,7 @@ proof
     moreover from t have "(Spec-U) \<noteq>0" by auto
     ultimately obtain V where "V\<in>Spec-U" "t\<in>V" by auto
     then have "t\<in>\<Union>Spec" by auto
-    then have "t\<in>R" unfolding Spec_def ideals_def by auto
+    then have "t\<in>R" unfolding Spec_def by auto
   }
   then have S:"\<Inter>(Spec-U) \<subseteq> R" by auto
   {
@@ -251,8 +251,8 @@ proof
     with assms(2) have False by auto
   }
   then have P:"Spec-U \<subseteq> \<I>" "Spec-U \<noteq>0" unfolding Spec_def by auto
-  then have "(\<Inter>(Spec-U))\<triangleleft>R" using intersection_ideals unfolding ideals_def by auto
-  then have "(\<Inter>(Spec-U))\<in>\<I>" unfolding ideals_def using ideal_dest_subset by auto
+  then have "(\<Inter>(Spec-U))\<triangleleft>R" using intersection_ideals by auto
+  then have "(\<Inter>(Spec-U))\<in>\<I>" using ideal_dest_subset by auto
   then have "D(\<Inter>(Spec-U)) \<in>{D(J). J\<in>\<I>}" by auto
   ultimately
   show "D(\<Inter>(Spec-U)) \<subseteq>int(U)" using zariski.Top_2_L5 by auto
@@ -265,7 +265,7 @@ proof
       {
         assume "\<not>(J\<subseteq>K)"
         with K have "K\<in>D(J)" using J(1) using openBasic_def
-          unfolding ideals_def by auto
+          by auto
         with SS K J(2) have False by auto
       }
       then have "J\<subseteq>K" by auto
@@ -300,8 +300,8 @@ qed
 corollary (in ring0) total_spec:
   shows "\<Union>{D(J). J\<in>\<I>} = Spec"
 proof
-  show "\<Union>{D(J). J\<in>\<I>} \<subseteq> Spec" using openBasic_def unfolding ideals_def by auto
-  have "D(R)\<in>{D(J). J\<in>\<I>}" using R_ideal unfolding ideals_def by auto
+  show "\<Union>{D(J). J\<in>\<I>} \<subseteq> Spec" using openBasic_def by auto
+  have "D(R)\<in>{D(J). J\<in>\<I>}" using R_ideal by auto
   then have "D(R) \<subseteq> \<Union>{D(J). J\<in>\<I>}" by auto
   then show "Spec \<subseteq> \<Union>{D(J). J\<in>\<I>}" using openBasic_total by auto
 qed
@@ -333,7 +333,7 @@ proof-
   then obtain J where J:"J\<in>\<I>" "Spec-U = D(J)" by auto
   moreover from U(1) have "Spec-(Spec-U) = U" by auto
   ultimately have "U = Spec-{K\<in>Spec. \<not>(J\<subseteq>K)}" using openBasic_def
-    unfolding ideals_def by auto
+    by auto
   then have "U = {K\<in>Spec. J\<subseteq>K}" by auto
   with J show ?thesis using rule by auto
 qed
@@ -350,17 +350,17 @@ lemma (in ring0) V_is_closed:
   shows "Spec-V(J) = D(J)" and "V(J){is closed in}{D(J). J\<in>\<I>}"
   unfolding IsClosed_def
 proof(safe)
-  from assms have "V(J) \<subseteq> Spec" using closeBasic_def
-    unfolding ideals_def by auto
+  from assms have "V(J) \<subseteq> Spec" using closeBasic_def by auto
   then show "\<And>x. x \<in> V(J) \<Longrightarrow> x \<in> \<Union>RepFun(\<I>, D)" using total_spec by auto
   show "Spec-V(J) = D(J)" using assms
-    closeBasic_def openBasic_def unfolding ideals_def by auto
+    closeBasic_def openBasic_def by auto
   with assms show "\<Union>RepFun(\<I>, D) - V(J) \<in> RepFun(\<I>, D)"
     using total_spec by auto
 qed
 
 text\<open>As with D-sets, by De Morgan's Laws we get the same result
 for unions and intersections on V-sets\<close>
+
 lemma (in ring0) V_union:
   assumes "J\<in>\<I>" "K\<in>\<I>"
   shows "V(J)\<union>V(K) = V(J\<cdot>\<^sub>IK)"
@@ -368,36 +368,38 @@ proof-
   {
     fix t assume "t\<in>V(J)"
     then have "t\<in>Spec" "J\<subseteq>t" using closeBasic_def
-      assms(1) unfolding ideals_def by auto
+      assms(1) by auto
     moreover have "J\<cdot>\<^sub>IK \<subseteq> J" using product_in_intersection(1)[of J K]
-      assms unfolding ideals_def by auto
+      assms by auto
     ultimately have "t\<in>Spec" "J\<cdot>\<^sub>IK \<subseteq>t" by auto
     then have "t: V(J\<cdot>\<^sub>IK)" using closeBasic_def
       product_in_intersection(2)[of J K] assms ideal_dest_subset
-      unfolding ideals_def by auto
+      by auto
   }
   moreover
   {
     fix t assume "t\<in>V(K)"
     then have "t\<in>Spec" "K\<subseteq>t" using closeBasic_def
-      assms(2) unfolding ideals_def by auto
+      assms(2) by auto
     moreover have "J\<cdot>\<^sub>IK \<subseteq> K" using product_in_intersection(1)[of J K]
-      assms unfolding ideals_def by auto
+      assms by auto
     ultimately have "t\<in>Spec" "J\<cdot>\<^sub>IK \<subseteq>t" by auto
     then have "t: V(J\<cdot>\<^sub>IK)" using closeBasic_def
       product_in_intersection(2)[of J K] assms ideal_dest_subset
-      unfolding ideals_def by auto
+      by auto
   }
   moreover
   {
     fix t assume "t\<in> V(J\<cdot>\<^sub>IK)"
-    then have "t\<in>Spec" "J\<cdot>\<^sub>IK\<subseteq>t" using closeBasic_def
+    then have t:"t\<in>Spec" "J\<cdot>\<^sub>IK\<subseteq>t" using closeBasic_def
       assms product_in_intersection(2)[of J K]
-      ideal_dest_subset unfolding ideals_def by auto
-    then have "t\<in>Spec"  "J \<subseteq> t \<or> K \<subseteq> t" unfolding Spec_def
-      primeIdeal_def using assms by auto
+      ideal_dest_subset by auto
+    from this(1) have "\<forall>Ia\<in>\<I>. \<forall>J\<in>\<I>. Ia \<cdot>\<^sub>I J \<subseteq> t \<longrightarrow> Ia \<subseteq> t \<or> J \<subseteq> t"
+      unfolding Spec_def primeIdeal_def by blast
+    with assms have "J\<cdot>\<^sub>IK\<subseteq>t \<longrightarrow> J\<subseteq>t \<or> K\<subseteq>t" by auto
+    with t have "t\<in>Spec"  "J \<subseteq> t \<or> K \<subseteq> t" by auto
     then have "t\<in>V(J)\<union>V(K)" using closeBasic_def
-      assms unfolding ideals_def by auto
+      assms by auto
   }
   ultimately show ?thesis by auto
 qed
@@ -434,7 +436,7 @@ proof-
   then have "Spec-(Spec - (\<Inter>{V(I). I\<in>\<J>})) = Spec- D(\<oplus>\<^sub>I\<J>)" by auto
   moreover
   have JI:"(\<oplus>\<^sub>I\<J>) \<in> \<I>" using generated_ideal_is_ideal[of "\<Union>\<J>"] assms
-    unfolding sumArbitraryIdeals_def[OF assms(1)] ideals_def
+    unfolding sumArbitraryIdeals_def[OF assms(1)]
     using ideal_dest_subset by auto
   then have "Spec- V(\<oplus>\<^sub>I\<J>) = D(\<oplus>\<^sub>I\<J>)" using V_is_closed(1)[of "\<oplus>\<^sub>I\<J>"]
     by auto
@@ -444,7 +446,7 @@ proof-
   {
     fix t assume t:"t\<in>\<Inter>{V(I). I\<in>\<J>}"
     with assms(2) obtain I where "I:\<J>" "t:V(I)" by auto
-    then have "t\<in>Spec" using closeBasic_def assms(1) unfolding ideals_def
+    then have "t\<in>Spec" using closeBasic_def assms(1)
       by auto
     with t have "t\<in>Spec-(Spec - (\<Inter>{V(I). I\<in>\<J>}))" by auto
     with R have "t\<in>Spec-(Spec-V(\<oplus>\<^sub>I\<J>) )" by auto
@@ -452,7 +454,7 @@ proof-
   } moreover
   {
     fix t assume t:"t\<in>V(\<oplus>\<^sub>I\<J>)"
-    with JI have "t:Spec" using closeBasic_def unfolding ideals_def by auto
+    with JI have "t:Spec" using closeBasic_def by auto
     with t have "t\<in>Spec-(Spec-V(\<oplus>\<^sub>I\<J>) )" by auto
     then have "t\<in>Spec-(Spec - (\<Inter>{V(I). I\<in>\<J>}))" using R by auto
     then have "t\<in>\<Inter>{V(I). I\<in>\<J>}" by auto
@@ -462,33 +464,32 @@ qed
 
 text\<open>The closure of a set is the V-set of the intersection
 of all its points.\<close>
+
 lemma (in ring0) closure_zariski:
   assumes "U \<subseteq> Spec" "U\<noteq>0"
   shows "cl(U) = V(\<Inter>U)"
 proof
   have "U \<subseteq> \<I>" using assms(1) unfolding Spec_def by auto
-  then have ideal:"(\<Inter>U)\<triangleleft>R" using intersection_ideals[of U] assms(2)
-    unfolding ideals_def by auto
+  then have ideal:"(\<Inter>U)\<triangleleft>R" using intersection_ideals[of U] assms(2) by auto
   {
     fix t assume t:"t\<in>V(\<Inter>U)"
     {
       fix q assume q:"q\<in>\<Inter>U"
       with q obtain M where "M:U" "q:M" using assms(2) by blast
       with assms have "q\<in>\<Union>Spec" by auto
-      then have "q:R" unfolding Spec_def ideals_def by auto
+      then have "q:R" unfolding Spec_def by auto
     }
     then have sub:"\<Inter>U \<subseteq> R" by auto
     with t have tt:"t\<in>Spec" "\<Inter>U \<subseteq> t" using closeBasic_def by auto
     {
       fix VV assume VV:"VV\<in>{D(J). J\<in>\<I>}" "t\<in>VV"
       then obtain J where J:"VV= D(J)" "J\<in>\<I>" by auto
-      from VV(2) J have jt:"\<not>(J \<subseteq> t)" using openBasic_def
-        unfolding ideals_def by auto
+      from VV(2) J have jt:"\<not>(J \<subseteq> t)" using openBasic_def by auto
       {
         assume "U\<inter>D(J) = 0"
         then have "\<forall>x\<in>U. x\<notin>D(J)" by auto
         with J(2) have "\<forall>x\<in>U. J\<subseteq>x" using openBasic_def[of J]
-          assms(1) unfolding ideals_def by auto
+          assms(1) by auto
         then have "J\<subseteq> \<Inter>U \<or> U=0" by auto 
         with tt(2) jt have False using assms(2) by auto
       }
@@ -506,15 +507,16 @@ proof
     then have "\<Inter>U \<subseteq>p" by auto
     moreover
     from p assms(1) have "p\<in>Spec" "\<Inter>U\<subseteq>\<Union>Spec" by auto
-    then have "p\<in>Spec" "\<Inter>U\<subseteq>R" unfolding Spec_def ideals_def by auto
+    then have "p\<in>Spec" "\<Inter>U\<subseteq>R" unfolding Spec_def by auto
     ultimately have "p\<in>V(\<Inter>U)" using closeBasic_def[of "\<Inter>U"]
       by auto
   }
   then have A:"U\<subseteq>V(\<Inter>U)" by auto
   have B:"V(\<Inter>U){is closed in}{D(J). J\<in>\<I>}"
-    using V_is_closed(2) ideal ideal_dest_subset unfolding ideals_def by auto
+    using V_is_closed(2) ideal ideal_dest_subset by auto
   show "cl(U) \<subseteq> V(\<Inter>U)"
     apply (rule zariski.Top_3_L13[of "V(\<Inter>U)" U])
     using A B by auto
 qed
+
 end
