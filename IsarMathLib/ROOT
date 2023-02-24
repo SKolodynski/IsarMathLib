@@ -61,6 +61,7 @@ session "IsarMathLib" = "ZF" +
     Ring_Zariski_ZF_2
     Topology_ZF_1b
     Topology_ZF_2
+    Ring_Zariski_ZF_3
     Topology_ZF_3
     Topology_ZF_4
     Topology_ZF_4a
