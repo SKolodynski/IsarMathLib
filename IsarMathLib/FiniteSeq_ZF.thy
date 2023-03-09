@@ -587,7 +587,7 @@ proof-
   from assms obtain n where a:"a:succ(n) \<rightarrow> X" "n\<in>nat" unfolding NELists_def by auto
   then have "Last(a) = a`n" using last_seq_elem by auto moreover
   have "n\<in>succ(n)" by auto moreover note a(1)
-  ultimately show "Last(a) \<in> X" using apply_type[of a "succ(n)" _ n] by auto
+  ultimately show "Last(a) \<in> X" using apply_funtype by auto
 qed
 
 text\<open>If two finite sequences are the same when restricted to domain one 
