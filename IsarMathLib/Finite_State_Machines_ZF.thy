@@ -529,7 +529,7 @@ understand.\<close>
 definition states where
   "states \<equiv> {empty, starts0, starts1, ends0}"
 
-text\<open>The final state is @{term starts0}}\<close>
+text\<open>The final state is @{term starts0}\<close>
 
 definition finalStates where
 "finalStates \<equiv> {starts0}"
