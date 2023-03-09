@@ -417,7 +417,7 @@ proof -
   ultimately show "?b = ?c" by (rule func_eq)
 qed  
 
-text\<open>@{term NELists} are non-empty lists}\<close>
+text\<open>@{term NELists} are non-empty lists\<close>
 
 lemma non_zero_List_func_is_NEList:
   shows "NELists(X) = {a\<in>Lists(X). a\<noteq>0}"
