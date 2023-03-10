@@ -169,7 +169,7 @@ qed
 text\<open>Singletons are compact. Interestingly we do not have
   to assume that $T$ is a topology for this.
   Note singletons do not have to be closed, we need the
-  the space to be $T_0$ for that (see \<open>Topology_ZF_1)\<close>. \<close>
+  the space to be $T_1$ for that (see \<open>Topology_ZF_1)\<close>. \<close>
 
 lemma singl_compact: 
   assumes "x\<in>\<Union>T" shows "{x} {is compact in} T"

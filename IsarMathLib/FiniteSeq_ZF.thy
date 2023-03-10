@@ -422,30 +422,27 @@ text\<open>@{term NELists} are non-empty lists\<close>
 lemma non_zero_List_func_is_NEList:
   shows "NELists(X) = {a\<in>Lists(X). a\<noteq>0}"
 proof-
-  {
-    fix a assume as:"a\<in>{a\<in>Lists(X). a\<noteq>0}"
-    from as obtain n where a:"n\<in>nat" "a:n\<rightarrow> X" unfolding Lists_def by auto
-    {
-      assume "n=0"
+  { fix a assume as: "a\<in>{a\<in>Lists(X). a\<noteq>0}"
+    from as obtain n where a: "n\<in>nat" "a:n\<rightarrow> X" unfolding Lists_def 
+      by auto
+    { assume "n=0"
       with a(2) have "a=0" unfolding Pi_def by auto
       with as have False by auto
     }
-    then have "n\<noteq>0" by auto
-    with a(1) obtain k where "k:nat" "n=succ(k)" using Nat_ZF_1_L3 by auto
-    with a(2) have "a\<in>NELists(X)" unfolding NELists_def by auto
+    hence "n\<noteq>0" by auto
+    with a(1) obtain k where "k\<in>nat" "n=succ(k)" using Nat_ZF_1_L3 
+      by auto
+    with a(2) have "a \<in> NELists(X)" unfolding NELists_def by auto
   } moreover
-  {
-    fix a assume as:"a\<in>NELists(X)"
-    then obtain k where k:"a:succ(k)\<rightarrow>X" "k\<in>nat"
+  { fix a assume as: "a\<in>NELists(X)"
+    then obtain k where k: "a:succ(k)\<rightarrow>X" "k\<in>nat"
       unfolding NELists_def by auto
-    {
-      assume "a=0"
-      then have "domain(a) = 0" by auto
+    { assume "a=0"
+      hence "domain(a) = 0" by auto
       with k(1) have "succ(k) = 0" using domain_of_fun by auto
-      then have False by auto
+      hence False by auto
     } moreover
-    {
-      from k(2) have "succ(k)\<in>nat" using nat_succI by auto
+    { from k(2) have "succ(k)\<in>nat" using nat_succI by auto
       with k(1) have "a\<in>Lists(X)" unfolding Lists_def by auto
     } ultimately
     have "a\<in>{a\<in>Lists(X). a\<noteq>0}" by auto
@@ -498,19 +495,20 @@ proof -
 qed
 
 text\<open>The initial part of a non-empty list
-is a list, and the domain of the original list
-is the successor of its initial part.\<close>
+  is a list, and the domain of the original list
+  is the successor of its initial part.\<close>
 
 theorem init_NElist: 
-  assumes "a: NELists(X)"
-  shows "Init(a): Lists(X)" 
-    and "succ(domain(Init(a))) = domain(a)"
+  assumes "a \<in> NELists(X)"
+  shows "Init(a) \<in> Lists(X)" and "succ(domain(Init(a))) = domain(a)"
 proof -
-  from assms obtain n where n:"n\<in>nat" "a:succ(n) \<rightarrow> X" unfolding NELists_def by auto
-  then have tailF:"Init(a):n \<rightarrow> X" using init_props(1) by auto
-  with n(1) show "Init(a): Lists(X)" unfolding Lists_def by auto
+  from assms obtain n where n: "n\<in>nat" "a:succ(n) \<rightarrow> X" 
+    unfolding NELists_def by auto
+  then have tailF: "Init(a):n \<rightarrow> X" using init_props(1) by auto
+  with n(1) show "Init(a) \<in> Lists(X)" unfolding Lists_def by auto
   from tailF have "domain(Init(a)) = n" using domain_of_fun by auto
-  moreover from n(2) have "domain(a) = succ(n)" using domain_of_fun by auto
+  moreover from n(2) have "domain(a) = succ(n)" using domain_of_fun 
+    by auto
   ultimately show "succ(domain(Init(a))) = domain(a)" by auto
 qed
 
@@ -591,23 +589,17 @@ proof -
   ultimately show ?thesis using succ_explained by auto
 qed
 
-
 text\<open>The next lemma rephrases the definition of \<open>Last\<close>.
   Recall that in ZF we have $\{0,1,2,..,n\} = n+1=$\<open>succ\<close>$(n)$.\<close>
 
 lemma last_seq_elem: assumes "a: succ(n) \<rightarrow> X" shows "Last(a) = a`(n)"
   using assms func1_1_L1 pred_succ_eq Last_def by simp
 
-text\<open>The last element of a non-empty list is in the
-set.\<close>
+text\<open>The last element of a non-empty list valued in $X$ is in $X$.\<close>
 
 lemma last_type: assumes "a \<in> NELists(X)" shows "Last(a) \<in> X"
-proof-
-  from assms obtain n where a:"a:succ(n) \<rightarrow> X" "n\<in>nat" unfolding NELists_def by auto
-  then have "Last(a) = a`n" using last_seq_elem by auto moreover
-  have "n\<in>succ(n)" by auto moreover note a(1)
-  ultimately show "Last(a) \<in> X" using apply_funtype by auto
-qed
+  using assms last_seq_elem apply_funtype unfolding NELists_def 
+  by auto
 
 text\<open>If two finite sequences are the same when restricted to domain one 
   shorter than the original and have the same value on the last element, 
