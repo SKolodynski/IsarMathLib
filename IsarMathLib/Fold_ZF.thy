@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2007  Slawomir Kolodynski
+    Copyright (C) 2007-2023  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -263,5 +263,25 @@ proof -
     by simp
 qed
 
+text\<open>Another way of formulating information contained in \<open>fold_append\<close> is to start
+  with a longer sequence $a:n+1\rightarrow X$ and then detach the last element from it.
+  This provides an identity between the fold of the longer sequence 
+  and the value of the folding function on the fold of the shorter sequence and the last element
+  of the longer one. \<close>
+
+lemma fold_detach_last: 
+  assumes "n \<in> nat" "f : X\<times>Y \<rightarrow> X" "x\<in>X" "\<forall>k\<in>n #+ 1. q(k) \<in> Y"
+  shows "Fold(f,x,{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) = f`\<langle>Fold(f,x,{\<langle>k,q(k)\<rangle>. k\<in>n}), q(n)\<rangle>"
+proof -
+  let ?a = "{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}"
+  let ?b = "{\<langle>k,q(k)\<rangle>. k\<in>n}"
+  from assms have
+    "Fold(f,x,Append(?b,q(n))) = f`\<langle>Fold(f,x,?b), q(n)\<rangle>"
+    using ZF_fun_from_total fold_append(2) by simp_all
+  moreover from assms(1,4) have "?a = Append(?b,q(n))"
+    using set_list_append1(4) by simp
+  ultimately show "Fold(f,x,?a) = f`\<langle>Fold(f,x,?b), q(n)\<rangle>"
+    by simp
+qed  
 
 end

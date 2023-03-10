@@ -356,25 +356,32 @@ qed
 text\<open>For non-zero natural numbers $\textrm{pred}(n) = n-1$.\<close>
 
 lemma pred_minus_one: assumes "n\<in>nat" "n\<noteq>0" 
-  shows "pred(n) = n #- 1"
+  shows "n #- 1 = pred(n)"
 proof -
   from assms obtain k where "n=succ(k)" 
     using Nat_ZF_1_L3 by blast
-  with assms show "pred(n) = n #- 1"
+  with assms show ?thesis
     using pred_succ_eq eq_succ_imp_eq_m1 by simp
 qed
 
 text\<open>For natural numbers taking the successor is the same as adding one. \<close>
 
 lemma succ_add_one: assumes "n\<in>nat" 
-  shows "succ(n) = n #+ 1" and "n #+ 1 \<in> nat"
+  shows "n #+ 1 = succ(n)" and "n #+ 1 \<in> nat"
   using assms by auto
 
 text\<open>Adding and subtracting a natural number cancel each other.\<close>
 
 lemma add_subctract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"
   using assms diff_add_inverse2 by simp
-  
+
+text\<open>A version of induction on natural numbers that uses the $n+1$ notation
+  instead of $succ(n)$.\<close>
+
+lemma ind_on_nat1: 
+  assumes "n\<in>nat" and "P(0)" and "\<forall>k\<in>nat. P(k)\<longrightarrow>P(k #+ 1)"
+  shows "P(n)" using assms succ_add_one(1) ind_on_nat by simp
+
 subsection\<open>Intervals\<close>
 
 text\<open>In this section we consider intervals of natural numbers i.e. sets

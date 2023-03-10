@@ -966,8 +966,7 @@ proof -
 qed
 
 text\<open>A simpler case of \<open>func1_2_L4\<close>, where
-  the range of the original and restricted function are the same.
-\<close>
+  the range of the original and restricted function are the same.\<close>
 
 corollary restrict_fun: assumes A1: "f:X\<rightarrow>Y" and A2: "A\<subseteq>X"
   shows "restrict(f,A) : A \<rightarrow> Y"
@@ -975,6 +974,27 @@ proof -
   from assms have "\<forall>x\<in>A. f`(x) \<in> Y" using apply_funtype
     by auto
   with assms show ?thesis using func1_2_L4 by simp
+qed
+
+text\<open>Suppose a function $f:X\rightarrow Y$ is defined by an expression $q$, i.e.
+  $f = \{\langle x,y\rangle : x\in X\}$. Then a function that is defined by the same expression,
+   but on a smaller set is the same as the restriction of $f$ to that smaller set.\<close>
+
+lemma restrict_def_alt: assumes "A\<subseteq>X"
+  shows "restrict({\<langle>x,q(x)\<rangle>. x\<in>X},A) = {\<langle>x,q(x)\<rangle>. x\<in>A}"
+proof -
+  let ?Y = "{q(x). x\<in>X}"
+  let ?f = "{\<langle>x,q(x)\<rangle>. x\<in>X}"
+  have "\<forall>x\<in>X. q(x)\<in>?Y" by blast
+  with assms have "?f:X\<rightarrow>?Y" using ZF_fun_from_total by simp
+  with assms have "restrict(?f,A):A\<rightarrow>?Y" using restrict_fun by simp
+  moreover 
+  from assms have "\<forall>x\<in>A. q(x)\<in>?Y" by blast
+  then have "{\<langle>x,q(x)\<rangle>. x\<in>A}:A\<rightarrow>?Y" using ZF_fun_from_total by simp
+  moreover from assms have 
+    "\<forall>x\<in>A. restrict(?f,A)`(x) = {\<langle>x,q(x)\<rangle>. x\<in>A}`(x)"  
+    using restrict ZF_fun_from_tot_val1 by auto
+  ultimately show ?thesis by (rule func_eq)
 qed
 
 text\<open>A composition of two functions is the same as 

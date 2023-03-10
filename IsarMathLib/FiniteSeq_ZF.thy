@@ -526,11 +526,30 @@ proof -
   with \<open>Init(Append(a,x)):n\<rightarrow>X\<close> A2 show ?thesis by (rule func_eq)
 qed
 
-text\<open>A reformulation of definition of  \<open>Init\<close>.\<close>
+text\<open>A reformulation of definition of \<open>Init\<close>.\<close>
 
-lemma init_def: assumes "n \<in> nat" and "x:succ(n)\<rightarrow>X"
-  shows "Init(x) = restrict(x,n)"
+lemma init_def: assumes "n \<in> nat" and "a:succ(n)\<rightarrow>X"
+  shows "Init(a) = restrict(a,n)"
   using assms func1_1_L1 Init_def by simp
+
+text\<open>Another reformulation of the definition of \<open>Init\<close>, starting with the
+  expression defining the list.\<close>
+
+lemma init_def_alt: assumes "n\<in>nat" and "\<forall>k\<in>n #+ 1. q(k) \<in> X"
+  shows "Init({\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) = {\<langle>k,q(k)\<rangle>. k\<in>n}"
+proof -
+  let ?a = "{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}"
+  from assms(2) have "?a:n #+ 1\<rightarrow>X" by (rule ZF_fun_from_total)
+  moreover from assms(1) have "n #+ 1 = succ(n)" using succ_add_one(1)
+    by simp
+  ultimately have "?a:succ(n)\<rightarrow>X" by simp
+  with assms(1) have "Init(?a) = restrict(?a,n)" using init_def by simp
+  moreover
+  from assms(1) have "n \<subseteq> n #+ 1" by auto
+  then have "restrict(?a,n) = {\<langle>k,q(k)\<rangle>. k\<in>n}"
+    by (rule restrict_def_alt)
+  ultimately show ?thesis by simp
+qed
     
 text\<open>A lemma about extending a finite sequence by one more value. This is 
   just a more explicit version of \<open>append_props\<close>.\<close>
@@ -786,7 +805,7 @@ qed
 text\<open>A lemma about appending an element to a list defined by set
   comprehension.\<close>
 
-lemma set_list_append:  assumes 
+lemma set_list_append: assumes 
   A1: "\<forall>i \<in> succ(k). b(i) \<in> X" and
   A2: "a = {\<langle>i,b(i)\<rangle>. i \<in> succ(k)}"
   shows 
@@ -803,6 +822,38 @@ proof -
     by (rule ZF_fun_from_total)
   with A2 show "a = Append({\<langle>i,b(i)\<rangle>. i \<in> k},b(k))"
     using func1_1_L1 Append_def by auto
+qed
+
+text\<open>A version of \<open>set_list_append\<close> using $n+1$ instead of \<open>succ(n)\<close>. \<close>
+
+lemma set_list_append1: 
+  assumes "n\<in>nat" and "\<forall>k\<in>n #+ 1. q(k) \<in> X"
+  defines "a\<equiv>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}"
+  shows
+  "a: n #+ 1 \<rightarrow> X"
+  "{\<langle>k,q(k)\<rangle>. k \<in> n}: n \<rightarrow> X"
+  "Init(a) = {\<langle>k,q(k)\<rangle>. k \<in> n}"
+  "a = Append({\<langle>k,q(k)\<rangle>. k \<in> n},q(n))"
+  "a = Append(Init(a), q(n))"
+  "a = Append(Init(a), a`(n))"
+proof -
+  from assms(1) have I: "n #+ 1 = succ(n)" using succ_add_one(1) 
+    by simp
+  with assms show 
+    "a: n #+ 1 \<rightarrow> X" and "{\<langle>k,q(k)\<rangle>. k \<in> n}: n \<rightarrow> X" 
+    and II: "Init(a) = {\<langle>k,q(k)\<rangle>. k \<in> n}"
+    using set_list_append(1,2) init_def_alt by simp_all
+  from assms(2,3) I have 
+    "\<forall>k\<in>succ(n). q(k) \<in> X" and "a = {\<langle>k,q(k)\<rangle>. k \<in> succ(n)}"
+    by simp_all
+  then show "a = Append({\<langle>k,q(k)\<rangle>. k \<in> n},q(n))"  
+    using set_list_append(3) by simp
+  with II show "a = Append(Init(a), q(n))" by simp
+  from I have "n \<in> n #+ 1" by simp
+  then have "{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}`(n) = q(n)"
+    by (rule ZF_fun_from_tot_val1)
+  with assms(3) \<open>a = Append(Init(a), q(n))\<close> show "a = Append(Init(a), a`(n))"
+    by simp
 qed
 
 text\<open>An induction theorem for lists.\<close>
@@ -835,6 +886,70 @@ proof -
     qed
     ultimately have "\<forall>b\<in>succ(n)\<rightarrow>X. P(b)" by (rule ind_on_nat)
   } with A3 show ?thesis using NELists_def by auto 
+qed 
+
+text\<open>A dual notion to \<open>Append\<close> is \<open>Prepend\<close> where we add an element to the list at the beginning of the
+  list. We define the value of the list $a$ prepended by an element $x$ as 
+  $x$ if index is 0 and $a(k-1)$ otherwise.\<close>
+
+definition
+  "Prepend(a,x) \<equiv> {\<langle>k,if k = 0 then x else a`(k #- 1)\<rangle>. k\<in>domain(a) #+ 1}"
+
+text\<open>If $a:n\rightarrow X$ is a list, then $a$ with prepended $x\in X$ is a list as well and
+  its first element is $x$. \<close>
+
+lemma prepend_props: 
+  assumes "n\<in>nat" "a:n\<rightarrow>X" "x\<in>X"
+  shows "Prepend(a,x):(n #+ 1)\<rightarrow>X" and "Prepend(a,x)`(0) = x"
+proof -
+  let ?b = "{\<langle>k,if k = 0 then x else a`(k #- 1)\<rangle>. k\<in>n #+ 1}"
+  have "\<forall>k\<in>n #+ 1. (if k = 0 then x else a`(k #- 1)) \<in> X"
+  proof -
+    { fix k assume "k \<in> n #+ 1"
+      let ?v = "if k = 0 then x else a`(k #- 1)"
+      { assume "k\<noteq>0"
+        with \<open>k \<in> n #+ 1\<close> have "n\<noteq>0" by auto
+        from assms(1) \<open>k \<in> n #+ 1\<close> have "k \<in> nat" 
+          using elem_nat_is_nat(2) by blast
+        from assms(1) have "succ(n) = n #+ 1"
+          using succ_add_one(1) by simp
+        with \<open>k \<in> n #+ 1\<close> have "k\<in>succ(n)" by simp
+        with assms(1) \<open>n\<noteq>0\<close> have "pred(k) \<in> n"
+          using pred_succ_mem by simp
+        with assms(2) \<open>k \<in> nat\<close> \<open>k\<noteq>0\<close> have "?v\<in>X"
+          using pred_minus_one apply_funtype by simp
+      }
+      with assms(3) have "?v \<in> X" by simp
+    } thus ?thesis by simp
+  qed
+  then have "?b: (n #+ 1)\<rightarrow>X" by (rule ZF_fun_from_total)
+  with assms(2) show "Prepend(a,x):(n #+ 1)\<rightarrow>X"
+    using func1_1_L1 unfolding Prepend_def by simp
+  from assms(1) have "0 \<in> n #+ 1"
+    using succ_add_one(1) empty_in_every_succ by simp
+  then have "?b`(0) = (if 0 = 0 then x else a`(0 #- 1))" 
+    by (rule ZF_fun_from_tot_val1)
+  with assms(2) show  "Prepend(a,x)`(0) = x"
+    using func1_1_L1 unfolding Prepend_def by simp
+qed
+
+text\<open>When prepending an element to a list the values at positive indices do not change.\<close>
+
+lemma prepend_val: assumes "n\<in>nat" "a:n\<rightarrow>X" "x\<in>X" "k\<in>n"
+  shows "Prepend(a,x)`(k #+ 1) = a`(k)"
+proof -
+  let ?b = "{\<langle>k,if k = 0 then x else a`(k #- 1)\<rangle>. k\<in>n #+ 1}"
+  from assms(1,4) have "k\<in>nat"
+    using elem_nat_is_nat(2) by simp
+  with assms(1) have "succ(n) = n #+ 1" and "succ(k) = k #+ 1"
+    using succ_add_one(1) by auto
+  with assms(1,4) have "k #+ 1 \<in> n #+ 1"
+    using succ_ineq by simp
+  from \<open>k #+ 1 \<in> n #+ 1\<close> have 
+    "?b`(k #+ 1) = (if k #+ 1 = 0 then x else a`((k #+ 1) #- 1))"
+    by (rule ZF_fun_from_tot_val1)
+  with assms(2) \<open>k\<in>nat\<close> show ?thesis
+    using func1_1_L1 unfolding Prepend_def by simp
 qed
 
 subsection\<open>Lists and cartesian products\<close>
