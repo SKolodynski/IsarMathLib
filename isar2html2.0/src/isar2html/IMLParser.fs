@@ -1,7 +1,7 @@
 (*
     This file is part of isar2html2.0 - a tool for rendering IsarMathLib
 	theories in in HTML.
-    Copyright (C) 2022  Slawomir Kolodynski
+    Copyright (C) 2022-2023  Slawomir Kolodynski
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -308,7 +308,7 @@ module IMLParser =
 
     /// parses a tactic
     let tactic : Parser<string,unit> =
-        pstring "simp" <|> pstring "auto" <|> pstring "blast" <|>
+        attempt (pstring "simp_all") <|> pstring "simp" <|> pstring "auto" <|> pstring "blast" <|>
         attempt (pstring "fast") <|> pstring "force"
 
     /// parses a short proof that has only a tactic in it
