@@ -442,6 +442,12 @@ text\<open>The next lemma has to be used as a rule in some rare cases. \<close>
 lemma exists_in_set: assumes "\<forall>x. x\<in>A \<longrightarrow> \<phi>(x)" shows "\<forall>x\<in>A. \<phi>(x)"
   using assms by simp
 
+text\<open>If $x$ belongs to a set where a property holds, then the property holds
+  for $x$. This has to be used as rule in rare cases. \<close>
+
+lemma property_holds: assumes "\<forall>t\<in>X. \<phi>(t)" and "x\<in>X"
+  shows "\<phi>(x)" using assms by simp
+
 text\<open>Set comprehensions defined by equal expressions are the equal. 
   The second assertion is actually about functions, which are sets of pairs 
   as illustrated in lemma \<open>fun_is_set_of_pairs\<close> in \<open>func1.thy\<close>  \<close>

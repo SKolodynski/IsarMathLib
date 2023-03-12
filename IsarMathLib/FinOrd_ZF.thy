@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2008  Slawomir Kolodynski
+    Copyright (C) 2008-2023  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -30,7 +30,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Finite sets and order relations\<close>
 
-theory FinOrd_ZF imports Finite_ZF func_ZF_1
+theory FinOrd_ZF imports Finite_ZF func_ZF_1 NatOrder_ZF
 
 begin
 
@@ -107,10 +107,29 @@ proof -
   with A2 show "Maximum(r,A) \<in> X" using FinPow_def
     by auto
 qed
+
+text\<open>Every nonempty subset of a natural number has a maximum with expected properties.\<close>
+
+lemma nat_max_props: assumes "n\<in>nat" "A\<subseteq>n" "A\<noteq>0"
+  shows
+  "Maximum(Le,A) \<in> A"
+  "Maximum(Le,A) \<in> nat"
+  "\<forall>k\<in>A. k \<le> Maximum(Le,A)"
+proof -
+  from assms(1,2) have "A \<in> FinPow(nat)" 
+    using nat_finpow_nat subset_finpow by blast
+  with assms(3) show 
+    "Maximum(Le,A) \<in> A"
+    "Maximum(Le,A) \<in> nat"
+    using NatOrder_ZF_1_L2(4) linord_max_props(1,2) by simp_all
+  from assms(3) \<open>A \<in> FinPow(nat)\<close> have "\<forall>k\<in>A. \<langle>k,Maximum(Le,A)\<rangle> \<in> Le"
+    using linord_max_props NatOrder_ZF_1_L2(4) by blast
+  then show  "\<forall>k\<in>A. k \<le> Maximum(Le,A)" by simp
+qed
   
 subsection\<open>Order isomorphisms of finite sets\<close>
 
-text\<open>In this section we eastablish that if two linearly 
+text\<open>In this section we establish that if two linearly 
   ordered finite sets have the same number of elements,
   then they are order-isomorphic and the isomorphism
   is unique. This allows us to talk about ''enumeration''

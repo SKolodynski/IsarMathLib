@@ -85,6 +85,11 @@ text\<open>What is \<open>succ\<close>, anyway? It's a union with the singleton 
 lemma succ_explained: shows "succ(n) = n \<union> {n}"
   using succ_iff by auto
 
+text\<open>If $k$ is a member of $succ(n)$ but is not $n$, then it must be the member of $n$.\<close>
+
+lemma mem_succ_not_eq: assumes "k\<in>succ(n)" "k\<noteq>n"
+  shows "k\<in>n" using assms succ_explained by simp
+
 text\<open>Empty set is an element of every natural number which is not zero.\<close>
 
 lemma empty_in_every_succ: assumes A1: "n \<in> nat"
@@ -217,7 +222,7 @@ lemma nat_mem_lt: assumes "n\<in>nat"
   shows "k<n \<longleftrightarrow> k\<in>n" and "k\<le>n \<longleftrightarrow> k \<in> succ(n)"
   using assms nat_into_Ord Ord_mem_iff_lt by auto
 
-text\<open>The term $k \leq j$ the same as $k < \textrm{succ}(n)$.  \<close>
+text\<open>The term $k \leq n$ is the same as $k < \textrm{succ}(n)$.  \<close>
 
 lemma leq_mem_succ: shows "k\<le>n \<longleftrightarrow> k < succ(n)" by simp
 
