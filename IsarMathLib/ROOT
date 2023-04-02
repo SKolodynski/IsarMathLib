@@ -29,6 +29,8 @@ session "IsarMathLib" = "ZF" +
     OrderedLoop_ZF
     Semigroup_ZF
     CommutativeSemigroup_ZF
+    Monoid_ZF
+    Monoid_ZF_1
     Group_ZF
     Group_ZF_1
     Group_ZF_1b

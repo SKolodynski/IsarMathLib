@@ -37,6 +37,11 @@ text\<open>This theory consider properties of sums of monoid elements, similar
   can be applied to natural powers of elements ($x^n, n\in \mathbb{N}$) in group or ring theory or,
   when written additively, to natural multiplicities $n\cdot x, n\in \mathbb{N}$). \<close>
 
+subsection\<open>Notation and basic properties of sums of lists of monoid elements\<close>
+
+text\<open>In this section we setup a contex (locale) with notation for sums of lists of
+  monoid elements and prove basic properties of those sums in terms of that notation. \<close>
+
 text\<open>The locale (context) \<open>monoid1\<close> extends the locale \<open>monoid1\<close>, adding the notation for the 
   neutral element as $0$ and the sum of a list of monoid elements. \<close>
 
@@ -45,7 +50,7 @@ locale monoid1 = monoid0 +
   defines mzero_def [simp]: "\<zero> \<equiv> TheNeutralElement(G,f)"
 
   fixes listsum ("\<Sum> _" 70)
-  defines listsum_def [simp]: "\<Sum> s \<equiv> Fold(f,\<zero>,s)"
+  defines listsum_def [simp]: "\<Sum>s \<equiv> Fold(f,\<zero>,s)"
 
 text\<open>Let's recall that the neutral element of the monoid is an element of the monoid (carrier) $G$
   and the monoid operation ($f$ in our notation) is a function that maps $G\times G$
@@ -116,14 +121,5 @@ proof -
   }
   ultimately show ?thesis by auto
 qed
-  
-  
-  
 
-
-
-  
-
-
-
-  
+end
