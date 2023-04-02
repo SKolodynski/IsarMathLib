@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2007  Slawomir Kolodynski
+    Copyright (C) 2007-2023  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -105,6 +105,11 @@ text\<open>If lists are modeled as finite sequences (i.e. functions on natural
 definition
   "Last(a) \<equiv> a`(pred(domain(a)))"
 
+text\<open>Codomain of a nonempty list is nonempty.\<close>
+
+lemma nelist_vals_nonempty: assumes "a:succ(n)\<rightarrow>Y"
+  shows "Y\<noteq>0" using assms codomain_nonempty by simp
+
 text\<open>Shifted sequence is a function on a the interval of natural numbers.\<close>
 
 lemma shifted_seq_props: 
@@ -197,7 +202,7 @@ lemma concat_concat_list:
   A2: "a:n\<rightarrow>X"   "b:k\<rightarrow>X"  "c:m\<rightarrow>X" and
   A3: "d = Concat(Concat(a,b),c)"
   shows
-  "d : n #+k #+ m \<rightarrow> X"
+  "d : n #+ k #+ m \<rightarrow> X"
   "\<forall>j \<in> n. d`(j) = a`(j)"
   "\<forall>j \<in> k. d`(n #+ j) = b`(j)"
   "\<forall>j \<in> m. d`(n #+ k #+ j) = c`(j)"
@@ -239,7 +244,7 @@ lemma concat_list_concat:
   A2: "a:n\<rightarrow>X"   "b:k\<rightarrow>X"  "c:m\<rightarrow>X" and
   A3: "e = Concat(a, Concat(b,c))"
   shows 
-  "e : n #+k #+ m \<rightarrow> X"
+  "e : n #+ k #+ m \<rightarrow> X"
   "\<forall>j \<in> n. e`(j) = a`(j)"
   "\<forall>j \<in> k. e`(n #+ j) = b`(j)"
   "\<forall>j \<in> m. e`(n #+ k #+ j) = c`(j)"
@@ -336,7 +341,51 @@ proof -
   ultimately show "\<forall>k \<in> n. Tail(a)`(k) = a`(succ(k))"
     by (rule ZF_fun_from_tot_val0)
 qed
-  
+
+text\<open>A nonempty list can be decomposed into concatenation of its first element and 
+  the tail.\<close>
+
+lemma first_concat_tail: assumes "n\<in>nat" "a:succ(n)\<rightarrow>X"
+  shows "a = Concat({\<langle>0,a`(0)\<rangle>},Tail(a))"
+proof -
+  let ?b = "Concat({\<langle>0,a`(0)\<rangle>},Tail(a))"
+  have "?b:succ(n)\<rightarrow>X" and "\<forall>k\<in>succ(n). a`(k) = ?b`(k)"
+  proof -
+    from assms(1) have "0\<in>succ(n)" using empty_in_every_succ by simp
+    with assms(2) have "a`(0) \<in> X" using apply_funtype by simp
+    then have I: "{\<langle>0,a`(0)\<rangle>}:{0}\<rightarrow>X" using pair_func_singleton by simp
+    have "{0}\<in>nat" using one_is_nat by simp
+    from assms have "Tail(a): n \<rightarrow> X" using tail_props(1) by simp
+    with assms(1) \<open>{0}\<in>nat\<close> I have "?b:{0} #+ n \<rightarrow> X"
+      using concat_props(1) by simp
+    with assms(1) show "?b:succ(n) \<rightarrow> X" using succ_add_one(3) by simp
+    { fix k assume "k\<in>succ(n)"
+      { assume "k=0"
+        with assms(1) \<open>{0}\<in>nat\<close> I \<open>Tail(a): n \<rightarrow> X\<close>
+        have "a`(k) = ?b`(k)" using concat_props(2) pair_val
+          by simp          
+      }
+      moreover
+      { assume "k\<noteq>0"
+        from assms(1) \<open>k\<in>succ(n)\<close> have "k\<in>nat"
+          using elem_nat_is_nat(2) by blast
+        with \<open>k\<noteq>0\<close> obtain m where "m\<in>nat" and "k=succ(m)"
+          using Nat_ZF_1_L3 by blast
+        with assms(1) \<open>k\<in>succ(n)\<close> have "m\<in>n" using succ_mem 
+          by simp
+        with \<open>{0}\<in>nat\<close> assms(1) I \<open>Tail(a): n \<rightarrow> X\<close>
+        have "?b`({0} #+ m) = Tail(a)`(m)"
+          using concat_props(4) by simp
+        with assms \<open>m\<in>nat\<close> \<open>k\<in>succ(n)\<close> \<open>k=succ(m)\<close> \<open>m\<in>n\<close>
+        have "a`(k) = ?b`(k)"
+          using succ_add_one(3) tail_props(2) by simp
+      }
+      ultimately have "a`(k) = ?b`(k)" by blast
+    } thus "\<forall>k\<in>succ(n). a`(k) = ?b`(k)" by simp
+  qed
+  with assms(2) show ?thesis by (rule func_eq)
+qed
+
 text\<open>Properties of \<open>Append\<close>. It is a bit surprising that
   the we don't need to assume that $n$ is a natural number.\<close>
 
@@ -600,6 +649,21 @@ text\<open>The last element of a non-empty list valued in $X$ is in $X$.\<close>
 lemma last_type: assumes "a \<in> NELists(X)" shows "Last(a) \<in> X"
   using assms last_seq_elem apply_funtype unfolding NELists_def 
   by auto
+
+text\<open>The last element of a list of length at least 2 is the same as the last element
+  of the tail of that list.\<close>
+
+lemma last_tail_last: assumes "n\<in>nat" "a: succ(succ(n)) \<rightarrow> X"
+  shows "Last(Tail(a)) = Last(a)"
+proof -
+  from assms have "Last(Tail(a)) = Tail(a)`(n)"
+    using tail_props(1) last_seq_elem by blast
+  also from assms have "Tail(a)`(n) = a`(succ(n))" using tail_props(2) 
+    by blast
+  also from assms(2) have "a`(succ(n)) = Last(a)" using last_seq_elem 
+    by simp
+  finally show ?thesis by simp
+qed
 
 text\<open>If two finite sequences are the same when restricted to domain one 
   shorter than the original and have the same value on the last element, 

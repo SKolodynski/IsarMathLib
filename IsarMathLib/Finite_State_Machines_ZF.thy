@@ -1514,7 +1514,7 @@ corollary (in NonDetFinStateAuto) lang_is_regular:
          rule exI[of _ "{Q \<in> Pow(S). Q \<inter> F \<noteq> 0}"])
   using language_nfsa dfsa.DFSA by auto
 
-theorem concat_language:
+(*theorem concat_language:
   assumes "Finite(\<Sigma>)"
   and "L1{is a regular language on}\<Sigma>"
   and "L2{is a regular language on}\<Sigma>"
@@ -1522,6 +1522,6 @@ shows "concat(L1,L2) {is a regular language on}\<Sigma>"
 proof-
   (*TODO: Need first to show that $\varepsilon$-transitions generate regular languages.*)
   oops
-
+*)
 
 end

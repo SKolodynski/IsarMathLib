@@ -85,6 +85,15 @@ text\<open>What is \<open>succ\<close>, anyway? It's a union with the singleton 
 lemma succ_explained: shows "succ(n) = n \<union> {n}"
   using succ_iff by auto
 
+text\<open>The singleton containing the empty set is a natural number.\<close>
+
+lemma one_is_nat: shows "{0} \<in> nat" "{0} = succ(0)" "{0} = 1"
+proof -
+  show "{0} = succ(0)" using succ_explained by simp
+  then show "{0} \<in> nat" by simp
+  show "{0}=1" by blast
+qed
+
 text\<open>If $k$ is a member of $succ(n)$ but is not $n$, then it must be the member of $n$.\<close>
 
 lemma mem_succ_not_eq: assumes "k\<in>succ(n)" "k\<noteq>n"
@@ -139,6 +148,11 @@ proof -
     by simp
   ultimately show "\<forall>i \<in> n. succ(i) \<in> succ(n)" by (rule ind_on_nat)
 qed
+
+text\<open>A version of \<open>succ_ineq\<close> without a quantifier.\<close>
+
+lemma succ_ineq1:  assumes A1: "n \<in> nat" "i\<in>n"
+  shows "succ(i) \<in> succ(n)" using assms succ_ineq by simp
 
 text\<open>For natural numbers if $k\subseteq n$ the similar holds for 
   their successors.\<close>
@@ -202,7 +216,7 @@ proof -
   then show "succ(n) \<subseteq> nat" using nat_union_succ by simp
 qed
 
-text\<open>Element of a natural number is a natural number.\<close>
+text\<open>Element $k$ of a natural number $n$ is a natural number that is smaller than $n$.\<close>
 
 lemma elem_nat_is_nat: assumes A1: "n \<in> nat"  and A2: "k\<in>n"
   shows "k < n"  "k \<in> nat"  "k \<le> n"  "\<langle>k,n\<rangle> \<in> Le"
@@ -369,12 +383,23 @@ proof -
     using pred_succ_eq eq_succ_imp_eq_m1 by simp
 qed
 
-text\<open>For natural numbers taking the successor is the same as adding one. \<close>
+text\<open>Various forms of saying that for natural numbers taking the successor 
+  is the same as adding one. \<close>
 
 lemma succ_add_one: assumes "n\<in>nat" 
-  shows "n #+ 1 = succ(n)" and "n #+ 1 \<in> nat"
-  using assms by auto
-
+  shows 
+    "n #+ 1 = succ(n)" 
+    "n #+ 1 \<in> nat" 
+    "{0} #+ n = succ(n)" 
+    "n #+ {0} = succ(n)"
+    "succ(n) \<in> nat"
+proof -
+  from assms show "n #+ 1 = succ(n)" "n #+ 1 \<in> nat" "succ(n) \<in> nat" by simp_all
+  moreover from assms have "{0} = 1" and "n #+ 1 = 1 #+ n" by auto
+  ultimately show "{0} #+ n = succ(n)" and "n #+ {0} = succ(n)"
+    by simp_all
+qed
+  
 text\<open>Adding and subtracting a natural number cancel each other.\<close>
 
 lemma add_subctract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"

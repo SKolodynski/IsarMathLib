@@ -295,34 +295,31 @@ proof -
   let ?F = "FoldSeq(f,x,y)"
   let ?T = "Tail(?F)" 
   let ?S = "Seq2TrSeq(f,Tail(y))"
-  from assms(1) have "succ(n) \<in> nat" and "0 \<in> succ(n)" 
-      using empty_in_every_succ by simp_all    
-  with assms(3) have "y`(0)\<in>Y" using apply_funtype 
-      by simp
-  hence "Y\<noteq>0" by auto
+  from assms(1,3) have "succ(n) \<in> nat" "0 \<in> succ(n)" "y`(0)\<in>Y"
+    using empty_in_every_succ apply_funtype by simp_all
   have "n \<in> nat" "f`\<langle>x,y`(0)\<rangle> \<in> X" "?S:n\<rightarrow>(X\<rightarrow>X)" 
     and "?T:succ(n) \<rightarrow> X" "?T`(0) = f`\<langle>x,y`(0)\<rangle>"
     and "\<forall>k\<in>n. ?T`(succ(k)) = (?S`(k))`(?T`(k))"
   proof -
     from assms(1) show "n \<in> nat" by simp
-    from assms \<open>Y\<noteq>0\<close> \<open>succ(n) \<in> nat\<close> show "?T:succ(n) \<rightarrow> X"
-      using fold_seq_props(1) tail_props(1) by simp
+    from assms \<open>succ(n) \<in> nat\<close> show "?T:succ(n) \<rightarrow> X"
+      using fold_seq_props(1) tail_props(1) nelist_vals_nonempty by simp
     from assms(2,4) \<open>y`(0)\<in>Y\<close> show "f`\<langle>x,y`(0)\<rangle> \<in> X"
       using apply_funtype by simp
     from assms(1,2,3) show "?S:n\<rightarrow>(X\<rightarrow>X)"
       using tail_props(1) seq2trans_seq_props by simp
-    from assms \<open>Y\<noteq>0\<close> have I: "?F:succ(succ(n)) \<rightarrow> X"
-      using fold_seq_props(1) by simp
+    from assms  have I: "?F:succ(succ(n)) \<rightarrow> X"
+      using fold_seq_props(1) nelist_vals_nonempty by simp
     show "?T`(0) = f`\<langle>x,y`(0)\<rangle>"
     proof -
       from \<open>succ(n) \<in> nat\<close> \<open>0 \<in> succ(n)\<close> I 
         have "?T`(0) = ?F`(succ(0))"
         using tail_props(2) by blast
-      moreover from assms \<open>Y\<noteq>0\<close> \<open>0 \<in> succ(n)\<close> 
+      moreover from assms  \<open>0 \<in> succ(n)\<close> 
         have "?F`(succ(0)) = f`\<langle>?F`(0), y`(0)\<rangle>"
-        using fold_seq_props(3) by blast
-      moreover from assms \<open>Y\<noteq>0\<close> have "?F`(0) = x" 
-        using fold_seq_props(2) by blast
+        using fold_seq_props(3) nelist_vals_nonempty by blast
+      moreover from assms  have "?F`(0) = x" 
+        using fold_seq_props(2) nelist_vals_nonempty by blast
       ultimately show "?T`(0) = f`\<langle>x,y`(0)\<rangle>" by simp
     qed
     show "\<forall>k\<in>n. ?T`(succ(k)) = (?S`(k))`(?T`(k))"
@@ -333,9 +330,9 @@ proof -
           using succ_ineq by auto
         with \<open>succ(n) \<in> nat\<close> I have "?T`(succ(k)) = ?F`(succ(succ(k)))"
           using tail_props(2) by blast
-        moreover from assms \<open>Y\<noteq>0\<close> \<open>succ(k) \<in> succ(n)\<close>
+        moreover from assms \<open>succ(k) \<in> succ(n)\<close>
           have "?F`(succ(succ(k))) = f`\<langle>?F`(succ(k)), y`(succ(k))\<rangle>"
-            using fold_seq_props(3) by blast
+            using fold_seq_props(3) nelist_vals_nonempty by blast
         moreover from assms(1,3) \<open>k\<in>n\<close> have "y`(succ(k)) = (Tail(y))`(k)"
           using tail_props(2) by simp
         moreover from assms \<open>k\<in>n\<close> I \<open>succ(k) \<in> succ(succ(n))\<close> 
@@ -353,12 +350,26 @@ proof -
     by (rule is_fin_indseq_var_f)
   moreover have "fstdom(f) = X" and "domain(Tail(y)) = n"
   proof -
-    from assms(2) \<open>Y\<noteq>0\<close> show "fstdom(f) = X"
-      using fstdomdef by simp
+    from assms(2,3) show "fstdom(f) = X"
+      using fstdomdef nelist_vals_nonempty by simp
     from assms(1,3) show "domain(Tail(y)) = n"
       using tail_props(1) func1_1_L1 by blast
   qed
   ultimately show ?thesis unfolding FoldSeq_def by simp
-qed  
+qed
+
+text\<open>Taking a fold of a sequence $y$ with a function $f$ with the starting point $x$ 
+  is the same as the fold starting from $f\langle x,y(0)\rangle$ of the tail of $y$. \<close>
+
+lemma fold_detach_first: 
+  assumes "n \<in> nat" "f : X\<times>Y \<rightarrow> X" "y:succ(n)\<rightarrow>Y" "x\<in>X"
+  shows "Fold(f,x,y) = Fold(f,f`\<langle>x,y`(0)\<rangle>,Tail(y))"
+proof -
+  from assms have "FoldSeq(f,x,y):succ(succ(n))\<rightarrow>X"
+    using fold_seq_props(1) nelist_vals_nonempty by simp
+  with assms show ?thesis
+    using last_tail_last fold_seq_detach_first unfolding Fold_def
+    by simp
+qed
 
 end

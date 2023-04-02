@@ -783,6 +783,11 @@ proof
   } thus "\<Union>{f``(A). A\<in>M} \<subseteq> f``(\<Union>M)" by auto
 qed
 
+text\<open>If the domain of a function is nonempty, then the codomain is as well.\<close>
+
+lemma codomain_nonempty: assumes "f:X\<rightarrow>Y" "X\<noteq>0" shows "Y\<noteq>0"
+  using assms apply_funtype by blast
+
 text\<open>The image of a nonempty subset of domain is nonempty.\<close>
 
 lemma func1_1_L15A: 

@@ -234,7 +234,7 @@ proof -
     by simp
 qed
     
-text\<open>Under the assumptions of \<open> group0_1_T1\<close>
+text\<open>Under the assumptions of \<open>group0_1_T1\<close>
   the neutral element of a 
   submonoid is the same as that of the monoid.\<close>
 
