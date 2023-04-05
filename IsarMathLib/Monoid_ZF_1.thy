@@ -90,7 +90,7 @@ lemma (in monoid1) semigr0_valid_in_monoid1: shows "semigr0(G,f)"
 text\<open>We can pull the first component of a sum of a nonempty list of monoid elements
   before the summation sign. \<close>  
 
-theorem (in monoid1) seq_sum_pull_first: assumes "n \<in> nat" "s:succ(n)\<rightarrow>G"
+lemma (in monoid1) seq_sum_pull_first0: assumes "n \<in> nat" "s:succ(n)\<rightarrow>G"
   shows "(\<Sum>s) = s`(0) \<oplus> (\<Sum>Tail(s))"
 proof -
   from assms have "s`(0) \<in> G" using empty_in_every_succ apply_funtype 
@@ -120,6 +120,25 @@ proof -
         sum_nonempty(2) first_concat_tail by simp
   }
   ultimately show ?thesis by auto
+qed
+
+text\<open>Similar content like in \<open>seq_sum_pull_first0\<close> but formulated in terms of
+  the expression defining the list of monoid elements. \<close>
+
+theorem (in monoid1) seq_sum_pull_first: 
+  assumes "n \<in> nat" "\<forall>k\<in>n #+ 1. q(k) \<in> G"
+  shows "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  q(0) \<oplus> (\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>n})"
+proof -
+  let ?s = "{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}"
+  from assms(1) have "0 \<in> n #+ 1" using empty_in_every_succ succ_add_one(1)
+    by simp
+  then have "?s`(0) = q(0)" by (rule ZF_fun_from_tot_val1)
+  from assms(2) have "?s: n #+ 1 \<rightarrow> G" by (rule ZF_fun_from_total)
+  with assms(1) \<open>?s`(0) = q(0)\<close> have "(\<Sum>?s) = q(0) \<oplus> (\<Sum>Tail(?s))"
+    using seq_sum_pull_first0 by simp
+  moreover from assms have "Tail(?s) = {\<langle>k,q(k #+ 1)\<rangle>. k \<in> n}"
+    using tail_formula by simp
+  ultimately show ?thesis by simp
 qed
 
 end

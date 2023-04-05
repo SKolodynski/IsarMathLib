@@ -105,6 +105,36 @@ text\<open>If lists are modeled as finite sequences (i.e. functions on natural
 definition
   "Last(a) \<equiv> a`(pred(domain(a)))"
 
+text\<open>A formula for tail of a finite list.\<close>
+
+lemma tail_as_set: assumes "n \<in> nat" and "a: n #+ 1 \<rightarrow> X"
+  shows "Tail(a) = {\<langle>k,a`(k #+ 1)\<rangle>. k\<in>n}"
+  using assms func1_1_L1 elem_nat_is_nat(2) succ_add_one(1) 
+  unfolding Tail_def by simp
+
+text\<open>Formula for the tail of a list defined by an expression:\<close>
+
+lemma tail_formula: assumes "n \<in> nat" and "\<forall>k \<in> n #+ 1. q(k) \<in> X"
+  shows "Tail({\<langle>k,q(k)\<rangle>. k \<in> n #+ 1}) = {\<langle>k,q(k #+ 1)\<rangle>. k \<in> n}"
+proof -
+  let ?a = "{\<langle>k,q(k)\<rangle>. k \<in> n #+ 1}"
+  from assms(2) have "?a : n #+ 1 \<rightarrow> X"
+    by (rule ZF_fun_from_total)
+  with assms(1) have "Tail(?a) = {\<langle>k,?a`(k #+ 1)\<rangle>. k\<in>n}"
+    using tail_as_set by simp
+  moreover have "\<forall>k\<in>n. ?a`(k #+ 1) = q(k #+ 1)"
+  proof - 
+    { fix k assume "k\<in>n"
+      with assms(1) have "k #+ 1 \<in> n #+ 1"
+        using succ_ineq1 elem_nat_is_nat(2) succ_add_one(1) 
+        by simp
+      then have "?a`(k #+ 1) = q(k #+ 1)"
+        by (rule ZF_fun_from_tot_val1)
+    } thus ?thesis by simp
+  qed
+  ultimately show ?thesis by simp
+qed
+
 text\<open>Codomain of a nonempty list is nonempty.\<close>
 
 lemma nelist_vals_nonempty: assumes "a:succ(n)\<rightarrow>Y"
@@ -341,6 +371,14 @@ proof -
   ultimately show "\<forall>k \<in> n. Tail(a)`(k) = a`(succ(k))"
     by (rule ZF_fun_from_tot_val0)
 qed
+
+text\<open>Essentially the second assertion of \<open>tail_props\<close> but formulated using notation 
+  $n+1$ instead of \<open>succ(n)\<close>:\<close>
+
+lemma tail_props2: assumes "n \<in> nat" "a: n #+ 1 \<rightarrow> X" "k\<in>n"
+  shows "Tail(a)`(k) = a`(k #+ 1)"
+  using assms succ_add_one(1) tail_props(2) elem_nat_is_nat(2)
+  by simp
 
 text\<open>A nonempty list can be decomposed into concatenation of its first element and 
   the tail.\<close>
