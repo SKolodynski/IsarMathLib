@@ -43,7 +43,9 @@ text\<open>In this section we setup a contex (locale) with notation for sums of 
   monoid elements and prove basic properties of those sums in terms of that notation. \<close>
 
 text\<open>The locale (context) \<open>monoid1\<close> extends the locale \<open>monoid1\<close>, adding the notation for the 
-  neutral element as $0$ and the sum of a list of monoid elements. \<close>
+  neutral element as $0$ and the sum of a list of monoid elements.
+  It also defines a notation for natural multiple of an element of a monoid,
+  i.e. $n\cdot x = x\oplus x\oplus ... \oplus x$ (n times). \<close>
 
 locale monoid1 = monoid0 +
   fixes mzero ("\<zero>")
@@ -51,6 +53,9 @@ locale monoid1 = monoid0 +
 
   fixes listsum ("\<Sum> _" 70)
   defines listsum_def [simp]: "\<Sum>s \<equiv> Fold(f,\<zero>,s)"
+
+  fixes nat_mult (infix "\<cdot>" 70)
+  defines nat_mult_def [simp]: "n\<cdot>x \<equiv> \<Sum>{\<langle>k,x\<rangle>. k\<in>n}"
 
 text\<open>Let's recall that the neutral element of the monoid is an element of the monoid (carrier) $G$
   and the monoid operation ($f$ in our notation) is a function that maps $G\times G$
@@ -122,12 +127,16 @@ proof -
   ultimately show ?thesis by auto
 qed
 
-text\<open>Similar content like in \<open>seq_sum_pull_first0\<close> but formulated in terms of
-  the expression defining the list of monoid elements. \<close>
+text\<open>The first assertion of the next theorem is similar in content to \<open>seq_sum_pull_first0\<close> 
+  but formulated in terms of the expression defining the list of monoid elements. The second
+  one shows the dual statement: the last element of a sequence can be pulled out of the
+  sequence and put after the summation sign.\<close>
 
-theorem (in monoid1) seq_sum_pull_first: 
+theorem (in monoid1) seq_sum_pull_one_elem: 
   assumes "n \<in> nat" "\<forall>k\<in>n #+ 1. q(k) \<in> G"
-  shows "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  q(0) \<oplus> (\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>n})"
+  shows 
+    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  q(0) \<oplus> (\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>n})"
+    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n}) \<oplus> q(n)"
 proof -
   let ?s = "{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}"
   from assms(1) have "0 \<in> n #+ 1" using empty_in_every_succ succ_add_one(1)
@@ -138,7 +147,10 @@ proof -
     using seq_sum_pull_first0 by simp
   moreover from assms have "Tail(?s) = {\<langle>k,q(k #+ 1)\<rangle>. k \<in> n}"
     using tail_formula by simp
-  ultimately show ?thesis by simp
+  ultimately show "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  q(0) \<oplus> (\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>n})" 
+    by simp
+  from assms show "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n}) \<oplus> q(n)"
+    using zero_monoid_oper fold_detach_last by simp
 qed
 
 end
