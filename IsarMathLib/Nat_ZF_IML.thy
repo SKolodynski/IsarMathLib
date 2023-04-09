@@ -399,6 +399,13 @@ proof -
   ultimately show "{0} #+ n = succ(n)" and "n #+ {0} = succ(n)"
     by simp_all
 qed
+
+text\<open>A nonzero natural number is of the form $n=m+1$ for some natural number $m$.
+  This is very similar to \<open>Nat_ZF_1_L3\<close> except that we use $n+1$ instead of \<open>succ(n)\<close>. \<close>
+
+lemma nat_not0_succ: assumes "n\<in>nat" "n\<noteq>0"
+  shows "\<exists>m\<in>nat. n = m #+1"
+  using assms Nat_ZF_1_L3 succ_add_one(1) by simp
   
 text\<open>Adding and subtracting a natural number cancel each other.\<close>
 

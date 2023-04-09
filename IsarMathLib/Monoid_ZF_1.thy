@@ -128,9 +128,10 @@ proof -
 qed
 
 text\<open>The first assertion of the next theorem is similar in content to \<open>seq_sum_pull_first0\<close> 
-  but formulated in terms of the expression defining the list of monoid elements. The second
+  formulated in terms of the expression defining the list of monoid elements. The second
   one shows the dual statement: the last element of a sequence can be pulled out of the
-  sequence and put after the summation sign.\<close>
+  sequence and put after the summation sign. So, we are showing here that 
+  $\sum_{k=0}^{n} q_k = q_0 \oplus \sum_{k=0}^{n-1} q_{k+1} = (\sum_{k=0}^{n-1} q_k)) \oplus q_n. $ \<close>
 
 theorem (in monoid1) seq_sum_pull_one_elem: 
   assumes "n \<in> nat" "\<forall>k\<in>n #+ 1. q(k) \<in> G"
@@ -151,6 +152,61 @@ proof -
     by simp
   from assms show "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n}) \<oplus> q(n)"
     using zero_monoid_oper fold_detach_last by simp
+qed
+
+text\<open>If the monoid operation is commutative, then the sum of a nonempty sequence
+  added to another sum of a nonempty sequence of the same length is equal 
+  to the sum of pointwise sums of the sequence elements. 
+  This is the same as the theorem \<open>prod_comm_distrib\<close> from the 
+  \<open>Semigroup_ZF\<close> theory, just written in the notation used in the \<open>monoid1\<close> locale.\<close>
+
+lemma (in monoid1) sum_comm_distrib0:
+  assumes  "f {is commutative on} G" "n\<in>nat" and
+  "a : n #+ 1 \<rightarrow> G"  "b : n #+ 1 \<rightarrow> G"  "c : n #+ 1 \<rightarrow> G" and
+  "\<forall>j\<in>n #+ 1. c`(j) = a`(j) \<oplus> b`(j)"
+  shows "(\<Sum> c) = (\<Sum> a) \<oplus> (\<Sum> b)"
+  using assms succ_add_one(1) sum_nonempty 
+    semigr0_valid_in_monoid1 semigr0.prod_comm_distrib by simp
+
+text\<open>Another version of \<open>sum_comm_distrib0\<close> written in terms of the expressions
+  defining the sequences, shows that for commutative monoids we have 
+  $\sum_{k=0}^{n-1}q(k) \oplus p(k) = (\sum_{k=0}^{n-1} p(k))\oplus (\sum_{k=0}^{n-1} q(k))$. \<close>
+
+theorem (in monoid1) sum_comm_distrib: 
+  assumes  "f {is commutative on} G" "n\<in>nat" and
+  "\<forall>k\<in>n. p(k) \<in> G" "\<forall>k\<in>n. q(k) \<in> G"
+  shows 
+    "(\<Sum>{\<langle>k,p(k)\<oplus>q(k)\<rangle>. k\<in>n}) = (\<Sum>{\<langle>k,p(k)\<rangle>. k\<in>n}) \<oplus> (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n})" 
+proof -
+  let ?a = "{\<langle>k,p(k)\<rangle>. k\<in>n}"
+  let ?b = "{\<langle>k,q(k)\<rangle>. k\<in>n}"
+  let ?c = "{\<langle>k,p(k)\<oplus>q(k)\<rangle>. k\<in>n}"
+  { assume "n=0"
+    then have "(\<Sum>?c) = (\<Sum>?a) \<oplus> (\<Sum>?b)"
+      using sum_empty unit_is_neutral by simp
+  }
+  moreover
+  { assume "n\<noteq>0"
+    with assms(2) obtain m where "m\<in>nat" and  "n = m #+1"
+      using nat_not0_succ by blast
+    from assms(3,4) have "?a:n\<rightarrow>G" "?b:n\<rightarrow>G" "?c:n\<rightarrow>G" 
+      using group0_1_L1 ZF_fun_from_total by simp_all
+    with assms(1) \<open>m\<in>nat\<close> \<open>n = m #+1\<close> have 
+      "f {is commutative on} G" "m\<in>nat" and
+      "?a:m #+1\<rightarrow>G" "?b:m #+1\<rightarrow>G" "?c:m #+1\<rightarrow>G"
+      by simp_all
+    moreover have "\<forall>j\<in>m #+ 1. ?c`(j) = ?a`(j) \<oplus> ?b`(j)"
+    proof -
+      { fix j assume "j \<in> m #+ 1"
+        with \<open>n = m #+1\<close> have "j\<in>n" by simp
+        then have "?c`(j) = ?a`(j) \<oplus> ?b`(j)"
+          using ZF_fun_from_tot_val1 by simp_all
+      } thus ?thesis by simp
+    qed
+    ultimately have "(\<Sum>?c) = (\<Sum>?a) \<oplus> (\<Sum>?b)"
+      using sum_comm_distrib0 by simp
+  }
+  ultimately show ?thesis by blast
 qed
 
 end
