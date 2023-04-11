@@ -41,6 +41,7 @@ session "IsarMathLib" = "ZF" +
     OrderedGroup_ZF
     OrderedGroup_ZF_1
     Ring_ZF
+    Ring_Binomial_ZF
     Ring_ZF_1
     OrderedRing_ZF
     Group_ZF_4

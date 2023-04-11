@@ -30,6 +30,7 @@ theory Monoid_ZF_1 imports Monoid_ZF Semigroup_ZF
 
 begin
 
+
 text\<open>This theory consider properties of sums of monoid elements, similar
   to the ones formalized in the \<open>Semigroup_ZF\<close> theory for sums of semigroup elements. The main
   difference is that since each monoid has a neutral element it makes sense to define a sum
