@@ -365,25 +365,25 @@ namespace iml
         /// exports formal items
         let exportFormalItem (repls:(string*string) list) (mfii:Map<string,string>) (fit:FormalItem) =
             match fit with 
-            | Abbr abbr ->  (bf  "Abbreviation" |> par) + (isar2latex repls abbr.abbspec |> par)
+            | Abbr abbr ->  (bf  "abbreviation" |> par) + (isar2latex repls abbr.abbspec |> par)
                             |> mkformal ""
-            | Def def ->    ((bf  "Definition ")  + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")") + "\n" |> par)
+            | Def def ->    ((bf  "definition ")  + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")") + "\n" |> par)
                             +  (isar2latex repls def.def |> par)
                             |> mkformal ""
             | Loc loc ->    let (parent,vars) = loc.inheritsFrom
-                            ((bf "Locale ") + loc.localename 
+                            ((bf "locale ") + loc.localename 
                             + (if parent.Length=0 then "" 
                                 else (" = " + parent + " " + (String.concat " " vars) + " +")) |> par)
                             + (List.map (exportLocaleItem repls) loc.localeItems |> String.concat "\n")
                             |> mkformal ""
-            | Subloc subloc ->  (bf "Sublocale ") + subloc.sublocalename + " &lt " 
+            | Subloc subloc ->  (bf "sublocale ") + subloc.sublocalename + " &lt " 
                                 + (if subloc.label.Length>0 then subloc.label + ": " else "")
                                 + subloc.localename 
                                 + (exportProof repls mfii subloc.sublocproof |> par)
                                 |> mkformal ""
             | Prop prop ->  exportProposition repls mfii prop
             | Interpretation i -> 
-                (bf "Interpretation ") + i.interprname + ": " + i.target + "&emsp;"
+                (bf "interpretation ") + i.interprname + ": " + i.target + "&emsp;"
                 + (i.parameters |> List.map (isar2latex repls)|> String.concat ", ")
                 + (exportProof repls mfii i.interprproof |> par)
                 |> mkformal ""

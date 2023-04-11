@@ -675,8 +675,23 @@ let ``test getPars`` () =
 let ``test macro expansion`` () =
   let s = "ab+Binom(n,k) + c"
   let mn = "Binom"
-  let templ = "{{$1}\\choose {$2}}"
+  let templ = macroBinom
   let expanded = "ab+{{n}\\choose {k}} + c"
   Assert.Equal(expanded,expMacro mn templ s)
+
+  let s = "pow(n,x)"
+  let mn = "pow"
+  let templ = macroPow
+  let expanded = "x^{n}"
+  Assert.Equal(expanded,expMacro mn templ s)
+
+  let s = "pow(n,a+b)"
+  let mn = "pow"
+  let templ = macroPow
+  let expanded = "(a+b)^{n}"
+  Assert.Equal(expanded,expMacro mn templ s)
+
+
+
   
 

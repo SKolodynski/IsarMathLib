@@ -26,7 +26,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Binomial theorem\<close>
 
-theory Ring_Binomial_ZF imports Monoid_ZF_1 Ring_ZF 
+theory Ring_Binomial_ZF imports Monoid_ZF_1 Ring_ZF
 
 begin
 

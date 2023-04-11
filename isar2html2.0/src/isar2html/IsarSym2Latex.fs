@@ -20,10 +20,21 @@ namespace iml
         open Utils
         open System
 
+        /// a macro that expands the binomial
+        let macroBinom (args:string array) :string =
+            "{{"+args[0]+"}\\choose {"+args[1]+"}}"
+
+        /// expands powers: pow(n,x) --> x^n Note the reversed order of the parameters
+        let macroPow (args:string array) :string =
+            if args[1].Length = 1 then args[1]+"^{"+args[0]+"}"
+            else "("+args[1]+")"+"^{"+args[0]+"}"
+
+
         /// list of macros to be expanded, the first string is macro name, 
         /// the second is the template
-        let macros : (string*string) array = 
-            [| "Binom", "{{$1}\\choose {$2}}"|]
+        let macros : (string*((string array -> string))) array = 
+            [| "Binom", macroBinom;
+                "pow",macroPow|]
 
         /// list of translations from Isar symbols to LaTeX symbols
         // TODO: read from a file maybe?
@@ -86,6 +97,7 @@ namespace iml
                  ("\\<ls>", " < ")
                  ("\\<lsq>", "\\leq ")
                  ("\\<ltr>", " + ")
+                 ("\\<nm>", "\\cdot ")
                  ("\\<longleftrightarrow>", "\\longleftrightarrow ")
                  ("\\<Longrightarrow>", "\\Longrightarrow ")
                  ("\\<A>", "\\mathcal{A} ")

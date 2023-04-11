@@ -151,8 +151,8 @@ namespace iml
 
         /// expands macro using the template
         /// - mn - macro name e.g. "Binom"
-        /// - templ - template e.g. "{{$1}\\choose {2}}"
-        let rec expMacro (mn:string) (templ:string) (s:string) : string =
+        /// - templ - a function that runs on the arguments of the macro and returns the string"
+        let rec expMacro (mn:string) (templ:(string array -> string)) (s:string) : string =
             let macro = mn+"("
             let pos = s.IndexOf(macro)
             if pos < 0 then s
@@ -160,12 +160,12 @@ namespace iml
                 let pars,newpos = getPars s (pos+macro.Length-1) 
                 let fillers = Array.map (expMacro mn templ) pars
                 let s1 = s[0..pos-1]
-                let s2 = fillPlaceholders templ fillers
-                let s3 = expMacro (mn:string) (templ:string) s[newpos+1..]
+                let s2 = templ fillers
+                let s3 = expMacro (mn:string) templ s[newpos+1..]
                 s1+s2+s3
         
         /// expands all macros provided in the macros array
-        let expAllMacros (macros:(string*string) array) : string -> string =
+        let expAllMacros (macros:(string*(string array->string)) array) : string -> string =
             Array.unzip macros
             ||> Array.map2 expMacro
             |> Array.reduce (<<)
