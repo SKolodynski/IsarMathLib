@@ -148,8 +148,8 @@ text\<open>The first assertion of the next theorem is similar in content to \<op
 theorem (in monoid1) seq_sum_pull_one_elem: 
   assumes "n \<in> nat" "\<forall>k\<in>n #+ 1. q(k) \<in> G"
   shows 
-    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  q(0) \<oplus> (\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>n})"
-    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n}) \<oplus> q(n)"
+    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) = q(0) \<oplus> (\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>n})"
+    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) = (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n}) \<oplus> q(n)"
 proof -
   let ?s = "{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}"
   from assms(1) have "0 \<in> n #+ 1" using empty_in_every_succ succ_add_one(1)

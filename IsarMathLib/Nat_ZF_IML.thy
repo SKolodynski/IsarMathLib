@@ -115,6 +115,26 @@ proof -
   ultimately show "0 \<in> succ(n)" by (rule ind_on_nat)
 qed
 
+text\<open>Various forms of saying that for natural numbers taking the successor 
+  is the same as adding one. \<close>
+
+lemma succ_add_one: assumes "n\<in>nat" 
+  shows 
+    "n #+ 1 = succ(n)" 
+    "n #+ 1 \<in> nat" 
+    "{0} #+ n = succ(n)" 
+    "n #+ {0} = succ(n)"
+    "succ(n) \<in> nat"
+    "0 \<in> n #+ 1"
+proof -
+  from assms show "n #+ 1 = succ(n)" "n #+ 1 \<in> nat" "succ(n) \<in> nat" by simp_all
+  moreover from assms have "{0} = 1" and "n #+ 1 = 1 #+ n" by auto
+  ultimately show "{0} #+ n = succ(n)" and "n #+ {0} = succ(n)"
+    by simp_all
+  from assms \<open>n #+ 1 = succ(n)\<close> show "0 \<in> n #+ 1" using empty_in_every_succ
+    by simp
+qed
+
 text\<open>A more direct way of stating that empty set is an element of every non-zero natural number:\<close>
 
 lemma empty_in_non_empty: assumes "n\<in>nat" "n\<noteq>0"
@@ -148,11 +168,6 @@ proof -
     by simp
   ultimately show "\<forall>i \<in> n. succ(i) \<in> succ(n)" by (rule ind_on_nat)
 qed
-
-text\<open>A version of \<open>succ_ineq\<close> without a quantifier.\<close>
-
-lemma succ_ineq1:  assumes A1: "n \<in> nat" "i\<in>n"
-  shows "succ(i) \<in> succ(n)" using assms succ_ineq by simp
 
 text\<open>For natural numbers if $k\subseteq n$ the similar holds for 
   their successors.\<close>
@@ -227,6 +242,14 @@ proof -
   with A1 \<open>k \<in> nat\<close> show "\<langle>k,n\<rangle> \<in> Le" using Le_def
     by simp
 qed
+
+text\<open>A version of \<open>succ_ineq\<close> without a quantifier, with additional assertion
+  using the \<open>n #+ 1\<close> notation.\<close>
+
+lemma succ_ineq1:  assumes A1: "n \<in> nat" "i\<in>n"
+  shows "succ(i) \<in> succ(n)" and "i #+ 1 \<in> n #+ 1" 
+  using assms succ_ineq succ_add_one(1) elem_nat_is_nat (2) 
+  by simp_all
 
 text\<open>For natural numbers membership and inequality are the same
   and $k \leq n$ is the same as $k \in \textrm{succ}(n)$. 
@@ -383,21 +406,15 @@ proof -
     using pred_succ_eq eq_succ_imp_eq_m1 by simp
 qed
 
-text\<open>Various forms of saying that for natural numbers taking the successor 
-  is the same as adding one. \<close>
 
-lemma succ_add_one: assumes "n\<in>nat" 
-  shows 
-    "n #+ 1 = succ(n)" 
-    "n #+ 1 \<in> nat" 
-    "{0} #+ n = succ(n)" 
-    "n #+ {0} = succ(n)"
-    "succ(n) \<in> nat"
+text\<open>For natural numbers if $j\in n$ then $j+1 \subseteq n$.\<close>
+
+lemma mem_add_one_subset: assumes "n \<in> nat" "k\<in>n" shows "k #+ 1 \<subseteq> n"
 proof -
-  from assms show "n #+ 1 = succ(n)" "n #+ 1 \<in> nat" "succ(n) \<in> nat" by simp_all
-  moreover from assms have "{0} = 1" and "n #+ 1 = 1 #+ n" by auto
-  ultimately show "{0} #+ n = succ(n)" and "n #+ {0} = succ(n)"
-    by simp_all
+  from assms have "k #+ 1 \<in> succ(n)"
+    using elem_nat_is_nat(2) succ_ineq1 succ_add_one(1) by simp
+  with assms(1) show "k #+ 1 \<subseteq> n" using nat_mem_lt(2) le_imp_subset 
+    by blast
 qed
 
 text\<open>A nonzero natural number is of the form $n=m+1$ for some natural number $m$.
@@ -413,11 +430,27 @@ lemma add_subctract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"
   using assms diff_add_inverse2 by simp
 
 text\<open>A version of induction on natural numbers that uses the $n+1$ notation
-  instead of $succ(n)$.\<close>
+  instead of $\<open>succ(n)\<close>$.\<close>
 
 lemma ind_on_nat1: 
   assumes "n\<in>nat" and "P(0)" and "\<forall>k\<in>nat. P(k)\<longrightarrow>P(k #+ 1)"
-  shows "P(n)" using assms succ_add_one(1) ind_on_nat by simp
+  shows "P(n)" using assms succ_add_one(1) ind_on_nat by simp  
+
+text\<open>A version of induction for finite sequences using the $n+1$ notation
+  instead of \<open>succ(n)\<close>:\<close>
+
+lemma fin_nat_ind1: 
+  assumes "n\<in>nat" and "P(0)" and "\<forall>j\<in>n. P(j)\<longrightarrow>P(j #+ 1)"
+  shows "\<forall>k\<in>n #+ 1. P(k)" and "P(n)"
+proof -
+  { fix k assume "k\<in>n #+ 1"
+    with assms have 
+      "n\<in>nat" "k\<in>succ(n)" "P(0)" "\<forall>j\<in>n. P(j)  \<longrightarrow> P(succ(j))"
+      using succ_add_one(1) elem_nat_is_nat(2) by simp_all
+    then have "P(k)" by (rule fin_nat_ind)
+  } thus "\<forall>k\<in>n #+ 1. P(k)" by simp
+  with assms(1) show "P(n)" by simp
+qed
 
 subsection\<open>Intervals\<close>
 

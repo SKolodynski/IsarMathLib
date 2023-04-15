@@ -126,6 +126,45 @@ proof -
     using linord_max_props NatOrder_ZF_1_L2(4) by blast
   then show  "\<forall>k\<in>A. k \<le> Maximum(Le,A)" by simp
 qed
+
+text\<open>Yet another version of induction where the induction step is valid only up to $n\in \mathbb{N}$
+  rather than for all natural numbers.
+  This lemma is redundant as it is easier to prove this assertion using lemma \<open>fin_nat_ind\<close> 
+  from \<open>Nat_ZF_IML\<close> which was done in lemma \<open>fin_nat_ind1\<close> there. 
+  It is left here for now as an alternative proof based on properties of the 
+  maximum of a finite set. \<close>
+
+lemma ind_on_nat2: 
+  assumes "n\<in>nat" and "P(0)" and "\<forall>j\<in>n. P(j)\<longrightarrow>P(j #+ 1)"
+  shows "\<forall>j\<in>n #+ 1. P(j)" and "P(n)"
+proof -
+  let ?A = "{k\<in>succ(n). \<forall>j\<in>succ(k). P(j)}"
+  let ?M = "Maximum(Le,?A)" 
+  from assms(1,2) have I: "succ(n) \<in> nat" "?A\<subseteq>succ(n)" "?A\<noteq>0" 
+    using empty_in_every_succ by auto 
+  then have "?M \<in> ?A" by (rule nat_max_props)
+  have "n=?M"
+  proof -
+    from \<open>?M \<in> ?A\<close> have "?M \<in> succ(n)" by blast
+    with assms(1) have "?M\<in>n \<or> ?M=n" by auto
+    moreover
+    { assume "?M \<in> n"
+      from I have "?M \<in> nat" by (rule nat_max_props)
+      from assms(3) \<open>?M\<in>?A\<close> \<open>?M\<in>n\<close> have "P(?M #+ 1)" by blast
+      with \<open>?M \<in> nat\<close> have "P(succ(?M))" using succ_add_one(1) by simp
+      with \<open>?M\<in>?A\<close> have "\<forall>j\<in>succ(succ(?M)). P(j)" by blast
+      moreover from assms(1) \<open>?M \<in> n\<close> have "succ(?M) \<in> succ(n)"
+        using succ_ineq1 by simp
+      moreover from I have "\<forall>k\<in>?A. k \<le> ?M"
+        by (rule nat_max_props)
+      ultimately have False by blast
+    }
+    ultimately show "n=?M" by auto
+  qed
+  with \<open>?M \<in> ?A\<close> have "n\<in>?A" by (rule eq_mem)
+  with assms(1) show "\<forall>j\<in>n #+ 1. P(j)" and "P(n)" 
+    using succ_add_one(1) by simp_all
+qed
   
 subsection\<open>Order isomorphisms of finite sets\<close>
 
@@ -138,8 +177,7 @@ text\<open>In this section we establish that if two linearly
   of the set (which is a natural number $n = \{0,1,..,n-1\}$)
   and the set.\<close>
 
-text\<open>A really weird corner case - empty set is order isomorphic with itself.
-\<close>
+text\<open>A really weird corner case - empty set is order isomorphic with itself. \<close>
 
 lemma empty_ord_iso: shows "ord_iso(0,r,0,R) \<noteq> 0"
 proof -

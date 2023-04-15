@@ -320,6 +320,12 @@ proof -
   with A1 show "x \<notin> A" by simp
 qed
 
+text\<open>Simple substitution in membership, has to be used by rule
+  in very rare cases.\<close>
+
+lemma eq_mem: assumes "x\<in>A" and "y=x" shows "y\<in>A" 
+  using assms by simp
+
 text\<open>A basic property of sets defined by comprehension.\<close>
 
 lemma comprehension: assumes "a \<in> {x\<in>X. p(x)}"

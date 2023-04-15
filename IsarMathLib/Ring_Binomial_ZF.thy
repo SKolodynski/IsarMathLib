@@ -88,5 +88,98 @@ lemma (in ring3) mult_pow_type: assumes "n\<in>nat" "x\<in>R"
   using assms add_monoid.nat_mult_type mul_monoid.nat_mult_type 
   by simp_all
 
+text\<open>Distributive laws for finite sums in a ring: 
+  $(\sum_{k=0}^{n-1}q(k))\cdot x = \sum_{k=0}^{n-1}q(k)\cdot x$ and 
+  $x\cdot (\sum_{k=0}^{n-1}q(k)) = \sum_{k=0}^{n-1}x\cdot q(k)$. \<close>
+
+theorem (in ring3) fin_sum_distrib: 
+  assumes "n\<in>nat" "\<forall>k\<in>n. q(k) \<in> R" "x\<in>R"
+  shows 
+    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n})\<cdot>x = \<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>n}"
+    "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n}) = \<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>n}"
+proof -
+  from assms(1,3) have "n\<in>nat" and 
+    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>0})\<cdot>x = \<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>0}"
+    using add_monoid.sum_empty Ring_ZF_1_L6(1) by simp_all
+  moreover have 
+    "\<forall>j\<in>n. (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j})\<cdot>x = (\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j})
+    \<longrightarrow> (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = \<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j #+ 1}"
+  proof -
+    { fix j assume "j\<in>n" and 
+        I: "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j})\<cdot>x = (\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j})"
+      from assms(1) \<open>j\<in>n\<close> have "j\<in>nat" using elem_nat_is_nat(2) 
+        by simp
+      moreover from assms(1,2) \<open>j\<in>n\<close> have II: "\<forall>k\<in>j #+ 1. q(k) \<in> R"
+        using mem_add_one_subset by blast
+      ultimately have     
+        "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> q(j)"
+        using add_monoid.seq_sum_pull_one_elem(2) by simp
+      hence 
+        "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = ((\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> q(j))\<cdot>x"
+        by simp
+      moreover from assms(3) \<open>j\<in>nat\<close> II have
+        "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<in> R" "q(j) \<in> R" and "x\<in>R" 
+        using add_monoid.sum_in_mono by simp_all
+      ultimately have 
+        "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j})\<cdot>x \<ra> q(j)\<cdot>x"
+        using ring_oper_distr(2) by simp
+      with I have 
+        "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = (\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j})  \<ra> q(j)\<cdot>x" 
+        by simp
+      moreover 
+      from assms(3) II have "\<forall>k\<in>j #+ 1. q(k)\<cdot>x \<in> R"
+        using Ring_ZF_1_L4(3) by simp
+      with \<open>j\<in>nat\<close> have 
+        "(\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j #+ 1}) = (\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j}) \<ra> q(j)\<cdot>x"
+        using add_monoid.seq_sum_pull_one_elem(2) by simp
+      ultimately have 
+        "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = (\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j #+ 1})"
+        by simp
+    } thus ?thesis by simp
+  qed
+  ultimately show "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n})\<cdot>x = \<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>n}"
+    by (rule fin_nat_ind1)
+  from assms(1,3) have "n\<in>nat" and 
+    "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>0}) = \<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>0}"
+    using add_monoid.sum_empty Ring_ZF_1_L6(2) by simp_all
+  moreover have 
+    "\<forall>j\<in>n. x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) = (\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j})
+    \<longrightarrow> x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = \<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j #+ 1}" 
+  proof -
+    { fix j assume "j\<in>n" and 
+        I: "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) = (\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j})"
+      from assms(1) \<open>j\<in>n\<close> have "j\<in>nat" using elem_nat_is_nat(2) 
+        by simp
+      moreover from assms(1,2) \<open>j\<in>n\<close> have II: "\<forall>k\<in>j #+ 1. q(k) \<in> R"
+        using mem_add_one_subset by blast
+      ultimately have     
+        "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> q(j)"
+        using add_monoid.seq_sum_pull_one_elem(2) by simp
+      hence 
+        "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = x\<cdot>((\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> q(j))"
+        by simp
+      moreover from assms(3) \<open>j\<in>nat\<close> II have
+        "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<in> R" "q(j) \<in> R" and "x\<in>R" 
+        using add_monoid.sum_in_mono by simp_all
+       ultimately have 
+        "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> x\<cdot>q(j)"
+        using ring_oper_distr(1) by simp
+       with I have 
+        "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) =  (\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j})  \<ra> x\<cdot>q(j)" 
+        by simp
+      moreover 
+      from assms(3) II have "\<forall>k\<in>j #+ 1. x\<cdot>q(k) \<in> R"
+        using Ring_ZF_1_L4(3) by simp
+      with \<open>j\<in>nat\<close> have 
+        "(\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j #+ 1}) = (\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j}) \<ra> x\<cdot>q(j)"
+        using add_monoid.seq_sum_pull_one_elem(2) by simp
+      ultimately have 
+        "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = (\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j #+ 1})"
+        by simp
+    } thus ?thesis by simp
+  qed
+  ultimately show  "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n}) = \<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>n}"
+    by (rule fin_nat_ind1)
+qed 
   
 end
