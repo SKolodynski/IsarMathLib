@@ -264,6 +264,20 @@ proof -
   with A2 show "(\<Prod> a) \<cdot> (\<Prod> b) = \<Prod> (a \<squnion> b)" by simp
 qed
 
+text\<open> $a\cdot b \cdot (c\cdot d) = a\cdot (b \cdot c) \cdot d$ for
+  semigrouop elements $a,b,c,d \in G$. The \<open>Commutative semigroups\<close> section
+  below contains a couple of rearrangements that need commutativity of the semigroup
+  operation, but this one uses only associativity, so it's here. \<close>
+
+lemma (in semigr0) rearr4elem_assoc: 
+  assumes "a\<in>G"  "b\<in>G"  "c\<in>G"  "d\<in>G"
+  shows "a\<cdot>b\<cdot>(c\<cdot>d) = a\<cdot>(b\<cdot>c)\<cdot>d"
+proof -
+  from assms have "a\<cdot>b\<cdot>(c\<cdot>d) = a\<cdot>b\<cdot>c\<cdot>d" using semigr_closed semigr_assoc
+    by simp
+  with assms(1,2,3) show ?thesis using semigr_assoc by simp
+qed
+
 subsection\<open>Products over sets of indices\<close>
 
 text\<open>In this section we study the properties of 

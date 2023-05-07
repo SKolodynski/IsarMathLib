@@ -457,11 +457,14 @@ lemma (in ring0) Ring_ZF_2_L1A: assumes "a\<in>R" "b\<in>R"
   using assms add_group.inv_cancel_two add_group.group0_4_L6A
     Ring_ZF_1_L1(3) by auto
 
-text\<open>In commutative rings $a-(b+1)c = (a-d-c)+(d-bc)$.\<close>
+text\<open>In rings $a-(b+1)c = (a-d-c)+(d-bc)$ and $a+b+(c+d) = a+(b+c)+d$.\<close>
 
 lemma (in ring0) Ring_ZF_2_L2: 
   assumes "a\<in>R"  "b\<in>R"  "c\<in>R"  "d\<in>R"
-  shows "a\<rs>(b\<ra>\<one>)\<cdot>c = (a\<rs>d\<rs>c)\<ra>(d\<rs>b\<cdot>c)"
+  shows 
+    "a\<rs>(b\<ra>\<one>)\<cdot>c = (a\<rs>d\<rs>c)\<ra>(d\<rs>b\<cdot>c)"
+    "a\<ra>b\<ra>(c\<ra>d) = a\<ra>b\<ra>c\<ra>d"
+    "a\<ra>b\<ra>(c\<ra>d) = a\<ra>(b\<ra>c)\<ra>d"
 proof -    
   let ?B = "b\<cdot>c"
   from ringAssum assms have
@@ -470,8 +473,12 @@ proof -
   then have 
     "a\<ra>(\<rm>?B\<ra>c) = a\<ra>(\<rm>d)\<ra>(\<rm>c)\<ra>(d\<ra>(\<rm>?B))"
     by (rule add_group.group0_4_L8)
-  with assms show ?thesis
-    using Ring_ZF_1_L2 ring_oper_distr Ring_ZF_1_L3 by auto
+  with assms show "a\<rs>(b\<ra>\<one>)\<cdot>c = (a\<rs>d\<rs>c)\<ra>(d\<rs>b\<cdot>c)"
+    using Ring_ZF_1_L2 ring_oper_distr Ring_ZF_1_L3 by simp
+  from assms show "a\<ra>b\<ra>(c\<ra>d) = a\<ra>b\<ra>c\<ra>d"
+    using Ring_ZF_1_L4(1) Ring_ZF_1_L10(1) by simp
+  with assms(1,2,3) show "a\<ra>b\<ra>(c\<ra>d) = a\<ra>(b\<ra>c)\<ra>d"
+    using Ring_ZF_1_L10(1) by simp
 qed
 
 text\<open>Rerrangement about adding linear functions.\<close>
@@ -496,9 +503,9 @@ text\<open>Rearrangement with three elements\<close>
 lemma (in ring0) Ring_ZF_2_L4: 
   assumes "M {is commutative on} R"
   and "a\<in>R"  "b\<in>R"  "c\<in>R"
-  shows "a\<cdot>(b\<cdot>c) = a\<cdot>c\<cdot>b"
+  shows "a\<cdot>(b\<cdot>c) = a\<cdot>c\<cdot>b" and "a\<cdot>b\<cdot>c = a\<cdot>c\<cdot>b"
   using assms IsCommutative_def Ring_ZF_1_L11
-  by simp
+  by simp_all
 
 text\<open>Some other rearrangements with three elements.\<close>
 

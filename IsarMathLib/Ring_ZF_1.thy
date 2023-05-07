@@ -83,7 +83,7 @@ text\<open>The sides of the distributive law equations for almost homomorphisms
 lemma (in group1) Ring_ZF_1_1_L2:
   assumes A1: "s\<in>AH" "r\<in>AH" "q\<in>AH"
   shows 
-  "s\<circ>(r\<bullet>q) \<approx> (s\<circ>r)\<bullet>(s\<circ>q)" 
+  "s\<circ>(r\<bullet>q) \<cong> (s\<circ>r)\<bullet>(s\<circ>q)" 
   "(r\<bullet>q)\<circ>s = (r\<circ>s)\<bullet>(q\<circ>s)"
 proof -
   from A1 have "\<forall>n\<in>G. \<langle> r`(n),q`(n)\<rangle> \<in> G\<times>G"
@@ -98,7 +98,7 @@ proof -
   moreover from groupAssum isAbelian A1 A1 have 
     "s\<circ>(r\<bullet>q) \<in> AH" "(s\<circ>r)\<bullet>(s\<circ>q) \<in> AH"
     using Group_ZF_3_2_L15 Group_ZF_3_4_T1 by auto
-  ultimately show "s\<circ>(r\<bullet>q) \<approx> (s\<circ>r)\<bullet>(s\<circ>q)"
+  ultimately show "s\<circ>(r\<bullet>q) \<cong> (s\<circ>r)\<bullet>(s\<circ>q)"
     using Group_ZF_3_4_L12 by simp
   from groupAssum isAbelian A1 have 
     "(r\<bullet>q)\<circ>s : G\<rightarrow>G" "(r\<circ>s)\<bullet>(q\<circ>s) : G\<rightarrow>G"
@@ -132,7 +132,7 @@ proof
     Group_ZF_3_2_L15 Group_ZF_3_4_L13A by simp
   also have "R``{s\<circ>(q\<bullet>r)} = R``{(s\<circ>q)\<bullet>(s\<circ>r)}"
   proof -
-    from T1 D1 have "equiv(AH,R)" "s\<circ>(q\<bullet>r)\<approx>(s\<circ>q)\<bullet>(s\<circ>r)"
+    from T1 D1 have "equiv(AH,R)" "s\<circ>(q\<bullet>r) \<cong> (s\<circ>q)\<bullet>(s\<circ>r)"
       using Ring_ZF_1_1_L2 by auto
     with A1 show ?thesis using equiv_class_eq by simp
   qed
@@ -173,8 +173,3 @@ theorem (in group1) Ring_ZF_1_1_T1:
     Ring_ZF_1_1_L4 IsAring_def by simp
   
 end
-   
-   
-   
-  
- 

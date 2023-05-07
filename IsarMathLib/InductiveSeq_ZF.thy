@@ -1049,6 +1049,28 @@ text\<open>The notion that will actually be used is the binomial coefficient ${n
 definition
   "Binom(n,k) \<equiv> (PascalTriangle`(n))`(k)"
 
+text\<open>Entries in the Pascal's triangle are natural numbers. 
+  Since in Isabelle/ZF the value of a function at a point 
+  that is outside of the domain is the empty set (which is the same as zero of natural numbers) 
+  we do not need any assumption on $k$.\<close>
+
+lemma binom_in_nat: assumes "n\<in>nat" shows "Binom(n,k) \<in> nat"
+proof -
+  { assume "k \<in> succ(n)"
+    with assms have "(PascalTriangle`(n))`(k) \<in> nat"
+      using pascal_row_list apply_funtype by blast
+  }
+  moreover
+  { assume "k \<notin> succ(n)"
+    from assms have "domain(PascalTriangle`(n)) = succ(n)"
+      using pascal_row_list func1_1_L1 by blast
+    with \<open>k \<notin> succ(n)\<close> have "(PascalTriangle`(n))`(k) = 0"
+      using apply_0 by simp
+    hence "(PascalTriangle`(n))`(k) \<in> nat" by simp
+  }
+  ultimately show ?thesis unfolding Binom_def by blast
+qed
+
 text\<open>The top of the Pascal's triangle is equal to 1 (i.e. ${0\choose 0}=1$).
   This is an easy fact that it is useful to have handy as it  is at the start of a 
   couple of inductive arguments. \<close>
@@ -1092,6 +1114,19 @@ proof -
   finally show ?thesis by simp
 qed
 
+text\<open>A version \<open>binom_prop\<close> where we write $k+1$ instead of $k$.\<close>
+
+lemma binom_prop2: assumes "n\<in>nat" "k \<in> n #+ 1"
+  shows "Binom(n #+ 1,k #+ 1) = Binom(n,k #+ 1) #+ Binom(n,k)"
+proof -
+  from assms have "k\<in>nat" using elem_nat_is_nat(2) by blast
+  hence "k #+1 #- 1 = k" by simp
+  moreover from assms have 
+    "Binom(n #+ 1,k #+ 1) = Binom(n,k #+1 #- 1) #+ Binom(n,k #+ 1)"
+    using succ_ineq2 binom_prop by simp
+  ultimately show ?thesis by simp
+qed
+
 text\<open>A special case of \<open>binom_prop\<close> when $n=k+1$ that helps 
   with the induction step in the proof that the binomial coefficient 
   are 1 on the right boundary of the Pascal's triangle.\<close>
@@ -1125,5 +1160,6 @@ proof -
     using binom_prop1 by simp
   ultimately show ?thesis by (rule ind_on_nat)  
 qed
+
 
 end

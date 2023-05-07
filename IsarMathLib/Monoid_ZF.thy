@@ -2,7 +2,7 @@
 This file is a part of IsarMathLib - 
 a library of formalized mathematics for Isabelle/Isar.
 
-Copyright (C) 2005 - 2008  Slawomir Kolodynski
+Copyright (C) 2005 - 2023  Slawomir Kolodynski
 
 This program is free software; Redistribution and use in source and binary forms, 
 with or without modification, are permitted provided that the 
@@ -31,7 +31,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Monoids\<close>
 
-theory Monoid_ZF imports func_ZF Loop_ZF
+theory Monoid_ZF imports func_ZF Loop_ZF Semigroup_ZF
 
 begin
 
@@ -71,6 +71,11 @@ locale monoid0 =
   
   fixes monoper (infixl "\<oplus>" 70)
   defines monoper_def [simp]: "a \<oplus> b \<equiv> f`\<langle>a,b\<rangle>"
+
+text\<open>Propositions proven in the \<open>semigr0\<close> locale are valid in the \<open>monoid0\<close> locale.\<close>
+
+lemma (in monoid0) semigr0_valid_in_monoid0: shows "semigr0(G,f)"
+  using monoidAssum IsAmonoid_def semigr0_def by simp
 
 text\<open>The result of the monoid operation is in the monoid (carrier).\<close>
 
@@ -161,8 +166,7 @@ qed
 text\<open>The next lemma shows that if the if we restrict the monoid operation to
   a subset of $G$ that contains the neutral element, then the 
   neutral element of the monoid operation is also neutral with the 
-  restricted operation.
-\<close>
+  restricted operation. \<close>
 
 lemma (in monoid0) group0_1_L5:
   assumes A1: "\<forall>x\<in>H.\<forall>y\<in>H. x\<oplus>y \<in> H"
@@ -284,5 +288,13 @@ lemma (in monoid0) sum_associative:
   shows "(a\<oplus>b)\<oplus>c = a\<oplus>(b\<oplus>c)"
   using assms monoidAssum unfolding IsAmonoid_def IsAssociative_def
   by auto
+
+text\<open>A simple rearrangement of four monoid elements transferred from the \<open>semigr0\<close> locale: \<close>
+
+lemma (in monoid0) rearr4elem_monoid: 
+  assumes "a\<in>G"  "b\<in>G"  "c\<in>G"  "d\<in>G" 
+  shows "a\<oplus>b\<oplus>(c\<oplus>d) = a\<oplus>(b\<oplus>c)\<oplus>d"
+  using assms semigr0_valid_in_monoid0 semigr0.rearr4elem_assoc
+  by simp
 
 end

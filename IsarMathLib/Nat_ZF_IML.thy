@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2019  Slawomir Kolodynski
+    Copyright (C) 2005 - 2023  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -30,7 +30,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Natural numbers in IsarMathLib\<close>
 
-theory Nat_ZF_IML imports ZF.Arith
+theory Nat_ZF_IML imports ZF.ArithSimp
 
 begin
 
@@ -126,6 +126,7 @@ lemma succ_add_one: assumes "n\<in>nat"
     "n #+ {0} = succ(n)"
     "succ(n) \<in> nat"
     "0 \<in> n #+ 1"
+    "n \<subseteq> n #+ 1"
 proof -
   from assms show "n #+ 1 = succ(n)" "n #+ 1 \<in> nat" "succ(n) \<in> nat" by simp_all
   moreover from assms have "{0} = 1" and "n #+ 1 = 1 #+ n" by auto
@@ -133,6 +134,8 @@ proof -
     by simp_all
   from assms \<open>n #+ 1 = succ(n)\<close> show "0 \<in> n #+ 1" using empty_in_every_succ
     by simp
+  from assms \<open>n #+ 1 = succ(n)\<close> show "n \<subseteq> n #+ 1" using succ_explained
+    by auto
 qed
 
 text\<open>A more direct way of stating that empty set is an element of every non-zero natural number:\<close>
@@ -246,10 +249,10 @@ qed
 text\<open>A version of \<open>succ_ineq\<close> without a quantifier, with additional assertion
   using the \<open>n #+ 1\<close> notation.\<close>
 
-lemma succ_ineq1:  assumes A1: "n \<in> nat" "i\<in>n"
-  shows "succ(i) \<in> succ(n)" and "i #+ 1 \<in> n #+ 1" 
-  using assms succ_ineq succ_add_one(1) elem_nat_is_nat (2) 
-  by simp_all
+lemma succ_ineq1:  assumes "n \<in> nat" "i\<in>n"
+  shows "succ(i) \<in> succ(n)" "i #+ 1 \<in> n #+ 1" "i \<in> n #+ 1" 
+  using assms succ_ineq succ_add_one(1,7) elem_nat_is_nat(2) 
+  by auto
 
 text\<open>For natural numbers membership and inequality are the same
   and $k \leq n$ is the same as $k \in \textrm{succ}(n)$. 
@@ -406,7 +409,6 @@ proof -
     using pred_succ_eq eq_succ_imp_eq_m1 by simp
 qed
 
-
 text\<open>For natural numbers if $j\in n$ then $j+1 \subseteq n$.\<close>
 
 lemma mem_add_one_subset: assumes "n \<in> nat" "k\<in>n" shows "k #+ 1 \<subseteq> n"
@@ -415,6 +417,16 @@ proof -
     using elem_nat_is_nat(2) succ_ineq1 succ_add_one(1) by simp
   with assms(1) show "k #+ 1 \<subseteq> n" using nat_mem_lt(2) le_imp_subset 
     by blast
+qed
+
+text\<open>For a natural $n$ if $k\in n+1$ then $k+1\leq n+1$.\<close>
+
+lemma succ_ineq2: assumes "n \<in> nat" "k \<in> n #+ 1"
+  shows "k #+ 1 \<le> n #+ 1" and "k\<le>n"
+proof -
+  from assms show "k\<le>n" using succ_add_one(1) nat_mem_lt(2)
+    by simp
+  with assms(1) show  "k #+ 1 \<le> n #+ 1" using add_le_mono1 by blast
 qed
 
 text\<open>A nonzero natural number is of the form $n=m+1$ for some natural number $m$.
@@ -450,6 +462,22 @@ proof -
     then have "P(k)" by (rule fin_nat_ind)
   } thus "\<forall>k\<in>n #+ 1. P(k)" by simp
   with assms(1) show "P(n)" by simp
+qed
+
+text\<open>A simplification rule for natural numbers: if $k<n$ then $n-(k+1)+1 = n-k$: \<close>
+
+lemma nat_subtr_simpl0: assumes "n\<in>nat" "k\<in>n" 
+  shows "n #- (k #+ 1) #+ 1 = n #- k"
+proof -
+  from assms obtain m where "m\<in>nat" and "n = m #+1"
+    using nat_not0_succ by blast
+  with assms have "succ(m) = m #+ 1" "succ(m #- k) = m #- k #+ 1"
+    using elem_nat_is_nat(2) succ_add_one by simp_all
+  moreover from assms(2) \<open>m\<in>nat\<close> \<open>n = m #+1\<close> have 
+    "succ(m) #- k = succ(m #- k)" 
+    using diff_succ succ_ineq2(2) by simp
+  ultimately have "m  #- k #+ 1 = m #+ 1 #- k" by simp
+  with \<open>n = m #+1\<close> show ?thesis using diff_cancel2 by simp
 qed
 
 subsection\<open>Intervals\<close>

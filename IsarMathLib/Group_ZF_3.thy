@@ -248,9 +248,8 @@ locale group1 = group0 +
   fixes AHcomp (infix "\<circ>" 70)
   defines AHcomp_def [simp]: "s \<circ> r \<equiv>  AlHomOp2(G,P)`\<langle>s,r\<rangle>"
 
-  fixes AlEq (infix "\<approx>" 68)
-  defines AlEq_def [simp]: 
-  "s \<approx> r \<equiv> \<langle>s,r\<rangle> \<in> QuotientGroupRel(AH,Op1,FR)"
+  fixes AlEq (infix "\<cong>" 68)
+  defines AlEq_def [simp]: "s \<cong> r \<equiv> \<langle>s,r\<rangle> \<in> QuotientGroupRel(AH,Op1,FR)"
 
 
 text\<open>HomDiff is a homomorphism on the lifted group structure.\<close>
@@ -698,14 +697,14 @@ lemma (in group1) Group_ZF_3_3_L3: shows
 
 text\<open>The "almost equal" relation is symmetric.\<close>
 
-lemma (in group1) Group_ZF_3_3_L3A: assumes A1: "s\<approx>r"
-  shows "r\<approx>s"
+lemma (in group1) Group_ZF_3_3_L3A: assumes A1: "s\<cong>r"
+  shows "r\<cong>s"
 proof -
   let ?R = "QuotientGroupRel(AH,Op1,FR)"
   from A1 have "equiv(AH,?R)" and "\<langle>s,r\<rangle> \<in> ?R"
-    using Group_ZF_3_3_L3 by auto
+    using Group_ZF_3_3_L3 by simp_all
   then have "\<langle>r,s\<rangle> \<in> ?R" by (rule equiv_is_sym)
-  then show "r\<approx>s" by simp
+  then show "r\<cong>s" by simp
 qed
 
 text\<open>Although we have bypassed this fact when proving that 
@@ -1006,7 +1005,7 @@ qed
 text\<open>A neccessary condition for two a. h. to be almost equal.\<close>
 
 lemma (in group1) Group_ZF_3_4_L11:
-  assumes A1: "s\<approx>r"
+  assumes A1: "s\<cong>r"
   shows "{s`(n)\<cdot>(r`(n))\<inverse>. n\<in>G} \<in> Fin(G)"
 proof -
   from A1 have "s\<in>AH" "r\<in>AH"
@@ -1022,7 +1021,7 @@ text\<open>A sufficient condition for two a. h. to be almost equal.\<close>
 
 lemma (in group1) Group_ZF_3_4_L12: assumes A1: "s\<in>AH"  "r\<in>AH"
   and A2: "{s`(n)\<cdot>(r`(n))\<inverse>. n\<in>G} \<in> Fin(G)"
-  shows "s\<approx>r"
+  shows "s\<cong>r"
 proof -
   from groupAssum isAbelian A1 A2 show ?thesis
     using Group_ZF_3_2_L15 AlmostHoms_def 
@@ -1036,18 +1035,18 @@ text\<open>Another sufficient consdition for two a.h. to be almost
 
 lemma (in group1) Group_ZF_3_4_L12A: assumes "s\<in>AH"  "r\<in>AH"
   and "s\<bullet>(GroupInv(AH,Op1)`(r)) \<in> FR"
-  shows "s\<approx>r"  "r\<approx>s"
+  shows "s\<cong>r"  "r\<cong>s"
 proof  -
-  from assms show "s\<approx>r" using assms QuotientGroupRel_def 
+  from assms show "s\<cong>r" using assms QuotientGroupRel_def 
     by simp
-  then show "r\<approx>s" by (rule Group_ZF_3_3_L3A)
+  then show "r\<cong>s" by (rule Group_ZF_3_3_L3A)
 qed
 
 text\<open>Another necessary condition for two a.h. to be almost
   equal. It is actually just an expansion of the definition
   of the quotient group relation.\<close>
 
-lemma (in group1) Group_ZF_3_4_L12B: assumes "s\<approx>r"
+lemma (in group1) Group_ZF_3_4_L12B: assumes "s\<cong>r"
   shows "s\<bullet>(GroupInv(AH,Op1)`(r)) \<in> FR"
   using assms QuotientGroupRel_def by simp
 
@@ -1057,8 +1056,8 @@ text\<open>The next lemma states the essential condition for
   range functions.\<close> 
 
 lemma (in group1) Group_ZF_3_4_L13: 
-  assumes A1: "s1\<approx>s2"  "r1\<approx>r2"
-  shows "(s1\<circ>r1) \<approx> (s2\<circ>r2)"
+  assumes A1: "s1\<cong>s2"  "r1\<cong>r2"
+  shows "(s1\<circ>r1) \<cong> (s2\<circ>r2)"
 proof -
   have "{s1`(r2`(n))\<cdot> (s2`(r2`(n)))\<inverse>. n\<in>G} \<in> Fin(G)"
   proof -
@@ -1206,7 +1205,7 @@ lemma (in group1) Group_ZF_3_5_L1:
   shows
   "\<forall>x\<in>G. r`(x) = s`(x)\<cdot>c"
   "r \<in> AH"
-  "s \<approx> r"
+  "s \<cong> r"
 proof -
   from A1 A2 A3 have I: "r:G\<rightarrow>G"
     using AlmostHoms_def apply_funtype group_op_closed 
@@ -1238,7 +1237,7 @@ proof -
     by auto
   then have "{s`(n)\<cdot>(r`(n))\<inverse>. n\<in>G} = {c\<inverse>. n\<in>G}"
     by (rule ZF1_1_L4B)
-  with A1 A2 IV show "s \<approx> r"
+  with A1 A2 IV show "s \<cong> r"
     using group0_2_L1 monoid0.group0_1_L3A 
       inverse_in_group Group_ZF_3_4_L12 by simp
 qed

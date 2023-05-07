@@ -117,8 +117,8 @@ locale group3 =
   fixes setinv ("\<sm> _" 72)
   defines setninv_def [simp]: "\<sm>A \<equiv> GroupInv(G,P)``(A)"
 
-  fixes abs ("| _ |")
-  defines abs_def [simp]: "|a| \<equiv> AbsoluteValue(G,P,r)`(a)"
+  fixes abs ("\<bar> _ \<bar>")
+  defines abs_def [simp]: "\<bar>a\<bar> \<equiv> AbsoluteValue(G,P,r)`(a)"
 
   fixes oddext ("_ \<degree>")
   defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(G,P,r,f)"

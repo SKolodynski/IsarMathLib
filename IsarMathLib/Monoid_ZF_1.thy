@@ -26,7 +26,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Summing lists in a monoid\<close>
 
-theory Monoid_ZF_1 imports Monoid_ZF Semigroup_ZF
+theory Monoid_ZF_1 imports Monoid_ZF
 
 begin
 
@@ -99,11 +99,6 @@ proof -
   then show "(\<Sum>s) = Fold1(f,s)" unfolding Fold1_def by simp
 qed
 
-text\<open>Propositions proven in the \<open>semigr0\<close> locale are valid in the \<open>monoid1\<close> locale.\<close>
-
-lemma (in monoid1) semigr0_valid_in_monoid1: shows "semigr0(G,f)"
-  using monoidAssum IsAmonoid_def semigr0_def by simp
-
 text\<open>We can pull the first component of a sum of a nonempty list of monoid elements
   before the summation sign. \<close>  
 
@@ -129,11 +124,11 @@ proof -
       using pair_func_singleton succ_explained by simp_all
     with \<open>m\<in>nat\<close> \<open>Tail(s):succ(m)\<rightarrow>G\<close> 
     have "f`\<langle>Fold1(f,?a),Fold1(f,Tail(s))\<rangle> = Fold1(f,Concat(?a,Tail(s)))"
-      using semigr0_valid_in_monoid1 semigr0.prod_conc_distr
+      using semigr0_valid_in_monoid0 semigr0.prod_conc_distr
       by blast
     with assms \<open>?a:succ(0)\<rightarrow>G\<close> \<open>m\<in>nat\<close> \<open>Tail(s):succ(m)\<rightarrow>G\<close> 
     have "(\<Sum>s) = s`(0) \<oplus> (\<Sum>Tail(s))" 
-      using semigr0_valid_in_monoid1 semigr0.prod_of_1elem pair_val 
+      using semigr0_valid_in_monoid0 semigr0.prod_of_1elem pair_val 
         sum_nonempty(2) first_concat_tail by simp
   }
   ultimately show ?thesis by auto
@@ -166,6 +161,18 @@ proof -
     using zero_monoid_oper fold_detach_last by simp
 qed
 
+text\<open>The sum of a singleton list is its only element,\<close>
+
+lemma (in monoid1) seq_sum_singleton: assumes "q(0) \<in> G"
+  shows "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>1}) = q(0)"
+proof -
+  from assms have "0\<in>nat" and "\<forall>k\<in>0 #+ 1. q(k) \<in> G" by simp_all
+  then have 
+    "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>0 #+ 1}) = q(0) \<oplus> (\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>0})"
+    by (rule seq_sum_pull_one_elem)
+  with assms show ?thesis using sum_empty unit_is_neutral by simp
+qed
+
 text\<open>If the monoid operation is commutative, then the sum of a nonempty sequence
   added to another sum of a nonempty sequence of the same length is equal 
   to the sum of pointwise sums of the sequence elements. 
@@ -178,7 +185,7 @@ lemma (in monoid1) sum_comm_distrib0:
   "\<forall>j\<in>n #+ 1. c`(j) = a`(j) \<oplus> b`(j)"
   shows "(\<Sum> c) = (\<Sum> a) \<oplus> (\<Sum> b)"
   using assms succ_add_one(1) sum_nonempty 
-    semigr0_valid_in_monoid1 semigr0.prod_comm_distrib by simp
+    semigr0_valid_in_monoid0 semigr0.prod_comm_distrib by simp
 
 text\<open>Another version of \<open>sum_comm_distrib0\<close> written in terms of the expressions
   defining the sequences, shows that for commutative monoids we have 
@@ -262,7 +269,7 @@ proof -
   with assms show ?thesis using nat_mult_zero unit_is_neutral by simp
 qed
 
-text\<open>Multiplication of$x$ by a natural number induces a homomorphism between natural numbers 
+text\<open>Multiplication of $x$ by a natural number induces a homomorphism between natural numbers 
   with addition and and the natural multiples of $x$. \<close>
 
 lemma (in monoid1) nat_mult_add: assumes "n\<in>nat" "m\<in>nat" "x\<in>G"

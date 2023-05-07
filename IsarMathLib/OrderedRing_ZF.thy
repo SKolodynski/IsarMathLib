@@ -78,8 +78,8 @@ locale ring1 = ring0 +
 
   assumes pos_mult_closed: "Nonnegative(R,A,r) {is closed under} M"
 
-  fixes abs ("| _ |")
-  defines abs_def [simp]: "|a| \<equiv> AbsoluteValue(R,A,r)`(a)"
+  fixes abs ("\<bar> _ \<bar>")
+  defines abs_def [simp]: "\<bar>a\<bar> \<equiv> AbsoluteValue(R,A,r)`(a)"
 
   fixes positiveset ("R\<^sub>+")
   defines positiveset_def [simp]: "R\<^sub>+ \<equiv> PositiveSet(R,A,r)"
@@ -473,7 +473,7 @@ text\<open>Absolute value of a product is the product of absolute values:
 
 lemma (in ring1) OrdRing_ZF_2_L1: 
   assumes "\<zero>\<lsq>a" "\<zero>\<lsq>b"
-  shows "|a\<cdot>b| = |a|\<cdot>|b|"
+  shows "\<bar>a\<cdot>b\<bar> = \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
   using assms OrdRing_ZF_1_L5 OrdRing_ZF_1_L4 
     group3.OrderedGroup_ZF_1_L2 group3.OrderedGroup_ZF_3_L2
   by simp
@@ -481,7 +481,7 @@ lemma (in ring1) OrdRing_ZF_2_L1:
 text\<open>The absolue value of an element and its negative are the same.\<close>
 
 lemma (in ring1) OrdRing_ZF_2_L2: assumes "a\<in>R"
-  shows "|\<rm>a| = |a|"
+  shows "\<bar>\<rm>a\<bar> = \<bar>a\<bar>"
   using assms OrdRing_ZF_1_L4 group3.OrderedGroup_ZF_3_L7A by simp
 
 text\<open>The next lemma states that 
@@ -490,9 +490,9 @@ text\<open>The next lemma states that
 lemma (in ring1) OrdRing_ZF_2_L3:
   assumes "a\<in>R"  "b\<in>R"
   shows 
-  "|(\<rm>a)\<cdot>b| = |a\<cdot>b|"
-  "|a\<cdot>(\<rm>b)| = |a\<cdot>b|"
-  "|(\<rm>a)\<cdot>(\<rm>b)| = |a\<cdot>b|"
+  "\<bar>(\<rm>a)\<cdot>b\<bar> = \<bar>a\<cdot>b\<bar>"
+  "\<bar>a\<cdot>(\<rm>b)\<bar> = \<bar>a\<cdot>b\<bar>"
+  "\<bar>(\<rm>a)\<cdot>(\<rm>b)\<bar> = \<bar>a\<cdot>b\<bar>"
   using assms Ring_ZF_1_L4 Ring_ZF_1_L7 Ring_ZF_1_L7A 
    OrdRing_ZF_2_L2 by auto
 
@@ -508,18 +508,18 @@ text\<open>Absolute value of a product is the product of absolute values.\<close
 
 lemma (in ring1) OrdRing_ZF_2_L5:
   assumes A1: "a\<in>R" "b\<in>R"
-  shows "|a\<cdot>b| = |a|\<cdot>|b|"
+  shows "\<bar>a\<cdot>b\<bar> = \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
 proof -
-  { assume A2: "\<zero>\<lsq>a" have "|a\<cdot>b| = |a|\<cdot>|b|"
+  { assume A2: "\<zero>\<lsq>a" have "\<bar>a\<cdot>b\<bar> = \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
     proof -
       { assume "\<zero>\<lsq>b"
-	with A2 have "|a\<cdot>b| = |a|\<cdot>|b|"
+	with A2 have "\<bar>a\<cdot>b\<bar> = \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
 	  using OrdRing_ZF_2_L1 by simp }
       moreover
       { assume "\<not>(\<zero>\<lsq>b)" 
-	with A1 A2 have "|a\<cdot>(\<rm>b)| = |a|\<cdot>|\<rm>b|"
+	with A1 A2 have "\<bar>a\<cdot>(\<rm>b)\<bar> = \<bar>a\<bar>\<cdot>\<bar>\<rm>b\<bar>"
 	  using OrdRing_ZF_2_L4 OrdRing_ZF_2_L1 by simp
-	with A1 have "|a\<cdot>b| = |a|\<cdot>|b|"
+	with A1 have "\<bar>a\<cdot>b\<bar> = \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
 	  using OrdRing_ZF_2_L2 OrdRing_ZF_2_L3 by simp }
       ultimately show ?thesis by blast
     qed }
@@ -527,18 +527,18 @@ proof -
   { assume "\<not>(\<zero>\<lsq>a)"
     with A1 have A3: "\<zero> \<lsq> (\<rm>a)"
       using OrdRing_ZF_2_L4 by simp
-    have "|a\<cdot>b| = |a|\<cdot>|b|"
+    have "\<bar>a\<cdot>b\<bar> = \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
     proof -
       { assume "\<zero>\<lsq>b" 
-	with A3 have "|(\<rm>a)\<cdot>b| = |\<rm>a|\<cdot>|b|"
+	with A3 have "\<bar>(\<rm>a)\<cdot>b\<bar> = \<bar>\<rm>a\<bar>\<cdot>\<bar>b\<bar>"
 	  using OrdRing_ZF_2_L1 by simp
-	with A1 have "|a\<cdot>b| = |a|\<cdot>|b|"
+	with A1 have "\<bar>a\<cdot>b\<bar> = \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
 	  using OrdRing_ZF_2_L2 OrdRing_ZF_2_L3 by simp }
       moreover
       { assume "\<not>(\<zero>\<lsq>b)"
-	with A1 A3 have "|(\<rm>a)\<cdot>(\<rm>b)| = |\<rm>a|\<cdot>|\<rm>b|"
+	with A1 A3 have "\<bar>(\<rm>a)\<cdot>(\<rm>b)\<bar> = \<bar>\<rm>a\<bar>\<cdot>\<bar>\<rm>b\<bar>"
 	  using OrdRing_ZF_2_L4 OrdRing_ZF_2_L1 by simp
-	with A1 have "|a\<cdot>b| = |a|\<cdot>|b|"
+	with A1 have "\<bar>a\<cdot>b\<bar> = \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
 	  using OrdRing_ZF_2_L2 OrdRing_ZF_2_L3 by simp }
       ultimately show ?thesis by blast
     qed }
@@ -548,7 +548,7 @@ qed
 text\<open>Triangle inequality. Property of linearly ordered abelian groups.\<close>
 
 lemma (in ring1) ord_ring_triangle_ineq:  assumes "a\<in>R" "b\<in>R"
-  shows "|a\<ra>b| \<lsq> |a|\<ra>|b|"
+  shows "\<bar>a\<ra>b\<bar> \<lsq> \<bar>a\<bar>\<ra>\<bar>b\<bar>"
   using assms OrdRing_ZF_1_L4 group3.OrdGroup_triangle_ineq 
   by simp
 
@@ -608,7 +608,7 @@ proof
     by simp
 next assume A2: "R\<^sub>+ {is closed under} M"
   { fix a b assume A3: "a\<in>R"  "b\<in>R"  and "a\<noteq>\<zero>"  "b\<noteq>\<zero>"
-    with A2 have "|a\<cdot>b| \<in> R\<^sub>+"
+    with A2 have "\<bar>a\<cdot>b\<bar> \<in> R\<^sub>+"
       using OrdRing_ZF_1_L4 group3.OrderedGroup_ZF_3_L12 IsOpClosed_def
         OrdRing_ZF_2_L5 by simp
     with A3 have "a\<cdot>b \<noteq> \<zero>" 
@@ -936,8 +936,5 @@ proof -
   ultimately show "\<zero> \<ls> a\<^sup>2 \<ra> b\<^sup>2"
     by auto
 qed
-
-    
-
 
 end

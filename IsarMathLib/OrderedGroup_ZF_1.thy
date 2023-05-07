@@ -70,7 +70,7 @@ qed
 text\<open>If $a\in G^+$, then $|a| = a$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L2:
-  assumes A1: "a\<in>G\<^sup>+" shows "|a| = a"
+  assumes A1: "a\<in>G\<^sup>+" shows "\<bar>a\<bar> = a"
 proof -
   from ordGroupAssum have "GroupInv(G,P) : G\<rightarrow>G"
     using IsAnOrdGroup_def group0_2_T2 by simp
@@ -83,20 +83,20 @@ text\<open>The absolute value of the unit is the unit. In the
   additive totation that would be $|0| = 0$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L2A: 
-  shows "|\<one>| = \<one>" using OrderedGroup_ZF_1_L3A OrderedGroup_ZF_3_L2
+  shows "\<bar>\<one>\<bar> = \<one>" using OrderedGroup_ZF_1_L3A OrderedGroup_ZF_3_L2
   by simp
 
 text\<open>If $a$ is positive, then $|a| = a$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L2B:
-  assumes "a\<in>G\<^sub>+" shows "|a| = a"
+  assumes "a\<in>G\<^sub>+" shows "\<bar>a\<bar> = a"
   using assms PositiveSet_def Nonnegative_def OrderedGroup_ZF_3_L2
   by auto
 
 text\<open>If $a\in G\setminus G^+$, then $|a| = a^{-1}$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L3:
-   assumes A1: "a \<in> G-G\<^sup>+" shows "|a| = a\<inverse>"
+   assumes A1: "a \<in> G-G\<^sup>+" shows "\<bar>a\<bar> = a\<inverse>"
 proof -
   have "domain(id(G\<^sup>+)) = G\<^sup>+"
     using id_type func1_1_L1 by auto
@@ -109,16 +109,16 @@ text\<open>For elements that not greater than the unit, the absolute value is
 
 lemma (in group3) OrderedGroup_ZF_3_L3A:
   assumes A1: "a\<lsq>\<one>" 
-  shows "|a| = a\<inverse>"
+  shows "\<bar>a\<bar> = a\<inverse>"
 proof -
-  { assume "a=\<one>" then have "|a| = a\<inverse>" 
+  { assume "a=\<one>" then have "\<bar>a\<bar> = a\<inverse>" 
       using OrderedGroup_ZF_3_L2A OrderedGroup_ZF_1_L1 group0.group_inv_of_one
       by simp }
   moreover
   { assume "a\<noteq>\<one>" 
-    with A1 have "|a| = a\<inverse>" using OrderedGroup_ZF_1_L4C OrderedGroup_ZF_3_L3
+    with A1 have "\<bar>a\<bar> = a\<inverse>" using OrderedGroup_ZF_1_L4C OrderedGroup_ZF_3_L3
       by simp }
-  ultimately show "|a| = a\<inverse>" by blast
+  ultimately show "\<bar>a\<bar> = a\<inverse>" by blast
 qed
 
 text\<open>In linearly ordered groups the absolute value of any element 
@@ -126,15 +126,15 @@ text\<open>In linearly ordered groups the absolute value of any element
 
 lemma (in group3) OrderedGroup_ZF_3_L3B: 
   assumes A1: "r {is total on} G" and A2: "a\<in>G"
-  shows "|a| \<in> G\<^sup>+"
+  shows "\<bar>a\<bar> \<in> G\<^sup>+"
 proof -
-  { assume "a \<in> G\<^sup>+" then have "|a| \<in> G\<^sup>+" 
+  { assume "a \<in> G\<^sup>+" then have "\<bar>a\<bar> \<in> G\<^sup>+" 
       using OrderedGroup_ZF_3_L2 by simp }
   moreover
   { assume "a \<notin> G\<^sup>+" 
-    with A1 A2 have "|a| \<in> G\<^sup>+" using OrderedGroup_ZF_3_L3
+    with A1 A2 have "\<bar>a\<bar> \<in> G\<^sup>+" using OrderedGroup_ZF_3_L3
       OrderedGroup_ZF_1_L6 by simp }
-  ultimately show "|a| \<in> G\<^sup>+" by blast
+  ultimately show "\<bar>a\<bar> \<in> G\<^sup>+" by blast
 qed
   
 text\<open>For linearly ordered groups (where the order is total), the absolute
@@ -155,7 +155,7 @@ qed
 text\<open>If the absolute value is the unit, then the elemnent is the unit.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L3D: 
-  assumes A1: "a\<in>G" and A2: "|a| = \<one>"
+  assumes A1: "a\<in>G" and A2: "\<bar>a\<bar> = \<one>"
   shows "a = \<one>"
 proof -
   { assume "a \<in> G\<^sup>+" 
@@ -173,7 +173,7 @@ text\<open>In linearly ordered groups the unit is not greater than the absolute
 
 lemma (in group3) OrderedGroup_ZF_3_L3E: 
   assumes "r {is total on} G" and "a\<in>G"
-  shows "\<one> \<lsq> |a|"
+  shows "\<one> \<lsq> \<bar>a\<bar>"
   using assms OrderedGroup_ZF_3_L3B OrderedGroup_ZF_1_L2 by simp
 
 text\<open>If $b$ is greater than both $a$ and $a^{-1}$, then $b$ is greater than
@@ -181,54 +181,54 @@ text\<open>If $b$ is greater than both $a$ and $a^{-1}$, then $b$ is greater tha
 
 lemma (in group3) OrderedGroup_ZF_3_L4: 
   assumes A1: "a\<lsq>b" and A2: "a\<inverse>\<lsq> b" 
-  shows "|a|\<lsq> b"
+  shows "\<bar>a\<bar>\<lsq> b"
 proof -
   { assume "a\<in>G\<^sup>+" 
-    with A1 have "|a|\<lsq> b" using OrderedGroup_ZF_3_L2 by simp }
+    with A1 have "\<bar>a\<bar>\<lsq> b" using OrderedGroup_ZF_3_L2 by simp }
   moreover
   { assume "a\<notin>G\<^sup>+"
-    with A1 A2 have "|a|\<lsq> b" 
+    with A1 A2 have "\<bar>a\<bar>\<lsq> b" 
       using OrderedGroup_ZF_1_L4 OrderedGroup_ZF_3_L3 by simp }
-  ultimately show "|a|\<lsq> b" by blast
+  ultimately show "\<bar>a\<bar>\<lsq> b" by blast
 qed
 
 text\<open>In linearly ordered groups $a\leq |a|$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L5: 
   assumes A1: "r {is total on} G" and A2: "a\<in>G"
-  shows "a \<lsq> |a|"
+  shows "a \<lsq> \<bar>a\<bar>"
 proof -
   { assume "a \<in> G\<^sup>+"
-    with A2 have "a \<lsq> |a|" 
+    with A2 have "a \<lsq> \<bar>a\<bar>" 
       using OrderedGroup_ZF_3_L2 OrderedGroup_ZF_1_L3 by simp }
   moreover
   { assume "a \<notin> G\<^sup>+"
-    with A1 A2 have "a \<lsq> |a|"
+    with A1 A2 have "a \<lsq> \<bar>a\<bar>"
       using OrderedGroup_ZF_3_L3B OrderedGroup_ZF_1_L4B by simp }
-  ultimately show "a \<lsq> |a|" by blast
+  ultimately show "a \<lsq> \<bar>a\<bar>" by blast
 qed
 
 text\<open> $a^{-1}\leq |a|$ (in additive notation it would be $-a\leq |a|$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L6: 
-  assumes A1: "a\<in>G" shows "a\<inverse> \<lsq> |a|"
+  assumes A1: "a\<in>G" shows "a\<inverse> \<lsq> \<bar>a\<bar>"
 proof -
   { assume "a \<in> G\<^sup>+"
-    then have T1: "\<one>\<lsq>a" and T2: "|a| = a" using OrderedGroup_ZF_1_L2  
+    then have T1: "\<one>\<lsq>a" and T2: "\<bar>a\<bar> = a" using OrderedGroup_ZF_1_L2  
       OrderedGroup_ZF_3_L2 by auto
     then have "a\<inverse>\<lsq>\<one>\<inverse>" using OrderedGroup_ZF_1_L5 by simp
     then have T3: "a\<inverse>\<lsq>\<one>" 
       using OrderedGroup_ZF_1_L1 group0.group_inv_of_one by simp
     from T3 T1 have "a\<inverse>\<lsq>a" by (rule Group_order_transitive)
-    with T2 have "a\<inverse> \<lsq> |a|" by simp }
+    with T2 have "a\<inverse> \<lsq> \<bar>a\<bar>" by simp }
   moreover 
   { assume A2: "a \<notin> G\<^sup>+"
-    from A1 have "|a| \<in> G" 
+    from A1 have "\<bar>a\<bar> \<in> G" 
       using OrderedGroup_ZF_3_L1 apply_funtype by auto
-    with ordGroupAssum have "|a| \<lsq> |a|" 
+    with ordGroupAssum have "\<bar>a\<bar> \<lsq> \<bar>a\<bar>" 
       using IsAnOrdGroup_def IsPartOrder_def refl_def by simp
-    with A1 A2 have "a\<inverse> \<lsq> |a|" using OrderedGroup_ZF_3_L3 by simp }
-  ultimately show "a\<inverse> \<lsq> |a|" by blast
+    with A1 A2 have "a\<inverse> \<lsq> \<bar>a\<bar>" using OrderedGroup_ZF_3_L3 by simp }
+  ultimately show "a\<inverse> \<lsq> \<bar>a\<bar>" by blast
 qed
 
 text\<open>Some inequalities about the product of two elements of a linearly 
@@ -237,10 +237,10 @@ text\<open>Some inequalities about the product of two elements of a linearly
 lemma (in group3) OrderedGroup_ZF_3_L6A:
   assumes "r {is total on} G" and "a\<in>G"  "b\<in>G"
   shows
-  "a\<cdot>b \<lsq>|a|\<cdot>|b|"
-  "a\<cdot>b\<inverse> \<lsq>|a|\<cdot>|b|"
-  "a\<inverse>\<cdot>b \<lsq>|a|\<cdot>|b|"
-  "a\<inverse>\<cdot>b\<inverse> \<lsq>|a|\<cdot>|b|"
+  "a\<cdot>b \<lsq>\<bar>a\<bar>\<cdot>\<bar>b\<bar>"
+  "a\<cdot>b\<inverse> \<lsq>\<bar>a\<bar>\<cdot>\<bar>b\<bar>"
+  "a\<inverse>\<cdot>b \<lsq>\<bar>a\<bar>\<cdot>\<bar>b\<bar>"
+  "a\<inverse>\<cdot>b\<inverse> \<lsq>\<bar>a\<bar>\<cdot>\<bar>b\<bar>"
   using assms OrderedGroup_ZF_3_L5 OrderedGroup_ZF_3_L6
     OrderedGroup_ZF_1_L5B by auto
 
@@ -248,7 +248,7 @@ text\<open> $|a^{-1}|\leq |a|$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L7:
   assumes "r {is total on} G" and "a\<in>G"
-  shows "|a\<inverse>|\<lsq>|a|"
+  shows "\<bar>a\<inverse>\<bar>\<lsq>\<bar>a\<bar>"
   using assms OrderedGroup_ZF_3_L5 OrderedGroup_ZF_1_L1 group0.group_inv_of_inv
     OrderedGroup_ZF_3_L6 OrderedGroup_ZF_3_L4 by simp
 
@@ -256,12 +256,12 @@ text\<open>$|a^{-1}| = |a|$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L7A:
   assumes A1: "r {is total on} G" and A2: "a\<in>G"
-  shows "|a\<inverse>| = |a|"
+  shows "\<bar>a\<inverse>\<bar> = \<bar>a\<bar>"
 proof -
   from A2 have "a\<inverse>\<in>G" using OrderedGroup_ZF_1_L1 group0.inverse_in_group
     by simp
-  with A1 have "|(a\<inverse>)\<inverse>| \<lsq> |a\<inverse>|" using OrderedGroup_ZF_3_L7 by simp
-  with A1 A2 have "|a\<inverse>| \<lsq> |a|"  "|a| \<lsq> |a\<inverse>|"
+  with A1 have "\<bar>(a\<inverse>)\<inverse>\<bar> \<lsq> \<bar>a\<inverse>\<bar>" using OrderedGroup_ZF_3_L7 by simp
+  with A1 A2 have "\<bar>a\<inverse>\<bar> \<lsq> \<bar>a\<bar>"  "\<bar>a\<bar> \<lsq> \<bar>a\<inverse>\<bar>"
     using OrderedGroup_ZF_1_L1 group0.group_inv_of_inv OrderedGroup_ZF_3_L7
     by auto
   then show ?thesis by (rule group_order_antisym)
@@ -272,9 +272,9 @@ text\<open> $|a\cdot b^{-1}| = |b\cdot a^{-1}|$. It doesn't look so strange in t
 
 lemma (in group3) OrderedGroup_ZF_3_L7B:
   assumes A1: "r {is total on} G" and A2: "a\<in>G" "b\<in>G"
-  shows "|a\<cdot>b\<inverse>| = |b\<cdot>a\<inverse>|"
+  shows "\<bar>a\<cdot>b\<inverse>\<bar> = \<bar>b\<cdot>a\<inverse>\<bar>"
 proof -
-  from A1 A2 have "|(a\<cdot>b\<inverse>)\<inverse>| = |a\<cdot>b\<inverse>|" using
+  from A1 A2 have "\<bar>(a\<cdot>b\<inverse>)\<inverse>\<bar> = \<bar>a\<cdot>b\<inverse>\<bar>" using
     OrderedGroup_ZF_1_L1 group0.inverse_in_group group0.group0_2_L1 
     monoid0.group0_1_L1 OrderedGroup_ZF_3_L7A by simp
   moreover from A2 have "(a\<cdot>b\<inverse>)\<inverse> =  b\<cdot>a\<inverse>" 
@@ -289,14 +289,14 @@ text\<open>Triangle inequality for linearly ordered abelian groups.
 theorem (in group3) OrdGroup_triangle_ineq:
   assumes A1: "P {is commutative on} G" 
   and A2: "r {is total on} G" and A3: "a\<in>G"  "b\<in>G" 
-  shows "|a\<cdot>b| \<lsq> |a|\<cdot>|b|"
+  shows "\<bar>a\<cdot>b\<bar> \<lsq> \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
 proof -
   from A1 A2 A3 have 
-    "a \<lsq> |a|" "b \<lsq> |b|" "a\<inverse> \<lsq> |a|" "b\<inverse> \<lsq> |b|"
+    "a \<lsq> \<bar>a\<bar>" "b \<lsq> \<bar>b\<bar>" "a\<inverse> \<lsq> \<bar>a\<bar>" "b\<inverse> \<lsq> \<bar>b\<bar>"
     using OrderedGroup_ZF_3_L5 OrderedGroup_ZF_3_L6 by auto
-  then have "a\<cdot>b \<lsq> |a|\<cdot>|b|" "a\<inverse>\<cdot>b\<inverse> \<lsq> |a|\<cdot>|b|"
+  then have "a\<cdot>b \<lsq> \<bar>a\<bar>\<cdot>\<bar>b\<bar>" "a\<inverse>\<cdot>b\<inverse> \<lsq> \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
     using OrderedGroup_ZF_1_L5B by auto
-  with A1 A3 show "|a\<cdot>b| \<lsq> |a|\<cdot>|b|"
+  with A1 A3 show "\<bar>a\<cdot>b\<bar> \<lsq> \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
     using OrderedGroup_ZF_1_L1 group0.group_inv_of_two IsCommutative_def 
     OrderedGroup_ZF_3_L4 by simp
 qed
@@ -304,15 +304,14 @@ qed
 text\<open>We can multiply the sides of an inequality with absolute value.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L7C:
-  assumes A1: "P {is commutative on} G" 
-  and A2: "r {is total on} G" and A3: "a\<in>G" "b\<in>G"
-  and A4: "|a| \<lsq> c"  "|b| \<lsq> d"
-  shows "|a\<cdot>b| \<lsq> c\<cdot>d"
+  assumes "P {is commutative on} G" 
+  and "r {is total on} G" "a\<in>G" "b\<in>G"
+  and "\<bar>a\<bar> \<lsq> c"  "\<bar>b\<bar> \<lsq> d"
+  shows "\<bar>a\<cdot>b\<bar> \<lsq> c\<cdot>d"
 proof -
-  from A1 A2 A3 A4 have "|a\<cdot>b| \<lsq> |a|\<cdot>|b|"
-    using OrderedGroup_ZF_1_L4 OrdGroup_triangle_ineq 
-    by simp
-  moreover from A4 have "|a|\<cdot>|b| \<lsq> c\<cdot>d"
+  from assms(1,2,3,4) have "\<bar>a\<cdot>b\<bar> \<lsq> \<bar>a\<bar>\<cdot>\<bar>b\<bar>"
+    using OrdGroup_triangle_ineq by simp
+  moreover from assms(5,6) have "\<bar>a\<bar>\<cdot>\<bar>b\<bar> \<lsq> c\<cdot>d"
     using OrderedGroup_ZF_1_L5B by simp
   ultimately show ?thesis by (rule Group_order_transitive)
 qed
@@ -323,8 +322,8 @@ text\<open>A version of the \<open>OrderedGroup_ZF_3_L7C\<close>
 lemma (in group3) OrderedGroup_ZF_3_L7CA:
   assumes "P {is commutative on} G" 
   and "r {is total on} G" and "a\<in>G"  "b\<in>G"
-  and "|a| \<lsq> c"  "|b| \<lsq> d"
-  shows "|a\<cdot>b\<inverse>| \<lsq> c\<cdot>d"
+  and "\<bar>a\<bar> \<lsq> c"  "\<bar>b\<bar> \<lsq> d"
+  shows "\<bar>a\<cdot>b\<inverse>\<bar> \<lsq> c\<cdot>d"
   using assms OrderedGroup_ZF_1_L1 group0.inverse_in_group
   OrderedGroup_ZF_3_L7A OrderedGroup_ZF_3_L7C by simp
 
@@ -333,17 +332,17 @@ text\<open>Triangle inequality with three integers.\<close>
 lemma (in group3) OrdGroup_triangle_ineq3:
   assumes A1: "P {is commutative on} G" 
   and A2: "r {is total on} G" and A3: "a\<in>G"  "b\<in>G"  "c\<in>G" 
-  shows "|a\<cdot>b\<cdot>c| \<lsq> |a|\<cdot>|b|\<cdot>|c|"
+  shows "\<bar>a\<cdot>b\<cdot>c\<bar> \<lsq> \<bar>a\<bar>\<cdot>\<bar>b\<bar>\<cdot>\<bar>c\<bar>"
 proof -
-  from A3 have T: "a\<cdot>b \<in> G"  "|c| \<in> G"
+  from A3 have T: "a\<cdot>b \<in> G"  "\<bar>c\<bar> \<in> G"
     using OrderedGroup_ZF_1_L1 group0.group_op_closed
       OrderedGroup_ZF_3_L1 apply_funtype by auto
-  with A1 A2 A3 have "|a\<cdot>b\<cdot>c| \<lsq> |a\<cdot>b|\<cdot>|c|"
+  with A1 A2 A3 have "\<bar>a\<cdot>b\<cdot>c\<bar> \<lsq> \<bar>a\<cdot>b\<bar>\<cdot>\<bar>c\<bar>"
     using OrdGroup_triangle_ineq by simp
   moreover from ordGroupAssum A1 A2 A3 T have
-    "|a\<cdot>b|\<cdot>|c| \<lsq> |a|\<cdot>|b|\<cdot>|c|"
+    "\<bar>a\<cdot>b\<bar>\<cdot>\<bar>c\<bar> \<lsq> \<bar>a\<bar>\<cdot>\<bar>b\<bar>\<cdot>\<bar>c\<bar>"
     using OrdGroup_triangle_ineq IsAnOrdGroup_def by simp
-  ultimately show "|a\<cdot>b\<cdot>c| \<lsq> |a|\<cdot>|b|\<cdot>|c|"
+  ultimately show "\<bar>a\<cdot>b\<cdot>c\<bar> \<lsq> \<bar>a\<bar>\<cdot>\<bar>b\<bar>\<cdot>\<bar>c\<bar>"
     by (rule Group_order_transitive)
 qed
 
@@ -352,30 +351,30 @@ text\<open>Some variants of the triangle inequality.\<close>
 lemma (in group3) OrderedGroup_ZF_3_L7D:
   assumes A1: "P {is commutative on} G" 
   and A2: "r {is total on} G" and A3: "a\<in>G"  "b\<in>G"
-  and A4: "|a\<cdot>b\<inverse>| \<lsq> c"
+  and A4: "\<bar>a\<cdot>b\<inverse>\<bar> \<lsq> c"
   shows 
-  "|a| \<lsq> c\<cdot>|b|" 
-  "|a| \<lsq> |b|\<cdot>c"
+  "\<bar>a\<bar> \<lsq> c\<cdot>\<bar>b\<bar>" 
+  "\<bar>a\<bar> \<lsq> \<bar>b\<bar>\<cdot>c"
   "c\<inverse>\<cdot>a \<lsq> b"
   "a\<cdot>c\<inverse> \<lsq> b"
   "a \<lsq> b\<cdot>c"
 proof -
   from A3 A4 have 
-    T: "a\<cdot>b\<inverse> \<in> G"  "|b| \<in> G"  "c\<in>G"  "c\<inverse> \<in> G"
+    T: "a\<cdot>b\<inverse> \<in> G"  "\<bar>b\<bar> \<in> G"  "c\<in>G"  "c\<inverse> \<in> G"
     using OrderedGroup_ZF_1_L1 
       group0.inverse_in_group group0.group0_2_L1 monoid0.group0_1_L1
       OrderedGroup_ZF_3_L1 apply_funtype  OrderedGroup_ZF_1_L4 
     by auto
-  from A3 have "|a| = |a\<cdot>b\<inverse>\<cdot>b|"
+  from A3 have "\<bar>a\<bar> = \<bar>a\<cdot>b\<inverse>\<cdot>b\<bar>"
     using OrderedGroup_ZF_1_L1 group0.inv_cancel_two
     by simp
-  with A1 A2 A3 T have "|a| \<lsq> |a\<cdot>b\<inverse>|\<cdot>|b|"
+  with A1 A2 A3 T have "\<bar>a\<bar> \<lsq> \<bar>a\<cdot>b\<inverse>\<bar>\<cdot>\<bar>b\<bar>"
     using OrdGroup_triangle_ineq by simp
-  with T A4 show "|a| \<lsq> c\<cdot>|b|" using OrderedGroup_ZF_1_L5C
+  with T A4 show "\<bar>a\<bar> \<lsq> c\<cdot>\<bar>b\<bar>" using OrderedGroup_ZF_1_L5C
     by blast
-  with T A1 show "|a| \<lsq> |b|\<cdot>c"
+  with T A1 show "\<bar>a\<bar> \<lsq> \<bar>b\<bar>\<cdot>c"
     using IsCommutative_def by simp
-  from A2 T have "a\<cdot>b\<inverse> \<lsq> |a\<cdot>b\<inverse>|"
+  from A2 T have "a\<cdot>b\<inverse> \<lsq> \<bar>a\<cdot>b\<inverse>\<bar>"
     using OrderedGroup_ZF_3_L5 by simp
   moreover note A4
   ultimately have I: "a\<cdot>b\<inverse> \<lsq> c"
@@ -394,19 +393,19 @@ text\<open>Some more variants of the triangle inequality.\<close>
 lemma (in group3) OrderedGroup_ZF_3_L7E:
   assumes A1: "P {is commutative on} G" 
   and A2: "r {is total on} G" and A3: "a\<in>G"  "b\<in>G"
-  and A4: "|a\<cdot>b\<inverse>| \<lsq> c"
+  and A4: "\<bar>a\<cdot>b\<inverse>\<bar> \<lsq> c"
   shows "b\<cdot>c\<inverse> \<lsq> a"
 proof -
   from A3 have "a\<cdot>b\<inverse> \<in> G"
     using OrderedGroup_ZF_1_L1 
       group0.inverse_in_group group0.group_op_closed
     by auto
-  with A2 have "|(a\<cdot>b\<inverse>)\<inverse>| = |a\<cdot>b\<inverse>|"
+  with A2 have "\<bar>(a\<cdot>b\<inverse>)\<inverse>\<bar> = \<bar>a\<cdot>b\<inverse>\<bar>"
     using OrderedGroup_ZF_3_L7A by simp
   moreover from A3 have "(a\<cdot>b\<inverse>)\<inverse> = b\<cdot>a\<inverse>"
     using OrderedGroup_ZF_1_L1 group0.group0_2_L12
     by simp
-  ultimately have "|b\<cdot>a\<inverse>| = |a\<cdot>b\<inverse>|"
+  ultimately have "\<bar>b\<cdot>a\<inverse>\<bar> = \<bar>a\<cdot>b\<inverse>\<bar>"
     by simp
   with A1 A2 A3 A4 show "b\<cdot>c\<inverse> \<lsq> a"
     using OrderedGroup_ZF_3_L7D by simp
@@ -419,7 +418,7 @@ lemma (in group3) OrderedGroup_ZF_3_L7F:
   assumes A1: "P {is commutative on} G" 
   and A2: "r {is total on} G" and 
   A3: "a\<in>G"  "b\<in>G"  "c\<in>G"  "d\<in>G"
-  shows "|a\<cdot>c\<inverse>| \<lsq> |a\<cdot>b|\<cdot>|c\<cdot>d|\<cdot>|b\<cdot>d\<inverse>|"
+  shows "\<bar>a\<cdot>c\<inverse>\<bar> \<lsq> \<bar>a\<cdot>b\<bar>\<cdot>\<bar>c\<cdot>d\<bar>\<cdot>\<bar>b\<cdot>d\<inverse>\<bar>"
 proof -
   from A3 have T:
     "a\<cdot>c\<inverse> \<in> G"  "a\<cdot>b \<in> G"  "c\<cdot>d \<in> G"  "b\<cdot>d\<inverse> \<in> G"
@@ -427,14 +426,14 @@ proof -
     using OrderedGroup_ZF_1_L1 
       group0.inverse_in_group group0.group_op_closed
     by auto
-  with A1 A2 have "|(a\<cdot>b)\<cdot>(c\<cdot>d)\<inverse>\<cdot>(b\<cdot>d\<inverse>)\<inverse>| \<lsq> |a\<cdot>b|\<cdot>|(c\<cdot>d)\<inverse>|\<cdot>|(b\<cdot>d\<inverse>)\<inverse>|"
+  with A1 A2 have "\<bar>(a\<cdot>b)\<cdot>(c\<cdot>d)\<inverse>\<cdot>(b\<cdot>d\<inverse>)\<inverse>\<bar> \<lsq> \<bar>a\<cdot>b\<bar>\<cdot>\<bar>(c\<cdot>d)\<inverse>\<bar>\<cdot>\<bar>(b\<cdot>d\<inverse>)\<inverse>\<bar>"
     using OrdGroup_triangle_ineq3 by simp
-  moreover from A2 T have "|(c\<cdot>d)\<inverse>| =|c\<cdot>d|" and "|(b\<cdot>d\<inverse>)\<inverse>| = |b\<cdot>d\<inverse>|"
+  moreover from A2 T have "\<bar>(c\<cdot>d)\<inverse>\<bar> =\<bar>c\<cdot>d\<bar>" and "\<bar>(b\<cdot>d\<inverse>)\<inverse>\<bar> = \<bar>b\<cdot>d\<inverse>\<bar>"
     using OrderedGroup_ZF_3_L7A by auto
   moreover from A1 A3 have "(a\<cdot>b)\<cdot>(c\<cdot>d)\<inverse>\<cdot>(b\<cdot>d\<inverse>)\<inverse> = a\<cdot>c\<inverse>"
     using OrderedGroup_ZF_1_L1 group0.group0_4_L8
     by simp
-  ultimately show "|a\<cdot>c\<inverse>| \<lsq> |a\<cdot>b|\<cdot>|c\<cdot>d|\<cdot>|b\<cdot>d\<inverse>|"
+  ultimately show "\<bar>a\<cdot>c\<inverse>\<bar> \<lsq> \<bar>a\<cdot>b\<bar>\<cdot>\<bar>c\<cdot>d\<bar>\<cdot>\<bar>b\<cdot>d\<inverse>\<bar>"
     by simp
 qed
     
@@ -442,11 +441,11 @@ text\<open>$|a|\leq L$ implies $L^{-1} \leq a$
   (it would be $-L \leq a$ in the additive notation).\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L8:
-  assumes A1:  "a\<in>G" and A2: "|a|\<lsq>L"
+  assumes A1:  "a\<in>G" and A2: "\<bar>a\<bar>\<lsq>L"
    shows 
   "L\<inverse>\<lsq>a"
 proof -
-  from A1 have I: "a\<inverse> \<lsq> |a|" using OrderedGroup_ZF_3_L6 by simp
+  from A1 have I: "a\<inverse> \<lsq> \<bar>a\<bar>" using OrderedGroup_ZF_3_L6 by simp
   from I A2 have "a\<inverse> \<lsq> L" by (rule Group_order_transitive)
   then have "L\<inverse>\<lsq>(a\<inverse>)\<inverse>" using OrderedGroup_ZF_1_L5 by simp
   with A1 show "L\<inverse>\<lsq>a" using OrderedGroup_ZF_1_L1 group0.group_inv_of_inv
@@ -458,14 +457,14 @@ text\<open>In linearly ordered groups $|a|\leq L$ implies $a \leq L$
 
 lemma (in group3) OrderedGroup_ZF_3_L8A:
   assumes A1: "r {is total on} G" 
-  and A2: "a\<in>G" and A3: "|a|\<lsq>L"
+  and A2: "a\<in>G" and A3: "\<bar>a\<bar>\<lsq>L"
   shows 
   "a\<lsq>L"
   "\<one>\<lsq>L"
 proof -
-  from A1 A2 have I: "a \<lsq> |a|" using OrderedGroup_ZF_3_L5 by simp
+  from A1 A2 have I: "a \<lsq> \<bar>a\<bar>" using OrderedGroup_ZF_3_L5 by simp
   from I A3 show "a\<lsq>L" by (rule Group_order_transitive)
-  from A1 A2 A3 have "\<one> \<lsq> |a|"  "|a|\<lsq>L"
+  from A1 A2 A3 have "\<one> \<lsq> \<bar>a\<bar>"  "\<bar>a\<bar>\<lsq>L"
      using OrderedGroup_ZF_3_L3B OrderedGroup_ZF_1_L2 by auto
    then show "\<one>\<lsq>L" by (rule Group_order_transitive)
 qed
@@ -473,7 +472,7 @@ qed
 text\<open>A somewhat generalized version of the above lemma.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L8B:
-  assumes A1: "a\<in>G" and A2: "|a|\<lsq>L" and A3: "\<one>\<lsq>c"
+  assumes A1: "a\<in>G" and A2: "\<bar>a\<bar>\<lsq>L" and A3: "\<one>\<lsq>c"
   shows "(L\<cdot>c)\<inverse> \<lsq> a"
 proof -
   from A1 A2 A3 have "c\<inverse>\<cdot>L\<inverse> \<lsq> \<one>\<cdot>a"
@@ -489,7 +488,7 @@ text\<open>If $b$ is between $a$ and $a\cdot c$, then $b\cdot a^{-1}\leq c$.\<cl
 
 lemma (in group3) OrderedGroup_ZF_3_L8C:
   assumes A1: "a\<lsq>b" and A2: "c\<in>G" and A3: "b\<lsq>c\<cdot>a"
-  shows "|b\<cdot>a\<inverse>| \<lsq> c"
+  shows "\<bar>b\<cdot>a\<inverse>\<bar> \<lsq> c"
 proof -
   from A1 A2 A3 have "b\<cdot>a\<inverse> \<lsq> c"
     using OrderedGroup_ZF_1_L9C OrderedGroup_ZF_1_L4
@@ -516,7 +515,7 @@ proof -
       using OrderedGroup_ZF_1_L1 group0.group0_2_L12
       by simp
   qed
-  ultimately show "|b\<cdot>a\<inverse>| \<lsq> c"
+  ultimately show "\<bar>b\<cdot>a\<inverse>\<bar> \<lsq> c"
     using OrderedGroup_ZF_3_L4 by simp
 qed
   
@@ -525,7 +524,7 @@ text\<open>For linearly ordered groups if the absolute values of elements in a s
 
 lemma (in group3) OrderedGroup_ZF_3_L9:
   assumes A1: "r {is total on} G"
-  and A2: "A\<subseteq>G" and A3: "\<forall>a\<in>A. |a| \<lsq> L"
+  and A2: "A\<subseteq>G" and A3: "\<forall>a\<in>A. \<bar>a\<bar> \<lsq> L"
   shows "IsBounded(A,r)"
 proof -
   from A1 A2 A3 have 
@@ -541,10 +540,10 @@ text\<open>A slightly more general version of the previous lemma, stating the sa
 
 lemma (in group3) OrderedGroup_ZF_3_L9A:
   assumes A1: "r {is total on} G"
-  and A2: "\<forall>x\<in>X. b(x)\<in>G \<and> |b(x)|\<lsq>L"
+  and A2: "\<forall>x\<in>X. b(x)\<in>G \<and> \<bar>b(x)\<bar>\<lsq>L"
   shows "IsBounded({b(x). x\<in>X},r)"
 proof -
-  from A2 have "{b(x). x\<in>X} \<subseteq> G" "\<forall>a\<in>{b(x). x\<in>X}. |a| \<lsq> L" 
+  from A2 have "{b(x). x\<in>X} \<subseteq> G" "\<forall>a\<in>{b(x). x\<in>X}. \<bar>a\<bar> \<lsq> L" 
     by auto
   with A1 show ?thesis using OrderedGroup_ZF_3_L9 by blast
 qed
@@ -555,10 +554,10 @@ text\<open>A special form of the previous lemma stating a similar fact for an
 lemma (in group3) OrderedGroup_ZF_3_L9B:
   assumes A1: "r {is total on} G"
   and A2: "f:X\<rightarrow>G" and A3: "A\<subseteq>X"
-  and A4: "\<forall>x\<in>A. |f`(x)| \<lsq> L"
+  and A4: "\<forall>x\<in>A. \<bar>f`(x)\<bar> \<lsq> L"
   shows "IsBounded(f``(A),r)"
 proof -
-  from A2 A3 A4 have "\<forall>x\<in>A. f`(x) \<in> G \<and>  |f`(x)| \<lsq> L"
+  from A2 A3 A4 have "\<forall>x\<in>A. f`(x) \<in> G \<and>  \<bar>f`(x)\<bar> \<lsq> L"
     using apply_funtype by auto
   with A1 have  "IsBounded({f`(x). x\<in>A},r)"
     by (rule OrderedGroup_ZF_3_L9A)
@@ -573,34 +572,34 @@ lemma (in group3) OrderedGroup_ZF_3_L10:
   assumes A1: "r {is total on} G"
   and A2: "l\<lsq>a"  "a\<lsq>u" 
   shows 
-  "|a| \<lsq> GreaterOf(r,|l|,|u|)"
+  "\<bar>a\<bar> \<lsq> GreaterOf(r,\<bar>l\<bar>,\<bar>u\<bar>)"
 proof -
-  from A2 have T1: "|l| \<in> G" "|a| \<in> G" "|u| \<in> G"
+  from A2 have T1: "\<bar>l\<bar> \<in> G" "\<bar>a\<bar> \<in> G" "\<bar>u\<bar> \<in> G"
     using OrderedGroup_ZF_1_L4 OrderedGroup_ZF_3_L1 apply_funtype
     by auto
   { assume A3: "a\<in>G\<^sup>+"
     with A2 have "\<one>\<lsq>a" "a\<lsq>u" 
       using OrderedGroup_ZF_1_L2 by auto
     then have "\<one>\<lsq>u" by (rule Group_order_transitive)
-    with A2 A3 have "|a|\<lsq>|u|" 
+    with A2 A3 have "\<bar>a\<bar>\<lsq>\<bar>u\<bar>" 
       using OrderedGroup_ZF_1_L2 OrderedGroup_ZF_3_L2 by simp
-    moreover from A1 T1 have "|u| \<lsq> GreaterOf(r,|l|,|u|)"
+    moreover from A1 T1 have "\<bar>u\<bar> \<lsq> GreaterOf(r,\<bar>l\<bar>,\<bar>u\<bar>)"
       using Order_ZF_3_L2 by simp
-    ultimately have "|a| \<lsq> GreaterOf(r,|l|,|u|)"
+    ultimately have "\<bar>a\<bar> \<lsq> GreaterOf(r,\<bar>l\<bar>,\<bar>u\<bar>)"
       by (rule Group_order_transitive) }
   moreover
   { assume A4: "a\<notin>G\<^sup>+"
     with A2 have T2: 
-      "l\<in>G" "|l| \<in> G" "|a| \<in> G" "|u| \<in> G" "a \<in> G-G\<^sup>+"
+      "l\<in>G" "\<bar>l\<bar> \<in> G" "\<bar>a\<bar> \<in> G" "\<bar>u\<bar> \<in> G" "a \<in> G-G\<^sup>+"
       using OrderedGroup_ZF_1_L4 OrderedGroup_ZF_3_L1 apply_funtype
       by auto
     with A2 have "l \<in> G-G\<^sup>+" using OrderedGroup_ZF_1_L4D by fast
-    with T2 A2 have "|a| \<lsq> |l|" 
+    with T2 A2 have "\<bar>a\<bar> \<lsq> \<bar>l\<bar>" 
       using OrderedGroup_ZF_3_L3 OrderedGroup_ZF_1_L5
       by simp
-    moreover from A1 T2 have "|l| \<lsq> GreaterOf(r,|l|,|u|)"
+    moreover from A1 T2 have "\<bar>l\<bar> \<lsq> GreaterOf(r,\<bar>l\<bar>,\<bar>u\<bar>)"
       using Order_ZF_3_L2 by simp 
-    ultimately have "|a| \<lsq> GreaterOf(r,|l|,|u|)"
+    ultimately have "\<bar>a\<bar> \<lsq> GreaterOf(r,\<bar>l\<bar>,\<bar>u\<bar>)"
       by (rule Group_order_transitive) }
   ultimately show ?thesis by blast
 qed
@@ -611,7 +610,7 @@ text\<open>For linearly ordered groups if a set is bounded then the absolute
 lemma (in group3) OrderedGroup_ZF_3_L10A:
   assumes A1: "r {is total on} G"
   and A2: "IsBounded(A,r)"
-  shows "\<exists>L. \<forall>a\<in>A. |a| \<lsq> L"
+  shows "\<exists>L. \<forall>a\<in>A. \<bar>a\<bar> \<lsq> L"
 proof -
   { assume "A = 0" then have ?thesis by auto }
   moreover
@@ -621,7 +620,7 @@ proof -
       by auto
     then obtain u l where "\<forall>g\<in>A. l\<lsq>g \<and>  g\<lsq>u" 
       by auto
-    with A1 have "\<forall>a\<in>A. |a| \<lsq> GreaterOf(r,|l|,|u|)"
+    with A1 have "\<forall>a\<in>A. \<bar>a\<bar> \<lsq> GreaterOf(r,\<bar>l\<bar>,\<bar>u\<bar>)"
       using OrderedGroup_ZF_3_L10 by simp
     then have ?thesis by auto }
   ultimately show ?thesis by blast
@@ -633,7 +632,7 @@ text\<open>A slightly more general version of the previous lemma, stating the sa
 lemma (in group3) OrderedGroup_ZF_3_L11:
   assumes "r {is total on} G"
   and "IsBounded({b(x).x\<in>X},r)"
-  shows "\<exists>L. \<forall>x\<in>X. |b(x)| \<lsq> L"
+  shows "\<exists>L. \<forall>x\<in>X. \<bar>b(x)\<bar> \<lsq> L"
   using assms OrderedGroup_ZF_3_L10A by blast
 
 text\<open>Absolute values of elements of a finite image of a nonempty set are 
@@ -642,12 +641,12 @@ text\<open>Absolute values of elements of a finite image of a nonempty set are
 lemma (in group3) OrderedGroup_ZF_3_L11A:
   assumes A1: "r {is total on} G" 
   and A2: "X\<noteq>0" and A3: "{b(x). x\<in>X} \<in> Fin(G)"
-  shows "\<exists>L\<in>G. \<forall>x\<in>X. |b(x)| \<lsq> L"
+  shows "\<exists>L\<in>G. \<forall>x\<in>X. \<bar>b(x)\<bar> \<lsq> L"
 proof -
-  from A1 A3 have "\<exists>L. \<forall>x\<in>X. |b(x)| \<lsq> L"
+  from A1 A3 have "\<exists>L. \<forall>x\<in>X. \<bar>b(x)\<bar> \<lsq> L"
      using  ord_group_fin_bounded OrderedGroup_ZF_3_L11
      by simp
-  then obtain L where I: "\<forall>x\<in>X. |b(x)| \<lsq> L"
+  then obtain L where I: "\<forall>x\<in>X. \<bar>b(x)\<bar> \<lsq> L"
     using OrderedGroup_ZF_3_L11 by auto
   from A2 obtain x where "x\<in>X" by auto
   with I show ?thesis using OrderedGroup_ZF_1_L4
@@ -660,15 +659,15 @@ text\<open>In totally oredered groups the absolute value of a
 lemma (in group3) OrderedGroup_ZF_3_L12:
   assumes A1: "r {is total on} G" 
   and A2: "a\<in>G"  and A3: "a\<noteq>\<one>"
-  shows "|a| \<in> G\<^sub>+"
+  shows "\<bar>a\<bar> \<in> G\<^sub>+"
 proof -
-  from A1 A2 have "|a| \<in> G"  "\<one> \<lsq> |a|" 
+  from A1 A2 have "\<bar>a\<bar> \<in> G"  "\<one> \<lsq> \<bar>a\<bar>" 
     using OrderedGroup_ZF_3_L1 apply_funtype
       OrderedGroup_ZF_3_L3B OrderedGroup_ZF_1_L2 
     by auto
-  moreover from A2 A3 have "|a| \<noteq> \<one>"
+  moreover from A2 A3 have "\<bar>a\<bar> \<noteq> \<one>"
     using OrderedGroup_ZF_3_L3D by auto
-  ultimately show "|a| \<in> G\<^sub>+"
+  ultimately show "\<bar>a\<bar> \<in> G\<^sub>+"
     using PositiveSet_def by auto
 qed
 
@@ -685,7 +684,7 @@ text\<open>If a set has a maximum and minimum, then the greater of the
 lemma (in group3) OrderedGroup_ZF_4_L1:
   assumes "A \<subseteq> G"
   and "HasAmaximum(r,A)" "HasAminimum(r,A)"
-  and "M = GreaterOf(r,|Minimum(r,A)|,|Maximum(r,A)|)"
+  and "M = GreaterOf(r,\<bar>Minimum(r,A)\<bar>,\<bar>Maximum(r,A)\<bar>)"
   shows "M \<in> AbsoluteValue(G,P,r)``(A)"
   using ordGroupAssum assms IsAnOrdGroup_def IsPartOrder_def 
     Order_ZF_4_L3 Order_ZF_4_L4 OrderedGroup_ZF_3_L1 
@@ -699,7 +698,7 @@ lemma (in group3) OrderedGroup_ZF_4_L2:
   assumes A1: "r {is total on} G"
   and A2: "HasAmaximum(r,A)"  "HasAminimum(r,A)"
   and A3: "a\<in>A"
-  shows "|a|\<lsq> GreaterOf(r,|Minimum(r,A)|,|Maximum(r,A)|)" 
+  shows "\<bar>a\<bar>\<lsq> GreaterOf(r,\<bar>Minimum(r,A)\<bar>,\<bar>Maximum(r,A)\<bar>)" 
 proof -
   from ordGroupAssum A2 A3 have 
     "Minimum(r,A)\<lsq> a" "a\<lsq> Maximum(r,A)" 
@@ -718,7 +717,7 @@ lemma (in group3) OrderedGroup_ZF_4_L3:
   assumes "r {is total on} G" and "A \<subseteq> G"
   and "HasAmaximum(r,A)" "HasAminimum(r,A)"
   and "b \<in> AbsoluteValue(G,P,r)``(A)"
-  shows "b\<lsq> GreaterOf(r,|Minimum(r,A)|,|Maximum(r,A)|)"
+  shows "b\<lsq> GreaterOf(r,\<bar>Minimum(r,A)\<bar>,\<bar>Maximum(r,A)\<bar>)"
   using assms OrderedGroup_ZF_3_L1 func_imagedef OrderedGroup_ZF_4_L2
   by auto
 
@@ -730,7 +729,7 @@ lemma (in group3) OrderedGroup_ZF_4_L4:
   and A3: "HasAmaximum(r,A)" "HasAminimum(r,A)"
   shows "HasAmaximum(r,AbsoluteValue(G,P,r)``(A))"
 proof -
-  let ?M = "GreaterOf(r,|Minimum(r,A)|,|Maximum(r,A)|)"
+  let ?M = "GreaterOf(r,\<bar>Minimum(r,A)\<bar>,\<bar>Maximum(r,A)\<bar>)"
   from A2 A3 have "?M \<in> AbsoluteValue(G,P,r)``(A)"
     using OrderedGroup_ZF_4_L1 by simp
   moreover from A1 A2 A3 have 
@@ -746,9 +745,9 @@ lemma (in group3) OrderedGroup_ZF_4_L5:
   assumes A1: "r {is total on} G" and A2: "A \<subseteq> G"
   and A3: "HasAmaximum(r,A)" "HasAminimum(r,A)"
   and A4: "a\<in>A"
-  shows "|a| \<lsq> Maximum(r,AbsoluteValue(G,P,r)``(A))"
+  shows "\<bar>a\<bar> \<lsq> Maximum(r,AbsoluteValue(G,P,r)``(A))"
 proof -
-  from A2 A4 have "|a| \<in> AbsoluteValue(G,P,r)``(A)" 
+  from A2 A4 have "\<bar>a\<bar> \<in> AbsoluteValue(G,P,r)``(A)" 
     using OrderedGroup_ZF_3_L1 func_imagedef by auto
   with ordGroupAssum A1 A2 A3 show ?thesis using 
     IsAnOrdGroup_def IsPartOrder_def OrderedGroup_ZF_4_L4
@@ -1210,7 +1209,7 @@ lemma (in group3) OrderedGroup_ZF_7_L4:
   A5: "\<forall>a\<in>G.\<exists>b\<in>G\<^sub>+.\<forall>y. b\<lsq>y \<longrightarrow> a \<lsq> f`(y)" and 
   A6: "\<forall>a\<in>G.\<exists>b\<in>G\<^sub>+.\<forall>y. b\<lsq>y \<longrightarrow> f`(y\<inverse>) \<lsq> a" and 
   A7: "\<forall>x\<in>X. b(x) \<in> G \<and> L \<lsq> f`(b(x)) \<and> f`(b(x)) \<lsq> U"
-shows "\<exists>M.\<forall>x\<in>X. |b(x)| \<lsq> M"
+shows "\<exists>M.\<forall>x\<in>X. \<bar>b(x)\<bar> \<lsq> M"
 proof -
   from A7 have 
     I: "\<forall>x\<in>X. b(x) \<in> G \<and> f`(b(x)) \<lsq> U" and
@@ -1222,9 +1221,9 @@ proof -
     by (rule OrderedGroup_ZF_7_L3)
   ultimately have "\<exists>u l. \<forall>x\<in>X. l\<lsq>b(x) \<and> b(x) \<lsq> u"
     by auto
-  with A1 have "\<exists>u l.\<forall>x\<in>X. |b(x)| \<lsq> GreaterOf(r,|l|,|u|)"
+  with A1 have "\<exists>u l.\<forall>x\<in>X. \<bar>b(x)\<bar> \<lsq> GreaterOf(r,\<bar>l\<bar>,\<bar>u\<bar>)"
     using OrderedGroup_ZF_3_L10 by blast
-  then show "\<exists>M.\<forall>x\<in>X. |b(x)| \<lsq> M"
+  then show "\<exists>M.\<forall>x\<in>X. \<bar>b(x)\<bar> \<lsq> M"
     by auto
 qed
 
