@@ -332,8 +332,8 @@ lemma (in ring3) bt_rec_identity:
   shows 
     "BT(j,k #+ 1,x,y)\<cdot>x \<ra> BT(j,k,x,y)\<cdot>y = BT(j #+ 1,k #+ 1,x,y)"
 proof -
-  from assms(2,3,4) have "k\<in>nat" 
-    "Binom(j,k #+ 1) \<in> nat" "Binom(j,k) \<in> nat" "Binom(j #+ 1,k #+ 1) \<in> nat" 
+  from assms(2,3,4) have "k\<in>nat" "Binom(j,k #+ 1) \<in> nat" 
+    and "Binom(j,k) \<in> nat" "Binom(j #+ 1,k #+ 1) \<in> nat" 
     and I: "pow(j #- (k #+ 1),x) \<in> R" and II: "pow(j #- k,x) \<in> R"
     using elem_nat_is_nat(2) binom_in_nat mult_pow_type(2)
     by simp_all
@@ -373,12 +373,13 @@ proof -
     unfolding BT_def by simp
 qed
 
-text\<open>The binomial theorem $x,y$ are elements of a commutative ring then 
-  $(x+y)^n = \sum_{k=0}^{n} {n \choose k} x^{n-k} y^k$.\<close>
+text\<open>The binomial theorem: if $x,y$ are elements of a commutative ring, $n\in \mathbb{N}$
+   then $(x+y)^n = \sum_{k=0}^{n} {n \choose k} x^{n-k} y^k$.\<close>
 
 theorem (in ring3) binomial_theorem: 
   assumes "M {is commutative on} R" "n\<in>nat" "x\<in>R" "y\<in>R"
-  shows "pow(n,x\<ra>y) = \<Sum>{\<langle>k,Binom(n,k)\<nm>pow(n #- k,x) \<cdot> pow(k,y)\<rangle>. k\<in>n #+ 1}"
+  shows 
+    "pow(n,x\<ra>y) = \<Sum>{\<langle>k,Binom(n,k)\<nm>pow(n #- k,x) \<cdot> pow(k,y)\<rangle>. k\<in>n #+ 1}"
 proof -
   from assms(2) have "n\<in>nat" by simp
   moreover have "pow(0,x\<ra>y) = \<Sum>{\<langle>k,BT(0,k,x,y)\<rangle>. k\<in>0 #+ 1}"

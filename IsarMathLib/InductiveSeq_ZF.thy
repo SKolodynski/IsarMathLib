@@ -1079,7 +1079,7 @@ lemma binom_zero_zero: shows "Binom(0,0) = 1"
   using gen_binom_fun pascal_sequence(1) indseq_valat0 pair_val
     unfolding Binom_def PascalTriangle_def by auto
 
-text\<open>The binomial coefficient are 1 on the left boundary of the Pascal's triangle.\<close>
+text\<open>The binomial coefficients are 1 on the left boundary of the Pascal's triangle.\<close>
 
 theorem binom_left_boundary: assumes "n\<in>nat" shows "Binom(n,0) = 1"
 proof -
