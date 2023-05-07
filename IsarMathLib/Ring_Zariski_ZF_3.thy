@@ -392,9 +392,9 @@ proof
     unfolding RestrictedTo_def by auto
 qed
 
-text\<open>A quotient ring has an spectrum homeomorphic
+text\<open>A quotient ring has a spectrum homeomorphic
 to a closed subspace of the spectrum of the base ring.
-Specifically, the close subspace associated to the
+Specifically, the closed subspace associated to the
 ideal by which we quotient.\<close>
 
 corollary (in ring_homo) surj_homeomorphism:
