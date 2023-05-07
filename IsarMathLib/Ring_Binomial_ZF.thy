@@ -265,7 +265,7 @@ qed
 
 text\<open>In rings we have 
   $\sum_{k=0}^{n-1}q(k) + p(k) = (\sum_{k=0}^{n-1} p(k)) + (\sum_{k=0}^{n-1} q(k))$. 
-  This is the same as theorem \<open>sum_comm_distrib\<close> is \<open>Monoid_ZF_1.thy\<close>, except that
+  This is the same as theorem \<open>sum_comm_distrib\<close> in \<open>Monoid_ZF_1.thy\<close>, except that
   we do not need the assumption about commutativity of the operation as addition in rings
   is always commutative. \<close>
 
@@ -276,7 +276,7 @@ lemma (in ring3) sum_ring_distrib:
   using assms Ring_ZF_1_L1(3) add_monoid.sum_comm_distrib by simp
 
 text\<open>To shorten the notation in the proof of the binomial theorem we give a name to the
-  binomial term $\choose{n}{k} x^{n-k} y^k$.\<close>
+  binomial term ${n \choose k} x^{n-k} y^k$.\<close>
 
 definition (in ring3) BT where
   "BT(n,k,x,y) \<equiv> Binom(n,k)\<nm>pow(n #- k,x)\<cdot>pow(k,y)"
@@ -374,7 +374,7 @@ proof -
 qed
 
 text\<open>The binomial theorem $x,y$ are elements of a commutative ring then 
-  $(x+y)^n = \sum_{k=0}^{n} \choose{n}{k} x^{n-k} y^k$.\<close>
+  $(x+y)^n = \sum_{k=0}^{n} {n \choose k} x^{n-k} y^k$.\<close>
 
 theorem (in ring3) binomial_theorem: 
   assumes "M {is commutative on} R" "n\<in>nat" "x\<in>R" "y\<in>R"
