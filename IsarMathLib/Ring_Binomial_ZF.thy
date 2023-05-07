@@ -402,7 +402,7 @@ proof -
       let ?s\<^sub>6 = "\<Sum>{\<langle>k,BT(j #+ 1,k #+ 1,x,y)\<rangle>. k\<in>j}"
       let ?s\<^sub>7 = "\<Sum>{\<langle>k,BT(j #+ 1,k,x,y)\<rangle>. k\<in>j #+ 1}"
       let ?s\<^sub>8 = "\<Sum>{\<langle>k,BT(j #+ 1,k,x,y)\<rangle>. k\<in>j #+ 1 #+ 1}"
-      assume "j\<in>nat" and A: "pow(j,x\<ra>y) = ?s\<^sub>0"
+      assume "j\<in>nat" and "pow(j,x\<ra>y) = ?s\<^sub>0"
       then have "j #+ 1 \<in> nat" and "j #+ 1 #+ 1 \<in> nat" by simp_all
       have 
         I:  "\<forall>k\<in>j #+ 1. BT(j,k,x,y) \<in> R" and
@@ -437,7 +437,7 @@ proof -
           "pow(j #+ 1,x\<ra>y) = pow(j,x\<ra>y)\<cdot>x \<ra> pow(j,x\<ra>y)\<cdot>y"
           using Ring_ZF_1_L4(1) mult_pow_type nat_mult_pow_add_one(2) 
             ring_oper_distr(1) by simp
-        with A show  ?thesis by simp
+        with \<open>pow(j,x\<ra>y) = ?s\<^sub>0\<close> show  ?thesis by simp
       qed
       also have "?s\<^sub>0\<cdot>x \<ra> ?s\<^sub>0\<cdot>y = ?s\<^sub>1 \<ra> ?s\<^sub>2"
       proof -
