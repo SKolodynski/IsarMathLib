@@ -138,7 +138,7 @@ text\<open>The first assertion of the next theorem is similar in content to \<op
   formulated in terms of the expression defining the list of monoid elements. The second
   one shows the dual statement: the last element of a sequence can be pulled out of the
   sequence and put after the summation sign. So, we are showing here that 
-  $\sum_{k=0}^{n} q_k = q_0 \oplus \sum_{k=0}^{n-1} q_{k+1} = (\sum_{k=0}^{n-1} q_k)) \oplus q_n. $ \<close>
+  $\sum_{k=0}^{n} q_k = q_0 \oplus \sum_{k=0}^{n-1} q_{k+1} = (\sum_{k=0}^{n-1} q_k) \oplus q_n. $ \<close>
 
 theorem (in monoid1) seq_sum_pull_one_elem: 
   assumes "n \<in> nat" "\<forall>k\<in>n #+ 1. q(k) \<in> G"
@@ -206,19 +206,19 @@ proof -
   }
   moreover
   { assume "n\<noteq>0"
-    with assms(2) obtain m where "m\<in>nat" and  "n = m #+1"
+    with assms(2) obtain m where "m\<in>nat" and  "n = m #+ 1"
       using nat_not0_succ by blast
     from assms(3,4) have "?a:n\<rightarrow>G" "?b:n\<rightarrow>G" "?c:n\<rightarrow>G" 
       using group0_1_L1 ZF_fun_from_total by simp_all
-    with assms(1) \<open>m\<in>nat\<close> \<open>n = m #+1\<close> have 
+    with assms(1) \<open>m\<in>nat\<close> \<open>n = m #+ 1\<close> have 
       "f {is commutative on} G" "m\<in>nat" and
-      "?a:m #+1\<rightarrow>G" "?b:m #+1\<rightarrow>G" "?c:m #+1\<rightarrow>G"
+      "?a:m #+ 1\<rightarrow>G" "?b:m #+ 1\<rightarrow>G" "?c:m #+ 1\<rightarrow>G"
       by simp_all
-    moreover have "\<forall>j\<in>m #+ 1. ?c`(j) = ?a`(j) \<oplus> ?b`(j)"
+    moreover have "\<forall>k\<in>m #+ 1. ?c`(k) = ?a`(k) \<oplus> ?b`(k)"
     proof -
-      { fix j assume "j \<in> m #+ 1"
-        with \<open>n = m #+1\<close> have "j\<in>n" by simp
-        then have "?c`(j) = ?a`(j) \<oplus> ?b`(j)"
+      { fix k assume "k \<in> m #+ 1"
+        with \<open>n = m #+ 1\<close> have "k\<in>n" by simp
+        then have "?c`(k) = ?a`(k) \<oplus> ?b`(k)"
           using ZF_fun_from_tot_val1 by simp_all
       } thus ?thesis by simp
     qed
@@ -230,8 +230,8 @@ qed
 
 subsection\<open>Multiplying monoid elements by natural numbers\<close>
 
-text\<open>A special case of summing (or, using more notation-neutral term \<open>folding\<close> 
-  a list a list of monoid is taking a natural multiple of a single element. 
+text\<open>A special case of summing (or, using more notation-neutral term \<open>folding\<close>)
+  a list of monoid elements is taking a natural multiple of a single element. 
   This can be applied to various monoids embedded in other algebraic structures.
   For example a ring is a monoid with addition as the operation, so the notion of 
   natural multiple directly transfers there. Another monoid in a ring is formed by its 

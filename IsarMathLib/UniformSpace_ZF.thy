@@ -424,7 +424,7 @@ corollary utopsnnei: assumes "\<Phi> {is a uniformity on} X" "W\<in>\<Phi>" "x\<
   
 text\<open>If $\Phi$ is a uniformity on $X$ that generates a topology $T$, $R$ is any relation
   on $X$ (i.e. $R\subseteq X\times X$), $W$ is a symmetric entourage (i.e. $W\in \Phi$,
-  and $W$ is symmetric (i.e. equal to its converse), then the closure of $R$ in the product topology
+  and $W$ is symmetric (i.e. equal to its converse)), then the closure of $R$ in the product topology
   is contained the the composition $V\circ (M \circ V)$. 
   Metamath has a similar theorem with the same name.  \<close>
 
