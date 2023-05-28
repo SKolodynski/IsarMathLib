@@ -43,13 +43,13 @@ the entourages: \<close>
 
 definition
   IsUniformlyCont ("_ {is uniformly continuous between} _ {and} _" 90) where
-  "f:X->Y ==> \<Phi> {is a uniformity on}X  ==> \<Gamma> {is a uniformity on}Y  ==> 
-  f {is uniformly continuous between} \<Phi> {and} \<Gamma> \<equiv> \<forall>V\<in>\<Gamma>. (ProdFunction(f,f)-``V)\<in>\<Phi>"
+  "f:X\<rightarrow>Y \<Longrightarrow> \<Phi> {is a uniformity on} X  \<Longrightarrow> \<Gamma> {is a uniformity on} Y \<Longrightarrow> 
+  f {is uniformly continuous between} \<Phi> {and} \<Gamma> \<equiv> \<forall>V\<in>\<Gamma>. (ProdFunction(f,f)-``V) \<in> \<Phi>"
 
 text\<open> Any uniformly continuous function is continuous when considering the topologies on the uniformities. \<close>
 
 lemma uniformly_cont_is_cont:
-  assumes "f:X->Y" "\<Phi> {is a uniformity on}X " "\<Gamma> {is a uniformity on}Y" 
+  assumes "f:X\<rightarrow>Y" "\<Phi> {is a uniformity on} X " "\<Gamma> {is a uniformity on} Y" 
     "f {is uniformly continuous between} \<Phi> {and} \<Gamma>"
   shows "IsContinuous(UniformTopology(\<Phi>,X),UniformTopology(\<Gamma>,Y),f)"
 proof -
