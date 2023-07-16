@@ -248,6 +248,14 @@ lemma (in reals) pos_non_empty: shows "\<real>\<^sub>+\<noteq>0"
   using R_are_reals ordring_one_is_pos 
   unfolding IsAmodelOfReals_def IsAnOrdField_def by auto
 
+text\<open>We say that a relation $r$  \<open>down-directs\<close> a set $R$ if every two-element subset
+  of $R$ has a lower bound. The next lemma states that the natural order relation on real numbers
+  down-directs the set of positive reals. \<close>
+
+lemma (in reals) rord_down_directs: shows "ROrd {down-directs} \<real>\<^sub>+" 
+  using pos_is_lattice(3) pos_non_empty meet_down_directs down_dir_mono
+  unfolding IsAlattice_def by blast
+
 text\<open> We define the topology on reals as one consisting of the unions of open disks. \<close>
 
 definition (in reals) RealTopology ("\<tau>\<^sub>\<real>") 
@@ -257,18 +265,9 @@ text\<open>Real numbers form a Hausdorff topological space with topology generat
 
 theorem (in reals) reals_is_top: 
   shows "\<tau>\<^sub>\<real> {is a topology}" "\<Union>\<tau>\<^sub>\<real> = \<real>" "\<tau>\<^sub>\<real> {is T\<^sub>2}"
-proof -
-  let ?B = "\<Union>c\<in>\<real>.{disk(c,r). r \<in> \<real>\<^sub>+}"
-  have "pmetric_space(\<real>,Add, ROrd,dist,\<real>)" using pmetric_space_valid by simp
-  moreover have "metric_space(\<real>,Add, ROrd,dist,\<real>)" using metric_space_valid by simp
-  moreover have "ROrd {down-directs} \<real>\<^sub>+"
-    using pos_is_lattice(3) pos_non_empty meet_down_directs down_dir_mono
-    unfolding IsAlattice_def by blast
-  moreover have "?B = (\<Union>c\<in>\<real>.{disk(c,r). r \<in> \<real>\<^sub>+})" by simp
-  moreover have "\<tau>\<^sub>\<real> =  {\<Union>A. A \<in> Pow(?B)}" unfolding RealTopology_def by simp
-  ultimately show "\<tau>\<^sub>\<real> {is a topology}"  "\<Union>\<tau>\<^sub>\<real> = \<real>"  "\<tau>\<^sub>\<real> {is T\<^sub>2}"
-    using pmetric_space.pmetric_is_top metric_space.metric_space_T2
-    by auto
-qed
+  using rord_down_directs metric_space_valid pmetric_space_valid 
+    pmetric_space.pmetric_is_top  metric_space.metric_space_T2
+  unfolding RealTopology_def
+    by simp_all
 
 end

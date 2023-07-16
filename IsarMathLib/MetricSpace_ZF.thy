@@ -65,7 +65,6 @@ text\<open>A disk is defined as set of points located less than the radius from 
 
 definition "Disk(X,d,r,c,R) \<equiv> {x\<in>X. \<langle>d`\<langle>c,x\<rangle>,R\<rangle> \<in> StrictVersion(r)}"
 
-
 text\<open>Next we define notation for metric spaces. We will reuse the additive notation defined in 
   the \<open>loop1\<close> locale adding only the assumption about $d$ being a pseudometric and notation
   for a disk centered at $c$ with radius $R$.
@@ -74,9 +73,7 @@ text\<open>Next we define notation for metric spaces. We will reuse the additive
 
 locale pmetric_space =  loop1 +
   fixes d and X 
-
   assumes pmetricAssum: "IsApseudoMetric(d,X,L,A,r)"
-  
   fixes disk
   defines disk_def [simp]: "disk(c,R) \<equiv> Disk(X,d,r,c,R)"
 
