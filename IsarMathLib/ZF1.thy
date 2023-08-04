@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2005-2019  Slawomir Kolodynski
+    Copyright (C) 2005-2023  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -441,6 +441,12 @@ lemma superset_gen: assumes "A\<subseteq>X" "A\<in>\<A>" shows "A \<in> Superset
 text\<open>This can be done by the auto method, but sometimes takes a long time. \<close>
 
 lemma witness_exists: assumes "x\<in>X" and "\<phi>(x)" shows "\<exists>x\<in>X. \<phi>(x)"
+  using assms by auto
+
+text\<open>Another lemma that concludes existence of some set.\<close>
+
+lemma witness_exists1: assumes "x\<in>X" "\<phi>(x)" "\<psi>(x)"
+  shows "\<exists>x\<in>X. \<phi>(x) \<and> \<psi>(x)"
   using assms by auto
 
 text\<open>The next lemma has to be used as a rule in some rare cases. \<close>

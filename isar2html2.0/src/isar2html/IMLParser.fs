@@ -190,7 +190,7 @@ module IMLParser =
     let abbreviation : Parser<FormalItem,unit> =
         pipe3
             (pstring "abbreviation" >>. whiteSpace >>. pureItemName)
-            (textBetween "(\"" "\")")
+            (whiteSpace >>. textBetween "(\"" "\")")
             (whiteSpace >>. pstring "where" >>. whiteSpace >>. innerText)
             (fun nm nt d -> Abbr { abbname = nm; abbnotation = nt; abbspec = d })
 
