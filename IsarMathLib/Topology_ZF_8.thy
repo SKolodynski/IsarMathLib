@@ -47,14 +47,14 @@ text\<open>For a topological space $X=\bigcup T$ and a surjection $f:X\rightarro
 
 definition (in topology0)
   QuotientTop ("{quotient topology in}_{by}_" 80)
-  where "f\<in>surj(\<Union>T,Y) \<Longrightarrow>{quotient topology in}Y{by}f\<equiv>
+  where "f\<in>surj(\<Union>T,Y) \<Longrightarrow>{quotient topology in} Y {by} f \<equiv>
     {U\<in>Pow(Y). f-``U\<in>T}"
 
 text\<open>Outside of the \<open>topology0\<close> context we will indicate also the generating
   topology and write \<open>{quotient topology in}Y{by}f{from}X\<close>. \<close>
 
 abbreviation QuotientTopTop ("{quotient topology in}_{by}_{from}_")
-  where "QuotientTopTop(Y,f,T) \<equiv> topology0.QuotientTop(T,Y,f)"
+  where "{quotient topology in} Y {by} f {from} T \<equiv> topology0.QuotientTop(T,Y,f)"
 
 text\<open>The quotient topology is indeed a topology.\<close>
 
@@ -62,39 +62,39 @@ theorem (in topology0) quotientTop_is_top:
   assumes "f\<in>surj(\<Union>T,Y)"
   shows "({quotient topology in} Y {by} f) {is a topology}"
 proof-
-  have "({quotient topology in} Y {by} f)={U \<in> Pow(Y) . f -`` U \<in> T}" using QuotientTop_def assms
+  have "({quotient topology in} Y {by} f)={U \<in> Pow(Y) . f-``(U) \<in> T}" using QuotientTop_def assms
     by auto 
   moreover
   {
-    fix M x B assume M: "M \<subseteq> {U \<in> Pow(Y) . f -`` U \<in> T}"
+    fix M x B assume M: "M \<subseteq> {U \<in> Pow(Y) . f-``(U) \<in> T}"
     then have "\<Union>M\<subseteq>Y" by blast 
-    moreover have A1: "f -`` (\<Union>M)=(\<Union>y\<in>(\<Union>M). f-``{y})" using vimage_eq_UN by blast
+    moreover have A1: "f-``(\<Union>M) = (\<Union>y\<in>(\<Union>M). f-``{y})" using vimage_eq_UN by blast
     moreover 
     {
       fix A assume "A\<in>M"
-      with M have "A\<in>Pow(Y)" "f -`` A\<in>T" by auto
-      have "f -`` A=(\<Union>y\<in>A. f-``{y})" using vimage_eq_UN by blast
+      with M have "A\<in>Pow(Y)" "f-``(A) \<in> T" by auto
+      have "f-``(A) = (\<Union>y\<in>A. f-``{y})" using vimage_eq_UN by blast
     }
-    hence "(\<Union>A\<in>M. f-`` A)=(\<Union>y\<in>\<Union>M. f-``{y})" by auto
-    with A1 have A2: "f -`` (\<Union>M)=\<Union>{f-`` A. A\<in>M}" by auto
+    hence "(\<Union>A\<in>M. f-``(A)) = (\<Union>y\<in>\<Union>M. f-``{y})" by auto
+    with A1 have A2: "f-``(\<Union>M)=\<Union>{f-`` A. A\<in>M}" by auto
     moreover 
     {
       fix A assume "A\<in>M"
-      with M have "f -`` A\<in>T" by auto
+      with M have "f-``(A)\<in>T" by auto
     }
-    hence "{f-`` A. A\<in>M}\<subseteq>T" by auto
-    then have "(\<Union>{f-`` A. A\<in>M})\<in>T" 
+    hence "{f-``(A). A\<in>M}\<subseteq>T" by auto
+    then have "(\<Union>{f-``(A). A\<in>M})\<in>T" 
       using topSpaceAssum unfolding IsATopology_def by auto
-    with A2 have "(f -`` (\<Union>M))\<in>T" by auto
+    with A2 have "(f-``(\<Union>M))\<in>T" by auto
     ultimately have "\<Union>M\<in>{U\<in>Pow(Y). f-``U\<in>T}" by auto
   }
   moreover
   {
-    fix U V assume "U\<in>{U\<in>Pow(Y). f-``U\<in>T}""V\<in>{U\<in>Pow(Y). f-``U\<in>T}"
+    fix U V assume "U \<in> {U\<in>Pow(Y). f-``U\<in>T}" "V\<in>{U\<in>Pow(Y). f-``U\<in>T}"
     then have "U\<in>Pow(Y)" "V\<in>Pow(Y)" "f-``U\<in>T""f-``V\<in>T" by auto
-    then have "f-`` (U\<inter>V)\<in>T" using topSpaceAssum invim_inter_inter_invim assms
+    then have "f-``(U\<inter>V)\<in>T" using topSpaceAssum invim_inter_inter_invim assms
       unfolding IsATopology_def surj_def by auto
-    with \<open>U\<in>Pow(Y)\<close>\<open>V\<in>Pow(Y)\<close> have "U\<inter>V\<in>{U\<in>Pow(Y). f-``U\<in>T}" by auto
+    with \<open>U\<in>Pow(Y)\<close> \<open>V\<in>Pow(Y)\<close> have "U\<inter>V\<in>{U\<in>Pow(Y). f-``(U)\<in>T}" by auto
   }
   ultimately show ?thesis using IsATopology_def by auto
 qed
@@ -129,7 +129,7 @@ text\<open>The underlying set of the quotient topology is $Y$.\<close>
 
 lemma (in topology0) total_quo_func:
   assumes "f\<in>surj(\<Union>T,Y)"
-  shows "(\<Union>({quotient topology in}Y{by}f))=Y"
+  shows "(\<Union>({quotient topology in} Y {by} f))=Y"
 proof-
   from assms have "f-``Y=\<Union>T" using func1_1_L4 unfolding surj_def by auto moreover
   have "\<Union>T\<in>T" using topSpaceAssum unfolding IsATopology_def by auto ultimately
@@ -190,13 +190,13 @@ qed
 text\<open>Now we define what a quotient topology from an equivalence relation is:\<close>
 
 definition (in topology0)
-  EquivQuo ("{quotient by}_" 70)
-  where "equiv(\<Union>T,r)\<Longrightarrow>({quotient by}r)\<equiv>{quotient topology in}(\<Union>T)//r{by}{\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}"
+  EquivQuo ("{quotient by} _" 70)
+  where "equiv(\<Union>T,r)\<Longrightarrow>({quotient by} r) \<equiv> {quotient topology in} (\<Union>T)//r {by} {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}"
 
 text\<open>Outside of the \<open>topology0\<close> context we need to indicate the original topology. \<close>
 
 abbreviation EquivQuoTop ("_{quotient by}_")
-  where "EquivQuoTop(T,r) \<equiv> topology0.EquivQuo(T,r)"
+  where "T {quotient by} r \<equiv> topology0.EquivQuo(T,r)"
 
 text\<open>First, another description of the topology (more intuitive):\<close>
 
@@ -204,20 +204,22 @@ theorem (in topology0) quotient_equiv_rel:
   assumes "equiv(\<Union>T,r)"
   shows "({quotient by}r)={U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}"
 proof-
-  have "({quotient topology in}(\<Union>T)//r{by}{\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T})={U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}"
-    using QuotientTop_def quotient_proj_surj by auto moreover
-  have "{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}={U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}"
-    proof
-     {
-       fix U assume "U\<in>{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}"
-       then have "U\<in>{U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}" using preim_equi_proj assms by auto
+  have "({quotient topology in}(\<Union>T)//r{by}{\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T})=
+    {U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}"
+    using QuotientTop_def quotient_proj_surj by auto 
+  moreover have "{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}={U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}"
+  proof
+    {
+      fix U assume "U\<in>{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}"
+      with assms have "U\<in>{U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}" using preim_equi_proj by auto
+    }
+    thus "{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}\<subseteq>{U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}" by auto
+    {
+      fix U assume "U\<in>{U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}"
+      with assms have "U\<in>{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}" using preim_equi_proj
+        by auto
      }
-     then show "{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}\<subseteq>{U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}" by auto
-     {
-       fix U assume "U\<in>{U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}"
-       then have "U\<in>{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}" using preim_equi_proj assms by auto
-     }
-     then show "{U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}\<subseteq>{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}" by auto
+     thus "{U\<in>Pow((\<Union>T)//r). \<Union>U\<in>T}\<subseteq>{U\<in>Pow((\<Union>T)//r). {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}-``U\<in>T}" by auto
    qed
   ultimately show ?thesis using EquivQuo_def assms by auto
 qed
@@ -415,15 +417,15 @@ text\<open>The product of quotient topologies is a quotient topology given that 
   quotient map is open. This isn't true in general.\<close>
 
 theorem (in topology0) prod_quotient:
-  assumes "equiv(\<Union>T,r)" "\<forall>A\<in>T. {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}``(A) \<in> ({quotient by}r)"
-  shows "(({quotient by}r)\<times>\<^sub>t{quotient by}r) = 
-  ({quotient topology in}(((\<Union>T)//r)\<times>((\<Union>T)//r)){by}({\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T}){from}(T\<times>\<^sub>tT))"
+  assumes "equiv(\<Union>T,r)" "\<forall>A\<in>T. {\<langle>b,r``{b}\<rangle>. b\<in>\<Union>T}``(A) \<in> ({quotient by} r)"
+  shows "(({quotient by} r)\<times>\<^sub>t{quotient by} r) = 
+  ({quotient topology in} (((\<Union>T)//r)\<times>((\<Union>T)//r)) {by} ({\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T}) {from} (T\<times>\<^sub>tT))"
 proof
-  let ?R = "({quotient topology in}(((\<Union>T)//r)\<times>((\<Union>T)//r)){by}({\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T}){from}(T\<times>\<^sub>tT))"
-  let ?T\<^sub>r = "T{quotient by}r"
-  { fix A assume A: "A\<in>({quotient by}r)\<times>\<^sub>t({quotient by}r)"
+  let ?R = "({quotient topology in} (((\<Union>T)//r)\<times>((\<Union>T)//r)) {by} ({\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T}) {from} (T\<times>\<^sub>tT))"
+  let ?T\<^sub>r = "T {quotient by} r"
+  { fix A assume A: "A\<in>({quotient by} r)\<times>\<^sub>t({quotient by} r)"
     from assms have 
-      "IsContinuous(T\<times>\<^sub>tT,({quotient by}r)\<times>\<^sub>t({quotient by}r),{\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T})" 
+      "IsContinuous(T\<times>\<^sub>tT,({quotient by} r)\<times>\<^sub>t({quotient by} r),{\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T})" 
       using product_quo_fun by auto
     with A have "{\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T}-``(A) \<in> (T\<times>\<^sub>tT)"
       unfolding IsContinuous_def by auto 
@@ -432,7 +434,7 @@ proof
     with assms have "A\<in>Pow(((\<Union>T)//r)\<times>((\<Union>T)//r))"
       using Top_1_4_T1(3) equiv_quo_is_top equiv_quo_is_top total_quo_equi by auto
     ultimately have 
-      "A\<in>({quotient topology in}(((\<Union>T)//r)\<times>((\<Union>T)//r)){by}{\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T}{from}(T\<times>\<^sub>tT))"
+      "A\<in>({quotient topology in} (((\<Union>T)//r)\<times>((\<Union>T)//r)) {by} {\<langle>\<langle>b,c\<rangle>,\<langle>r``{b},r``{c}\<rangle>\<rangle>. \<langle>b,c\<rangle>\<in>\<Union>T\<times>\<Union>T} {from} (T\<times>\<^sub>tT))"
       using topology0.QuotientTop_def Top_1_4_T1(1) topSpaceAssum prod_equiv_rel_surj assms(1) 
       unfolding topology0_def by auto
   } thus "(?T\<^sub>r)\<times>\<^sub>t(?T\<^sub>r) \<subseteq> ?R" by auto
