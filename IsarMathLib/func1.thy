@@ -1190,7 +1190,7 @@ proof -
     by simp
 qed
 
-text\<open>A lemma about how a surjection maps collections of subsets in domain and rangge.\<close>
+text\<open>A lemma about how a surjection maps collections of subsets in domain and range.\<close>
 
 lemma surj_subsets: assumes A1: "f \<in> surj(X,Y)" and A2: "B \<subseteq> Pow(Y)"
   shows "{ f``(U). U \<in> {f-``(V). V\<in>B} } = B"
