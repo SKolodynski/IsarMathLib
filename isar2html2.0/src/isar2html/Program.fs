@@ -20,9 +20,11 @@ open iml.ProcessThys
 open iml.Export2Html
 open iml.Utils
 
+let nameValid (line:string) =
+    let trimmed = line.Trim()
+    if 0<String.length trimmed then Some (trimmed + ".thy") else None
 let names = File.ReadAllLines "theories.conf"
-            |> Seq.filter (fun line -> 0 < String.length line) // Is it the best way to check if the string is empty?
-            |> Seq.map (fun x -> x+".thy")            
+            |> Seq.choose nameValid
 let thstxt = Seq.map (fun name -> "../IsarMathLib/" + name |> System.IO.File.ReadAllText) names
 let parsed = Seq.zip thstxt names |> Seq.toList |> parseTheories 
 printfn "Parsed %i theories" parsed.Length 
