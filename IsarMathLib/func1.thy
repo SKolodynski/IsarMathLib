@@ -338,7 +338,7 @@ text\<open>The value of a function defined by a meta-function is this
 
 lemma func1_1_L11B: 
   assumes A1: "f:X\<rightarrow>Y"   "x\<in>X"
-  and A2: "f = {\<langle> x,y\<rangle> \<in> X\<times>Y. b(x) = y}"
+  and A2: "f = {\<langle>x,y\<rangle> \<in> X\<times>Y. b(x) = y}"
   shows "f`(x) = b(x)"
 proof -
   from A1 have "\<langle> x,f`(x)\<rangle> \<in> f" using apply_iff by simp
@@ -392,6 +392,11 @@ text\<open>An hypotheses-free form of \<open>ZF_fun_from_tot_val1\<close>: the v
 
 lemma ZF_fun_from_tot_val2: shows "\<forall>x\<in>X. {\<langle>x,b(x)\<rangle>. x\<in>X}`(x) = b(x)"
   using ZF_fun_from_tot_val1 by simp
+
+text\<open>The range of a function defined by set comprehension is the set of its values."\<close>
+
+lemma range_fun: shows "range({\<langle>x,b(x)\<rangle>. x\<in>X}) = {b(x). x\<in>X}" 
+  by blast
 
 text\<open>In Isabelle/ZF and Metamath if $x$ is not in the domain of a function $f$
   then $f(x)$ is the empty set. This allows us to conclude that if $y\in f(x)$, then
@@ -565,6 +570,19 @@ text\<open>A lemma that can be used instead \<open>fun_extension_iff\<close>
 lemma func_eq: 
   assumes "f: X\<rightarrow>Y"  "g: X\<rightarrow>Z"and  "\<forall>x\<in>X. f`(x) = g`(x)"
   shows "f = g" using assms fun_extension_iff by simp
+
+text\<open>An alternative syntax for defining a function: instead of writing 
+  $\{\langle x,p(x)\rangle. x\in X\}$ we can write $\lambda x\in X. p(x)$. \<close>
+
+lemma lambda_fun_alt: shows "{\<langle>x,p(x)\<rangle>. x\<in>X} = (\<lambda>x\<in>X. p(x))"
+proof -
+  let ?L = "{\<langle>x,p(x)\<rangle>. x\<in>X}" 
+  let ?R = "\<lambda>x\<in>X. p(x)"
+  have "?L:X\<rightarrow>range(?L)" and "?R:X\<rightarrow>range(?L)" 
+    using lam_is_fun_range range_fun lam_funtype by simp_all
+  moreover have "\<forall>x\<in>X. ?L`(x) = ?R`(x)" using ZF_fun_from_tot_val1 beta by simp
+  ultimately show "?L = ?R" using func_eq by blast
+qed
 
 text\<open>If a function is equal to an expression $b(x)$ on $X$, then it has to be
   of the form $\{ \langle x, b(x)\rangle | x\in X\}$. \<close>
@@ -932,7 +950,7 @@ lemma func1_2_L2:
   shows "\<forall>x\<in>A. g`(x) = f`(x)"
 proof
   fix x assume "x\<in>A"
-  with A2 have "\<langle> x,g`(x)\<rangle> \<in> g" using apply_Pair by simp
+  with A2 have "\<langle>x,g`(x)\<rangle> \<in> g" using apply_Pair by simp
   with A4 A1 show "g`(x) = f`(x)"  using apply_iff by auto 
 qed
 
@@ -979,6 +997,15 @@ proof -
   from assms have "\<forall>x\<in>A. f`(x) \<in> Y" using apply_funtype
     by auto
   with assms show ?thesis using func1_2_L4 by simp
+qed
+
+text\<open>A function restricted to its domain is itself.\<close>
+
+lemma restrict_domain: assumes "f:X\<rightarrow>Y"
+  shows "restrict(f,X) = f"
+proof - 
+  have "\<forall>x\<in>X. restrict(f,X)`(x) = f`(x)" using restrict by simp
+  with assms show ?thesis using func_eq restrict_fun by blast
 qed
 
 text\<open>Suppose a function $f:X\rightarrow Y$ is defined by an expression $q$, i.e.

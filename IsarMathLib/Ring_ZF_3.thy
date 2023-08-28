@@ -360,7 +360,7 @@ theorem (in ring2) quotient_fun_homomor:
   unfolding ringHomomor_def[OF ringAssum quotient_ring.ringAssum]
 proof(safe)
   from add_group.quotient_map[OF ideal_normal_add_subgroup[OF idealAssum]]
-    show "f\<^sub>I{is a homomorphism}{R,A}\<rightarrow>{R\<^sub>I,A\<^sub>I}"
+    show "Homomor(f\<^sub>I,R,A,R\<^sub>I,A\<^sub>I)"
     unfolding qfun_def quot_def qadd_def QuotientBy_def[OF idealAssum] by auto
   {
     fix x y assume as:"x\<in>R" "y\<in>R"
@@ -546,7 +546,7 @@ proof
     show "IsAgroup(R,A)" using origin_ring.ringAssum unfolding IsAring_def by auto
     show "f : R \<rightarrow> S" using fun .
     show "IsAsubgroup(J,A)" using assms unfolding origin_ring.Ideal_def by auto
-    show "f{is a homomorphism}{R,A}\<rightarrow>{S,U}" using homomorphism
+    show "Homomor(f,R,A,S,U)" using homomorphism
       unfolding ringHomomor_def[OF origin target]
       by auto
     show "IsAgroup(S,U)" using target_ring.ringAssum

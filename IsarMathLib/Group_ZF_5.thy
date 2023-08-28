@@ -31,18 +31,18 @@ theory Group_ZF_5 imports Group_ZF_4 Ring_ZF Semigroup_ZF
 
 begin
 
+text\<open>In this theory we study group homomorphisms.\<close>
+
 subsection\<open>Homomorphisms\<close>
 
-text\<open>A homomorphism is a function between groups that preserves
-group operations.\<close>
+text\<open>A homomorphism is a function between groups that preserves the group operations.\<close>
 
 text\<open>Suppose we have two groups $G$ and $H$ with corresponding binary operations 
   $P:G\times G \rightarrow G$ and $F:H\times H \rightarrow H$. Then $f$ is a homomorphism
   if for all $g_1,g_2\in G$ we have $f(P\langle g_1,g_2\rangle ) = F\langle f(g_1),f(g_2)\rangle$. \<close> 
 
 definition
-  Homomor ("_{is a homomorphism}{_,_}\<rightarrow>{_,_}" 85)
-    where  "IsAgroup(G,P) \<Longrightarrow> IsAgroup(H,F) \<Longrightarrow> 
+  Homomor where  "IsAgroup(G,P) \<Longrightarrow> IsAgroup(H,F) \<Longrightarrow> 
     Homomor(f,G,P,H,F) \<equiv> \<forall>g\<^sub>1\<in>G. \<forall>g\<^sub>2\<in>G. f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>)=F`\<langle>f`(g\<^sub>1),f`(g\<^sub>2)\<rangle>"
 
 text\<open>Now a lemma about the definition:\<close>
@@ -271,7 +271,7 @@ theorem (in abelian_group) end_is_ring:
 text\<open>The theorems proven in the \<open>ring0\<close> context are valid in the \<open>abelian_group\<close> context
    as applied to the endomorphisms of $G$.  \<close>
 
-sublocale abelian_group < endo_ring:ring0 
+sublocale abelian_group < endo_ring: ring0 
   "End(G,P)" 
   "InEnd(P {lifted to function space over} G,G,P)" 
   "InEnd(Composition(G),G,P)"
@@ -328,123 +328,99 @@ text\<open>If $f:G\rightarrow H$ is a homomorphism, then it sends the inverse of
 
 lemma image_inv:
   assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H" "g\<in>G"
-  shows "f`( GroupInv(G,P)`(g)) = GroupInv(H,F)` (f`(g))"
+  shows "f`(GroupInv(G,P)`(g)) = GroupInv(H,F)`(f`(g))"
 proof-
-  have im:"f`g\<in>H" using apply_type[OF assms(4,5)].
-  have inv:"GroupInv(G,P)`g\<in>G" using group0.inverse_in_group[OF _ assms(5)] assms(1) unfolding group0_def by auto
-  then have inv2:"f`(GroupInv(G,P)`g)\<in>H"using apply_type[OF assms(4)] by auto
-  have "f`TheNeutralElement(G,P)=f`(P`\<langle>g,GroupInv(G,P)`g\<rangle>)" using assms(1,5) group0.group0_2_L6
-    unfolding group0_def by auto
-  also have "\<dots>=F`\<langle>f`g,f`(GroupInv(G,P)`g)\<rangle>" using assms(3) unfolding Homomor_def[OF assms(1,2)] using
-    assms(5) inv by auto
-  ultimately have "TheNeutralElement(H,F)=F`\<langle>f`g,f`(GroupInv(G,P)`g)\<rangle>" using image_neutral[OF assms(1-4)]
-    by auto
-  then show ?thesis using group0.group0_2_L9(2)[OF _ im inv2] assms(2) unfolding group0_def by auto
+  from assms(4,5) have im: "f`(g)\<in>H" using apply_type by simp
+  from assms(1,5) have inv: "GroupInv(G,P)`(g)\<in>G" 
+    using group0.inverse_in_group unfolding group0_def by simp
+  with assms(4) have inv2: "f`(GroupInv(G,P)`g)\<in>H" using apply_type by simp
+  from assms(1,5) have 
+    "f`(TheNeutralElement(G,P)) = f`(P`\<langle>g,GroupInv(G,P)`(g)\<rangle>)" 
+    using group0.group0_2_L6 unfolding group0_def by simp
+  also from assms(1,2,3,5) inv have "\<dots> = F`\<langle>f`(g),f`(GroupInv(G,P)`(g))\<rangle>" 
+    using Homomor_def by simp
+  finally have "f`(TheNeutralElement(G,P)) = F`\<langle>f`(g),f`(GroupInv(G,P)`(g))\<rangle>"
+    by simp
+  with assms(1,2,3,4) im inv2 show ?thesis 
+    using group0.group0_2_L9 image_neutral unfolding group0_def by simp
 qed
 
 text\<open>The preimage of a subgroup is a subgroup\<close>
 
 theorem preimage_sub:
-  assumes "IsAgroup(G,P)" 
-          "IsAgroup(H,F)" 
-          "Homomor(f,G,P,H,F)" 
-          "f:G\<rightarrow>H"
+  assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H"
           "IsAsubgroup(K,F)"
-        shows "IsAsubgroup(f-``(K),P)"
-proof(rule group0.group0_3_T3)
-  show "group0(G, P)" unfolding group0_def using assms(1).
-  show KG:"f-``K \<subseteq> G" using func1_1_L3 assms(4) by auto
-  have "f`TheNeutralElement(G,P) = TheNeutralElement(H,F)"
-    using image_neutral assms(1-4) by auto
-  then have "f`TheNeutralElement(G,P) \<in> K" using group0.group0_3_L5
-    assms(2,5) unfolding group0_def by auto
-  then have "TheNeutralElement(G,P)\<in>f-``K"
-    using func1_1_L15 assms(4) assms(1) group0.group0_2_L2[of G P] unfolding group0_def
-    by auto
-  then show "f-``K\<noteq>0" by auto
-  {
-    fix x assume "x\<in>f-``K"
-    then obtain y where y:"\<langle>x,y\<rangle>\<in>f" "y \<in> K" using vimage_iff by auto
-    from y(1) have x:"x:G" using assms(4) unfolding Pi_def by auto
-    with y(1) have "\<langle>GroupInv(G, P)`x,GroupInv(H, F)`y\<rangle>\<in>f" using 
-        image_inv[OF assms(1-4), of x]
-      apply_Pair[OF assms(4), of x] assms(4)
-      apply_Pair[OF assms(4) group0.inverse_in_group[of G P x]] 
-      assms(1)
-      unfolding Pi_def function_def group0_def by force
-    moreover have "GroupInv(H, F)`y \<in> K" using group0.group0_3_T3A
-      assms(2,5) y(2) unfolding group0_def by auto
-    ultimately have "GroupInv(G, P)`x \<in>f-``K" using vimage_iff by auto
-  }
-  then show "\<forall>x\<in>f -`` K. GroupInv(G, P) ` x \<in> f -`` K" by auto
-  {
-    fix x y assume as:"x:f-``K" "y:f-``K"
-    then obtain x1 y1 where xy1:"\<langle>x,x1\<rangle>\<in>f" "x1\<in>K" "\<langle>y,y1\<rangle>\<in>f" "y1\<in>K"
-      using vimage_iff by auto
-    have "f`(P`\<langle>x,y\<rangle>) = F`\<langle>f`x,f`y\<rangle>" using homomor_eq[OF assms(1-3)]
-      as KG by auto moreover
-    from assms(4) xy1(3) apply_Pair[OF assms(4), of y]
-    have "y1=f`y" unfolding Pi_def function_def by blast moreover
-    from assms(4) xy1(1) apply_Pair[OF assms(4), of x]
-    have "x1=f`x" unfolding Pi_def function_def by blast ultimately
-    have "f`(P`\<langle>x,y\<rangle>) = F`\<langle>x1,y1\<rangle>" by auto
-    with xy1(2,4) have "f`(P`\<langle>x,y\<rangle>) \<in> K" using group0.group0_3_L6
-      assms(2,5) unfolding group0_def by auto
-    then have "P`\<langle>x,y\<rangle>:f-``K" using func1_1_L15[OF assms(4)]
-      using group0.group_op_closed as KG unfolding group0_def
-      using assms(1) by auto
-  }
-  then show "f -`` K {is closed under} P" unfolding IsOpClosed_def by auto
+  shows "IsAsubgroup(f-``(K),P)"
+proof -
+  from assms(2) have Hgr: "group0(H,F)" unfolding group0_def by simp
+  from assms(1) have Ggr: "group0(G,P)" unfolding group0_def by simp
+  moreover 
+  from assms Ggr Hgr have "TheNeutralElement(G,P) \<in> f-``(K)"
+    using image_neutral group0.group0_3_L5 func1_1_L15 group0.group0_2_L2 
+    by simp
+  hence "f-``(K)\<noteq>0" by blast
+  moreover from assms(4) have "f-``(K) \<subseteq> G" using func1_1_L3 by simp
+  moreover from assms Ggr Hgr have "f-``(K) {is closed under} P"
+    using func1_1_L15 group0.group0_3_L6 Homomor_def 
+        group0.group_op_closed func1_1_L15
+    unfolding IsOpClosed_def by simp
+  moreover from assms Ggr Hgr have 
+    "\<forall>x\<in>f-``(K). GroupInv(G, P)`(x) \<in> f-``(K)"
+    using group0.group0_3_T3A image_inv func1_1_L15 
+        group0.inverse_in_group by simp
+  ultimately show ?thesis by (rule group0.group0_3_T3)
 qed
 
 text\<open>The preimage of a normal subgroup is normal\<close>
 
 theorem preimage_normal_subgroup:
-  assumes  "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H"
+  assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H"
           "IsAnormalSubgroup(H,F,K)"
-        shows "IsAnormalSubgroup(G,P,f-``K)"
-proof (rule group0.cont_conj_is_normal)
-  show "group0(G,P)" unfolding group0_def using assms(1).
-  show "IsAsubgroup(f-``K,P)" using preimage_sub assms unfolding IsAnormalSubgroup_def
-    by auto
-  {
-    fix g assume g:"g\<in>G"
-    {
-      fix h assume "h:{P ` \<langle>g, P ` \<langle>h, GroupInv(G, P) ` g\<rangle>\<rangle> . h \<in> f -`` K}"
-      then obtain k where k:"h = P ` \<langle>g, P ` \<langle>k, GroupInv(G, P) ` g\<rangle>\<rangle>" "k\<in> f -`` K" by auto
-      from k(1) have "f`h = f`(P ` \<langle>g, P ` \<langle>k, GroupInv(G, P) ` g\<rangle>\<rangle>)" by auto
-      moreover have "k:G" using k(2) assms(4) vimage_iff unfolding Pi_def by auto
-      moreover note g
-      ultimately have f:"f`h = F`\<langle>f`g,F`\<langle>f`k,GroupInv(H,F)`(f`g)\<rangle>\<rangle>"
-        using group0.group_op_closed[of G P] group0.inverse_in_group[of G P]
-        image_inv[OF assms(1-4)] homomor_eq[OF assms(1-3)]
-        assms(1) unfolding group0_def by auto
-      from g k have hg:"h:G" using group0.group_op_closed[of G P]
-        group0.inverse_in_group[of G P] func1_1_L15[OF assms(4)] assms(1)
-        unfolding group0_def by auto
-      from k(2) have fk:"f`k:K" using func1_1_L15[OF assms(4)] by auto
-      moreover have fg:"f`g:H" using apply_type[OF assms(4)] g by auto
-      ultimately have "F`\<langle>F`\<langle>f`g,f`k\<rangle>,GroupInv(H,F)`(f`g)\<rangle> \<in>K"
-        using assms(5) unfolding IsAnormalSubgroup_def by auto
-      then have "f`h \<in>K" using group0.group_oper_assoc[of H F "f`g" "f`k"]
-        fk fg f assms(2,5) group0.group0_3_L2[of H F K]
-        group0.inverse_in_group[of H F "f`g"]
-        unfolding group0_def IsAnormalSubgroup_def by auto
-      then have "h:f-``K" using func1_1_L15[OF assms(4)] hg by auto
-    }
-    then have "{P ` \<langle>g, P ` \<langle>h, GroupInv(G, P) ` g\<rangle>\<rangle> . h \<in> f -`` K} \<subseteq> f -`` K" by auto
-  }
-  then show "\<forall>g\<in>G. {P ` \<langle>g, P ` \<langle>h, GroupInv(G, P) ` g\<rangle>\<rangle> . h \<in> f -`` K} \<subseteq> f -`` K" by auto
+        shows "IsAnormalSubgroup(G,P,f-``(K))"
+proof -
+  from assms(2) have Hgr: "group0(H,F)" unfolding group0_def by simp
+  with assms(5) have "K\<subseteq>H" using group0.group0_3_L2 
+    unfolding IsAnormalSubgroup_def  by simp
+  from assms(1) have Ggr: "group0(G,P)" unfolding group0_def by simp
+  moreover from assms have "IsAsubgroup(f-``(K),P)" 
+    using preimage_sub unfolding IsAnormalSubgroup_def by simp
+  moreover
+  { fix g assume "g\<in>G"
+    { fix h assume "h \<in> {P`\<langle>g,P`\<langle>h, GroupInv(G, P)`(g)\<rangle>\<rangle>. h \<in> f-``(K)}"
+      then obtain k where 
+        k: "h = P`\<langle>g,P`\<langle>k,GroupInv(G, P)`(g)\<rangle>\<rangle>" "k \<in> f-``(K)" 
+        by auto
+      from k(1) have "f`(h) = f`(P`\<langle>g,P`\<langle>k, GroupInv(G, P)`(g)\<rangle>\<rangle>)" by simp
+      moreover from assms(4) k(2) have "k\<in>G" using vimage_iff 
+        unfolding Pi_def by blast
+      ultimately have f: "f`(h) = F`\<langle>f`(g),F`\<langle>f`(k),GroupInv(H,F)`(f`(g))\<rangle>\<rangle>"
+        using assms(1-4) Ggr \<open>g\<in>G\<close> group0.group_op_closed 
+          group0.inverse_in_group image_inv homomor_eq by simp
+      from assms(1,4) Ggr \<open>g\<in>G\<close> k have "h\<in>G" using group0.group_op_closed
+        group0.inverse_in_group func1_1_L15 by simp
+      from assms(4,5) k(2) \<open>g\<in>G\<close> have "f`(k)\<in>K" "f`(g)\<in>H" and 
+        "F`\<langle>F`\<langle>f`(g),f`(k)\<rangle>,GroupInv(H,F)`(f`(g))\<rangle> \<in> K"
+        using func1_1_L15 apply_type unfolding IsAnormalSubgroup_def 
+        by auto
+      moreover from \<open>f`(k)\<in>K\<close> \<open>K\<subseteq>H\<close> Hgr f \<open>f`(g)\<in>H\<close> have
+        "f`(h) = F`\<langle>F`\<langle>f`(g),f`(k)\<rangle>,GroupInv(H,F)`(f`(g))\<rangle>"
+        using group0.group_oper_assoc group0.inverse_in_group by auto
+      ultimately have "f`(h) \<in> K" by simp
+      with assms(4) \<open>h\<in>G\<close> have "h \<in> f-``(K)" using func1_1_L15 by simp
+    } hence "{P`\<langle>g,P`\<langle>h,GroupInv(G,P)`(g)\<rangle>\<rangle>. h\<in>f-``(K)} \<subseteq> f-``(K)" 
+      by blast
+  } hence "\<forall>g\<in>G. {P`\<langle>g, P`\<langle>h, GroupInv(G, P)`(g)\<rangle>\<rangle>. h\<in>f-``(K)} \<subseteq> f-``(K)" 
+    by simp
+  ultimately show ?thesis using group0.cont_conj_is_normal by simp 
 qed        
 
 text\<open>The kernel of an homomorphism is a normal subgroup.\<close>
 
-corollary kerner_normal_sub:
+corollary kernel_normal_sub:
   assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H"
   shows "IsAnormalSubgroup(G,P,f-``{TheNeutralElement(H,F)})"
-  using preimage_normal_subgroup[OF assms]
-    group0.trivial_normal_subgroup[of H F] unfolding group0_def
-  using assms(2) by auto
+  using assms preimage_normal_subgroup group0.trivial_normal_subgroup 
+  unfolding group0_def by auto
 
 text\<open>The image of a subgroup is a subgroup\<close>
 
@@ -452,195 +428,196 @@ theorem image_subgroup:
   assumes "IsAgroup(G,P)" "IsAgroup(H,F)" 
     "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H" "IsAsubgroup(K,P)"
   shows "IsAsubgroup(f``K,F)"
-proof(rule group0.group0_3_T3)
-  have sub:"K\<subseteq>G" using group0.group0_3_L2[of G P K] assms(1,5) unfolding group0_def by auto
-  show "group0(H,F)" using assms(2) unfolding group0_def.
-  show "f``K \<subseteq> H" using func_imagedef[OF assms(4)] sub apply_type[OF assms(4)] by auto
-  have "TheNeutralElement(G,P) :  K" using group0.group0_3_L5
-    assms(1,5) unfolding group0_def by auto
-  then have "f`TheNeutralElement(G,P) \<in>f``K" using func_imagedef[OF assms(4)]
-    sub by auto
-  then show "f``K \<noteq> 0" by auto
-  {
-    fix x assume x:"x:f``K"
-    then obtain q where q:"q:K" "x=f`q" using func_imagedef[OF assms(4)] sub by auto
-    then have "GroupInv(H,F)`x = f`(GroupInv(G,P)`q)" using 
-      image_inv[OF assms(1-4)] sub by auto
-    then have "GroupInv(H,F)`x:f``K" using group0.group0_3_T3A[of G P K q]
-      assms(1,5) q(1) func_imagedef[OF assms(4)] sub unfolding group0_def by auto
-  }
-  then show "\<forall>x\<in>f `` K. GroupInv(H, F) ` x \<in> f `` K" by auto
-  {
-    fix x y assume "x:f``K" "y:f``K"
-    then obtain qx qy where q:"qx:K" "x=f`qx" "qy:K" "y=f`qy" using func_imagedef[OF assms(4)] sub by auto
-    then have "F`\<langle>x,y\<rangle> = f`(P`\<langle>qx,qy\<rangle>)" using homomor_eq[OF assms(1-3), of qx qy] sub by force
-    moreover from q(1,3) have "P`\<langle>qx,qy\<rangle>:K" using group0.group0_3_L6
-      assms(1,5) unfolding group0_def by auto
-    ultimately have "F`\<langle>x,y\<rangle> \<in>f``K" using func_imagedef[OF assms(4)] sub by auto
-  }
-  then show "f `` K {is closed under} F" unfolding IsOpClosed_def by auto
+proof - 
+  from assms(1,5) have sub: "K\<subseteq>G" using group0.group0_3_L2 
+    unfolding group0_def by simp
+  from assms(2) have "group0(H,F)" unfolding group0_def by simp
+  moreover from assms(4) have "f``(K) \<subseteq> H" 
+    using func_imagedef sub apply_type by auto
+  moreover
+  from assms(1,4,5) sub have "f`(TheNeutralElement(G,P)) \<in> f``(K)"
+    using group0.group0_3_L5 func_imagedef unfolding group0_def 
+    by auto
+  hence "f``(K) \<noteq> 0" by blast
+  moreover
+  { fix x assume "x\<in>f``(K)"
+    with assms(4) sub obtain q where q: "q\<in>K" "x=f`(q)" 
+      using func_imagedef by auto
+    with assms(1-4) sub have "GroupInv(H,F)`(x) = f`(GroupInv(G,P)`q)" 
+      using image_inv by auto
+    with assms(1,4,5) q(1) sub have "GroupInv(H,F)`(x) \<in> f``(K)" 
+      using group0.group0_3_T3A func_imagedef unfolding group0_def 
+      by auto
+  } hence "\<forall>x\<in>f``(K). GroupInv(H, F)`(x) \<in> f``(K)" by auto
+  moreover 
+  { fix x y assume "x\<in>f``(K)" "y\<in>f``(K)"
+    with assms(4) sub obtain q\<^sub>x q\<^sub>y where 
+      q: "q\<^sub>x\<in>K" "x=f`(q\<^sub>x)" "q\<^sub>y\<in>K" "y=f`(q\<^sub>y)" 
+      using func_imagedef by auto
+    with assms(1-3) sub have "F`\<langle>x,y\<rangle> = f`(P`\<langle>q\<^sub>x,q\<^sub>y\<rangle>)" 
+      using homomor_eq by force
+    moreover from assms(1,5) q(1,3) have "P`\<langle>q\<^sub>x,q\<^sub>y\<rangle> \<in> K" 
+      using group0.group0_3_L6 unfolding group0_def by simp
+    ultimately have "F`\<langle>x,y\<rangle>  \<in> f``(K)" 
+      using assms(4) sub func_imagedef by auto
+  } then have  "f``(K) {is closed under} F" unfolding IsOpClosed_def 
+    by simp
+  ultimately show ?thesis using group0.group0_3_T3 by simp
 qed
+
+text\<open>The image of a group under a homomorphism is a subgroup of the target group.\<close>
 
 corollary image_group:
   assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H"
-  shows "IsAsubgroup(f``G,F)"
-proof-
-  have "restrict(P,G\<times>G)=P" using group0.group_oper_fun[of G P] restrict_idem assms(1)
-    unfolding Pi_def group0_def by auto
-  then have "IsAsubgroup(G,P)" unfolding IsAsubgroup_def using assms(1) by auto
-  then show ?thesis using image_subgroup[OF assms, of G] by auto
+  shows "IsAsubgroup(f``(G),F)"
+proof - 
+  from assms(1) have "restrict(P,G\<times>G) = P" 
+    using group0.group_oper_fun restrict_domain unfolding group0_def 
+    by blast
+  with assms show ?thesis using image_subgroup unfolding IsAsubgroup_def
+    by simp
 qed
 
-
 text\<open>Now we are able to prove the first isomorphism theorem. This theorem states
-that any group homomorphism $f:G\to H$ gives an isomorphism between a quotient group of $G$
-and a subgroup of $H$.\<close>
+  that any group homomorphism $f:G\to H$ gives an isomorphism between a quotient group of $G$
+  and a subgroup of $H$.\<close>
 
 theorem isomorphism_first_theorem:
   assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H"
   defines "r \<equiv> QuotientGroupRel(G,P,f-``{TheNeutralElement(H,F)})" and
-  "PP \<equiv> QuotientGroupOp(G,P,f-``{TheNeutralElement(H,F)})"
-  shows "\<exists>ff. Homomor(ff,G//r,PP,f``G,restrict(F,(f``G)\<times>(f``G))) \<and> ff\<in>bij(G//r,f``G)"
+  "\<P> \<equiv> QuotientGroupOp(G,P,f-``{TheNeutralElement(H,F)})"
+  shows "\<exists>\<ff>. Homomor(\<ff>,G//r,\<P>,f``G,restrict(F,(f``G)\<times>(f``(G)))) \<and> \<ff>\<in>bij(G//r,f``(G))"
 proof-
-  let ?ff="{\<langle>r``{g},f`g\<rangle>. g\<in>G}"
-  {
-    fix t assume "t\<in>{\<langle>r``{g},f`g\<rangle>. g\<in>G}"
-    then obtain g where "t=\<langle>r``{g},f`g\<rangle>" "g\<in>G" by auto
-    moreover then have "r``{g}\<in>G//r" unfolding r_def quotient_def by auto
-    moreover from \<open>g\<in>G\<close> have "f`g\<in>f``G" using func_imagedef[OF assms(4)] by auto
-    ultimately have "t\<in>(G//r)\<times>f``G" by auto
-  }
-  then have "?ff\<in>Pow((G//r)\<times>f``G)" by auto
-  moreover have "(G//r)\<subseteq>domain(?ff)" unfolding domain_def quotient_def by auto moreover
-  {
-    fix x y t assume A:"\<langle>x,y\<rangle>\<in>?ff" "\<langle>x,t\<rangle>\<in>?ff"
-    then obtain gy gr where "\<langle>x, y\<rangle>=\<langle>r``{gy},f`gy\<rangle>" "\<langle>x, t\<rangle>=\<langle>r``{gr},f`gr\<rangle>" and p:"gr\<in>G""gy\<in>G" by auto
-    then have B:"r``{gy}=r``{gr}""y=f`gy""t=f`gr" by auto
-    from B(2,3) have q:"y\<in>H""t\<in>H" using apply_type p assms(4) by auto
-    have "\<langle>gy,gr\<rangle>\<in>r" using eq_equiv_class[OF B(1) _ p(1)] group0.Group_ZF_2_4_L3 kerner_normal_sub[OF assms(1-4)]
-      assms(1) unfolding group0_def IsAnormalSubgroup_def r_def by auto
-    then have "P`\<langle>gy,GroupInv(G,P)`gr\<rangle>\<in>f-``{TheNeutralElement(H,F)}" unfolding r_def QuotientGroupRel_def by auto
-    then have eq:"f`(P`\<langle>gy,GroupInv(G,P)`gr\<rangle>)=TheNeutralElement(H,F)" using func1_1_L15[OF assms(4)] by auto
-    from B(2,3) have "F`\<langle>y,GroupInv(H,F)`t\<rangle>=F`\<langle>f`gy,GroupInv(H,F)`(f`gr)\<rangle>" by auto
-    also have "\<dots>=F`\<langle>f`gy,f`(GroupInv(G,P)`gr)\<rangle>" using image_inv[OF assms(1-4)] p(1) by auto
-    also have "\<dots>=f`(P`\<langle>gy,GroupInv(G,P)`gr\<rangle>)" using assms(3) unfolding Homomor_def[OF assms(1,2)] using p(2)
-      group0.inverse_in_group assms(1) p(1) unfolding group0_def by auto
-    ultimately have "F`\<langle>y,GroupInv(H,F)`t\<rangle>=TheNeutralElement(H,F)" using eq by auto
-    then have "y=t" using assms(2) group0.group0_2_L11A q unfolding group0_def by auto
-  }
-  then have "\<forall>x y. \<langle>x,y\<rangle>\<in>?ff \<longrightarrow> (\<forall>y'. \<langle>x,y'\<rangle>\<in>?ff \<longrightarrow> y=y')" by auto
-  ultimately have ff_fun:"?ff:G//r\<rightarrow>f``G" unfolding Pi_def function_def by auto
-  {
-    fix a1 a2 assume AS:"a1\<in>G//r""a2\<in>G//r"
-    then obtain g\<^sub>1 g\<^sub>2  where p:"g\<^sub>1\<in>G""g\<^sub>2\<in>G" and a:"a1=r``{g\<^sub>1}""a2=r``{g\<^sub>2}" unfolding quotient_def by auto
-    have "equiv(G,r)" using group0.Group_ZF_2_4_L3 kerner_normal_sub[OF assms(1-4)]
-      assms(1) unfolding group0_def IsAnormalSubgroup_def r_def by auto moreover
-    have "Congruent2(r,P)" using Group_ZF_2_4_L5A[OF assms(1) kerner_normal_sub[OF assms(1-4)]]
-      unfolding r_def by auto moreover
-    have "PP=ProjFun2(G,r,P)" unfolding PP_def QuotientGroupOp_def r_def by auto moreover
-    note a p ultimately have "PP`\<langle>a1,a2\<rangle>=r``{P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>}" using group0.Group_ZF_2_2_L2 assms(1)
+  let ?\<ff> = "{\<langle>r``{g},f`(g)\<rangle>. g\<in>G}"
+  from assms(1-5) have "equiv(G,r)"
+    using group0.Group_ZF_2_4_L3 kernel_normal_sub 
+    unfolding group0_def IsAnormalSubgroup_def by simp
+  from assms(4,5) have "?\<ff> \<in> Pow((G//r)\<times>f``G)" 
+    unfolding quotient_def using func_imagedef by auto
+  moreover have "(G//r) \<subseteq> domain(?\<ff>)" unfolding domain_def quotient_def by auto 
+  moreover
+  { fix x y t assume A: "\<langle>x,y\<rangle> \<in> ?\<ff>" "\<langle>x,t\<rangle> \<in> ?\<ff>"
+    then obtain g\<^sub>y g\<^sub>r where "\<langle>x, y\<rangle>=\<langle>r``{g\<^sub>y},f`(g\<^sub>y)\<rangle>" "\<langle>x, t\<rangle>=\<langle>r``{g\<^sub>r},f`(g\<^sub>r)\<rangle>" 
+      and "g\<^sub>r\<in>G" "g\<^sub>y\<in>G" by auto
+    hence B: "r``{g\<^sub>y}=r``{g\<^sub>r}" "y=f`(g\<^sub>y)" "t=f`(g\<^sub>r)" by auto
+    from assms(4) \<open>g\<^sub>y\<in>G\<close> \<open>g\<^sub>r\<in>G\<close> B(2,3) have "y\<in>H" "t\<in>H" 
+      using apply_type by simp_all
+    with \<open>equiv(G,r)\<close> \<open>g\<^sub>r\<in>G\<close> \<open>r``{g\<^sub>y}=r``{g\<^sub>r}\<close> have "\<langle>g\<^sub>y,g\<^sub>r\<rangle>\<in>r" 
+      using same_image_equiv by simp
+    with assms(4,5) have 
+      "f`(P`\<langle>g\<^sub>y,GroupInv(G,P)`(g\<^sub>r)\<rangle>) = TheNeutralElement(H,F)"
+      unfolding QuotientGroupRel_def using func1_1_L15 by simp
+    with assms(1-4) B(2,3) \<open>g\<^sub>y\<in>G\<close> \<open>g\<^sub>r\<in>G\<close> \<open>y\<in>H\<close> \<open>t\<in>H\<close> have "y=t"
+      using image_inv Homomor_def group0.inverse_in_group group0.group0_2_L11A 
       unfolding group0_def by auto
-    then have "\<langle>PP`\<langle>a1,a2\<rangle>,f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>)\<rangle>\<in>?ff" using group0.group_op_closed[OF _ p] assms(1) unfolding group0_def
+  } hence "\<forall>x y. \<langle>x,y\<rangle> \<in> ?\<ff> \<longrightarrow> (\<forall>z. \<langle>x,z\<rangle>\<in>?\<ff> \<longrightarrow> y=z)" by auto
+  ultimately have ff_fun: "?\<ff>:G//r\<rightarrow>f``(G)" unfolding Pi_def function_def 
+    by auto
+  { fix a\<^sub>1 a\<^sub>2 assume AS: "a\<^sub>1\<in>G//r" "a\<^sub>2\<in>G//r"
+    then obtain g\<^sub>1 g\<^sub>2  where "g\<^sub>1\<in>G" "g\<^sub>2\<in>G" and a: "a\<^sub>1=r``{g\<^sub>1}" "a\<^sub>2=r``{g\<^sub>2}" 
+      unfolding quotient_def by auto
+    with assms \<open>equiv(G,r)\<close> have "\<langle>\<P>`\<langle>a\<^sub>1,a\<^sub>2\<rangle>,f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>)\<rangle> \<in> ?\<ff>"
+      using Group_ZF_2_4_L5A kernel_normal_sub group0.Group_ZF_2_2_L2 group0.group_op_closed
+      unfolding QuotientGroupOp_def group0_def by auto       
+    with ff_fun have eq: "?\<ff>`(\<P>`\<langle>a\<^sub>1,a\<^sub>2\<rangle>) = f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>)" using apply_equality  
+      by simp
+    from \<open>g\<^sub>1\<in>G\<close> \<open>g\<^sub>2\<in>G\<close> a have "\<langle>a\<^sub>1,f`(g\<^sub>1)\<rangle> \<in> ?\<ff>" and "\<langle>a\<^sub>2,f`(g\<^sub>2)\<rangle> \<in> ?\<ff>" by auto
+    with assms(1,2,3) ff_fun \<open>g\<^sub>1\<in>G\<close> \<open>g\<^sub>2\<in>G\<close> eq have "F`\<langle>?\<ff>`(a\<^sub>1),?\<ff>`(a\<^sub>2)\<rangle> = ?\<ff>`(\<P>`\<langle>a\<^sub>1,a\<^sub>2\<rangle>)"
+      using apply_equality Homomor_def by simp
+    moreover from AS ff_fun have "?\<ff>`(a\<^sub>1) \<in> f``(G)" "?\<ff>`(a\<^sub>2) \<in> f``(G)" 
+      using apply_type by auto 
+    ultimately have "restrict(F,f``(G)\<times>f``(G))`\<langle>?\<ff>`(a\<^sub>1),?\<ff>`(a\<^sub>2)\<rangle> = ?\<ff>`(\<P>`\<langle>a\<^sub>1,a\<^sub>2\<rangle>)" 
+      by simp
+  } hence r: "\<forall>a\<^sub>1\<in>G//r. \<forall>a\<^sub>2\<in>G//r. restrict(F,f``G\<times>f``G)`\<langle>?\<ff>`a\<^sub>1,?\<ff>`a\<^sub>2\<rangle> = ?\<ff>`(\<P>`\<langle>a\<^sub>1,a\<^sub>2\<rangle>)" 
+    by simp
+  moreover from assms have G: "IsAgroup(G//r,\<P>)" 
+    using Group_ZF_2_4_T1 kernel_normal_sub by simp
+  moreover from assms(1-4) have H: "IsAgroup(f``(G), restrict(F,f``(G)\<times>f``(G)))" 
+    using image_group unfolding IsAsubgroup_def by simp
+  ultimately have HOM: "Homomor(?\<ff>,G//r,\<P>,f``(G),restrict(F,(f``(G))\<times>(f``(G))))" 
+    using Homomor_def by simp
+  { fix b\<^sub>1 b\<^sub>2 assume AS: "?\<ff>`(b\<^sub>1) = ?\<ff>`(b\<^sub>2)" "b\<^sub>1\<in>G//r" "b\<^sub>2\<in>G//r"
+    from G AS(3) have invb2: "GroupInv(G//r,\<P>)`(b\<^sub>2)\<in>G//r" 
+      using group0.inverse_in_group unfolding group0_def by simp
+    with G AS(2) have I: "\<P>`\<langle>b\<^sub>1,GroupInv(G//r,\<P>)`(b\<^sub>2)\<rangle>\<in>G//r"
+      using group0.group_op_closed unfolding group0_def by auto
+    then obtain g where "g\<in>G" and gg: "\<P>`\<langle>b\<^sub>1,GroupInv(G//r,\<P>)`(b\<^sub>2)\<rangle>=r``{g}" 
+      unfolding quotient_def by auto
+    from \<open>g\<in>G\<close> have "\<langle>r``{g},f`(g)\<rangle> \<in> ?\<ff>" by blast
+    with ff_fun gg have E: "?\<ff>`(\<P>`\<langle>b\<^sub>1,GroupInv(G//r,\<P>)`(b\<^sub>2)\<rangle>) = f`(g)"
+      using apply_equality by simp
+    from ff_fun invb2 have pp: "?\<ff>`(GroupInv(G//r,\<P>)`(b\<^sub>2))\<in>f``(G)" 
+      using apply_type by simp
+    from ff_fun AS(2,3) have fff: "?\<ff>`(b\<^sub>1) \<in> f``(G)" "?\<ff>`(b\<^sub>2) \<in> f``(G)" 
+      using apply_type by simp_all
+    from fff(1) pp have 
+      EE: "F`\<langle>?\<ff>`(b\<^sub>1),?\<ff>`(GroupInv(G//r,\<P>)`(b\<^sub>2))\<rangle>=
+          restrict(F,f``(G)\<times>f``(G))`\<langle>?\<ff>`(b\<^sub>1),?\<ff>`(GroupInv(G//r,\<P>)`(b\<^sub>2))\<rangle>"
       by auto
-    then have eq:"?ff`(PP`\<langle>a1,a2\<rangle>)=f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>)" using apply_equality ff_fun by auto
-    from p a have "\<langle>a1,f`g\<^sub>1\<rangle>\<in>?ff""\<langle>a2,f`g\<^sub>2\<rangle>\<in>?ff" by auto
-    then have "?ff`a1=f`g\<^sub>1""?ff`a2=f`g\<^sub>2" using apply_equality ff_fun by auto
-    then have "F`\<langle>?ff`a1,?ff`a2\<rangle>=F`\<langle>f`g\<^sub>1,f`g\<^sub>2\<rangle>" by auto
-    also have "\<dots>=f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>)" using assms(3) unfolding Homomor_def[OF assms(1,2)] using p by auto
-    ultimately have "F`\<langle>?ff`a1,?ff`a2\<rangle>=?ff`(PP`\<langle>a1,a2\<rangle>)" using eq by auto moreover
-    have "?ff`a1\<in>f``G""?ff`a2\<in>f``G" using ff_fun apply_type AS by auto ultimately
-    have "restrict(F,f``G\<times>f``G)`\<langle>?ff`a1,?ff`a2\<rangle>=?ff`(PP`\<langle>a1,a2\<rangle>)" by auto
-  }
-  then have r:"\<forall>a1\<in>G//r. \<forall>a2\<in>G//r. restrict(F,f``G\<times>f``G)`\<langle>?ff`a1,?ff`a2\<rangle>=?ff`(PP`\<langle>a1,a2\<rangle>)" by auto
-  have G:"IsAgroup(G//r,PP)" using Group_ZF_2_4_T1[OF assms(1) kerner_normal_sub[OF assms(1-4)]] unfolding r_def PP_def by auto
-  have H:"IsAgroup(f``G, restrict(F,f``G\<times>f``G))" using image_group[OF assms(1-4)] unfolding IsAsubgroup_def .
-  have HOM:"Homomor(?ff,G//r,PP,f``G,restrict(F,(f``G)\<times>(f``G)))" using r unfolding Homomor_def[OF G H] by auto
-  {
-    fix b1 b2 assume AS:"?ff`b1=?ff`b2""b1\<in>G//r""b2\<in>G//r"
-    have invb2:"GroupInv(G//r,PP)`b2\<in>G//r" using group0.inverse_in_group[OF _ AS(3)] G unfolding group0_def
+    from assms(4) have "f``(G) \<subseteq> H" using func1_1_L6(2) by simp
+    with fff have "?\<ff>`(b\<^sub>1)\<in>H" "?\<ff>`(b\<^sub>2)\<in>H" by auto
+    with assms(1-4) G H HOM ff_fun AS(1,3) fff(2) EE have
+      "TheNeutralElement(H,F) = restrict(F,f``(G)\<times>f``(G))`\<langle>?\<ff>`(b\<^sub>1),?\<ff>`(GroupInv(G//r,\<P>)`(b\<^sub>2))\<rangle>"
+      using group0.group0_2_L6(1) restrict image_inv group0.group0_3_T1 image_group 
+      unfolding group0_def by simp
+    also from G H HOM AS(2,3) E have "\<dots> = f`(g)"
+      using Homomor_def group0.inverse_in_group unfolding group0_def by simp
+    finally have "TheNeutralElement(H,F) = f`(g)" by simp
+    with assms(4) \<open>g\<in>G\<close> have "g\<in>f-``{TheNeutralElement(H,F)}" using func1_1_L15 
+      by simp
+    with assms \<open>g\<in>G\<close> gg have 
+      "\<P>`\<langle>b\<^sub>1,GroupInv(G//r,\<P>)`(b\<^sub>2)\<rangle> = TheNeutralElement(G//r,\<P>)"
+      using group0.Group_ZF_2_4_L5E kernel_normal_sub unfolding group0_def 
+      by simp
+    with AS(2,3) G have "b\<^sub>1=b\<^sub>2" using group0.group0_2_L11A unfolding group0_def 
       by auto
-    with AS(2) have "PP`\<langle>b1,GroupInv(G//r,PP)`b2\<rangle>\<in>G//r" using group0.group_op_closed G unfolding group0_def by auto moreover
-    then obtain gg where gg:"gg\<in>G""PP`\<langle>b1,GroupInv(G//r,PP)`b2\<rangle>=r``{gg}" unfolding quotient_def by auto
-    ultimately have E:"?ff`(PP`\<langle>b1,GroupInv(G//r,PP)`b2\<rangle>)=f`gg" using apply_equality[OF _ ff_fun] by auto
-    from invb2 have pp:"?ff`(GroupInv(G//r,PP)`b2)\<in>f``G" using apply_type ff_fun by auto
-    from AS(2,3) have fff:"?ff`b1\<in>f``G""?ff`b2\<in>f``G" using apply_type[OF ff_fun] by auto
-    from fff(1) pp have EE:"F`\<langle>?ff`b1,?ff`(GroupInv(G//r,PP)`b2)\<rangle>=restrict(F,f``G\<times>f``G)`\<langle>?ff`b1,?ff`(GroupInv(G//r,PP)`b2)\<rangle>"
-      by auto
-    from fff have fff2:"?ff`b1\<in>H""?ff`b2\<in>H" using func1_1_L6(2)[OF assms(4)] by auto
-    with AS(1) have "TheNeutralElement(H,F)=F`\<langle>?ff`b1,GroupInv(H,F)`(?ff`b2)\<rangle>" using group0.group0_2_L6(1)
-      assms(2) unfolding group0_def by auto
-    also have "\<dots>=F`\<langle>?ff`b1,restrict(GroupInv(H,F),f``G)`(?ff`b2)\<rangle>" using restrict fff(2) by auto
-    also have "\<dots>=F`\<langle>?ff`b1,?ff`(GroupInv(G//r,PP)`b2)\<rangle>" using image_inv[OF G H HOM ff_fun AS(3)]
-      group0.group0_3_T1[OF _ image_group[OF assms(1-4)]] assms(2) unfolding group0_def by auto
-    also have "\<dots>=restrict(F,f``G\<times>f``G)`\<langle>?ff`b1,?ff`(GroupInv(G//r,PP)`b2)\<rangle>" using EE by auto
-    also have "\<dots>=?ff`(PP`\<langle>b1,GroupInv(G//r,PP)`b2\<rangle>)" using HOM unfolding Homomor_def[OF G H] using AS(2)
-      group0.inverse_in_group[OF _ AS(3)] G unfolding group0_def by auto
-    also have "\<dots>=f`gg" using E by auto
-    ultimately have "f`gg=TheNeutralElement(H,F)" by auto
-    then have "gg\<in>f-``{TheNeutralElement(H,F)}" using func1_1_L15[OF assms(4)] \<open>gg\<in>G\<close> by auto
-    then have "r``{gg}=TheNeutralElement(G//r,PP)" using group0.Group_ZF_2_4_L5E[OF _ kerner_normal_sub[OF assms(1-4)]
-      \<open>gg\<in>G\<close> ] using assms(1) unfolding group0_def r_def PP_def by auto 
-    with gg(2) have "PP`\<langle>b1,GroupInv(G//r,PP)`b2\<rangle>=TheNeutralElement(G//r,PP)" by auto
-    then have "b1=b2" using group0.group0_2_L11A[OF _ AS(2,3)] G unfolding group0_def by auto
+  } with ff_fun have "?\<ff> \<in> inj(G//r,f``(G))" unfolding inj_def by blast 
+  moreover
+  { fix m assume "m \<in> f``(G)"
+    with assms(4) obtain g where "g\<in>G" "m=f`(g)" using func_imagedef by auto
+    hence "\<langle>r``{g},m\<rangle> \<in> ?\<ff>" by blast
+    with ff_fun have "?\<ff>`(r``{g})=m" using apply_equality by auto
+    with \<open>g\<in>G\<close> have "\<exists>A\<in>G//r. ?\<ff>`(A) = m" unfolding quotient_def by auto
   }
-  then have "?ff\<in>inj(G//r,f``G)" unfolding inj_def using ff_fun by auto moreover
-  {
-    fix m assume "m\<in>f``G"
-    then obtain g where "g\<in>G""m=f`g" using func_imagedef[OF assms(4)] by auto
-    then have "\<langle>r``{g},m\<rangle>\<in>?ff" by auto
-    then have "?ff`(r``{g})=m" using apply_equality ff_fun by auto
-    then have "\<exists>A\<in>G//r. ?ff`A=m" unfolding quotient_def using \<open>g\<in>G\<close> by auto
-  }
-  ultimately have "?ff\<in>bij(G//r,f``G)" unfolding bij_def surj_def using ff_fun by auto
-  with HOM show ?thesis by auto
+  ultimately have "?\<ff> \<in> bij(G//r,f``G)" unfolding bij_def surj_def using ff_fun 
+    by blast
+  with HOM show ?thesis by blast
 qed
 
-text\<open>As a last result, the inverse of a bijective homomorphism is an homomorphism.
-Meaning that in the previous result, the homomorphism we found is an isomorphism.\<close>
+text\<open>The inverse of a bijective homomorphism is an homomorphism.
+  Meaning that in the previous result, the homomorphism we found is an isomorphism.\<close>
 
 theorem bij_homomor:
-  assumes "f\<in>bij(G,H)""IsAgroup(G,P)""IsAgroup(H,F)""Homomor(f,G,P,H,F)"
+  assumes "f\<in>bij(G,H)" "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)"
   shows "Homomor(converse(f),H,F,G,P)"
 proof-
-  {
-    fix h\<^sub>1 h\<^sub>2 assume A:"h\<^sub>1\<in>H" "h\<^sub>2\<in>H"
-    from A(1) obtain g\<^sub>1 where g1:"g\<^sub>1\<in>G" "f`g\<^sub>1=h\<^sub>1" using assms(1) unfolding bij_def surj_def by auto moreover
-    from A(2) obtain g\<^sub>2 where g2:"g\<^sub>2\<in>G" "f`g\<^sub>2=h\<^sub>2" using assms(1) unfolding bij_def surj_def by auto ultimately
-    have "F`\<langle>f`g\<^sub>1,f`g\<^sub>2\<rangle>=F`\<langle>h\<^sub>1,h\<^sub>2\<rangle>" by auto
-    then have "f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>)=F`\<langle>h\<^sub>1,h\<^sub>2\<rangle>" using assms(2,3,4) homomor_eq g1(1) g2(1) by auto
-    then have "converse(f)`(f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>))=converse(f)`(F`\<langle>h\<^sub>1,h\<^sub>2\<rangle>)" by auto
-    then have "P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>=converse(f)`(F`\<langle>h\<^sub>1,h\<^sub>2\<rangle>)" using left_inverse assms(1) group0.group_op_closed
-      assms(2) g1(1) g2(1) unfolding group0_def bij_def by auto moreover
-    from g1(2) have "converse(f)`(f`g\<^sub>1)=converse(f)`h\<^sub>1" by auto
-    then have "g\<^sub>1=converse(f)`h\<^sub>1" using left_inverse assms(1) unfolding bij_def using g1(1) by auto moreover
-    from g2(2) have "converse(f)`(f`g\<^sub>2)=converse(f)`h\<^sub>2" by auto
-    then have "g\<^sub>2=converse(f)`h\<^sub>2" using left_inverse assms(1) unfolding bij_def using g2(1) by auto ultimately
-    have "P`\<langle>converse(f)`h\<^sub>1,converse(f)`h\<^sub>2\<rangle>=converse(f)`(F`\<langle>h\<^sub>1,h\<^sub>2\<rangle>)" by auto
-  }
-  then show ?thesis using assms(2,3) Homomor_def by auto
+  { fix h\<^sub>1 h\<^sub>2 assume "h\<^sub>1\<in>H" "h\<^sub>2\<in>H"
+    with assms(1) obtain g\<^sub>1 g\<^sub>2 where 
+      g1: "g\<^sub>1\<in>G" "f`(g\<^sub>1)=h\<^sub>1" and g2: "g\<^sub>2\<in>G" "f`(g\<^sub>2)=h\<^sub>2"
+      unfolding bij_def surj_def by blast
+    with assms(2,3,4) have  
+      "converse(f)`(f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>)) = converse(f)`(F`\<langle>h\<^sub>1,h\<^sub>2\<rangle>)"
+      using homomor_eq by simp
+    with assms(1,2) g1 g2 have
+      "P`\<langle>converse(f)`(h\<^sub>1),converse(f)`(h\<^sub>2)\<rangle> = converse(f)`(F`\<langle>h\<^sub>1,h\<^sub>2\<rangle>)"
+      using left_inverse group0.group_op_closed unfolding group0_def bij_def
+      by auto
+  } with assms(2,3) show ?thesis using Homomor_def by simp
 qed
 
-text\<open>A very important homomorphism is given by taken every element
-to its class in a group quotient\<close>
+text\<open>A very important homomorphism is given by taking every element
+  to its class in a group quotient. Recall that $\lambda x\in X. p(x)$
+  is an alternative notation for function defined as a set of pairs,
+  see lemma \<open>lambda_fun_alt\<close> in theory \<open>func1.thy\<close>.\<close>
 
 lemma (in group0) quotient_map:
   assumes "IsAnormalSubgroup(G,P,H)"
   defines "r \<equiv> QuotientGroupRel(G,P,H)" and "q \<equiv> \<lambda>x\<in>G. QuotientGroupRel(G,P,H)``{x}"
   shows "Homomor(q,G,P,G//r,QuotientGroupOp(G,P,H))"
-  unfolding r_def Homomor_def[OF groupAssum Group_ZF_2_4_T1[OF groupAssum assms(1)]]
-proof(safe)
-  fix x y assume as:"x\<in>G" "y\<in>G"
-  then have "x\<cdot>y\<in>G" using group_op_closed by auto
-  then have "q`(x\<cdot>y) = r``{x\<cdot>y}" unfolding q_def
-    using lam_funtype lamE unfolding r_def by auto
-  then have "q`(x\<cdot>y) = QuotientGroupOp(G,P,H)`\<langle>r``{x},r``{y}\<rangle>"
-    using EquivClass_1_L10[OF Group_ZF_2_4_L3 _ as]
-    Group_ZF_2_4_L5A[OF groupAssum assms(1)] assms(1)
-    unfolding IsAnormalSubgroup_def QuotientGroupOp_def
-    r_def by auto
-  then show "q`(P`\<langle>x,y\<rangle>) = QuotientGroupOp(G, P, H) ` \<langle>q ` x, q ` y\<rangle>"
-    unfolding q_def r_def using lam_funtype lamE as by auto
-qed
+  using groupAssum assms group_op_closed lam_funtype lamE EquivClass_1_L10 
+    Group_ZF_2_4_L3 Group_ZF_2_4_L5A Homomor_def Group_ZF_2_4_T1
+  unfolding IsAnormalSubgroup_def QuotientGroupOp_def
+  by simp
 
 text\<open>In the context of \<open>group0\<close>, we may use all results of \<open>semigr0\<close>.\<close>
 

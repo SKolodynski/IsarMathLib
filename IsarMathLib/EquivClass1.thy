@@ -122,6 +122,14 @@ lemma EquivClass_1_L2A:
   using assms EquivClass_1_L2 EquivClass_1_L1 equiv_class_eq_iff
   by simp
 
+text\<open>Elements that have the same image under an equivalence relation are equivalent.
+  This is the same as \<open>eq_equiv_class\<close> from standard Isabelle/ZF's \<open>EquivClass\<close> theory, 
+  just copied here to be easier to find.\<close>
+
+lemma same_image_equiv: 
+  assumes "equiv(A,r)" "y\<in>A" "r``{x} = r``{y}"
+  shows "\<langle>x,y\<rangle> \<in> r" using assms eq_equiv_class by simp
+
 text\<open>Every $x$ is in the class of $y$, then they are equivalent.\<close>
 
 lemma EquivClass_1_L2B: 
@@ -312,12 +320,6 @@ theorem EquivClass_1_T1:
   shows "ProjFun2(A,r,f) : (A//r)\<times>(A//r) \<rightarrow> A//r"
   using assms EquivClass_1_L9 ProjFun2_def ZF_fun_from_total 
   by simp
-
-(*text{*We define the projection on the quotient space as a function that takes
-  an element of $A$ and assigns its equivalence class in $A/r$.*}
-
-constdefs
-  "Proj(A,r) \<equiv> {<x,c> \<in> A\<times>(A//r). r``{x} = c}"*)
 
 text\<open>The projection diagram commutes. I wish I knew how to draw this diagram
   in LaTeX.\<close>
