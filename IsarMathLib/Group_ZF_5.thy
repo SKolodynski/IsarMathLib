@@ -89,11 +89,10 @@ proof-
     by simp
 qed
 
-text\<open>We will use some binary opetrations that are naturally defined on the function space 
+text\<open>We will use some binary operations that are naturally defined on the function space 
    $G\rightarrow G$, but we consider them restricted to the endomorphisms of $G$.
   To shorten the notation in such case we define an abbreviation \<open>InEnd(F,G,P)\<close> 
-  which restricts a binary operation $F$ to the set of endomorphisms of $G$. 
-  An alterrnative notation for \<open>InEnd(F,G,P)\<close> is \<open>F {in End} [G,P]\<close>. \<close>
+  which restricts a binary operation $F$ to the set of endomorphisms of $G$. \<close>
 
 abbreviation InEnd("_ {in End} [_,_]")
   where "InEnd(F,G,P) \<equiv> restrict(F,End(G,P)\<times>End(G,P))"
@@ -292,8 +291,7 @@ subsection\<open>First isomorphism theorem\<close>
 text\<open>Now we will prove that any homomorphism $f:G\to H$ defines a bijective
   homomorphism between $G/H$ and $f(G)$.\<close>
   
-text\<open>A group homomorphism sends the neutral element to the neutral element
-  and commutes with the inverse.\<close>
+text\<open>A group homomorphism sends the neutral element to the neutral element.\<close>
 
 lemma image_neutral:
   assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H"
@@ -323,8 +321,7 @@ proof -
     unfolding inj_def group0_def by force
 qed
 
-text\<open>If $f:G\rightarrow H$ is a homomorphism, then it sends the inverse of an element in $G$
-  to the inverse of the image of this element in $H$. \<close>
+text\<open>If $f:G\rightarrow H$ is a homomorphism, then it commutes with the inverse \<close>
 
 lemma image_inv:
   assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H" "g\<in>G"
@@ -341,7 +338,7 @@ proof-
     using Homomor_def by simp
   finally have "f`(TheNeutralElement(G,P)) = F`\<langle>f`(g),f`(GroupInv(G,P)`(g))\<rangle>"
     by simp
-  with assms(1,2,3,4) im inv2 show ?thesis 
+  with assms(1-4) im inv2 show ?thesis 
     using group0.group0_2_L9 image_neutral unfolding group0_def by simp
 qed
 
@@ -385,7 +382,7 @@ proof -
   moreover from assms have "IsAsubgroup(f-``(K),P)" 
     using preimage_sub unfolding IsAnormalSubgroup_def by simp
   moreover
-  { fix g assume "g\<in>G"
+  { fix g assume gG: "g\<in>G"
     { fix h assume "h \<in> {P`\<langle>g,P`\<langle>h, GroupInv(G, P)`(g)\<rangle>\<rangle>. h \<in> f-``(K)}"
       then obtain k where 
         k: "h = P`\<langle>g,P`\<langle>k,GroupInv(G, P)`(g)\<rangle>\<rangle>" "k \<in> f-``(K)" 
@@ -394,7 +391,7 @@ proof -
       moreover from assms(4) k(2) have "k\<in>G" using vimage_iff 
         unfolding Pi_def by blast
       ultimately have f: "f`(h) = F`\<langle>f`(g),F`\<langle>f`(k),GroupInv(H,F)`(f`(g))\<rangle>\<rangle>"
-        using assms(1-4) Ggr \<open>g\<in>G\<close> group0.group_op_closed 
+        using assms(1-4) Ggr gG group0.group_op_closed 
           group0.inverse_in_group image_inv homomor_eq by simp
       from assms(1,4) Ggr \<open>g\<in>G\<close> k have "h\<in>G" using group0.group_op_closed
         group0.inverse_in_group func1_1_L15 by simp
@@ -486,7 +483,7 @@ theorem isomorphism_first_theorem:
   assumes "IsAgroup(G,P)" "IsAgroup(H,F)" "Homomor(f,G,P,H,F)" "f:G\<rightarrow>H"
   defines "r \<equiv> QuotientGroupRel(G,P,f-``{TheNeutralElement(H,F)})" and
   "\<P> \<equiv> QuotientGroupOp(G,P,f-``{TheNeutralElement(H,F)})"
-  shows "\<exists>\<ff>. Homomor(\<ff>,G//r,\<P>,f``G,restrict(F,(f``G)\<times>(f``(G)))) \<and> \<ff>\<in>bij(G//r,f``(G))"
+  shows "\<exists>\<ff>. Homomor(\<ff>,G//r,\<P>,f``(G),restrict(F,(f``(G))\<times>(f``(G)))) \<and> \<ff>\<in>bij(G//r,f``(G))"
 proof-
   let ?\<ff> = "{\<langle>r``{g},f`(g)\<rangle>. g\<in>G}"
   from assms(1-5) have "equiv(G,r)"
