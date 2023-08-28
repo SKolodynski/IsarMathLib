@@ -112,8 +112,9 @@ module IMLParser =
          >>. many1Satisfy (fun (c:char) -> isAsciiLetter c || isDigit c || List.contains c chars )
 
     /// Parses a valid theory,proposition or sublocale name, also labels.
+    /// this includes things like assms(1,2) and assms(1-4)
     let itemName : Parser<string,unit> =
-        alphaNumNotKeyword (Seq.toList "_.,()")
+        alphaNumNotKeyword (Seq.toList "_.,-()")
 
     /// like an the itemName, but we don't allow parentheses
     /// TODO: check if needed
@@ -441,13 +442,17 @@ module IMLParser =
     and moreoveritem (s:string) : Parser<Reasoning,unit> = 
         pstring s >>. whiteSpace >>. reasoning
 
+    // sublocale paramaters are names or pieces of innerText
+    let nameOrExpr : Parser<NameOrExpr,unit> =
+        (innerText |>> Expr) <|> (itemName |>> Name)
+
     /// parses a sublocale     
     let sublocale : Parser<FormalItem,unit> =
         pipe5
             (pstring "sublocale" >>. whiteSpace >>. pureItemName .>> whiteSpace .>> pchar '<')
             (poption "" (attempt (whiteSpace >>. statLabel)))
             (whiteSpace >>. pureItemName)
-            (whiteSpace >>. manyTill (itemName .>> whiteSpace) (anyOf ["using";"unfolding";"proof";"by"]))
+            (whiteSpace >>. manyTill (nameOrExpr .>> whiteSpace) (anyOf ["using";"unfolding";"proof";"by"]))
             (whiteSpace >>. proof)
             (fun sln lbl ln itms pr -> Subloc { sublocalename = sln;
                                             label = lbl;

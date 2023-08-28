@@ -88,11 +88,14 @@ module IMLP_datatypes =
                         | ThenStep of ProofCommand
                         | HenceThus of HenceThusStep
     and ProofCommand = PChaveShow of string*ClaimProof | PCbtain of string list*ClaimProof // the list of strings is the list of variables to obtain
+
+    // sublocale parameters can be names or expressions represented by inner tex
+    type NameOrExpr = Name of string | Expr of string
     
     type Sublocale = {  sublocalename: string;
                         label: string; // optional
                         localename: string;
-                        remapping: string list;
+                        remapping: NameOrExpr list;
                         sublocproof: Proof
                         }
 
