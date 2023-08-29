@@ -77,6 +77,12 @@ namespace iml
         let getDepsFromProposition (prop:Proposition) : string list =
             getDepsFromProof prop.propproof
 
+        /// gets dependencies from a sublocale. 
+        /// Sublocales have proofs and that's where they have dependencies. 
+        
+        let getDepsFromSublocale (s:Sublocale) : string list =
+            getDepsFromProof s.sublocproof
+
         /// Converts a formal item to a a simplified form.
         let formal2simple : FormalItem -> SimpleFormalItem =
             function
@@ -111,10 +117,11 @@ namespace iml
             let dotpos=s.LastIndexOf '.'
             if dotpos=(-1) then s else (s.Remove (0,1+dotpos))
 
-        /// get dependencies from formal Item
+        /// get dependencies from formal item
         let getDepsFromFormalItem : FormalItem -> string list =
             function
             | Prop p -> getDepsFromProposition p
+            | Subloc s -> getDepsFromSublocale s
             | _ -> []
 
         /// get dependencies from a Subsection
@@ -123,7 +130,6 @@ namespace iml
 
         /// obtains dependecies from a Theory
         let getDepsFromTheory (t:Theory) : string list =
-            let nmAfterDot name = skipUntilAfterDot t.name
             List.collect getDepsFromSubsection t.thsections
             |> List.map skipUntilAfterDot
             |> List.distinct // like Haskell's nub
