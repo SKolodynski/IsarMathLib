@@ -1,12 +1,13 @@
 ## Dockerfile for IsarMathLib
 
-FROM slawekkol/isarmathlib:isabelle-zf-2022
+FROM slawekkol/isarmathlib:isabelle-zf-2023
 
 COPY IsarMathLib /home/isabelle/IsarMathLib
 
 USER root
-RUN chown isabelle /home/isabelle/IsarMathLib
+RUN chown -R isabelle:isabelle /home/isabelle/IsarMathLib
 USER isabelle
 
 CMD ["build", "-D", "/home/isabelle/IsarMathLib"]
+
 
