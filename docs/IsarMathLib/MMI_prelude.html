@@ -12,7 +12,7 @@
 <h1>Theory MMI_prelude</h1>
 </div>
 
-<pre class="source"><span class="comment1"><span>(</span><span>*</span><span> 
+<pre class="source"><span class="comment1"><span>(* 
     This file is a part of MMIsar - a translation of Metamath's set.mm to Isabelle 2005 (ZF logic).
 
     Copyright (C) 2006  Slawomir Kolodynski
@@ -37,116 +37,116 @@ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-</span><span>*</span><span>)</span></span><span>
-</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹</span><span>Metamath introduction</span><span>›</span></span></span><span>
+*)</span></span><span>
+</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹Metamath introduction›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>theory</span></span></span><span> </span><a href="MMI_prelude.html"><span>MMI_prelude</span></a><span> </span><span class="keyword2"><span class="keyword"><span>imports</span></span></span><span> </span><a href="Order_ZF_1.html"><span>Order_ZF_1</span></a><span>
 
 </span><span class="keyword2"><span class="keyword"><span>begin</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>Metamath's set.mm features a large (over 8000) collection of theorems 
-</span><span>  proven in the ZFC set theory. This theory is part of an attempt to translate
-</span><span>  those theorems to Isar so that they are available for Isabelle/ZF users.
-</span><span>  A total of about 1200 assertions have been translated, 600 of that 
-</span><span>  with proofs (the rest was proven automatically by Isabelle). 
-</span><span>  The translation was done with the support of the mmisar tool, whose source
-</span><span>  is included in the IsarMathLib distributions prior to version 1.6.4. 
-</span><span>  The translation tool was doing about 99 percent of work involved, with the rest
-</span><span>  mostly related to the difference between Isabelle/ZF and Metamath 
-</span><span>  metalogics. Metamath uses Tarski-Megill metalogic that does not have a notion
-</span><span>  of bound variables (see 
-</span><span>  </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span> http://planetx.cc.vt.edu/AsteroidMeta/Distinctors_vs_binders ›</span></span></span><span>
-</span><span>  for details and discussion).
-</span><span>  The translation project is closed now as I decided that it was too boring 
-</span><span>  and tedious even with the support of mmisar software. Also, the translated
-</span><span>  proofs are not as readable as native Isar proofs which goes against IsarMathLib
-</span><span>  philosophy.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹Metamath's set.mm features a large (over 8000) collection of theorems 
+  proven in the ZFC set theory. This theory is part of an attempt to translate
+  those theorems to Isar so that they are available for Isabelle/ZF users.
+  A total of about 1200 assertions have been translated, 600 of that 
+  with proofs (the rest was proven automatically by Isabelle). 
+  The translation was done with the support of the mmisar tool, whose source
+  is included in the IsarMathLib distributions prior to version 1.6.4. 
+  The translation tool was doing about 99 percent of work involved, with the rest
+  mostly related to the difference between Isabelle/ZF and Metamath 
+  metalogics. Metamath uses Tarski-Megill metalogic that does not have a notion
+  of bound variables (see 
+  </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span> http://planetx.cc.vt.edu/AsteroidMeta/Distinctors_vs_binders ›</span></span></span><span>
+  for details and discussion).
+  The translation project is closed now as I decided that it was too boring 
+  and tedious even with the support of mmisar software. Also, the translated
+  proofs are not as readable as native Isar proofs which goes against IsarMathLib
+  philosophy.›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>Importing from Metamath - how is it done</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹Importing from Metamath - how is it done›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>
-  </span><span>We are interested in importing the theorems about complex numbers
-</span><span>  that start from the "recnt" theorem on. This is done mostly automatically
-</span><span>  by the mmisar tool that is included in the IsarMathLib distributions prior
-</span><span>  to version 1.6.4.
-</span><span>  The tool works as follows:
-</span><span>
-</span><span>  First it reads the list of (Metamath) names of theorems 
-</span><span>  that are already imported to IsarMathlib ("known theorems") 
-</span><span>  and the list of theorems that are intended to be imported in this 
-</span><span>  session ("new theorems"). 
-</span><span>  The new theorems are consecutive theorems about complex numbers
-</span><span>  as they appear in the Metamath database.
-</span><span>  Then mmisar creates a "Metamath script" that contains 
-</span><span>  Metamath commands that open a log file and put the statements
-</span><span>  and proofs of the new theorems in that file in a readable format. 
-</span><span>  The tool writes this script to a disk file and executes metamath 
-</span><span>  with standard input redirected from that file. Then the log file is read
-</span><span>  and its contents converted to the Isar format. In Metamath, 
-</span><span>  the proofs of theorems about complex numbers 
-</span><span>  depend only on 28 axioms of complex numbers and some basic logic and 
-</span><span>  set theory theorems.
-</span><span>  The tool finds which of these dependencies are not known yet and repeats 
-</span><span>  the process of getting their statements from Metamath as with the 
-</span><span>  new theorems. As a result of this process mmisar creates files 
-</span><span>  new\_theorems.thy, new\_deps.thy and new\_known\_theorems.txt.
-</span><span>  The file new\_theorems.thy contains the theorems (with proofs) 
-</span><span>  imported from Metamath in this session. These theorems are added
-</span><span>  (by hand) to the current </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>MMI_Complex_ZF_x.thy›</span></span></span><span> file. 
-</span><span>  The file new\_deps.thy contains the 
-</span><span>  statements of new dependencies with generic proofs "by auto".
-</span><span>  These are added to the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>MMI_logic_and_sets.thy›</span></span></span><span>.
-</span><span>  Most of the dependencies can be proven automatically by Isabelle.
-</span><span>  However, some manual work has to be done for the dependencies
-</span><span>  that Isabelle can not prove by itself and to correct problems related
-</span><span>  to the fact that Metamath uses a metalogic based on 
-</span><span>  distinct variable constraints (Tarski-Megill metalogic), 
-</span><span>  rather than an explicit notion of free and bound variables.
-</span><span>
-</span><span>  The old list of known theorems is replaced by the new list and
-</span><span>  mmisar is ready to convert the next batch of new theorems.
-</span><span>  Of course this rarely works in practice without tweaking the mmisar
-</span><span>  source files every time a new batch is processed.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹
+  We are interested in importing the theorems about complex numbers
+  that start from the "recnt" theorem on. This is done mostly automatically
+  by the mmisar tool that is included in the IsarMathLib distributions prior
+  to version 1.6.4.
+  The tool works as follows:
 
-</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The context for Metamath theorems</span><span>›</span></span></span><span>
+  First it reads the list of (Metamath) names of theorems 
+  that are already imported to IsarMathlib ("known theorems") 
+  and the list of theorems that are intended to be imported in this 
+  session ("new theorems"). 
+  The new theorems are consecutive theorems about complex numbers
+  as they appear in the Metamath database.
+  Then mmisar creates a "Metamath script" that contains 
+  Metamath commands that open a log file and put the statements
+  and proofs of the new theorems in that file in a readable format. 
+  The tool writes this script to a disk file and executes metamath 
+  with standard input redirected from that file. Then the log file is read
+  and its contents converted to the Isar format. In Metamath, 
+  the proofs of theorems about complex numbers 
+  depend only on 28 axioms of complex numbers and some basic logic and 
+  set theory theorems.
+  The tool finds which of these dependencies are not known yet and repeats 
+  the process of getting their statements from Metamath as with the 
+  new theorems. As a result of this process mmisar creates files 
+  new\_theorems.thy, new\_deps.thy and new\_known\_theorems.txt.
+  The file new\_theorems.thy contains the theorems (with proofs) 
+  imported from Metamath in this session. These theorems are added
+  (by hand) to the current </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>MMI_Complex_ZF_x.thy›</span></span></span><span> file. 
+  The file new\_deps.thy contains the 
+  statements of new dependencies with generic proofs "by auto".
+  These are added to the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>MMI_logic_and_sets.thy›</span></span></span><span>.
+  Most of the dependencies can be proven automatically by Isabelle.
+  However, some manual work has to be done for the dependencies
+  that Isabelle can not prove by itself and to correct problems related
+  to the fact that Metamath uses a metalogic based on 
+  distinct variable constraints (Tarski-Megill metalogic), 
+  rather than an explicit notion of free and bound variables.
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>We list the Metamth's axioms of complex numbers
-</span><span>  and define notation here.</span><span>›</span></span></span><span>
+  The old list of known theorems is replaced by the new list and
+  mmisar is ready to convert the next batch of new theorems.
+  Of course this rarely works in practice without tweaking the mmisar
+  source files every time a new batch is processed.›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The next definition is what Metamath $X\in V$ is
-</span><span>  translated to. I am not sure why it works, probably because
-</span><span>  Isabelle does a type inference and the "=" sign
-</span><span>  indicates that both sides are sets.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹The context for Metamath theorems›</span></span></span><span>
+
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹We list the Metamth's axioms of complex numbers
+  and define notation here.›</span></span></span><span>
+
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The next definition is what Metamath $X\in V$ is
+  translated to. I am not sure why it works, probably because
+  Isabelle does a type inference and the "=" sign
+  indicates that both sides are sets.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>definition</span></span></span><span>
-  </span><span class="entity"><span class="entity_def" id="MMI_prelude.IsASet|const"><span>IsASet</span></span></span><span> </span><span class="main"><span>::</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.i|type"><span>i</span></a><span class="main"><span>⇒</span></span><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.o|type"><span>o</span></a><span>"</span></span></span><span> </span><span class="main"><span>(</span></span><span class="quoted"><span>"</span><span>_</span><span> </span><span class="keyword1"><span>isASet</span></span><span>"</span></span><span> </span><span class="main"><span>[</span></span><span>90</span><span class="main"><span>]</span></span><span> 90</span><span class="main"><span>)</span></span><span> </span><span class="keyword2"><span class="keyword"><span>where</span></span></span><span>
-  </span><span class="comment1"><span>(</span><span>*</span><span>set_def[simp]: "X isASet ≡  X = X"</span><span>*</span><span>)</span></span><span>
+  </span><span class="entity"><span class="entity_def" id="MMI_prelude.IsASet|const"><span>IsASet</span></span></span><span> </span><span class="main"><span>::</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.i|type"><span>i</span></a><span class="main"><span>⇒</span></span><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.o|type"><span>o</span></a><span>"</span></span></span><span> </span><span class="main"><span>(</span></span><span class="quoted"><span>"_ </span><span class="keyword1"><span>isASet</span></span><span>"</span></span><span> </span><span class="main"><span>[</span></span><span>90</span><span class="main"><span>]</span></span><span> 90</span><span class="main"><span>)</span></span><span> </span><span class="keyword2"><span class="keyword"><span>where</span></span></span><span>
+  </span><span class="comment1"><span>(*set_def[simp]: "X isASet ≡  X = X"*)</span></span><span>
   </span><span class="entity_def" id="MMI_prelude.IsASet_def|fact"><span class="entity_def" id="MMI_prelude.IsASet_def|thm"><span class="entity_def" id="MMI_prelude.IsASet_def_raw|axiom"><span>IsASet_def</span></span></span></span><span class="main"><span>[</span></span><span class="operator"><span>simp</span></span><span class="main"><span>]</span></span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span class="bound"><span class="entity"><span>X</span></span></span></span><span> </span><span class="keyword1"><span class="free"><span>isASet</span></span></span><span> </span><span class="main"><span>≡</span></span><span>  </span><span class="free"><span class="bound"><span class="entity"><span>X</span></span></span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.eq|const"><span>=</span></a></span><span> </span><span class="free"><span class="bound"><span class="entity"><span>X</span></span></span></span><span>"</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The next locale sets up the context to which Metamath theorems
-</span><span>  about complex numbers are imported. It assumes the axioms
-</span><span>  of complex numbers and defines the notation used for complex numbers.
-</span><span>  
-</span><span>  One of the problems with importing theorems from Metamath is that
-</span><span>  Metamath allows direct infix notation for binary operations so 
-</span><span>  that the notation $a f b$ is allowed where $f$ is a function 
-</span><span>  (that is, a set of pairs). To my knowledge, 
-</span><span>  Isar allows only notation </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>f`⟨a,b⟩›</span></span></span><span> with a possibility of 
-</span><span>  defining a syntax say </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>a \&lt;ca&gt; b›</span></span></span><span> to mean the same as </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>f`⟨a,b⟩›</span></span></span><span> 
-</span><span>  (please correct me if I am wrong here). This is why we have
-</span><span>  two objects for addition: one called </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>caddset›</span></span></span><span> that represents
-</span><span>  the binary function, and the second one called </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>ca›</span></span></span><span> which 
-</span><span>  defines the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>a \&lt;ca&gt; b›</span></span></span><span> notation for </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>caddset`⟨a,b⟩›</span></span></span><span>.
-</span><span>  The same applies to multiplication of real numbers.
-</span><span>  
-</span><span>  Another difficulty is that Metamath allows to define sets with syntax
-</span><span>  $\{ x | p\}$ where $p$ is some formula that (usually) depends on $x$.
-</span><span>  Isabelle allows the set comprehension like this only as a subset of another 
-</span><span>  set i.e. $\{x\in A . p(x)\}$. This forces us to have a sligtly different 
-</span><span>  definition of (complex) natural numbers, requiring explicitly that natural 
-</span><span>  numbers is a subset of reals. Because of that, the proofs of Metamath theorems 
-</span><span>  that reference the definition directly can not be imported.</span><span> 
-</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The next locale sets up the context to which Metamath theorems
+  about complex numbers are imported. It assumes the axioms
+  of complex numbers and defines the notation used for complex numbers.
+  
+  One of the problems with importing theorems from Metamath is that
+  Metamath allows direct infix notation for binary operations so 
+  that the notation $a f b$ is allowed where $f$ is a function 
+  (that is, a set of pairs). To my knowledge, 
+  Isar allows only notation </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>f`⟨a,b⟩›</span></span></span><span> with a possibility of 
+  defining a syntax say </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>a \&lt;ca&gt; b›</span></span></span><span> to mean the same as </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>f`⟨a,b⟩›</span></span></span><span> 
+  (please correct me if I am wrong here). This is why we have
+  two objects for addition: one called </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>caddset›</span></span></span><span> that represents
+  the binary function, and the second one called </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>ca›</span></span></span><span> which 
+  defines the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>a \&lt;ca&gt; b›</span></span></span><span> notation for </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>caddset`⟨a,b⟩›</span></span></span><span>.
+  The same applies to multiplication of real numbers.
+  
+  Another difficulty is that Metamath allows to define sets with syntax
+  $\{ x | p\}$ where $p$ is some formula that (usually) depends on $x$.
+  Isabelle allows the set comprehension like this only as a subset of another 
+  set i.e. $\{x\in A . p(x)\}$. This forces us to have a sligtly different 
+  definition of (complex) natural numbers, requiring explicitly that natural 
+  numbers is a subset of reals. Because of that, the proofs of Metamath theorems 
+  that reference the definition directly can not be imported. 
+›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="MMI_prelude.MMIsar0.intro|fact"><span class="entity_def" id="MMI_prelude.MMIsar0_def|fact"><span class="entity_def" id="MMI_prelude.MMIsar0.intro|thm"><span class="entity_def" id="MMI_prelude.MMIsar0_def|thm"><span class="entity_def" id="MMI_prelude.MMIsar0_def|axiom"><span>locale</span></span></span></span></span></span></span></span><span> </span><span class="entity_def" id="MMI_prelude.MMIsar0|locale"><span class="entity_def" id="MMI_prelude.MMIsar0|const"><span>MMIsar0</span></span></span><span> </span><span class="main"><span>=</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>real</span></span><span> </span><span class="main"><span>(</span></span><span class="quoted"><span>"</span><span class="keyword1"><span>ℝ</span></span><span>"</span></span><span class="main"><span>)</span></span><span>
@@ -164,7 +164,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </span><span class="keyword2"><span class="keyword"><span>defines</span></span></span><span> </span><span class="entity_def" id="MMI_prelude.MMIsar0.cm_def|fact"><span class="entity_def" id="MMI_prelude.MMIsar0.cm_def|thm"><span>cm_def</span></span></span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>a</span></span><span> </span><span class="main"><span class="free"><span>⋅</span></span></span><span> </span><span class="free"><span>b</span></span><span> </span><span class="main"><span>≡</span></span><span> </span><span class="main"><span class="free"><span>\&lt;cmulset&gt;</span></span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.apply|const"><span>`</span></a></span><span class="main"><span>⟨</span></span><span class="free"><span>a</span></span><span class="main"><span>,</span></span><span class="free"><span>b</span></span><span class="main"><span>⟩</span></span><span>"</span></span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>sub</span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>infixl</span></span></span><span> </span><span class="quoted"><span>"</span><span class="keyword1"><span>\&lt;cs&gt;</span></span><span>"</span></span><span> 69</span><span class="main"><span>)</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>defines</span></span></span><span> </span><span class="entity_def" id="MMI_prelude.MMIsar0.sub_def|fact"><span class="entity_def" id="MMI_prelude.MMIsar0.sub_def|thm"><span>sub_def</span></span></span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>a</span></span><span> </span><span class="main"><span class="free"><span>\&lt;cs&gt;</span></span></span><span> </span><span class="free"><span>b</span></span><span> </span><span class="main"><span>≡</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.Union|const"><span>⋃</span></a></span><span> </span><span class="main"><span>{</span></span><span> </span><span class="bound"><span>x</span></span><span> </span><span class="main"><span>∈</span></span><span> </span><span class="main"><span class="free"><span>ℂ</span></span></span><span class="main"><span>.</span></span><span> </span><span class="free"><span>b</span></span><span> </span><span class="main"><span class="free"><span>\&lt;ca&gt;</span></span></span><span> </span><span class="bound"><span>x</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.eq|const"><span>=</span></a></span><span> </span><span class="free"><span>a</span></span><span> </span><span class="main"><span>}</span></span><span>"</span></span></span><span>
-  </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>cneg</span></span><span> </span><span class="main"><span>(</span></span><span class="quoted"><span>"</span><span class="keyword1"><span>\&lt;cn&gt;</span></span><span>_</span><span>"</span></span><span> 95</span><span class="main"><span>)</span></span><span>
+  </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>cneg</span></span><span> </span><span class="main"><span>(</span></span><span class="quoted"><span>"</span><span class="keyword1"><span>\&lt;cn&gt;</span></span><span>_"</span></span><span> 95</span><span class="main"><span>)</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>defines</span></span></span><span> </span><span class="entity_def" id="MMI_prelude.MMIsar0.cneg_def|fact"><span class="entity_def" id="MMI_prelude.MMIsar0.cneg_def|thm"><span>cneg_def</span></span></span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="main"><span class="free"><span>\&lt;cn&gt;</span></span></span><span> </span><span class="free"><span>a</span></span><span> </span><span class="main"><span>≡</span></span><span> </span><span class="main"><span class="free"><span>𝟬</span></span></span><span> </span><span class="main"><span class="free"><span>\&lt;cs&gt;</span></span></span><span> </span><span class="free"><span>a</span></span><span>"</span></span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>cdiv</span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>infixl</span></span></span><span> </span><span class="quoted"><span>"</span><span class="keyword1"><span>\&lt;cdiv&gt;</span></span><span>"</span></span><span> 70</span><span class="main"><span>)</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>defines</span></span></span><span> </span><span class="entity_def" id="MMI_prelude.MMIsar0.cdiv_def|fact"><span class="entity_def" id="MMI_prelude.MMIsar0.cdiv_def|thm"><span>cdiv_def</span></span></span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>a</span></span><span> </span><span class="main"><span class="free"><span>\&lt;cdiv&gt;</span></span></span><span> </span><span class="free"><span>b</span></span><span> </span><span class="main"><span>≡</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.Union|const"><span>⋃</span></a></span><span> </span><span class="main"><span>{</span></span><span> </span><span class="bound"><span>x</span></span><span> </span><span class="main"><span>∈</span></span><span> </span><span class="main"><span class="free"><span>ℂ</span></span></span><span class="main"><span>.</span></span><span> </span><span class="free"><span>b</span></span><span> </span><span class="main"><span class="free"><span>⋅</span></span></span><span> </span><span class="bound"><span>x</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.eq|const"><span>=</span></a></span><span> </span><span class="free"><span>a</span></span><span> </span><span class="main"><span>}</span></span><span>"</span></span></span><span>

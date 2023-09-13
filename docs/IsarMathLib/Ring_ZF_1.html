@@ -12,7 +12,7 @@
 <h1>Theory Ring_ZF_1</h1>
 </div>
 
-<pre class="source"><span class="comment1"><span>(</span><span>*</span><span> 
+<pre class="source"><span class="comment1"><span>(* 
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
@@ -39,34 +39,34 @@ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-</span><span>*</span><span>)</span></span><span>
+*)</span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹</span><span>More on rings</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹More on rings›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>theory</span></span></span><span> </span><a href="Ring_ZF_1.html"><span>Ring_ZF_1</span></a><span> </span><span class="keyword2"><span class="keyword"><span>imports</span></span></span><span> </span><a href="Ring_ZF.html"><span>Ring_ZF</span></a><span> </span><a href="Group_ZF_3.html"><span>Group_ZF_3</span></a><span>
 
 </span><span class="keyword2"><span class="keyword"><span>begin</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>This theory is devoted to the part of ring theory specific the 
-</span><span>  construction of real numbers in the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Real_ZF_x›</span></span></span><span> series of theories. 
-</span><span>  The goal is to 
-</span><span>  show that classes of almost homomorphisms form a ring.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹This theory is devoted to the part of ring theory specific the 
+  construction of real numbers in the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Real_ZF_x›</span></span></span><span> series of theories. 
+  The goal is to 
+  show that classes of almost homomorphisms form a ring.›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The ring of classes of almost homomorphisms</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹The ring of classes of almost homomorphisms›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>Almost homomorphisms do not form a ring as the regular homomorphisms 
-</span><span>  do because the lifted group operation is not distributive with respect to 
-</span><span>  composition -- we have $s\circ (r\cdot q) \neq s\circ r\cdot s\circ q$ in 
-</span><span>  general. However, we do have 
-</span><span>  $s\circ (r\cdot q) \approx s\circ r\cdot s\circ q$ in the sense of the 
-</span><span>  equivalence relation defined by the group of finite range
-</span><span>  functions (that is a normal subgroup of almost homomorphisms, 
-</span><span>  if the group is abelian). This allows to define a natural ring structure 
-</span><span>  on the classes of almost homomorphisms.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹Almost homomorphisms do not form a ring as the regular homomorphisms 
+  do because the lifted group operation is not distributive with respect to 
+  composition -- we have $s\circ (r\cdot q) \neq s\circ r\cdot s\circ q$ in 
+  general. However, we do have 
+  $s\circ (r\cdot q) \approx s\circ r\cdot s\circ q$ in the sense of the 
+  equivalence relation defined by the group of finite range
+  functions (that is a normal subgroup of almost homomorphisms, 
+  if the group is abelian). This allows to define a natural ring structure 
+  on the classes of almost homomorphisms.›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The next lemma provides a formula useful for proving that two sides 
-</span><span>  of the distributive law equation for almost homomorphisms are almost 
-</span><span>  equal.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The next lemma provides a formula useful for proving that two sides 
+  of the distributive law equation for almost homomorphisms are almost 
+  equal.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>lemma</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="Group_ZF_3.html#Group_ZF_3.group1|locale"><span>group1</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L1|fact"><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L1(2)|thm"><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L1(1)|thm"><span class="entity_def" id="offset_2668..2682">Ring_ZF_1_1_L1</span></span></span></span><span class="main"><span>:</span></span><span> 
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="entity_def" id="offset_2695..2697">A1</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>s</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="free"><span>AH</span></span><span>"</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>r</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="free"><span>AH</span></span><span>"</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>q</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="free"><span>AH</span></span><span>"</span></span></span><span> </span><span class="keyword2"><span class="keyword"><span>and</span></span></span><span> </span><span class="entity_def" id="offset_2724..2726">A2</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>n</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="free"><span>G</span></span><span>"</span></span></span><span>
@@ -91,8 +91,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </span><span class="keyword1"><span class="command"><span>by</span></span></span><span> </span><a class="entity_ref" href="../../FOL/ZF/ISABELLE_HOME/src/Provers/clasimp.ML.html#FOL.auto|method"><span class="operator"><span>auto</span></span></a><span>  
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The sides of the distributive law equations for almost homomorphisms 
-</span><span>  are almost equal.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The sides of the distributive law equations for almost homomorphisms 
+  are almost equal.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>lemma</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="Group_ZF_3.html#Group_ZF_3.group1|locale"><span>group1</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L2|fact"><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L2(2)|thm"><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L2(1)|thm"><span class="entity_def" id="offset_3701..3715">Ring_ZF_1_1_L2</span></span></span></span><span class="main"><span>:</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="entity_def" id="offset_3727..3729">A1</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>s</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="free"><span>AH</span></span><span>"</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>r</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="free"><span>AH</span></span><span>"</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>q</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="free"><span>AH</span></span><span>"</span></span></span><span>
@@ -125,8 +125,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </span><span class="keyword1"><span class="command"><span>using</span></span></span><span> </span><a class="entity_ref" href="../../FOL/ZF/func.html#func.fun_extension_iff|fact"><span>fun_extension_iff</span></a><span> </span><span class="keyword1"><span class="command"><span>by</span></span></span><span> </span><span class="operator"><span>simp</span></span><span>
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span>
     
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The essential condition to show the distributivity for the 
-</span><span>  operations defined on classes of almost homomorphisms.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The essential condition to show the distributivity for the 
+  operations defined on classes of almost homomorphisms.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>lemma</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="Group_ZF_3.html#Group_ZF_3.group1|locale"><span>group1</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L3|fact"><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L3|thm"><span class="entity_def" id="offset_4885..4899">Ring_ZF_1_1_L3</span></span></span><span class="main"><span>:</span></span><span> 
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="entity_def" id="offset_4912..4914">A1</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>R</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.eq|const"><span>=</span></a></span><span> </span><a class="entity_ref" href="Group_ZF_2.html#Group_ZF_2.QuotientGroupRel|const"><span>QuotientGroupRel</span></a><span class="main"><span>(</span></span><span class="free"><span>AH</span></span><span class="main"><span>,</span></span><span class="free"><span>Op1</span></span><span class="main"><span>,</span></span><span class="free"><span>FR</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>
@@ -162,8 +162,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </span><a class="entity_ref" href="Group_ZF_3.html#Group_ZF_3.Group_ZF_3_2_L15|fact"><span>Group_ZF_3_2_L15</span></a><span> </span><a class="entity_ref" href="Ring_ZF_1.html#offset_3701..3715"><span>Ring_ZF_1_1_L2</span></a><span> </span><span>Group_ZF_3_4_T1</span><span> </span><span class="keyword1"><span class="command"><span>by</span></span></span><span> </span><span class="operator"><span>simp</span></span><span>
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The projection of the first group operation on almost homomorphisms
-</span><span>  is distributive with respect to the second group operation.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The projection of the first group operation on almost homomorphisms
+  is distributive with respect to the second group operation.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>lemma</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="Group_ZF_3.html#Group_ZF_3.group1|locale"><span>group1</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L4|fact"><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_L4|thm"><span class="entity_def" id="offset_6391..6405">Ring_ZF_1_1_L4</span></span></span><span class="main"><span>:</span></span><span> 
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="entity_def" id="offset_6418..6420">A1</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>R</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.eq|const"><span>=</span></a></span><span> </span><a class="entity_ref" href="Group_ZF_2.html#Group_ZF_2.QuotientGroupRel|const"><span>QuotientGroupRel</span></a><span class="main"><span>(</span></span><span class="free"><span>AH</span></span><span class="main"><span>,</span></span><span class="free"><span>Op1</span></span><span class="main"><span>,</span></span><span class="free"><span>FR</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>
@@ -177,7 +177,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </span><span class="keyword1"><span class="command"><span>then</span></span></span><span> </span><span class="keyword3"><span class="command"><span>show</span></span></span><span> </span><span class="var"><span class="quoted"><span class="var"><span>?thesis</span></span></span></span><span> </span><span class="keyword1"><span class="command"><span>using</span></span></span><span> </span><a class="entity_ref" href="func_ZF.html#func_ZF.IsDistributive_def|fact"><span>IsDistributive_def</span></a><span> </span><span class="keyword1"><span class="command"><span>by</span></span></span><span> </span><span class="operator"><span>simp</span></span><span>
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The classes of almost homomorphisms form a ring.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The classes of almost homomorphisms form a ring.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="offset_6848..6855">theorem</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="Group_ZF_3.html#Group_ZF_3.group1|locale"><span>group1</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_T1|fact"><span class="entity_def" id="Ring_ZF_1.group1.Ring_ZF_1_1_T1|thm"><span>Ring_ZF_1_1_T1</span></span></span><span class="main"><span>:</span></span><span> 
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>R</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.eq|const"><span>=</span></a></span><span> </span><a class="entity_ref" href="Group_ZF_2.html#Group_ZF_2.QuotientGroupRel|const"><span>QuotientGroupRel</span></a><span class="main"><span>(</span></span><span class="free"><span>AH</span></span><span class="main"><span>,</span></span><span class="free"><span>Op1</span></span><span class="main"><span>,</span></span><span class="free"><span>FR</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>

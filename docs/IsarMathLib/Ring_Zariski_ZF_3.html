@@ -12,7 +12,7 @@
 <h1>Theory Ring_Zariski_ZF_3</h1>
 </div>
 
-<pre class="source"><span class="comment1"><span>(</span><span>*</span><span> 
+<pre class="source"><span class="comment1"><span>(* 
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
@@ -38,9 +38,9 @@ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-</span><span>*</span><span>)</span></span><span>
+*)</span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹</span><span>Rings - Zariski Topology - maps</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹Rings - Zariski Topology - maps›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>theory</span></span></span><span> </span><a href="Ring_Zariski_ZF_3.html"><span>Ring_Zariski_ZF_3</span></a><span> </span><span class="keyword2"><span class="keyword"><span>imports</span></span></span><span> </span><a href="Ring_Zariski_ZF.html"><span>Ring_Zariski_ZF</span></a><span> </span><a href="Ring_ZF_3.html"><span>Ring_ZF_3</span></a><span> </span><a href="Topology_ZF_2.html"><span>Topology_ZF_2</span></a><span>
 
@@ -406,10 +406,10 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </span><span class="keyword1"><span class="command"><span>unfolding</span></span></span><span> </span><a class="entity_ref" href="ZF1.html#ZF1.RestrictedTo_def|fact"><span>RestrictedTo_def</span></a><span> </span><span class="keyword1"><span class="command"><span>by</span></span></span><span> </span><a class="entity_ref" href="../../FOL/ZF/ISABELLE_HOME/src/Provers/clasimp.ML.html#FOL.auto|method"><span class="operator"><span>auto</span></span></a><span>
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>A quotient ring has a spectrum homeomorphic
-</span><span>to a closed subspace of the spectrum of the base ring.
-</span><span>Specifically, the closed subspace associated to the
-</span><span>ideal by which we quotient.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹A quotient ring has a spectrum homeomorphic
+to a closed subspace of the spectrum of the base ring.
+Specifically, the closed subspace associated to the
+ideal by which we quotient.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="offset_17745..17754">corollary</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="Ring_ZF_3.html#Ring_ZF_3.ring_homo|locale"><span>ring_homo</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="Ring_Zariski_ZF_3.ring_homo.surj_homeomorphism|fact"><span class="entity_def" id="Ring_Zariski_ZF_3.ring_homo.surj_homeomorphism|thm"><span>surj_homeomorphism</span></span></span><span class="main"><span>:</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>f</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><a class="entity_ref" href="../../FOL/ZF/Perm.html#Perm.surj|const"><span>surj</span></a><span class="main"><span>(</span></span><span class="free"><span>R</span></span><span class="main"><span>,</span></span><span class="free"><span>S</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>

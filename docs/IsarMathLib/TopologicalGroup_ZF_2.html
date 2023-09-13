@@ -12,7 +12,7 @@
 <h1>Theory TopologicalGroup_ZF_2</h1>
 </div>
 
-<pre class="source"><span class="comment1"><span>(</span><span>*</span><span> 
+<pre class="source"><span class="comment1"><span>(* 
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
@@ -38,19 +38,19 @@ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
 OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
-EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. </span><span>*</span><span>)</span></span><span>
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)</span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹</span><span>Topological groups 2</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹Topological groups 2›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>theory</span></span></span><span> </span><a href="TopologicalGroup_ZF_2.html"><span>TopologicalGroup_ZF_2</span></a><span> </span><span class="keyword2"><span class="keyword"><span>imports</span></span></span><span> </span><a href="Topology_ZF_8.html"><span>Topology_ZF_8</span></a><span> </span><a href="TopologicalGroup_ZF.html"><span>TopologicalGroup_ZF</span></a><span> </span><a href="Group_ZF_2.html"><span>Group_ZF_2</span></a><span>
 </span><span class="keyword2"><span class="keyword"><span>begin</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>This theory deals with quotient topological groups.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹This theory deals with quotient topological groups.›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>Quotients of topological groups</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹Quotients of topological groups›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The quotient topology given by the quotient group equivalent relation, has
-</span><span>an open quotient map.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The quotient topology given by the quotient group equivalent relation, has
+an open quotient map.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="offset_1896..1903">theorem</span></span></span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="TopologicalGroup_ZF.html#TopologicalGroup_ZF.topgroup|locale"><span>topgroup</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="TopologicalGroup_ZF_2.topgroup.quotient_map_topgroup_open|fact"><span class="entity_def" id="TopologicalGroup_ZF_2.topgroup.quotient_map_topgroup_open|thm"><span class="entity_def" id="offset_1917..1943">quotient_map_topgroup_open</span></span></span><span class="main"><span>:</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><a class="entity_ref" href="Group_ZF.html#Group_ZF.IsAsubgroup|const"><span>IsAsubgroup</span></a><span class="main"><span>(</span></span><span class="free"><span>H</span></span><span class="main"><span>,</span></span><span class="free"><span>f</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>A</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="free"><span>T</span></span><span>"</span></span></span><span>
@@ -116,8 +116,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. </span><span>*</span><span>)<
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span> 
       
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>A quotient of a topological group is just a quotient group with an appropiate
-</span><span> topology that makes product and inverse continuous.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹A quotient of a topological group is just a quotient group with an appropiate
+ topology that makes product and inverse continuous.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="offset_5633..5640">theorem</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="TopologicalGroup_ZF.html#TopologicalGroup_ZF.topgroup|locale"><span>topgroup</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="TopologicalGroup_ZF_2.topgroup.quotient_top_group_F_cont|fact"><span class="entity_def" id="TopologicalGroup_ZF_2.topgroup.quotient_top_group_F_cont|thm"><span class="entity_def" id="offset_5655..5680">quotient_top_group_F_cont</span></span></span><span class="main"><span>:</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><a class="entity_ref" href="Group_ZF_2.html#Group_ZF_2.IsAnormalSubgroup|const"><span>IsAnormalSubgroup</span></a><span class="main"><span>(</span></span><span class="free"><span>G</span></span><span class="main"><span>,</span></span><span class="free"><span>f</span></span><span class="main"><span>,</span></span><span class="free"><span>H</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>
@@ -224,8 +224,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. </span><span>*</span><span>)<
   </span><span class="keyword1"><span class="command"><span>then</span></span></span><span> </span><span class="keyword3"><span class="command"><span>show</span></span></span><span> </span><span class="var"><span class="quoted"><span class="var"><span>?thesis</span></span></span></span><span> </span><span class="keyword1"><span class="command"><span>unfolding</span></span></span><span> </span><a class="entity_ref" href="TopologicalGroup_ZF_2.html#offset_10878..10885"><span>EquivQuo_def</span></a><span class="main"><span>[</span></span><span class="operator"><span>OF</span></span><span> </span><a class="entity_ref" href="TopologicalGroup_ZF_2.html#offset_11132..11135"><span>eqT</span></a><span class="main"><span>]</span></span><span class="keyword1"><span class="command"><span>.</span></span></span><span>
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>Finally we can prove that quotient groups of topological groups
-</span><span> are topological groups.</span><span>›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹Finally we can prove that quotient groups of topological groups
+ are topological groups.›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="offset_13360..13367">theorem</span></span></span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="TopologicalGroup_ZF.html#TopologicalGroup_ZF.topgroup|locale"><span>topgroup</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="TopologicalGroup_ZF_2.topgroup.quotient_top_group|fact"><span class="entity_def" id="TopologicalGroup_ZF_2.topgroup.quotient_top_group|thm"><span>quotient_top_group</span></span></span><span class="main"><span>:</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><a class="entity_ref" href="Group_ZF_2.html#Group_ZF_2.IsAnormalSubgroup|const"><span>IsAnormalSubgroup</span></a><span class="main"><span>(</span></span><span class="free"><span>G</span></span><span class="main"><span>,</span></span><span class="free"><span>f</span></span><span class="main"><span>,</span></span><span class="free"><span>H</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>
