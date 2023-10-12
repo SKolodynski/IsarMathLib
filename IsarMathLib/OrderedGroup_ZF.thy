@@ -68,7 +68,7 @@ definition
 text\<open>The odd functions are defined as those having property 
   $f(a^{-1})=(f(a))^{-1}$. This looks a bit strange in the 
   multiplicative notation, I have to admit.
-  For linearly oredered groups a function $f$ defined on the set of positive
+  For linearly ordered groups a function $f$ defined on the set of positive
   elements iniquely defines an odd function of the whole group. This function
   is called an odd extension of $f$\<close>
 

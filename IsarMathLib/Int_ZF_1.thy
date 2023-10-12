@@ -1285,7 +1285,7 @@ subsection\<open>The set of nonnegative integers\<close>
 
 text\<open>The set of nonnegative integers looks like the set of natural numbers.
   We explore that in this section. We also rephrase some lemmas about the set
-  of positive integers known from the theory of oredered grups.\<close>
+  of positive integers known from the theory of ordered groups.\<close>
 
 text\<open>The set of positive integers is closed under addition.\<close>
 

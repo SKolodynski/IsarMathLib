@@ -58,7 +58,7 @@ definition
 
 text\<open>The next context (locale) defines notation used for ordered fields. 
   We do that by extending the notation defined in the 
-  \<open>ring1\<close> context that is used for oredered rings and 
+  \<open>ring1\<close> context that is used for ordered rings and 
   adding some assumptions to make sure we are 
   talking about ordered fields in this context. 
   We should rename the carrier from $R$ used in the \<open>ring1\<close> 

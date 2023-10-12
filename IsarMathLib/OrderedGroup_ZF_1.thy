@@ -653,7 +653,7 @@ proof -
     by blast
 qed
 
-text\<open>In totally oredered groups the absolute value of a 
+text\<open>In totally ordered groups the absolute value of a 
   nonunit element is in \<open>G\<^sub>+\<close>.\<close>
 
 lemma (in group3) OrderedGroup_ZF_3_L12:

@@ -173,7 +173,7 @@ definition
   "Supremum(r,A) \<equiv> Minimum(r,\<Inter>a\<in>A. r``{a})"
 
 text\<open> The notion of "having a supremum" is the same as the set of upper bounds having a
-  minimum, but having it a a separate notion does simplify notattion in soma cases.
+  minimum, but having it a a separate notion does simplify notation in some cases.
   The definition is written in terms of 
   images of singletons $\{ x\}$ under relation. To understand this formulation note
   that the set of upper bounds of a set $A\subseteq X$ is 
