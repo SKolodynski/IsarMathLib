@@ -1,7 +1,7 @@
 (*
     This file is part of isar2html2.0 - a tool for rendering IsarMathLib
 	theories in in HTML.
-    Copyright (C) 2022  Slawomir Kolodynski
+    Copyright (C) 2022-2023  Slawomir Kolodynski
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -399,14 +399,37 @@ namespace iml
             (hd s.sectitle) + "\n" + (expInformalText repls s.secIntro) 
             + (List.map (exportItem repls mfii) s.items |> String.concat "\n")
 
+        /// Some standard Isabelle theory names are imported with prefix "ZF.", 
+        /// which has to be removed before creating link
+        let isabelleTheoryUrl (thName:string) =
+            let stripped = if thName.StartsWith("ZF.") then thName[3..] else thName
+            "https://isabelle.in.tum.de/dist/library/FOL/ZF/" + stripped + ".html"
+
+
+        
+        /// renders a name of an imported theory. 
+        /// If the theory is on the list of IsarMathLib theories then local link is created, 
+        /// otherwise it is assumed that it is a standard Isabelle theory and a link to official
+        /// Isabelle/ZF HTML documentation is created.
+        let exportImport (imlTheoryNames:Set<string>) (importName:string) =
+            if imlTheoryNames.Contains(importName) then tlink (importName + ".html") importName
+            else tlink (isabelleTheoryUrl importName) importName
+
         /// <summary>converts Isar theory to HTML markup, the main function of this module</summary>
         /// <param name="repls"> a list of string replacements in formal code to convert it to LaTeX</param>
         /// <param name="mfii"> a map of all known theorems rendered in simplified form</param>
         /// <param name="refs"> the list of all references in all proofs of the theory</param>
+        /// <param name="thNames"> the set of IsarMathLib theory names, used for rendering imports</param>
         /// <param name="th"> a parsed theory</param>
         /// <returns>The theory rendered in HTML</returns>
-        let exportTheory (repls:(string*string) list) (mfii:Map<string,string>) (refs:string list) (th:Theory) : string =
-            ( (bf "theory") + th.name + (bf "imports") + String.concat " " th.imports |> mkformal "")
+        let exportTheory 
+            (repls:(string*string) list) 
+            (mfii:Map<string,string>) 
+            (refs:string list)
+            (thNames: Set<string>)
+            (th:Theory) : string =
+            let importLinks = th.imports |> List.map (exportImport thNames)
+            ( (bf "theory") + th.name + (bf "imports") + String.concat " " importLinks |> mkformal "")
             + ( bf "begin\n" |> mkformal "" )
             + ( expInformalText repls th.thintro )
             + ( List.map (exportSubsection repls mfii) th.thsections |> sunlines)
@@ -424,7 +447,7 @@ namespace iml
             let tlinks = tinfos |> List.map (fun (tinfo:TheoryInfo) -> thrylink (tinfo.tiname))
                                 |> String.concat ""
             let expThr (tinfo:TheoryInfo) = 
-                let exportedTheory = exportTheory repls mfii (tinfo.tideps) (tinfo.titheory)
+                let exportedTheory = exportTheory repls mfii (tinfo.tideps) (kb.kbTheoryNames) (tinfo.titheory)
                 let  thHtml = templ |> replaceAll [ ("this is theory placeholder", exportedTheory)
                                                 ; ("this is links placeholder", tlinks) ]
                 ("isarhtml/" + tinfo.tiname + ".html", thHtml)

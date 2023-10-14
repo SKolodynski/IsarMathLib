@@ -143,7 +143,11 @@ namespace iml
         /// takes a list of parsed theories and returns a structure
         /// with all kinds of information that is needed
         let processTheories (ts:Theory list) : KnowledgeBase =
-            { kbformalitems = getThmsDefsFromTheories ts; kbtheories = List.map getTheoryInfo ts }
+            {   kbformalitems = getThmsDefsFromTheories ts
+                kbtheories = List.map getTheoryInfo ts
+                kbTheoryNames = ts |> Seq.map (fun t -> t.name) |> Set.ofSeq
+            }
+
 
         /// true if the formal item is a proposition
         /// (rather than definition or locale)

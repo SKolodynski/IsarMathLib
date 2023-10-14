@@ -157,12 +157,13 @@ module IMLP_datatypes =
                             fimitem:SimpleFormalItem
                             }
 
-    type TheoryInfo = { tiname: string; // redundant, but useful
-                        titheory: Theory; // parsed theory
+    type TheoryInfo = { tiname: string // redundant, but useful
+                        titheory: Theory // parsed theory
                         tideps: string list // a list of all dependencies in theory
                         }
 
     /// useful data extracted from all theories
-    type KnowledgeBase = { kbformalitems: FormalItemInfo list; // common for all theories
+    type KnowledgeBase = {  kbformalitems: FormalItemInfo list // common for all theories
                             kbtheories: TheoryInfo list // a list of information about theories
+                            kbTheoryNames: Set<string>
                             }
