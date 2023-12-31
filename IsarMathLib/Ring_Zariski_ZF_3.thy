@@ -320,8 +320,8 @@ proof
       assms(2) by auto
     with t have p:"t\<in>origin_ring.Spec" "\<not>(f-``I \<subseteq> t)"
       using origin_ring.openBasic_def by auto
-    from t(2) have kt:"ker \<subseteq> t" using origin_ring.closeBasic_def[OF
-      func1_1_L3[OF fun]] by auto
+    from t(2) have kt:"ker \<subseteq> t" using origin_ring.closeBasic_def
+      func1_1_L3 f_is_fun by auto
     {
       fix x assume "x\<in>f-``(f``t)"
       then have t:"f`x\<in>f``t" "x\<in>R" using func1_1_L15
@@ -383,11 +383,10 @@ proof
     spectrum_surj_bij[OF assms(2)]],of U] 
     unfolding g_def by blast
   moreover
-  have "D(f -`` I) \<in>\<tau>\<^sub>o" unfolding top_origin_def
-    using preimage_ideal(1)[OF I(1)]
-      origin_ring.ideal_dest_subset by auto
-  then have "V(ker)\<inter>D(f -`` I) \<in> {V(ker) \<inter> A . A \<in> \<tau>\<^sub>o}"
-    by auto
+  from I(1) have "(f-``(I)) \<triangleleft>R" and "(f-``(I)) \<subseteq> R" 
+    using preimage_ideal(2)  origin_ring.ideal_dest_subset by simp_all
+  then have "V(ker)\<inter>D(f-``(I)) \<in> {V(ker) \<inter> A . A \<in> \<tau>\<^sub>o}"
+    unfolding top_origin_def by auto
   ultimately show "g``U:  \<tau>\<^sub>o{restricted to}V(ker)"
     unfolding RestrictedTo_def by auto
 qed
@@ -406,8 +405,8 @@ proof-
     top_origin_def RestrictedTo_def using origin_ring.total_spec
     by auto
   then have "\<Union>(\<tau>\<^sub>o{restricted to}V(ker)) = V(ker)"
-    using origin_ring.closeBasic_def[OF func1_1_L3[OF fun,
-    of "{\<zero>\<^sub>S}"]] by auto moreover
+    using origin_ring.closeBasic_def func1_1_L3 f_is_fun
+     by auto moreover
   have "\<Union>\<tau>\<^sub>t = target_ring.Spec" unfolding top_target_def
     using target_ring.total_spec by auto
   ultimately show ?thesis using bij_cont_open_homeo[of g \<tau>\<^sub>t "\<tau>\<^sub>o{restricted to}V(ker)"]

@@ -560,7 +560,7 @@ lemma func1_1_L13A: assumes A1: "f``(A)\<noteq>0" shows "A\<noteq>0"
 
 text\<open>What is the inverse image of a singleton?\<close>
 
-lemma func1_1_L14: assumes "f\<in>X\<rightarrow>Y" 
+lemma func1_1_L14: assumes "f:X\<rightarrow>Y" 
   shows "f-``({y}) = {x\<in>X. f`(x) = y}" 
   using assms func1_1_L6A vimage_singleton_iff apply_iff by auto
 
@@ -651,6 +651,14 @@ proof
     with A1 A2 \<open>x\<in>A\<close> show "y \<in> f``(A)" using image_iff by auto
   qed
 qed  
+
+text\<open>If all elements of a nonempty set map to the same element of the codomain,
+  then the image of this set is a singleton.\<close>
+
+lemma image_constant_singleton: 
+  assumes "f:X\<rightarrow>Y" "A\<subseteq>X" "A\<noteq>0" "\<forall>x\<in>A. f`(x) = c"
+  shows "f``(A) = {c}"
+  using assms func_imagedef by auto
 
 text\<open>A technical lemma about graphs of functions: if we have two disjoint sets $A$ and $B$
   then the cartesian product of the inverse image of $A$ and $B$ is disjoint
@@ -879,8 +887,7 @@ proof -
 qed
 
 text\<open>A composition of functions is a function. This is a slight
-  generalization of standard Isabelle's \<open>comp_fun\<close>
-\<close>
+  generalization of standard Isabelle's \<open>comp_fun\<close>. \<close>
 
 lemma comp_fun_subset: 
   assumes A1: "g:A\<rightarrow>B"  and A2: "f:C\<rightarrow>D" and A3: "B \<subseteq> C"
@@ -1288,6 +1295,28 @@ proof -
     by auto
   from A1 A2 I II show "f`(converse(f)`(y)) = y"
     using func1_1_L5A right_inverse by auto
+qed
+
+text\<open>For a bijection between $Y$ and $X$ and a set $A\subseteq X$ 
+  an element $y\in Y$ is in the image $f(A)$ if and only if $f^{-1}(y)$ 
+  is an element of $A$. Note this is false with the weakened assumption that 
+  $f$ is an injection, for example consider $f:\{ 0,1\}\rightarrow \mathbb{N}, f(n)= n+1$
+  and $y=3$. Then $f^{-1}:\{1, 2\}\rightarrow \{ 0,1\}$ and (since $3$ is not in the domain 
+  of the inverse function) $f^{-1}(3) = \emptyset = 0 \in {0,1}$, but $3$ is not in the 
+  image $f(\{ 0,1\})$.  \<close>
+
+lemma bij_val_image_vimage: assumes "f \<in> bij(X,Y)" "A\<subseteq>X" "y\<in>Y"
+  shows "y\<in>f``(A) \<longleftrightarrow> converse(f)`(y) \<in> A"
+proof 
+  assume "y\<in>f``(A)"
+  with assms(1,2) show "converse(f)`(y) \<in> A" 
+    unfolding bij_def using inj_inv_back_in_set by blast
+next
+  assume "converse(f)`(y) \<in> A"
+  with assms(1,3) have "y\<in>{f`(x). x\<in>A}" using right_inverse_bij 
+    by force
+  with assms(1,2) show "y\<in>f``(A)" using bij_is_fun func_imagedef 
+    by force
 qed
 
 text\<open>For injections if a value at a point 
