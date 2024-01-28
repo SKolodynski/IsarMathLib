@@ -468,11 +468,18 @@ lemma set_comp_eq: assumes "\<forall>x\<in>X. p(x) = q(x)"
   shows "{p(x). x\<in>X} = {q(x). x\<in>X}" and "{\<langle>x,p(x)\<rangle>. x\<in>X} = {\<langle>x,q(x)\<rangle>. x\<in>X}"
   using assms by auto
 
+text\<open>If every element of a non-empty set $X\subseteq Y$ satisfies a condition
+  then the set of elements of $Y$ that satisfy the condition is non-empty.\<close>
+
+lemma non_empty_cond: assumes "X\<noteq>0" "X\<subseteq>Y" and "\<forall>x\<in>X. P(x)"
+  shows "{x\<in>Y. P(x)} \<noteq> 0" using assms by auto 
+
 text\<open>If $z$ is a pair, then the cartesian product of the singletons of its 
   elements is the same as the singleton $\{ z\}$.\<close> 
 
 lemma pair_prod: assumes "z = \<langle>x,y\<rangle>" shows "{x}\<times>{y} = {z}"
   using assms by blast
+
 
 end
 

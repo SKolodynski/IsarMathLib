@@ -301,7 +301,7 @@ corollary (in ring0) total_spec:
   shows "\<Union>{D(J). J\<in>\<I>} = Spec"
 proof
   show "\<Union>{D(J). J\<in>\<I>} \<subseteq> Spec" using openBasic_def by auto
-  have "D(R)\<in>{D(J). J\<in>\<I>}" using R_ideal by auto
+  have "D(R)\<in>{D(J). J\<in>\<I>}" using ring_self_ideal by auto
   then have "D(R) \<subseteq> \<Union>{D(J). J\<in>\<I>}" by auto
   then show "Spec \<subseteq> \<Union>{D(J). J\<in>\<I>}" using openBasic_total by auto
 qed

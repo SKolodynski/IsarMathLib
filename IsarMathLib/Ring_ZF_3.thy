@@ -448,8 +448,8 @@ text\<open>The quotient map is a homomorphism of rings. This is probably one of 
 theorem (in ring2) quotient_fun_homomor:
   shows "ringHomomor(f\<^sub>I,R,A,M,R\<^sub>I,A\<^sub>I,M\<^sub>I)"
   using ringAssum idealAssum ideal_normal_add_subgroup add_group.quotient_map 
-      Ring_ZF_1_L4(3) EquivClass_1_L10 Ring_ZF_1_L2(2) Group_ZF_2_2_L1 equiv_rel 
-      quotientBy_mul_monoid(1) QuotientBy_def
+      Ring_ZF_1_L4(3) EquivClass_1_L10 Ring_ZF_1_L2(2) Group_ZF_2_2_L1 
+      ideal_equiv_rel quotientBy_mul_monoid(1) QuotientBy_def
   unfolding IsAring_def Homomor_def IsMorphism_def ringHomomor_def
   by simp
 
@@ -1006,8 +1006,8 @@ proof -
         unfolding target_ring.primeIdeal_def by auto
       with I have "F`(q) \<in> {K\<in>\<I>. ker \<subseteq> K}" using apply_funtype 
         by blast
-      with assms \<open>q\<triangleleft>\<^sub>pR\<^sub>t\<close> \<open>t=F`(q)\<close> \<open>q\<in>?\<I>\<^sub>t\<close> \<open>t=F`(q)\<close> have 
-        "t\<triangleleft>R" "t\<triangleleft>\<^sub>pR" "ker\<subseteq>t"
+      with assms \<open>q\<triangleleft>\<^sub>pR\<^sub>t\<close> \<open>t=F`(q)\<close> \<open>q\<in>?\<I>\<^sub>t\<close> \<open>t=F`(q)\<close> 
+        have "t\<triangleleft>R" "t\<triangleleft>\<^sub>pR" "ker\<subseteq>t"
         using prime_ideal_quot_3 by simp_all
     } then show "F``{J\<in>Pow(S). J\<triangleleft>\<^sub>pR\<^sub>t} \<subseteq> {t\<in>Pow(R). ker\<subseteq>t \<and> (t\<triangleleft>\<^sub>pR)}"
       using origin_ring.ideal_dest_subset by blast

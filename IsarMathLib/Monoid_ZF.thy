@@ -123,6 +123,12 @@ proof -
   thus ?thesis by auto
 qed
 
+text\<open>The monoid operation is a binary function on the carrier with values in the carrier. \<close>
+
+lemma (in monoid0) monoid_oper_fun: shows "f:G\<times>G\<rightarrow>G"
+  using monoidAssum unfolding IsAmonoid_def IsAssociative_def
+  by simp
+
 text\<open>The range of the monoid operation is the whole monoid carrier.\<close>
 
 lemma (in monoid0) group0_1_L3B: shows "range(f) = G"

@@ -702,6 +702,12 @@ text\<open>A pair $(H,P)$ is a subgroup if $H$ forms a group with the
 definition
   "IsAsubgroup(H,P) \<equiv> IsAgroup(H, restrict(P,H\<times>H))"
 
+text\<open>The group is its own subgroup.\<close>
+
+lemma (in group0) group_self_subgroup: shows "IsAsubgroup(G,P)"
+  using groupAssum group_oper_fun restrict_domain
+  unfolding IsAsubgroup_def by simp
+ 
 text\<open>Formally the group operation in a subgroup is different than in the
   group as they have different domains. Of course we want to use the original 
   operation with the associated notation in the subgroup. The next couple of 
