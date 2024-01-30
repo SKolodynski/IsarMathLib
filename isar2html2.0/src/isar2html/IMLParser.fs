@@ -189,11 +189,12 @@ module IMLParser =
 
     /// parses abbreviations
     let abbreviation : Parser<FormalItem,unit> =
-        pipe3
-            (pstring "abbreviation" >>. whiteSpace >>. pureItemName)
+        pipe4
+            (pstring "abbreviation" >>. whiteSpace >>. poption "" incontext)
+            (whiteSpace >>. pureItemName)
             (whiteSpace >>. textBetween "(\"" "\")")
             (whiteSpace >>. pstring "where" >>. whiteSpace >>. innerText)
-            (fun nm nt d -> Abbr { abbname = nm; abbnotation = nt; abbspec = d })
+            (fun contxt nm nt d -> Abbr { abbname = nm; abbcontext = contxt; abbnotation = nt; abbspec = d })
 
     /// parses definitions. Note we require a space before \<equiv> in the definition
     let definition : Parser<FormalItem,unit> =  

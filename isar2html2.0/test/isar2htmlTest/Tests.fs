@@ -177,7 +177,8 @@ let ``test labelsimp`` () =
 let ``test abbreviation`` () =
     let teststr = "abbreviation FilConvTop(\"_ \\<rightarrow>\\<^sub>F _ {in} _\")\n\
                     where \"\\<FF> \\<rightarrow>\\<^sub>F x {in} T \\<equiv> topology0.FilterConverges(T,\\<FF>,x)\""
-    let parsed =  Abbr { abbname = "FilConvTop"; 
+    let parsed =  Abbr { abbname = "FilConvTop";
+                         abbcontext = "";
                             abbnotation = "_ \\<rightarrow>\\<^sub>F _ {in} _";
                             abbspec = "\\<FF> \\<rightarrow>\\<^sub>F x {in} T \\<equiv> topology0.FilterConverges(T,\\<FF>,x)" }            
     test1 abbreviation teststr parsed

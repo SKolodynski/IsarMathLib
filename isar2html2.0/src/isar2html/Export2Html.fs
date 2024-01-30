@@ -365,10 +365,11 @@ namespace iml
         /// exports formal items
         let exportFormalItem (repls:(string*string) list) (mfii:Map<string,string>) (fit:FormalItem) =
             match fit with 
-            | Abbr abbr ->  (bf  "abbreviation" |> par) + (isar2latex repls abbr.abbspec |> par)
+            | Abbr abbr ->  ((bf "abbreviation") + (if abbr.abbcontext.Length=0 then "\n" else  " (in " + abbr.abbcontext + ")") + "\n" |> par)
+                            + (isar2latex repls abbr.abbspec |> par)
                             |> mkformal ""
-            | Def def ->    ((bf  "definition ")  + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")") + "\n" |> par)
-                            +  (isar2latex repls def.def |> par)
+            | Def def ->    ((bf "definition ") + (if def.defcontext.Length=0 then "\n" else  " (in " + def.defcontext + ")") + "\n" |> par)
+                            + (isar2latex repls def.def |> par)
                             |> mkformal ""
             | Loc loc ->    let (parent,vars) = loc.inheritsFrom
                             ((bf "locale ") + loc.localename 

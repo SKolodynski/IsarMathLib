@@ -32,6 +32,7 @@ module IMLP_datatypes =
     }
 
     type Abbreviation = {   abbname: string;
+                            abbcontext: string; // an optional locale
                             abbnotation: string; // string defining notation, like "_ ->F _ {in} _"
                             abbspec: string // the actual abbreviation (after the "where" keyword)
                             }

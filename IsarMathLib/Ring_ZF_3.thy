@@ -34,10 +34,15 @@ theory Ring_ZF_3 imports Ring_ZF_2 Group_ZF_5
 
 begin
 
-text \<open>This section studies the ideals of quotient rings,
+text\<open>This section studies the ideals of quotient rings,
   and defines ring homomorphisms.\<close>
 
-text\<open>A ring homomorphism is a function between rings that which has the
+subsection\<open>Ring homomorphisms\<close>
+
+text\<open>Morphisms in general are structure preserving functions between algebraic
+  structures. In this section we study ring homomorphisms.\<close>
+
+text\<open>A ring homomorphism is a function between rings which has the
   morphism property with respect to both addition and multiplication operation, 
   and maps one (the neutral element of multiplication) in the first ring to one
   in the second ring. \<close>
@@ -385,7 +390,7 @@ proof -
     by (rule origin_ring.equivalent_prime_ideal_2)
 qed
 
-section\<open>Quotient ring with quotient map\<close>
+subsection\<open>Quotient ring with quotient map\<close>
 
 text\<open>The notion of a quotient ring (a.k.a factor ring, difference ring or residue class) 
   is analogous to the notion of quotient group from the group theory. \<close>
