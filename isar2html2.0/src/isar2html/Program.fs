@@ -37,23 +37,23 @@ exportTheories templ kb |> writeFiles
 
 
 // ----------------- debugging code, do not commit uncommented
-// open iml.Utils
-// let s = "ab+Binom(n,k) + c"
-// let mn = "Binom"
-// let templ = "{{$1}\\choose {2}}"
-// let expanded = expMacro mn templ s 
-
-// printfn "%s" expanded
     
 // open FParsec
-// let s = """interpretation comp_monoid:monoid0 "X\<longrightarrow>X" "Composition(X)" "comp2(X)"
-//   unfolding monoid0_def comp2_def using Group_ZF_2_5_L2(1) by auto
+// let s = """locale ring2 = ring0 +
+//   fixes I
+//   assumes idealAssum: "I\<triangleleft>R"
+
+//   fixes quot ("R\<^sub>I")
+//   defines quot_def [simp]: "R\<^sub>I \<equiv> QuotientBy(I)"
+
+//   fixes qrel ("r\<^sub>I")
+//   defines qrel_def [simp]: "r\<^sub>I \<equiv> QuotientGroupRel(R,A,I)"
 // """
 
-// let parseRes = run interpretation  s
+// let parseRes = run locale  s
 // let res = match parseRes with
 //             | Success(result, _, _) -> result
 //             | Failure(errorMsg, _, _) -> 
 //                 raise (ParsingError errorMsg)
 
-// getDepsFromProof res |> printfn "%A" 
+// res |> printfn "%A" 

@@ -192,7 +192,7 @@ module IMLParser =
         pipe4
             (pstring "abbreviation" >>. whiteSpace >>. poption "" incontext)
             (whiteSpace >>. pureItemName)
-            (whiteSpace >>. textBetween "(\"" "\")")
+            (whiteSpace >>. textBetween "(" ")")
             (whiteSpace >>. pstring "where" >>. whiteSpace >>. innerText)
             (fun contxt nm nt d -> Abbr { abbname = nm; abbcontext = contxt; abbnotation = nt; abbspec = d })
 
