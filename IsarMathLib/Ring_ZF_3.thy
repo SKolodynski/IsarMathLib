@@ -910,7 +910,7 @@ theorem (in ring_homo) quot_converse:
   assumes "J\<triangleleft>R" "ker\<subseteq>J" "f\<in>surj(R,S)"
   shows "converse(F)`(J) = f``(J)"
 proof-
-  let ?g="\<lambda>J\<in>{K\<in>\<I>. ker\<subseteq>K}. f``(J)"
+  let ?g = "\<lambda>J\<in>{K\<in>\<I>. ker\<subseteq>K}. f``(J)"
   let ?\<I>\<^sub>t = "target_ring.ideals"
   let ?C\<^sub>F = "converse(F)"
   from assms(1,4) have "?C\<^sub>F \<in> bij({K\<in>\<I>. ker\<subseteq>K}, ?\<I>\<^sub>t)" 
