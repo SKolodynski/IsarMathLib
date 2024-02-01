@@ -50,7 +50,10 @@ exportTheories templ kb |> writeFiles
 //   defines qrel_def [simp]: "r\<^sub>I \<equiv> QuotientGroupRel(R,A,I)"
 // """
 
-// let parseRes = run locale  s
+// let s = "abbreviation FilConvTop(\"_ \\<rightarrow>\\<^sub>F _ {in} _\")\n\
+//                     where \"\\<FF> \\<rightarrow>\\<^sub>F x {in} T \\<equiv> topology0.FilterConverges(T,\\<FF>,x)\""
+
+// let parseRes = run abbreviation  s
 // let res = match parseRes with
 //             | Success(result, _, _) -> result
 //             | Failure(errorMsg, _, _) -> 

@@ -179,7 +179,7 @@ let ``test abbreviation`` () =
                     where \"\\<FF> \\<rightarrow>\\<^sub>F x {in} T \\<equiv> topology0.FilterConverges(T,\\<FF>,x)\""
     let parsed =  Abbr { abbname = "FilConvTop";
                          abbcontext = "";
-                            abbnotation = "_ \\<rightarrow>\\<^sub>F _ {in} _";
+                            abbnotation = "\"_ \\<rightarrow>\\<^sub>F _ {in} _\"";
                             abbspec = "\\<FF> \\<rightarrow>\\<^sub>F x {in} T \\<equiv> topology0.FilterConverges(T,\\<FF>,x)" }            
     test1 abbreviation teststr parsed
 
