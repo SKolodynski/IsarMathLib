@@ -30,6 +30,15 @@ namespace iml
         /// converts literal latex: surrounds with "\( \)"
         let convLatex (s:string) : string =  "\\(" + s + "\\)"
 
+        /// a\<^sup>b\<^sup>c is a valid Isar markup but a^b^c is not a valid LaTeX 
+        /// This function looks for patterns like "a^b^c" and disambiguates them to
+        /// "a^{b^c}". We don't support symbols for now.
+        let rec fixDoubleExponents (s:string) : string =
+            let pos = s.IndexOf("^")
+            if  (pos < 0) || (s.Length < pos+4) || (s[pos+2] <> '^') then s
+            else s.Substring(0,pos+1)+"{" + s.Substring(pos+1,3) + "}" + 
+                    (fixDoubleExponents (s.Substring(5)))  
+
         /// converts the inner syntax to LaTeX. 
         let isar2latex (repls:(string*string) list) (s:string) : string =
             let formula = s
@@ -38,6 +47,7 @@ namespace iml
                         |> replaceAll repls 
                         |> replace  ("\n","\\)\n\\(")
                         |> remElems "`?"
+                        |> fixDoubleExponents
             "\\( " + formula + " \\)"
 
         /// chars allowed in literal texts that are not LaTeX. TODO: doe we need to allows space?
