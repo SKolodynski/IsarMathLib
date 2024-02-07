@@ -59,7 +59,7 @@ text\<open>The theorems translated from Metamath reside in the \<open>MMI_Comple
 
 subsection\<open>Extended reals and order\<close>
 
-text\<open>In this sectin we import a couple of theorems about the extended 
+text\<open>In this section we import a couple of theorems about the extended 
   real line and the linear order on it.\<close>
 
 text\<open>Metamath uses the set of real numbers extended with $+\infty$ and $-\infty$. 

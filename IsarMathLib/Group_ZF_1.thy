@@ -484,7 +484,7 @@ text\<open> The section \<open>Binary operations\<close> in the \<open>func_ZF\<
   on the subsets of $X$ defined by $F(A,B) = \{ f\langle x,y \rangle | x\in A, y\in B\}$.
   In the group context using multiplicative notation we can write this as 
   $H\cdot K = \{ x\cdot y | x\in A, y\in B\}$. Similarly we can define $H^{-1}=\{ x^{-1} | x\in H\}$.
-  In this section we study properties of these derived operation and how they relate to the concept
+  In this section we study properties of these derived operations and how they relate to the concept
   of subgroups.\<close>
 
 text\<open>The next locale extends the \<open>groups0\<close> locale with notation related to interval arithmetics.\<close>

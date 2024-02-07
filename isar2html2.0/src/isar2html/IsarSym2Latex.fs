@@ -58,6 +58,7 @@ namespace iml
                  ("\\<cn>", " - ")
                  ("\\<cmnf>", "-\\infty ")
                  ("\\<complex>", "\\mathbb{C} ")
+                 ("\\<cong>", "\\cong ")
                  ("\\<cpnf>", "+\\infty ")
                  ("\\<cs>", " - ")
                  ("\\<delta>", "\\delta ")

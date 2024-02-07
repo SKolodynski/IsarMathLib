@@ -390,7 +390,7 @@ qed
 subsection\<open>Choice axioms\<close>
 
 text\<open>We want to prove some theorems assuming that some version of the Axiom of Choice holds.
-  To avoid introducing it as an axiom we will defin an appropriate predicate and put that in the 
+  To avoid introducing it as an axiom we will define an appropriate predicate and put that in the 
   assumptions of the theorems. That way technically we stay inside ZF.\<close>
 
 text\<open>The first predicate we define states that the axiom of $Q$-choice holds for subsets of $K$ if 

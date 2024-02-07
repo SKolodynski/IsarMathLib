@@ -974,9 +974,10 @@ lemma (in ring0) two_quotient:
   shows "r``{\<two>} = QuotientGroupOp(R,A,I)`\<langle>r``{\<one>},r``{\<one>}\<rangle>"
   using ringAssum assms EquivClass_1_L10 ideal_equiv_rel Ring_ZF_1_L2(2) Ring_ZF_1_L2(2)
       Group_ZF_2_4_L5A ideal_normal_add_subgroup
-   unfolding IsAring_def QuotientGroupOp_def by simp
+  unfolding IsAring_def QuotientGroupOp_def by simp
 
-text\<open>The class of a square of an element of the ring is the same as the result \<close>
+text\<open>The class of a square of an element of the ring is the same as the result of the 
+  projected multiplication on the pair of classes of the element. \<close>
 
 lemma (in ring0) sqrt_quotient:
   assumes "I\<triangleleft>R" "x\<in>R"
@@ -1008,7 +1009,7 @@ theorem (in ring0) quotientBy_is_ring:
   using assms quotientBy_distributive quotientBy_mul_monoid(2) quotientBy_add_group
   unfolding IsAring_def by auto
 
-text\<open>An import property satisfied by many important rings is
+text\<open>An important property satisfied by many important rings is
   being Noetherian: every ideal is finitely generated.\<close>
 
 definition (in ring0) isFinGen ("_{is finitely generated}") where
