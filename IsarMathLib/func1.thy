@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2022  Slawomir Kolodynski
+    Copyright (C) 2005 - 2024  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -393,7 +393,7 @@ text\<open>An hypotheses-free form of \<open>ZF_fun_from_tot_val1\<close>: the v
 lemma ZF_fun_from_tot_val2: shows "\<forall>x\<in>X. {\<langle>x,b(x)\<rangle>. x\<in>X}`(x) = b(x)"
   using ZF_fun_from_tot_val1 by simp
 
-text\<open>The range of a function defined by set comprehension is the set of its values."\<close>
+text\<open>The range of a function defined by set comprehension is the set of its values.\<close>
 
 lemma range_fun: shows "range({\<langle>x,b(x)\<rangle>. x\<in>X}) = {b(x). x\<in>X}" 
   by blast
@@ -1202,6 +1202,48 @@ proof -
     by simp
 qed
 
+text\<open>Surjections are functions that map the domain onto the codomain.\<close>
+
+lemma surj_def_alt: shows "surj(X,Y) = {f\<in>X\<rightarrow>Y. f``(X) = Y}"
+proof
+  show "surj(X,Y) \<subseteq> {f\<in>X\<rightarrow>Y. f``(X) = Y}"
+    using surj_range_image_domain unfolding surj_def by auto
+  show "{f\<in>X\<rightarrow>Y. f``(X) = Y} \<subseteq> surj(X,Y)"
+    using range_image_domain fun_is_surj by auto
+qed
+
+text\<open>Bijections are functions that preserve complements.\<close>
+
+lemma bij_def_alt: 
+  shows "bij(X,Y) = {f\<in>X\<rightarrow>Y. \<forall>A\<in>Pow(X). f``(X-A) = Y-f``(A)}"
+proof
+  let ?R = "{f\<in>X\<rightarrow>Y. \<forall>A\<in>Pow(X). f``(X-A) = Y-f``(A)}"
+  show "bij(X,Y) \<subseteq> ?R"
+    using inj_image_dif surj_range_image_domain surj_is_fun
+    unfolding bij_def by auto
+  { fix f assume "f\<in>?R"
+    hence "f:X\<rightarrow>Y" and I: "\<forall>A\<in>Pow(X). f``(X-A) = Y-f``(A)"
+      by auto
+    { fix x\<^sub>1 x\<^sub>2 assume "x\<^sub>1\<in>X" "x\<^sub>2\<in>X" "f`(x\<^sub>1) = f`(x\<^sub>2)"
+      with \<open>f:X\<rightarrow>Y\<close> have 
+        "f``{x\<^sub>1} = {f`(x\<^sub>1)}" "f``{x\<^sub>2} = {f`(x\<^sub>2)}" "f``{x\<^sub>1} = f``{x\<^sub>2}"
+        using singleton_image by simp_all
+      { assume "x\<^sub>1\<noteq>x\<^sub>2"
+        from \<open>f:X\<rightarrow>Y\<close> have "f``(X-{x\<^sub>1}) = {f`(t). t\<in>X-{x\<^sub>1}}"
+          using func_imagedef by blast
+        with I \<open>x\<^sub>2\<in>X\<close> \<open>x\<^sub>1\<in>X\<close> \<open>x\<^sub>1\<noteq>x\<^sub>2\<close> \<open>f``{x\<^sub>1} = f``{x\<^sub>2}\<close> 
+          have "f`(x\<^sub>2) \<in> Y-f``{x\<^sub>2}" by auto
+        with \<open>f``{x\<^sub>2} = {f`(x\<^sub>2)}\<close> have False by auto
+      } hence "x\<^sub>1=x\<^sub>2" by auto
+    } with \<open>f:X\<rightarrow>Y\<close> have "f\<in>inj(X,Y)" unfolding inj_def 
+      by auto
+    moreover
+    from I have "f``(X-0) = Y-f``(0)" by blast
+    with \<open>f:X\<rightarrow>Y\<close> have "f\<in>surj(X,Y)" using surj_def_alt by simp
+    ultimately have "f \<in> bij(X,Y)" unfolding bij_def by simp
+  } thus "?R \<subseteq> bij(X,Y)" by auto
+qed
+
 text\<open>For injections the inverse image of an image is the same set.\<close>
 
 lemma inj_vimage_image: assumes "f \<in> inj(X,Y)" and "A\<subseteq>X"
@@ -1302,7 +1344,7 @@ text\<open>For a bijection between $Y$ and $X$ and a set $A\subseteq X$
   is an element of $A$. Note this is false with the weakened assumption that 
   $f$ is an injection, for example consider $f:\{ 0,1\}\rightarrow \mathbb{N}, f(n)= n+1$
   and $y=3$. Then $f^{-1}:\{1, 2\}\rightarrow \{ 0,1\}$ and (since $3$ is not in the domain 
-  of the inverse function) $f^{-1}(3) = \emptyset = 0 \in {0,1}$, but $3$ is not in the 
+  of the inverse function) $f^{-1}(3) = \emptyset = 0 \in \{ 0,1\}$, but $3$ is not in the 
   image $f(\{ 0,1\})$.  \<close>
 
 lemma bij_val_image_vimage: assumes "f \<in> bij(X,Y)" "A\<subseteq>X" "y\<in>Y"
@@ -1545,7 +1587,6 @@ proof -
   with A1 \<open>b \<in> bij(B,A)\<close> show "a = converse(b)" and "b = converse(a)"
     using comp_id_conv by auto
 qed  
- 
  
 text\<open>For a surjection the union if images of singletons
   is the whole range.\<close>
