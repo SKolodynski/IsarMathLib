@@ -112,7 +112,7 @@ text\<open>Endomoprhisms of a group form a monoid with composition as the binary
 
 theorem (in group0) end_comp_monoid:
   shows "IsAmonoid(End(G,P),InEnd(Composition(G),G,P))"
-  and "TheNeutralElement(End(G,P),InEnd(Composition(G),G,P))=id(G)"
+  and "TheNeutralElement(End(G,P),InEnd(Composition(G),G,P)) = id(G)"
 proof -
   let ?C\<^sub>0 = "InEnd(Composition(G),G,P)"
   have fun: "id(G):G\<rightarrow>G" unfolding id_def by auto
@@ -153,6 +153,14 @@ proof-
   } with fun2 show ?thesis using eq_endomor by simp
 qed
 
+text\<open>The value of a product of endomorphisms on a group element is the product of values.\<close>
+
+lemma (in abelian_group) end_pointwise_add_val:
+  assumes "f\<in>End(G,P)" "g\<in>End(G,P)" "x\<in>G" "F = P {lifted to function space over} G"
+  shows "(InEnd(F,G,P)`\<langle>f,g\<rangle>)`(x) = (f`(x))\<cdot>(g`(x))"
+  using assms group_oper_fun monoid.group0_1_L3B func_ZF_1_L4 
+  unfolding End_def by simp
+
 text\<open>The inverse of an abelian group is an endomorphism.\<close>
 
 lemma (in abelian_group) end_inverse_group:
@@ -162,7 +170,7 @@ lemma (in abelian_group) end_inverse_group:
   unfolding End_def IsMorphism_def by simp
 
 text\<open>The set of homomorphisms of an abelian group is an abelian subgroup of
-  the group of functions from a set to a group, under pointwise multiplication.\<close>
+  the group of functions from a set to a group, under pointwise addition.\<close>
 
 theorem (in abelian_group) end_addition_group:
   assumes "F = P {lifted to function space over} G"
@@ -172,7 +180,7 @@ proof-
   have "End(G,P)\<noteq>0" using end_comp_monoid(1) monoid0.group0_1_L3A 
     unfolding monoid0_def by auto
   moreover have "End(G,P) \<subseteq> G\<rightarrow>G" unfolding End_def by auto 
-  moreover from isAbelian assms(1) have "End(G,P){is closed under}F" 
+  moreover from isAbelian assms(1) have "End(G,P){is closed under} F" 
     unfolding IsOpClosed_def using end_pointwise_addition by auto 
   moreover from groupAssum assms(1) have 
     "\<forall>f\<in>End(G,P). GroupInv(G\<rightarrow>G,F)`(f) \<in> End(G,P)"
@@ -186,6 +194,20 @@ proof-
     "InEnd(F,G,P) {is commutative on} End(G,P)" 
     using Group_ZF_2_1_L7 unfolding End_def IsCommutative_def by auto
 qed
+
+text\<open>Endomorphisms form a subgroup of the space of functions that map the group to itself.\<close>
+
+lemma (in abelian_group) end_addition_subgroup:
+  shows "IsAsubgroup(End(G,P),P {lifted to function space over} G)"
+  using end_addition_group unfolding IsAsubgroup_def by simp
+
+text\<open>The neutral element of the group of endomorphisms of a group is the constant function 
+  with value equal to the neutral element of the group.\<close>
+
+lemma (in abelian_group) end_add_neut_elem:
+  assumes "F = P {lifted to function space over} G"
+  shows "TheNeutralElement(End(G,P),InEnd(F,G,P)) = ConstantFunction(G,\<one>)"
+  using assms end_addition_subgroup lift_group_subgr_neut by simp
 
 text\<open>For the endomorphisms of a group $G$ the group operation lifted to the function space 
   over $G$ is distributive with respect to the composition operation. \<close>

@@ -65,7 +65,7 @@ locale field0 = ring0 K A M for K A M +
   
   assumes not_triv: "\<zero> \<noteq> \<one>"
 
-  assumes inv_exists: "\<forall>a\<in>K. a\<noteq>\<zero> \<longrightarrow> (\<exists>b\<in>K. a\<cdot>b = \<one>)"
+  assumes inv_exists: "\<forall>x\<in>K. x\<noteq>\<zero> \<longrightarrow> (\<exists>y\<in>K. x\<cdot>y = \<one>)"
 
   fixes non_zero ("K\<^sub>0")
   defines non_zero_def[simp]: "K\<^sub>0 \<equiv> K-{\<zero>}"

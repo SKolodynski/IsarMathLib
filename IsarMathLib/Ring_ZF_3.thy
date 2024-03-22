@@ -64,16 +64,16 @@ locale ring_homo =
     and homomorphism: "ringHomomor(f,R,A,M,S,U,V)"
 
   fixes ringa (infixl "\<ra>\<^sub>R" 90)
-  defines ringa_def [simp]: "x\<ra>\<^sub>Rb \<equiv> A`\<langle>x,b\<rangle>"
+  defines ringa_def [simp]: "x\<ra>\<^sub>Ry \<equiv> A`\<langle>x,y\<rangle>"
 
   fixes ringminus ("\<rm>\<^sub>R _" 89)
   defines ringminus_def [simp]: "(\<rm>\<^sub>Rx) \<equiv> GroupInv(R,A)`(x)"
 
   fixes ringsub (infixl "\<rs>\<^sub>R" 90)
-  defines ringsub_def [simp]: "x\<rs>\<^sub>Rb \<equiv> x\<ra>\<^sub>R(\<rm>\<^sub>Rb)"
+  defines ringsub_def [simp]: "x\<rs>\<^sub>Ry \<equiv> x\<ra>\<^sub>R(\<rm>\<^sub>Ry)"
 
   fixes ringm (infixl "\<cdot>\<^sub>R" 95)
-  defines ringm_def [simp]: "x\<cdot>\<^sub>Rb \<equiv> M`\<langle>x,b\<rangle>"
+  defines ringm_def [simp]: "x\<cdot>\<^sub>Ry \<equiv> M`\<langle>x,y\<rangle>"
 
   fixes ringzero ("\<zero>\<^sub>R")
   defines ringzero_def [simp]: "\<zero>\<^sub>R \<equiv> TheNeutralElement(R,A)"

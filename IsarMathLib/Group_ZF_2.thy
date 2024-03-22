@@ -229,6 +229,13 @@ proof -
     by simp
 qed
 
+text\<open>The propositions proven in the \<open>group0\<close> context are valid in the same context
+  when applied to the function space with the lifted group operation.\<close>
+
+lemma (in group0) group0_valid_fun_space: 
+  shows "group0(X\<rightarrow>G,P {lifted to function space over} X)"
+  using Group_ZF_2_1_T2 unfolding group0_def by simp
+
 text\<open>What is the group inverse for the lifted group?\<close>
 
 lemma (in group0) Group_ZF_2_1_L6: 
@@ -274,6 +281,21 @@ proof -
     "GroupInv(X\<rightarrow>G,F)`(s) = GroupInv(G,P) O s"
     using group0.group0_3_L2 Group_ZF_2_1_L6 by blast
   ultimately show ?thesis by simp
+qed
+
+text\<open>The neutral element of a subgroup of the lifted group is the constant
+  function with value equal to the neutral element of the group. \<close>
+
+lemma (in group0) lift_group_subgr_neut:
+  assumes "F = P {lifted to function space over} X" and "IsAsubgroup(H,F)"
+  shows "TheNeutralElement(H,restrict(F,H\<times>H)) = ConstantFunction(X,\<one>)"
+proof -
+  from assms have 
+    "TheNeutralElement(H,restrict(F,H\<times>H)) = TheNeutralElement(X\<rightarrow>G,F)"
+    using group0_valid_fun_space group0.group0_3_L4 by blast
+  also from groupAssum assms(1) have "... = ConstantFunction(X,\<one>)"
+    using Group_ZF_2_1_L2 unfolding IsAgroup_def by simp
+  finally show ?thesis by simp
 qed
 
 text\<open>If a group is abelian, then its lift to a function space is also 

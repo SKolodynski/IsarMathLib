@@ -75,16 +75,16 @@ locale ring0 =
   assumes ringAssum: "IsAring(R,A,M)"
 
   fixes ringa (infixl "\<ra>" 90)
-  defines ringa_def [simp]: "a\<ra>b \<equiv> A`\<langle> a,b\<rangle>"
+  defines ringa_def [simp]: "x\<ra>y \<equiv> A`\<langle>x,y\<rangle>"
 
   fixes ringminus ("\<rm> _" 89)
-  defines ringminus_def [simp]: "(\<rm>a) \<equiv> GroupInv(R,A)`(a)"
+  defines ringminus_def [simp]: "(\<rm>x) \<equiv> GroupInv(R,A)`(x)"
 
   fixes ringsub (infixl "\<rs>" 90)
-  defines ringsub_def [simp]: "a\<rs>b \<equiv> a\<ra>(\<rm>b)"
+  defines ringsub_def [simp]: "x\<rs>y \<equiv> x\<ra>(\<rm>y)"
 
   fixes ringm (infixl "\<cdot>" 95)
-  defines ringm_def [simp]: "a\<cdot>b \<equiv> M`\<langle> a,b\<rangle>"
+  defines ringm_def [simp]: "x\<cdot>y \<equiv> M`\<langle>x,y\<rangle>"
 
   fixes ringzero ("\<zero>")
   defines ringzero_def [simp]: "\<zero> \<equiv> TheNeutralElement(R,A)"
@@ -96,7 +96,7 @@ locale ring0 =
   defines ringtwo_def [simp]: "\<two> \<equiv> \<one>\<ra>\<one>"
 
   fixes ringsq ("_\<^sup>2" [96] 97)
-  defines ringsq_def [simp]: "a\<^sup>2 \<equiv> a\<cdot>a"
+  defines ringsq_def [simp]: "x\<^sup>2 \<equiv> x\<cdot>x"
 
 text\<open>In the \<open>ring0\<close> context we can use theorems proven in some 
   other contexts.\<close>

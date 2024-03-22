@@ -26,9 +26,9 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *)
 
-section \<open> Modules and vector spaces \<close>
+section \<open>Vector spaces\<close>
 
-theory VectorSpace_ZF imports Ring_ZF_3 Field_ZF
+theory VectorSpace_ZF imports Module_ZF
 
 begin
 
@@ -40,7 +40,7 @@ text\<open> Vector spaces have a long history of applications in mathematics and
   This theory has nothing to do with LLM's however - it just defines vector space as a 
   mathematical structure as it has been understood from at least the beginning of the XXth century.  \<close>
 
-subsection\<open>Definition and basic properties of modules and vector spaces\<close>
+subsection\<open>Definition and basic properties of vector spaces\<close>
 
 text\<open> The canonical example of a vector space is $\mathbb{R}^2$ - the set of $n$-tuples
   of real numbers. We can add them adding respective coordinates and scale them by 
@@ -50,69 +50,25 @@ text\<open> The canonical example of a vector space is $\mathbb{R}^2$ - the set 
   properties $x(v_1 + v_2) = s v_1 + s v_2$ and $(s_1+s_2)v =s_1 v + s_2 v$ are satisfied for any
   scalars $s,s_1,s_2$ and vectors $v,v_1,v_2$. \<close>
 
-text\<open>we know that endomorphisms of an abelian group $G$ form a ring with pointwise addition
-  as the additive operation and composition as the ring multiplication. This asssertion is a bit
-  imprecise though as the domain of pointwise addition is a binary operation on 
-  the space of functions $G\rightarrow G$ (i.e. its domain is 
-  $(G\rightarrow G)\times G\rightarrow G$) while we need the space of endomorphisms to be the
-  domain of the ring addition and multiplication. Therefore, to get the actual additive operation
-  we need to restrict the pointwise addition of functions $G\rightarrow G$ 
-  to the set of endomorphisms of G$G$. 
-  Recall from the \<open>Group_ZF_5\<close> that the \<open>InEnd\<close> operator restricts an operation to
-  the set of endomorphisms and see the \<open>func_ZF\<close> theory for definitions 
-  of lifting an operation on a set to a function space over that set. \<close>
-
-definition "EndAdd(G,P) \<equiv> InEnd(P {lifted to function space over} G,G,P)"
-
-text\<open>Similarly we define the multiplication in the ring of endomorphisms 
-  as the restriction of compositions to the endomorphisms of $G$.
-  See the \<open>func_ZF\<close> theory for the definition of the \<open>Composition\<close> operator. \<close>
-
-definition "EndMult(G,P) \<equiv> InEnd(Composition(G),G,P)"
-
-text\<open>We can now reformulate the theorem \<open>end_is_ring\<close> from the \<open>Group_ZF_5\<close> theory
-  in terms of the addition and multiplication of endomorphisms defined above. \<close>
-
-lemma (in abelian_group) end_is_ring1: 
-  shows "IsAring(End(G,P),EndAdd(G,P),EndMult(G,P))"
-  using end_is_ring unfolding EndAdd_def EndMult_def by simp
-
-text\<open>We define an \<open>action\<close> as a homomorphism into a space of endomorphisms (typically of some
-  abelian group). In the definition below $S$ is the set of scalars, $A$ is the addition operation
-  on this set, $M$ is multiplication on the set, $V$ is the set of vectors, $A_V$ is the 
-  operation of vector addition, and $H$ is the homomorphism that defines the vector space.
-  On the right hand side of the definition \<open>End(V,A\<^sub>V)\<close> is the set of endomorphisms,  
-  This definition is only ever used as part of the definition of a module and vector space, 
-  it's just convenient to split it off to shorten the main definitions. \<close>
-
-definition 
-  "IsAction(S,A,M,V,A\<^sub>V,H) \<equiv> ringHomomor(H,S,A,M,End(V,A\<^sub>V),EndAdd(V,A\<^sub>V),EndMult(V,A\<^sub>V))"
-
-text\<open>A module is a ring action on an abelian group.\<close>
-
-definition "IsModule(S,A,M,V,A\<^sub>V,H) \<equiv>
-  IsAring(S,A,M) \<and> IsAgroup(V,A\<^sub>V) \<and> (A\<^sub>V {is commutative on} V) \<and> IsAction(S,A,M,V,A\<^sub>V,H)"
 
 text\<open>A vector space is a field action on an abelian group. \<close>
 
 definition "IsVectorSpace(S,A,M,V,A\<^sub>V,H) \<equiv>
   IsAfield(S,A,M) \<and> IsAgroup(V,A\<^sub>V) \<and> (A\<^sub>V {is commutative on} V) \<and> IsAction(S,A,M,V,A\<^sub>V,H)"
 
-
 text\<open>The next locale defines context (i.e. common assumptions and notation) when considering 
-  modules. We reuse notation from the \<open>ring0\<close> locale and add notation specific to the
-  vector spaces. We split the definition of a module into components to make the assumptions
-  easier to use. The addition and multiplication in the ring of scalars is denoted $+$ and $\cdot$,
-  resp. The addition of vectors will be denoted $+_V$. The multiplication (scaling) of scalars and
-  by vectors will be denoted $\cdot_S$.   \<close>
+  vector spaces. We reuse notation from the \<open>field0\<close> locale adding more similarly to the
+  \<open>module0\<close> locale. \<close>
 
-locale module0 = ring0 +
-  
+locale vector_space0 = field0 +
   fixes V A\<^sub>V H
-  
-  assumes vAbGr: "IsAgroup(V,A\<^sub>V) \<and> (A\<^sub>V {is commutative on} V)"
 
-  assumes vSpce: "IsAction(R,A,M,V,A\<^sub>V,H)"
+  assumes mAbGr: "IsAgroup(V,A\<^sub>V) \<and> (A\<^sub>V {is commutative on} V)"
+
+  assumes mAction: "IsAction(K,A,M,V,A\<^sub>V,H)"
+
+  fixes zero_vec ("\<Theta>")
+  defines zero_vec_def [simp]: "\<Theta> \<equiv> TheNeutralElement(V,A\<^sub>V)"
 
   fixes vAdd (infixl "+\<^sub>V" 80)
   defines vAdd_def [simp]: "v\<^sub>1 +\<^sub>V v\<^sub>2 \<equiv> A\<^sub>V`\<langle>v\<^sub>1,v\<^sub>2\<rangle>"
@@ -120,18 +76,94 @@ locale module0 = ring0 +
   fixes scal (infix "\<cdot>\<^sub>S" 90)
   defines scal_def [simp]: "s \<cdot>\<^sub>S v \<equiv> (H`(s))`(v)"
 
+  fixes negV ("\<midarrow>_")
+  defines negV_def [simp]: "\<midarrow>v \<equiv> GroupInv(V,A\<^sub>V)`(v)"
 
-text\<open>We indeed talk about modules in the \<open>module0\<close> context.\<close>
+  fixes vSub (infix "-\<^sub>V" 80)
+  defines vSub_def [simp]: "v\<^sub>1 -\<^sub>V v\<^sub>2 \<equiv> v\<^sub>1 +\<^sub>V (\<midarrow>v\<^sub>2)"
 
-lemma (in module0) module_in_module0: shows "IsModule(R,A,M,V,A\<^sub>V,H)"
-  using ringAssum vAbGr vSpce unfolding IsModule_def by simp
+text\<open>The assumptions of \<open>vector_spce0\<close> context hold in the \<open>module0\<close> context.\<close>
 
-text\<open>Theorems proven in the \<open>ring_homo\<close> context are valid in the \<open>module0\<close> context, as
-  applied to ring $R$ and the ring of endomorphisms of the vector group. \<close>
+lemma (in vector_space0) vec_spce_mod: shows "module0(K, A, M, V, A\<^sub>V, H)" 
+proof
+  from mAbGr show "IsAgroup(V,A\<^sub>V) \<and> (A\<^sub>V {is commutative on} V)" by simp
+  from mAction show "IsAction(K,A,M,V,A\<^sub>V,H)" by simp
+qed
 
-lemma (in module0) ring_homo_in_module0: 
-  shows "ring_homo(R,A,M,End(V,A\<^sub>V),EndAdd(V,A\<^sub>V),EndMult(V,A\<^sub>V),H)"
-proof 
+text\<open>Propositions proven in the \<open>module0\<close> context are valid in the \<open>vector_spce0\<close> context.\<close>
+
+sublocale vector_space0 < vspce_mod: module0 K A M 
+    ringa ringminus ringsub ringm ringzero ringone ringtwo ringsq V A\<^sub>V
+  using vec_spce_mod by auto
+
+subsection\<open>Vector space axioms\<close>
+
+text\<open>In this section we show that the definition of a vector space as a field action
+  on an abelian group implies the vector space axioms as listed on Wikipedia (March 2024). 
+  The first four axioms just state that vectors with addition form an abelian group.
+  That is fine of course, but in such case the axioms for scalars being a field should be listed
+  too, and they are not. The entry on modules is more consistent, 
+  it states that module elements form an abelian group, scalars form a ring and lists only
+  four properties of multiplication of scalars by vectors as module axioms.
+  The remaining four axioms are just restatemenst of module axioms and since
+  vector spaces are modules we can prove them by refering to the module axioms 
+  proven in the \<open>module0\<close> context \<close>
+
+text\<open>Vector addition is associative.\<close>
+
+lemma (in vector_space0) vec_spce_ax1: assumes "u\<in>V" "v\<in>V" "w\<in>V"
+  shows "u +\<^sub>V (v +\<^sub>V w) = (u +\<^sub>V v) +\<^sub>V w"
+  using assms vspce_mod.mod_ab_gr.group_oper_assoc by simp
+
+text\<open>Vector addition is commutative.\<close>
+
+lemma (in vector_space0) vec_spce_ax2: assumes "u\<in>V" "v\<in>V"
+  shows "u +\<^sub>V v = v +\<^sub>V u"
+  using mAbGr assms unfolding IsCommutative_def by simp
+  
+text\<open>The zero vector is a vector.\<close>
+
+lemma (in vector_space0) vec_spce_ax3a: shows "\<Theta> \<in> V"
+  using vspce_mod.zero_in_mod by simp
+
+text\<open>The zero vector is the neutral element of addition of vectors.\<close>
+
+lemma (in vector_space0) vec_spce_ax3b: assumes "v\<in>V" shows "v +\<^sub>V \<Theta> = v"
+  using assms vspce_mod.zero_neutral by simp
+
+text\<open>The additive inverse of a vector is a vector.\<close>
+
+lemma (in vector_space0) vec_spce_ax4a: assumes "v\<in>V" shows "(\<midarrow>v) \<in> V"
+  using assms vspce_mod.mod_ab_gr.inverse_in_group by simp
+
+text\<open>Sum of of a vector and it's additive inverse is the zero vector.\<close>
+
+lemma (in vector_space0) vec_spce_ax4b: assumes "v\<in>V"
+  shows "v +\<^sub>V (\<midarrow>v) = \<Theta>"
+  using assms vspce_mod.mod_ab_gr.group0_2_L6 by simp
+
+text\<open>Scalar multiplication and field multiplication are "compatible" (as Wikipedia calls it). \<close>
+
+lemma (in vector_space0) vec_spce_ax5: assumes "x\<in>K" "y\<in>K" "v\<in>V"
+  shows "x\<cdot>\<^sub>S(y\<cdot>\<^sub>Sv) = (x\<cdot>y)\<cdot>\<^sub>Sv"
+  using assms vspce_mod.module_ax3 by simp
+
+text\<open>Multiplying the identity element of the field by a vector gives the vector.\<close>
+
+lemma (in vector_space0) vec_spce_ax6: assumes "v\<in>V" shows "\<one>\<cdot>\<^sub>Sv = v"
+  using assms vspce_mod.module_ax4 by simp
+
+text\<open>Scalar multiplication is distributive with respect to vector addition.\<close>
+
+lemma (in vector_space0) vec_spce_ax7: assumes "x\<in>K" "u\<in>V" "v\<in>V"
+  shows "x\<cdot>\<^sub>S(u+\<^sub>Vv) = x\<cdot>\<^sub>Su +\<^sub>V x\<cdot>\<^sub>Sv"
+  using assms vspce_mod.module_ax1 by simp
+
+text\<open>Scalar multiplication is distributive with respect to field addition.\<close>
+
+lemma (in vector_space0) vec_spce_ax8: assumes "x\<in>K" "y\<in>K" "v\<in>V"
+  shows "(x\<ra>y)\<cdot>\<^sub>Sv = x\<cdot>\<^sub>Sv +\<^sub>V y\<cdot>\<^sub>Sv"
+  using assms vspce_mod.module_ax2 by simp
 
 end
 
