@@ -81,7 +81,7 @@ lemma fun_is_fun: assumes "f:X\<rightarrow>Y" shows "function(f)"
 
 text\<open>A lemma explains what \<open>fstdom\<close> is for.\<close>
 
-lemma fstdomdef: assumes A1: "f: X\<times>Y \<rightarrow> Z" and A2: "Y\<noteq>0" 
+lemma fstdomdef: assumes A1: "f: X\<times>Y \<rightarrow> Z" and A2: "Y\<noteq>\<emptyset>" 
   shows "fstdom(f) = X"
 proof -
   from A1 have "domain(f) = X\<times>Y" using func1_1_L1
@@ -113,7 +113,7 @@ text\<open>There is a value for each argument.\<close>
 
 lemma func1_1_L2: assumes A1: "f:X\<rightarrow>Y"  "x\<in>X" 
   shows "\<exists>y\<in>Y. \<langle>x,y\<rangle> \<in> f"  
-proof-
+proof -
   from A1 have "f`(x) \<in> Y" using apply_type by simp
   moreover from A1 have "\<langle> x,f`(x)\<rangle>\<in> f" using apply_Pair by simp
   ultimately show ?thesis by auto
@@ -142,7 +142,7 @@ lemma vimage_comp3: shows "(r O s O t)-``(A) = t-``(s-``(r-``(A)))"
 text\<open>Inverse image of any set is contained in the domain.\<close>
 
 lemma func1_1_L3: assumes A1: "f:X\<rightarrow>Y" shows "f-``(D) \<subseteq> X"
-proof-
+proof -
    have "\<forall>x. x\<in>f-``(D) \<longrightarrow> x \<in> domain(f)"
       using  vimage_iff domain_iff by auto
     with A1 have "\<forall>x. (x \<in> f-``(D)) \<longrightarrow> (x\<in>X)" using func1_1_L1 by simp
@@ -413,7 +413,7 @@ text\<open>We can extend a function by specifying its values on a set
   disjoint with the domain.\<close>
 
 lemma func1_1_L11C: assumes A1: "f:X\<rightarrow>Y" and A2: "\<forall>x\<in>A. b(x)\<in>B"
-  and A3: "X\<inter>A = 0" and Dg: "g = f \<union> {\<langle>x,b(x)\<rangle>. x\<in>A}"
+  and A3: "X\<inter>A = \<emptyset>" and Dg: "g = f \<union> {\<langle>x,b(x)\<rangle>. x\<in>A}"
   shows 
   "g : X\<union>A \<rightarrow> Y\<union>B"
   "\<forall>x\<in>X. g`(x) = f`(x)"
@@ -421,7 +421,7 @@ lemma func1_1_L11C: assumes A1: "f:X\<rightarrow>Y" and A2: "\<forall>x\<in>A. b
 proof -
   let ?h = "{\<langle>x,b(x)\<rangle>. x\<in>A}"
   from A1 A2 A3 have 
-    I: "f:X\<rightarrow>Y"  "?h : A\<rightarrow>B"  "X\<inter>A = 0"
+    I: "f:X\<rightarrow>Y"  "?h : A\<rightarrow>B"  "X\<inter>A = \<emptyset>"
     using ZF_fun_from_total by auto
   then have "f\<union>?h : X\<union>A \<rightarrow> Y\<union>B"
     by (rule fun_disjoint_Un)
@@ -455,7 +455,7 @@ lemma func1_1_L11D: assumes A1: "f:X\<rightarrow>Y" and A2: "a\<notin>X"
 proof -
   let ?h = "{\<langle>a,b\<rangle>}"
   from A1 A2 Dg have I:
-    "f:X\<rightarrow>Y"  "\<forall>x\<in>{a}. b\<in>{b}"  "X\<inter>{a} = 0"  "g = f \<union> {\<langle>x,b\<rangle>. x\<in>{a}}"
+    "f:X\<rightarrow>Y"  "\<forall>x\<in>{a}. b\<in>{b}"  "X\<inter>{a} = \<emptyset>"  "g = f \<union> {\<langle>x,b\<rangle>. x\<in>{a}}"
     by auto
   then show "g : X\<union>{a} \<rightarrow> Y\<union>{b}"
     by (rule func1_1_L11C)
@@ -473,7 +473,7 @@ text\<open>A technical lemma about extending a function both by defining
 lemma func1_1_L11E:
   assumes A1: "f:X\<rightarrow>Y" and 
   A2: "\<forall>x\<in>A. b(x)\<in>B" and 
-  A3: "X\<inter>A = 0" and A4: "a\<notin> X\<union>A"
+  A3: "X\<inter>A = \<emptyset>" and A4: "a \<notin> X\<union>A"
   and Dg: "g = f \<union> {\<langle>x,b(x)\<rangle>. x\<in>A} \<union> {\<langle>a,c\<rangle>}"
   shows
   "g : X\<union>A\<union>{a} \<rightarrow> Y\<union>B\<union>{c}"
@@ -485,7 +485,7 @@ proof -
   from assms show "g : X\<union>A\<union>{a} \<rightarrow> Y\<union>B\<union>{c}"
     using func1_1_L11C func1_1_L11D by simp
   from A1 A2 A3 have I:
-    "f:X\<rightarrow>Y"  "\<forall>x\<in>A. b(x)\<in>B"  "X\<inter>A = 0"  "?h = f \<union> {\<langle>x,b(x)\<rangle>. x\<in>A}"
+    "f:X\<rightarrow>Y"  "\<forall>x\<in>A. b(x)\<in>B"  "X\<inter>A = \<emptyset>"  "?h = f \<union> {\<langle>x,b(x)\<rangle>. x\<in>A}"
     by auto
   from assms have 
     II: "?h : X\<union>A \<rightarrow> Y\<union>B"  "a\<notin> X\<union>A"  "g = ?h \<union> {\<langle>a,c\<rangle>}"
@@ -502,11 +502,11 @@ qed
 text\<open>A way of defining a function on a union of two possibly overlapping sets. We decompose the 
 union into two differences and the intersection and define a function separately on each part.\<close>
 
-lemma fun_union_overlap: assumes "\<forall>x\<in>A\<inter>B. h(x) \<in> Y"  "\<forall>x\<in>A-B. f(x) \<in> Y"  "\<forall>x\<in>B-A. g(x) \<in> Y"
-  shows "{\<langle>x,if x\<in>A-B then f(x) else if x\<in>B-A then g(x) else h(x)\<rangle>. x \<in> A\<union>B}: A\<union>B \<rightarrow> Y"
+lemma fun_union_overlap: assumes "\<forall>x\<in>A\<inter>B. h(x) \<in> Y"  "\<forall>x\<in>A\<setminus>B. f(x) \<in> Y"  "\<forall>x\<in>B\<setminus>A. g(x) \<in> Y"
+  shows "{\<langle>x,if x\<in>A\<setminus>B then f(x) else if x\<in>B\<setminus>A then g(x) else h(x)\<rangle>. x \<in> A\<union>B}: A\<union>B \<rightarrow> Y"
 proof -
-  let ?F = "{\<langle>x,if x\<in>A-B then f(x) else if x\<in>B-A then g(x) else h(x)\<rangle>. x \<in> A\<inter>B}"
-  from assms have "\<forall>x\<in>A\<union>B. (if x\<in>A-B then f(x) else if x\<in>B-A then g(x) else h(x)) \<in> Y"
+  let ?F = "{\<langle>x,if x\<in>A\<setminus>B then f(x) else if x\<in>B\<setminus>A then g(x) else h(x)\<rangle>. x \<in> A\<inter>B}"
+  from assms have "\<forall>x\<in>A\<union>B. (if x\<in>A\<setminus>B then f(x) else if x\<in>B\<setminus>A then g(x) else h(x)) \<in> Y"
     by auto
   then show ?thesis by (rule ZF_fun_from_total)
 qed
@@ -523,7 +523,7 @@ text\<open>The inverse image of an intersection of a nonempty collection of sets
   which is proven for the case of two sets.\<close>
 
 lemma func1_1_L12:
-  assumes A1: "B \<subseteq> Pow(Y)" and A2: "B\<noteq>0" and A3: "f:X\<rightarrow>Y"
+  assumes A1: "B \<subseteq> Pow(Y)" and A2: "B\<noteq>\<emptyset>" and A3: "f:X\<rightarrow>Y"
   shows "f-``(\<Inter>B) = (\<Inter>U\<in>B. f-``(U))"
 proof
   from A2 show  "f-``(\<Inter>B) \<subseteq> (\<Inter>U\<in>B. f-``(U))" by blast
@@ -549,13 +549,13 @@ lemma inv_im_inter_im: assumes "f:X\<rightarrow>Y"
 text\<open>If the inverse image of a set is not empty, then the set is not empty.
   Proof by contradiction.\<close>
 
-lemma func1_1_L13: assumes A1:"f-``(A) \<noteq> 0" shows "A\<noteq>0"
+lemma func1_1_L13: assumes A1:"f-``(A) \<noteq> \<emptyset>" shows "A\<noteq>\<emptyset>"
   using assms by auto
 
 text\<open>If the image of a set is not empty, then the set is not empty.
   Proof by contradiction.\<close>
 
-lemma func1_1_L13A: assumes A1: "f``(A)\<noteq>0" shows "A\<noteq>0"
+lemma func1_1_L13A: assumes A1: "f``(A)\<noteq>\<emptyset>" shows "A\<noteq>\<emptyset>"
   using assms by auto
 
 text\<open>What is the inverse image of a singleton?\<close>
@@ -656,7 +656,7 @@ text\<open>If all elements of a nonempty set map to the same element of the codo
   then the image of this set is a singleton.\<close>
 
 lemma image_constant_singleton: 
-  assumes "f:X\<rightarrow>Y" "A\<subseteq>X" "A\<noteq>0" "\<forall>x\<in>A. f`(x) = c"
+  assumes "f:X\<rightarrow>Y" "A\<subseteq>X" "A\<noteq>\<emptyset>" "\<forall>x\<in>A. f`(x) = c"
   shows "f``(A) = {c}"
   using assms func_imagedef by auto
 
@@ -664,10 +664,10 @@ text\<open>A technical lemma about graphs of functions: if we have two disjoint 
   then the cartesian product of the inverse image of $A$ and $B$ is disjoint
   with (the graph of) $f$.\<close>
 
-lemma vimage_prod_dis_graph: assumes "f:X\<rightarrow>Y" "A\<inter>B = 0"
-  shows "f-``(A)\<times>B \<inter> f = 0"
+lemma vimage_prod_dis_graph: assumes "f:X\<rightarrow>Y" "A\<inter>B = \<emptyset>"
+  shows "f-``(A)\<times>B \<inter> f = \<emptyset>"
 proof -
-  { assume "f-``(A)\<times>B \<inter> f \<noteq> 0"
+  { assume "f-``(A)\<times>B \<inter> f \<noteq> \<emptyset>"
     then obtain p where "p \<in> f-``(A)\<times>B" and "p\<in>f" by blast
     from assms(1) \<open>p\<in>f\<close> have "p \<in> {\<langle>x, f`(x)\<rangle>. x \<in> X}" 
       using fun_is_set_of_pairs by simp
@@ -762,16 +762,16 @@ qed
 text\<open>The difference of images is contained in the image of difference.\<close>
 
 lemma diff_image_diff: assumes A1: "f: X\<rightarrow>Y" and A2: "A\<subseteq>X"
-  shows "f``(X) - f``(A) \<subseteq> f``(X-A)"
+  shows "f``(X)\<setminus>f``(A) \<subseteq> f``(X\<setminus>A)"
 proof
-  fix y assume "y \<in> f``(X) - f``(A)"
+  fix y assume "y \<in> f``(X) \<setminus> f``(A)"
   hence "y \<in> f``(X)" and I: "y \<notin> f``(A)" by auto
   with A1 obtain x where "x\<in>X" and II: "y = f`(x)"
     using func_imagedef by auto
   with A1 A2 I have "x\<notin>A"
     using func1_1_L15D by auto
-  with \<open>x\<in>X\<close> have "x \<in> X-A" "X-A \<subseteq> X" by auto
-  with A1 II show "y \<in> f``(X-A)"
+  with \<open>x\<in>X\<close> have "x \<in> X\<setminus>A" "X\<setminus>A \<subseteq> X" by auto
+  with A1 II show "y \<in> f``(X\<setminus>A)"
     using func1_1_L15D by simp
 qed
 
@@ -779,7 +779,7 @@ text\<open>The image of an intersection is contained in the
   intersection of the images.\<close>
 
 lemma image_of_Inter: assumes  A1: "f:X\<rightarrow>Y" and
-  A2: "I\<noteq>0" and A3: "\<forall>i\<in>I. P(i) \<subseteq> X"
+  A2: "I\<noteq>\<emptyset>" and A3: "\<forall>i\<in>I. P(i) \<subseteq> X"
   shows "f``(\<Inter>i\<in>I. P(i)) \<subseteq> ( \<Inter>i\<in>I. f``(P(i)) )"
 proof
   fix y assume A4: "y \<in> f``(\<Inter>i\<in>I. P(i))"
@@ -811,19 +811,19 @@ qed
 
 text\<open>If the domain of a function is nonempty, then the codomain is as well.\<close>
 
-lemma codomain_nonempty: assumes "f:X\<rightarrow>Y" "X\<noteq>0" shows "Y\<noteq>0"
+lemma codomain_nonempty: assumes "f:X\<rightarrow>Y" "X\<noteq>\<emptyset>" shows "Y\<noteq>\<emptyset>"
   using assms apply_funtype by blast
 
 text\<open>The image of a nonempty subset of domain is nonempty.\<close>
 
 lemma func1_1_L15A: 
-  assumes A1: "f: X\<rightarrow>Y" and A2: "A\<subseteq>X" and A3: "A\<noteq>0"
-  shows "f``(A) \<noteq> 0"
+  assumes A1: "f: X\<rightarrow>Y" and A2: "A\<subseteq>X" and A3: "A\<noteq>\<emptyset>"
+  shows "f``(A) \<noteq> \<emptyset>"
 proof -
   from A3 obtain x where "x\<in>A" by auto
   with A1 A2 have "f`(x) \<in> f``(A)"
     using func_imagedef by auto
-  then show "f``(A) \<noteq> 0" by auto
+  then show "f``(A) \<noteq> \<emptyset>" by auto
 qed
 
 text\<open>The next lemma allows to prove statements about the values in the
@@ -1116,7 +1116,7 @@ text\<open>If $c$ is not an element of $A$  then the inverse image of $A$ by the
   function $x\mapsto c$ is empty. \<close>
 
 lemma const_vimage_empty: assumes "c\<notin>A"
-  shows "ConstantFunction(X,c)-``(A) = 0"
+  shows "ConstantFunction(X,c)-``(A) = \<emptyset>"
 proof -
   let ?C = "ConstantFunction(X,c)"
   have "?C-``(A) = {x\<in>X. ?C`(x) \<in> A}" using func1_3_L1 func1_1_L15 
@@ -1135,16 +1135,16 @@ text\<open>For injections the image a difference of two sets is
 
 lemma inj_image_dif: 
   assumes A1: "f \<in> inj(A,B)" and A2: "C \<subseteq> A"
-  shows "f``(A-C) = f``(A) - f``(C)"
+  shows "f``(A\<setminus>C) = f``(A)\<setminus>f``(C)"
 proof
-  show "f``(A - C) \<subseteq> f``(A) - f``(C)"
+  show "f``(A\<setminus>C) \<subseteq> f``(A)\<setminus>f``(C)"
   proof
-    fix y assume A3: "y \<in> f``(A - C)"
+    fix y assume A3: "y \<in> f``(A\<setminus>C)"
     from A1 have "f:A\<rightarrow>B" using inj_def by simp
-    moreover have "A-C \<subseteq> A" by auto
-    ultimately have "f``(A-C) = {f`(x). x \<in> A-C}"
+    moreover have "A\<setminus>C \<subseteq> A" by auto
+    ultimately have "f``(A\<setminus>C) = {f`(x). x \<in> A\<setminus>C}"
       using func_imagedef by simp
-    with A3 obtain x where I: "f`(x) = y" and "x \<in> A-C" 
+    with A3 obtain x where I: "f`(x) = y" and "x \<in> A\<setminus>C" 
       by auto
     hence "x\<in>A" by auto
     with \<open>f:A\<rightarrow>B\<close> I have "y \<in> f``(A)"
@@ -1159,12 +1159,12 @@ proof
 	  "f \<in> inj(A,B)" "f`(x) = f`(x\<^sub>0)"  "x\<in>A" "x\<^sub>0 \<in> A"
 	  by auto
 	then have "x = x\<^sub>0" by (rule inj_apply_equality)
-	with \<open>x \<in> A-C\<close> \<open>x\<^sub>0 \<in> C\<close> have False by simp
+	with \<open>x \<in> A\<setminus>C\<close> \<open>x\<^sub>0 \<in> C\<close> have False by simp
       } thus ?thesis by auto
     qed
-    ultimately show "y \<in> f``(A) - f``(C)" by simp
+    ultimately show "y \<in> f``(A)\<setminus>f``(C)" by simp
   qed
-  from A1 A2 show "f``(A) - f``(C) \<subseteq> f``(A-C)"
+  from A1 A2 show "f``(A)\<setminus>f``(C) \<subseteq> f``(A\<setminus>C)"
     using inj_def diff_image_diff by auto
 qed
 
@@ -1215,30 +1215,30 @@ qed
 text\<open>Bijections are functions that preserve complements.\<close>
 
 lemma bij_def_alt: 
-  shows "bij(X,Y) = {f\<in>X\<rightarrow>Y. \<forall>A\<in>Pow(X). f``(X-A) = Y-f``(A)}"
+  shows "bij(X,Y) = {f\<in>X\<rightarrow>Y. \<forall>A\<in>Pow(X). f``(X\<setminus>A) = Y\<setminus>f``(A)}"
 proof
-  let ?R = "{f\<in>X\<rightarrow>Y. \<forall>A\<in>Pow(X). f``(X-A) = Y-f``(A)}"
+  let ?R = "{f\<in>X\<rightarrow>Y. \<forall>A\<in>Pow(X). f``(X\<setminus>A) = Y\<setminus>f``(A)}"
   show "bij(X,Y) \<subseteq> ?R"
     using inj_image_dif surj_range_image_domain surj_is_fun
     unfolding bij_def by auto
   { fix f assume "f\<in>?R"
-    hence "f:X\<rightarrow>Y" and I: "\<forall>A\<in>Pow(X). f``(X-A) = Y-f``(A)"
+    hence "f:X\<rightarrow>Y" and I: "\<forall>A\<in>Pow(X). f``(X\<setminus>A) = Y\<setminus>f``(A)"
       by auto
     { fix x\<^sub>1 x\<^sub>2 assume "x\<^sub>1\<in>X" "x\<^sub>2\<in>X" "f`(x\<^sub>1) = f`(x\<^sub>2)"
       with \<open>f:X\<rightarrow>Y\<close> have 
         "f``{x\<^sub>1} = {f`(x\<^sub>1)}" "f``{x\<^sub>2} = {f`(x\<^sub>2)}" "f``{x\<^sub>1} = f``{x\<^sub>2}"
         using singleton_image by simp_all
       { assume "x\<^sub>1\<noteq>x\<^sub>2"
-        from \<open>f:X\<rightarrow>Y\<close> have "f``(X-{x\<^sub>1}) = {f`(t). t\<in>X-{x\<^sub>1}}"
+        from \<open>f:X\<rightarrow>Y\<close> have "f``(X\<setminus>{x\<^sub>1}) = {f`(t). t\<in>X\<setminus>{x\<^sub>1}}"
           using func_imagedef by blast
         with I \<open>x\<^sub>2\<in>X\<close> \<open>x\<^sub>1\<in>X\<close> \<open>x\<^sub>1\<noteq>x\<^sub>2\<close> \<open>f``{x\<^sub>1} = f``{x\<^sub>2}\<close> 
-          have "f`(x\<^sub>2) \<in> Y-f``{x\<^sub>2}" by auto
+          have "f`(x\<^sub>2) \<in> Y\<setminus>f``{x\<^sub>2}" by auto
         with \<open>f``{x\<^sub>2} = {f`(x\<^sub>2)}\<close> have False by auto
       } hence "x\<^sub>1=x\<^sub>2" by auto
     } with \<open>f:X\<rightarrow>Y\<close> have "f\<in>inj(X,Y)" unfolding inj_def 
       by auto
     moreover
-    from I have "f``(X-0) = Y-f``(0)" by blast
+    from I have "f``(X\<setminus>\<emptyset>) = Y\<setminus>f``(\<emptyset>)" by blast
     with \<open>f:X\<rightarrow>Y\<close> have "f\<in>surj(X,Y)" using surj_def_alt by simp
     ultimately have "f \<in> bij(X,Y)" unfolding bij_def by simp
   } thus "?R \<subseteq> bij(X,Y)" by auto
@@ -1292,22 +1292,22 @@ text\<open>Restriction of an bijection to a set without a point
 
 lemma bij_restrict_rem: 
   assumes A1: "f \<in> bij(A,B)" and A2: "a\<in>A"
-  shows "restrict(f, A-{a}) \<in> bij(A-{a}, B-{f`(a)})"
+  shows "restrict(f, A\<setminus>{a}) \<in> bij(A\<setminus>{a}, B\<setminus>{f`(a)})"
 proof -
-  let ?C = "A-{a}"
+  let ?C = "A\<setminus>{a}"
   from A1 have "f \<in> inj(A,B)"  "?C \<subseteq> A"
     using bij_def by auto
   then have "restrict(f,?C) \<in> bij(?C, f``(?C))"
     using restrict_bij by simp
-  moreover have "f``(?C) =  B-{f`(a)}"
+  moreover have "f``(?C) =  B\<setminus>{f`(a)}"
   proof -
-    from A2 \<open>f \<in> inj(A,B)\<close> have "f``(?C) = f``(A) - f``{a}"
+    from A2 \<open>f \<in> inj(A,B)\<close> have "f``(?C) = f``(A)\<setminus>f``{a}"
       using inj_image_dif by simp
     moreover from A1 have "f``(A) = B" 
       using bij_def surj_range_image_domain by auto
     moreover from A1 A2 have "f``{a} = {f`(a)}"
       using bij_is_fun singleton_image by blast
-    ultimately show "f``(?C) =  B-{f`(a)}" by simp
+    ultimately show "f``(?C) =  B\<setminus>{f`(a)}" by simp
   qed
   ultimately show ?thesis by simp
 qed
@@ -1381,7 +1381,7 @@ text\<open>For injections the image of intersection is
   the intersection of images.\<close>
 
 lemma inj_image_of_Inter: assumes A1: "f \<in> inj(A,B)" and
-  A2: "I\<noteq>0" and A3: "\<forall>i\<in>I. P(i) \<subseteq> A"
+  A2: "I\<noteq>\<emptyset>" and A3: "\<forall>i\<in>I. P(i) \<subseteq> A"
   shows "f``(\<Inter>i\<in>I. P(i)) = ( \<Inter>i\<in>I. f``(P(i)) )"
 proof
   from A1 A2 A3 show "f``(\<Inter>i\<in>I. P(i)) \<subseteq> ( \<Inter>i\<in>I. f``(P(i)) )"

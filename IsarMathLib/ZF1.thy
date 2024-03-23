@@ -480,6 +480,18 @@ text\<open>If $z$ is a pair, then the cartesian product of the singletons of its
 lemma pair_prod: assumes "z = \<langle>x,y\<rangle>" shows "{x}\<times>{y} = {z}"
   using assms by blast
 
+text\<open>In Isabelle/ZF the set difference is written with a minus sign $A-B$
+  because the standard backslash character is reserved for other purposes. 
+  The next abbreviation declares that we want the set difference character $A\setminusB$
+  to be synonymous with the minus sign. \<close>
+
+abbreviation set_difference (infixl "\<setminus>" 65) where "A\<setminus>B \<equiv> A-B"
+
+text\<open>In ZF set theory the zero of natural numbers is the same as the empty set.
+  In the next abbreviation we declare that we want $0$ and $\emptyset$ to be synonyms
+  so that we can use $\emptyset$ instead of $0$ when appropriate. \<close>
+
+abbreviation empty_set ("\<emptyset>") where "\<emptyset> \<equiv> 0" 
 
 end
 
