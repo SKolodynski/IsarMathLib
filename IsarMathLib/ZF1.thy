@@ -482,7 +482,7 @@ lemma pair_prod: assumes "z = \<langle>x,y\<rangle>" shows "{x}\<times>{y} = {z}
 
 text\<open>In Isabelle/ZF the set difference is written with a minus sign $A-B$
   because the standard backslash character is reserved for other purposes. 
-  The next abbreviation declares that we want the set difference character $A\setminusB$
+  The next abbreviation declares that we want the set difference character $A\setminus B$
   to be synonymous with the minus sign. \<close>
 
 abbreviation set_difference (infixl "\<setminus>" 65) where "A\<setminus>B \<equiv> A-B"

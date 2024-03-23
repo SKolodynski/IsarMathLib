@@ -38,7 +38,7 @@ text\<open>A module is a generalization of the concept of a vector space in whic
 subsection\<open>Definition and basic properties of modules\<close>
 
 text\<open>Let $R$ be a ring and $M$ be an abelian group. The most common definition
-  of a left $R$-module states posits the existence of a scalar multiplication operation
+  of a left $R$-module posits the existence of a scalar multiplication operation
   $R\times M\rightarrow M$ satisfying certain four properties.
   Here we take a bit more concise and abstract approach defining a module as a ring action
   on an abelian group.  \<close>
@@ -73,8 +73,9 @@ lemma (in abelian_group) end_is_ring1:
 
 text\<open>We define an \<open>action\<close> as a homomorphism into a space of endomorphisms (typically of some
   abelian group). In the definition below $S$ is the set of scalars, $A$ is the addition operation
-  on this set, $M$ is multiplication on the set, $V$ is the set of vectors, $A_V$ is the 
-  operation of vector addition, and $H$ is the homomorphism that defines the vector space.
+  on this set, $M$ is multiplication on the set, $V$ is the group, $A_V$ is the 
+  group operation, and $H$ is the ring homomorphism that of the ring of scalars 
+  to the ring of endomorphisms of the group.
   On the right hand side of the definition \<open>End(V,A\<^sub>V)\<close> is the set of endomorphisms,  
   This definition is only ever used as part of the definition of a module and vector space, 
   it's just convenient to split it off to shorten the main definitions. \<close>
@@ -125,7 +126,7 @@ lemma (in module0) module_in_module0: shows "IsLeftModule(R,A,M,\<M>,A\<^sub>M,H
   using ringAssum mAbGr mAction unfolding IsLeftModule_def by simp
 
 text\<open>Theorems proven in the \<open>abelian_group\<close> context are valid as applied to the \<open>module0\<close>
-  context as applied to the abelian group of "vectors". \<close>
+  context as applied to the abelian group of module elements. \<close>
 
 lemma (in module0) abelian_group_valid_module0: 
   shows "abelian_group(\<M>,A\<^sub>M)"
@@ -135,11 +136,11 @@ lemma (in module0) abelian_group_valid_module0:
 text\<open>Another way to state that theorems proven in the \<open>abelian_group\<close> context 
   can be used in the \<open>module0\<close> context:  \<close>
 
-sublocale module0 < mod_ab_gr: abelian_group \<M> A\<^sub>M "\<Theta>" vAdd negV
+sublocale module0 < mod_ab_gr: abelian_group "\<M>" "A\<^sub>M" "\<Theta>" vAdd negV
   using abelian_group_valid_module0 by auto
   
 text\<open>Theorems proven in the \<open>ring_homo\<close> context are valid in the \<open>module0\<close> context, as
-  applied to ring $R$ and the ring of endomorphisms of the vector group. \<close>
+  applied to ring $R$ and the ring of endomorphisms of the group of module elements. \<close>
  
 lemma (in module0) ring_homo_valid_module0: 
   shows "ring_homo(R,A,M,End(\<M>,A\<^sub>M),EndAdd(\<M>,A\<^sub>M),EndMult(\<M>,A\<^sub>M),H)"
@@ -185,7 +186,7 @@ proof -
 qed
 
 text\<open>The value of the homomorphism defining the module is an endomorphism
-  of the vector space group and hence a  function that maps the vector space into itself.\<close>
+  of the group of module elements and hence a function that maps the module into itself.\<close>
 
 lemma (in module0) H_val_type: assumes "r\<in>R" shows 
   "H`(r) \<in> End(\<M>,A\<^sub>M)" and "H`(r):\<M>\<rightarrow>\<M>"

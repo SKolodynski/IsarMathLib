@@ -68,6 +68,7 @@ namespace iml
                  ("\\<fd>", " / ")
                  ("\\<fp>", " + ")
                  ("\\<fm>", " - ")
+                 ("\\<midarrow>", " - ")
                  ("\\<setminus>","\\setminus ")
                  ("\\<triangleleft>", "\\triangleleft ")
                  ("\\<gamma>", "\\gamma ")

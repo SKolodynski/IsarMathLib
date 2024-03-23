@@ -82,7 +82,27 @@ locale vector_space0 = field0 +
   fixes vSub (infix "-\<^sub>V" 80)
   defines vSub_def [simp]: "v\<^sub>1 -\<^sub>V v\<^sub>2 \<equiv> v\<^sub>1 +\<^sub>V (\<midarrow>v\<^sub>2)"
 
-text\<open>The assumptions of \<open>vector_spce0\<close> context hold in the \<open>module0\<close> context.\<close>
+text\<open>We indeed talk about vector spaces in the \<open>vector_space0\<close> context. \<close>
+
+lemma (in vector_space0) V_vec_space: shows "IsVectorSpace(K,A,M,V,A\<^sub>V,H)"
+  using mAbGr mAction Field_ZF_1_L1 unfolding IsVectorSpace_def by simp
+
+text\<open>If a quintuple of sets forms a vector space then the assumptions of 
+  the \<open>vector_spce0\<close> hold for those sets.\<close>
+
+lemma vec_spce_vec_spce_contxt: assumes "IsVectorSpace(K,A,M,V,A\<^sub>V,H)"
+  shows "vector_space0(K, A, M, V, A\<^sub>V, H)"
+proof
+  from assms show 
+    "IsAring(K, A, M)" "M {is commutative on} K"
+    "TheNeutralElement(K, A) \<noteq> TheNeutralElement(K, M)"
+    "\<forall>x\<in>K. x \<noteq> TheNeutralElement(K, A) \<longrightarrow> (\<exists>y\<in>K. M`\<langle>x, y\<rangle> = TheNeutralElement(K, M))"
+    "IsAgroup(V, A\<^sub>V) \<and> A\<^sub>V {is commutative on} V"
+    "IsAction(K, A, M, V, A\<^sub>V, H)"
+    unfolding IsAfield_def IsVectorSpace_def by simp_all
+qed
+
+text\<open>The assumptions of \<open>module0\<close> context hold in the \<open>vector_spce0\<close> context.\<close>
 
 lemma (in vector_space0) vec_spce_mod: shows "module0(K, A, M, V, A\<^sub>V, H)" 
 proof
@@ -93,7 +113,7 @@ qed
 text\<open>Propositions proven in the \<open>module0\<close> context are valid in the \<open>vector_spce0\<close> context.\<close>
 
 sublocale vector_space0 < vspce_mod: module0 K A M 
-    ringa ringminus ringsub ringm ringzero ringone ringtwo ringsq V A\<^sub>V
+    ringa ringminus ringsub ringm ringzero ringone ringtwo ringsq V "A\<^sub>V"
   using vec_spce_mod by auto
 
 subsection\<open>Vector space axioms\<close>
@@ -166,6 +186,3 @@ lemma (in vector_space0) vec_spce_ax8: assumes "x\<in>K" "y\<in>K" "v\<in>V"
   using assms vspce_mod.module_ax2 by simp
 
 end
-
-
-
