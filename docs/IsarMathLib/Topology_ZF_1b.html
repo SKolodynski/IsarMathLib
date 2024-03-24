@@ -12,7 +12,7 @@
 <h1>Theory Topology_ZF_1b</h1>
 </div>
 
-<pre class="source"><span class="comment1"><span>(* 
+<pre class="source"><span class="comment1"><span>(</span><span>*</span><span> 
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
@@ -38,47 +38,47 @@ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*)</span></span><span>
+</span><span>*</span><span>)</span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹Topology 1b›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹</span><span>Topology 1b</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>theory</span></span></span><span> </span><a href="Topology_ZF_1b.html"><span>Topology_ZF_1b</span></a><span> </span><span class="keyword2"><span class="keyword"><span>imports</span></span></span><span> </span><a href="Topology_ZF_1.html"><span>Topology_ZF_1</span></a><span>
 
 </span><span class="keyword2"><span class="keyword"><span>begin</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹One of the facts demonstrated in every class on General Topology is that
-  in a $T_2$ (Hausdorff) topological space compact sets are closed. 
-  Formalizing the proof of this fact gave me an interesting insight 
-  into the role of the Axiom of Choice (AC) in many informal proofs.
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>One of the facts demonstrated in every class on General Topology is that
+</span><span>  in a $T_2$ (Hausdorff) topological space compact sets are closed. 
+</span><span>  Formalizing the proof of this fact gave me an interesting insight 
+</span><span>  into the role of the Axiom of Choice (AC) in many informal proofs.
+</span><span>
+</span><span>  A typical informal proof of this fact goes like this: we want to show 
+</span><span>  that the complement of $K$ is open. To do this, 
+</span><span>  choose an arbitrary point $y\in K^c$.
+</span><span>  Since $X$ is $T_2$, for every point $x\in K$ we can find an 
+</span><span>  open set $U_x$ such that $y\notin \overline{U_x}$. 
+</span><span>  Obviously $\{U_x\}_{x\in K}$ covers $K$, so select a finite subcollection
+</span><span>  that covers $K$, and so on. I had never realized that 
+</span><span>  such reasoning requires the Axiom of Choice. 
+</span><span>  Namely, suppose we have a lemma that states "In $T_2$ spaces, 
+</span><span>  if $x\neq y$, then there is an open set 
+</span><span>  $U$ such that $x\in U$ and $y\notin \overline{U}$" (like our 
+</span><span>  lemma </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>T2_cl_open_sep›</span></span></span><span> below). This only states that
+</span><span>  the set of such open sets $U$ is not empty. To get the collection 
+</span><span>  $\{U_x \}_{x\in K}$ in this proof we have to select one such set 
+</span><span>  among many for every $x\in K$ and this is where we use the Axiom of Choice. 
+</span><span>  Probably in 99/100 cases when an informal calculus proof states something like
+</span><span>  $\forall \varepsilon \exists \delta_\varepsilon \cdots$ the proof uses AC.
+</span><span>  Most of the time the use of AC in such proofs can be avoided. This is also 
+</span><span>  the case for the fact that in a $T_2$ space compact sets are closed.</span><span>
+</span><span>›</span></span></span><span>
 
-  A typical informal proof of this fact goes like this: we want to show 
-  that the complement of $K$ is open. To do this, 
-  choose an arbitrary point $y\in K^c$.
-  Since $X$ is $T_2$, for every point $x\in K$ we can find an 
-  open set $U_x$ such that $y\notin \overline{U_x}$. 
-  Obviously $\{U_x\}_{x\in K}$ covers $K$, so select a finite subcollection
-  that covers $K$, and so on. I had never realized that 
-  such reasoning requires the Axiom of Choice. 
-  Namely, suppose we have a lemma that states "In $T_2$ spaces, 
-  if $x\neq y$, then there is an open set 
-  $U$ such that $x\in U$ and $y\notin \overline{U}$" (like our 
-  lemma </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>T2_cl_open_sep›</span></span></span><span> below). This only states that
-  the set of such open sets $U$ is not empty. To get the collection 
-  $\{U_x \}_{x\in K}$ in this proof we have to select one such set 
-  among many for every $x\in K$ and this is where we use the Axiom of Choice. 
-  Probably in 99/100 cases when an informal calculus proof states something like
-  $\forall \varepsilon \exists \delta_\varepsilon \cdots$ the proof uses AC.
-  Most of the time the use of AC in such proofs can be avoided. This is also 
-  the case for the fact that in a $T_2$ space compact sets are closed.
-›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>Compact sets are closed - no need for AC</span><span>›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹Compact sets are closed - no need for AC›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>In this section we show that in a $T_2$ topological 
+</span><span>  space compact sets are closed.</span><span>›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹In this section we show that in a $T_2$ topological 
-  space compact sets are closed.›</span></span></span><span>
-
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹First we prove a lemma that in a $T_2$ space two points 
-  can be separated by the closure of an open set.›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>First we prove a lemma that in a $T_2$ space two points 
+</span><span>  can be separated by the closure of an open set.</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="offset_3391..3396">lemma</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="Topology_ZF.html#Topology_ZF.topology0|locale"><span>topology0</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="Topology_ZF_1b.topology0.T2_cl_open_sep|fact"><span class="entity_def" id="Topology_ZF_1b.topology0.T2_cl_open_sep|thm"><span class="entity_def" id="offset_3412..3426">T2_cl_open_sep</span></span></span><span class="main"><span>:</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>T</span></span><span> </span><span class="keyword1"><a class="entity_ref" href="Topology_ZF_1.html#Topology_ZF_1.isT2|const"><span>{is</span></a></span><span> </span><span class="keyword1"><a class="entity_ref" href="Topology_ZF_1.html#Topology_ZF_1.isT2|const"><span>T<span class="hidden">⇩</span><sub>2</sub>}</span></a></span><span>"</span></span></span><span>  </span><span class="keyword2"><span class="keyword"><span>and</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>x</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.Union|const"><span>⋃</span></a></span><span class="free"><span>T</span></span><span>"</span></span></span><span>  </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>y</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.Union|const"><span>⋃</span></a></span><span class="free"><span>T</span></span><span>"</span></span></span><span>   </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>x</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.not_equal|const"><span>≠</span></a></span><span class="free"><span>y</span></span><span>"</span></span></span><span>
@@ -93,11 +93,11 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </span><span class="keyword3"><span class="command"><span>thus</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="main"><span>∃</span></span><span class="bound"><span>U</span></span><span class="main"><span>∈</span></span><span class="free"><span>T</span></span><span class="main"><span>.</span></span><span> </span><span class="main"><span>(</span></span><span class="free"><span>x</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span class="bound"><span>U</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.conj|const"><span>∧</span></a></span><span> </span><span class="free"><span>y</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.not_mem|const"><span>∉</span></a></span><span> </span><span class="free"><span>cl</span></span><span class="main"><span>(</span></span><span class="bound"><span>U</span></span><span class="main"><span>)</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span> </span><span class="keyword1"><span class="command"><span>by</span></span></span><span> </span><a class="entity_ref" href="../../FOL/ZF/ISABELLE_HOME/src/Provers/clasimp.ML.html#FOL.auto|method"><span class="operator"><span>auto</span></span></a><span>
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹AC-free proof that in a Hausdorff space compact sets 
-  are closed. To understand the notation recall that in Isabelle/ZF
-  </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Pow(A)›</span></span></span><span> is the powerset (the set of subsets) of $A$ 
-  and </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>FinPow(A)›</span></span></span><span> denotes the set of finite subsets of $A$ 
-  in IsarMathLib.›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>AC-free proof that in a Hausdorff space compact sets 
+</span><span>  are closed. To understand the notation recall that in Isabelle/ZF
+</span><span>  </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Pow(A)›</span></span></span><span> is the powerset (the set of subsets) of $A$ 
+</span><span>  and </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>FinPow(A)›</span></span></span><span> denotes the set of finite subsets of $A$ 
+</span><span>  in IsarMathLib.</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>theorem</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="Topology_ZF.html#Topology_ZF.topology0|locale"><span>topology0</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="Topology_ZF_1b.topology0.in_t2_compact_is_cl|fact"><span class="entity_def" id="Topology_ZF_1b.topology0.in_t2_compact_is_cl|thm"><span>in_t2_compact_is_cl</span></span></span><span class="main"><span>:</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span>A1</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>T</span></span><span> </span><span class="keyword1"><a class="entity_ref" href="Topology_ZF_1.html#Topology_ZF_1.isT2|const"><span>{is</span></a></span><span> </span><span class="keyword1"><a class="entity_ref" href="Topology_ZF_1.html#Topology_ZF_1.isT2|const"><span>T<span class="hidden">⇩</span><sub>2</sub>}</span></a></span><span>"</span></span></span><span> </span><span class="keyword2"><span class="keyword"><span>and</span></span></span><span> </span><span class="entity_def" id="offset_4142..4144">A2</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>K</span></span><span> </span><span class="keyword1"><a class="entity_ref" href="Topology_ZF.html#Topology_ZF.IsCompact|const"><span>{is</span></a></span><span> </span><span class="keyword1"><a class="entity_ref" href="Topology_ZF.html#Topology_ZF.IsCompact|const"><span>compact</span></a></span><span> </span><span class="keyword1"><a class="entity_ref" href="Topology_ZF.html#Topology_ZF.IsCompact|const"><span>in}</span></a></span><span> </span><span class="free"><span>T</span></span><span>"</span></span></span><span>

@@ -42,14 +42,13 @@ text\<open> Vector spaces have a long history of applications in mathematics and
 
 subsection\<open>Definition and basic properties of vector spaces\<close>
 
-text\<open> The canonical example of a vector space is $\mathbb{R}^2$ - the set of $n$-tuples
+text\<open> The canonical example of a vector space is $\mathbb{R}^n$ - the set of $n$-tuples
   of real numbers. We can add them adding respective coordinates and scale them by 
   multiplying all coordinates by the same number. In a more abstract approach we start
   with an abelian group (of vectors) and a field (of scalars) and define an operation
   of multiplying a vector by a scalar so that the distributive 
   properties $x(v_1 + v_2) = s v_1 + s v_2$ and $(s_1+s_2)v =s_1 v + s_2 v$ are satisfied for any
   scalars $s,s_1,s_2$ and vectors $v,v_1,v_2$. \<close>
-
 
 text\<open>A vector space is a field action on an abelian group. \<close>
 

@@ -12,7 +12,7 @@
 <h1>Theory CommutativeSemigroup_ZF</h1>
 </div>
 
-<pre class="source"><span class="comment1"><span>(* 
+<pre class="source"><span class="comment1"><span>(</span><span>*</span><span> 
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
@@ -40,60 +40,60 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*)</span></span><span>
+</span><span>*</span><span>)</span></span><span>
 
 
-</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹Commutative Semigroups›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>section</span></span></span><span> </span><span class="quoted"><span class="plain_text"><span>‹</span><span>Commutative Semigroups</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>theory</span></span></span><span> </span><a href="CommutativeSemigroup_ZF.html"><span>CommutativeSemigroup_ZF</span></a><span> </span><span class="keyword2"><span class="keyword"><span>imports</span></span></span><span> </span><a href="Semigroup_ZF.html"><span>Semigroup_ZF</span></a><span>
 
 </span><span class="keyword2"><span class="keyword"><span>begin</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹In the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Semigroup›</span></span></span><span> theory we introduced a notion 
-  of </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>SetFold(f,a,Λ,r)›</span></span></span><span> that represents the sum of 
-  values of some function $a$ valued in a semigroup
-  where the arguments of that function vary over some set $\Lambda$.
-  Using the additive notation something like this would be expressed
-  as $\sum_{x\in \Lambda} f(x)$ in informal mathematics. 
-  This theory considers an alternative to that notion that is more specific 
-  to commutative semigroups.
-›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>In the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Semigroup›</span></span></span><span> theory we introduced a notion 
+</span><span>  of </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>SetFold(f,a,Λ,r)›</span></span></span><span> that represents the sum of 
+</span><span>  values of some function $a$ valued in a semigroup
+</span><span>  where the arguments of that function vary over some set $\Lambda$.
+</span><span>  Using the additive notation something like this would be expressed
+</span><span>  as $\sum_{x\in \Lambda} f(x)$ in informal mathematics. 
+</span><span>  This theory considers an alternative to that notion that is more specific 
+</span><span>  to commutative semigroups.</span><span>
+</span><span>›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹Sum of a function over a set›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>subsection</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>Sum of a function over a set</span><span>›</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The $r$ parameter in the definition of </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>SetFold(f,a,Λ,r)›</span></span></span><span>
-  (from </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Semigroup_ZF›</span></span></span><span>) represents a linear order relation 
-  on $\Lambda$ that is needed to indicate in what order we are summing 
-  the values $f(x)$.
-  If the semigroup operation is commutative the order does not matter
-  and the relation $r$ is not needed. In this section we define a notion 
-  of summing up values of some function $a : X \rightarrow G$
-  over a finite set of indices $\Gamma \subseteq X$, without using any
-  order relation on $X$.›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The $r$ parameter in the definition of </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>SetFold(f,a,Λ,r)›</span></span></span><span>
+</span><span>  (from </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Semigroup_ZF›</span></span></span><span>) represents a linear order relation 
+</span><span>  on $\Lambda$ that is needed to indicate in what order we are summing 
+</span><span>  the values $f(x)$.
+</span><span>  If the semigroup operation is commutative the order does not matter
+</span><span>  and the relation $r$ is not needed. In this section we define a notion 
+</span><span>  of summing up values of some function $a : X \rightarrow G$
+</span><span>  over a finite set of indices $\Gamma \subseteq X$, without using any
+</span><span>  order relation on $X$.</span><span>›</span></span></span><span>
 
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹We define the sum of values of a function $a: X\rightarrow G$
-  over a set $\Lambda$ as the only element of the set of sums of lists 
-  that are bijections between the number of values in $\Lambda$ 
-  (which is a natural number $n = \{0,1, .. , n-1\}$ if $\Lambda$
-  is finite) and $\Lambda$. The notion of </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Fold1(f,c)›</span></span></span><span> 
-  is defined in </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Semigroup_ZF›</span></span></span><span> as the fold (sum) of the list
-  $c$ starting from the first element of that list. The intention
-  is to use the fact that since the result of summing up a list
-  does not depend on the order, the set 
-  </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>{Fold1(f,a O b). b ∈ bij( |Λ|, Λ)}›</span></span></span><span> is a singleton
-  and we can extract its only value by taking its union.›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>We define the sum of values of a function $a: X\rightarrow G$
+</span><span>  over a set $\Lambda$ as the only element of the set of sums of lists 
+</span><span>  that are bijections between the number of values in $\Lambda$ 
+</span><span>  (which is a natural number $n = \{0,1, .. , n-1\}$ if $\Lambda$
+</span><span>  is finite) and $\Lambda$. The notion of </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Fold1(f,c)›</span></span></span><span> 
+</span><span>  is defined in </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Semigroup_ZF›</span></span></span><span> as the fold (sum) of the list
+</span><span>  $c$ starting from the first element of that list. The intention
+</span><span>  is to use the fact that since the result of summing up a list
+</span><span>  does not depend on the order, the set 
+</span><span>  </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>{Fold1(f,a O b). b ∈ bij( |Λ|, Λ)}›</span></span></span><span> is a singleton
+</span><span>  and we can extract its only value by taking its union.</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="CommutativeSemigroup_ZF.CommSetFold_def|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.CommSetFold_def|thm"><span class="entity_def" id="CommutativeSemigroup_ZF.CommSetFold_def_raw|axiom"><span>definition</span></span></span></span></span></span><span>
   </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span class="entity_def" id="CommutativeSemigroup_ZF.CommSetFold|const"><span>CommSetFold</span></span></span><span class="main"><span>(</span></span><span class="free"><span class="bound"><span class="entity"><span>f</span></span></span></span><span class="main"><span>,</span></span><span class="free"><span class="bound"><span class="entity"><span>a</span></span></span></span><span class="main"><span>,</span></span><span class="free"><span class="bound"><span class="entity"><span>Λ</span></span></span></span><span class="main"><span>)</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.eq|const"><span>=</span></a></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.Union|const"><span>⋃</span></a></span><span class="main"><span>{</span></span><a class="entity_ref" href="Semigroup_ZF.html#Semigroup_ZF.Fold1|const"><span>Fold1</span></a><span class="main"><span>(</span></span><span class="free"><span class="bound"><span class="entity"><span>f</span></span></span></span><span class="main"><span>,</span></span><span class="free"><span class="bound"><span class="entity"><span>a</span></span></span></span><span> </span><span class="keyword1"><a class="entity_ref" href="../../FOL/ZF/Perm.html#Perm.comp|const"><span>O</span></a></span><span> </span><span class="bound"><span>b</span></span><span class="main"><span>)</span></span><span class="main"><span>.</span></span><span> </span><span class="bound"><span>b</span></span><span> </span><span class="main"><span>∈</span></span><span> </span><a class="entity_ref" href="../../FOL/ZF/Perm.html#Perm.bij|const"><span>bij</span></a><span class="main"><span>(</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/Cardinal.html#Cardinal.cardinal|const"><span>|</span></a></span><span class="free"><span class="bound"><span class="entity"><span>Λ</span></span></span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/Cardinal.html#Cardinal.cardinal|const"><span>|</span></a></span><span class="main"><span>,</span></span><span> </span><span class="free"><span class="bound"><span class="entity"><span>Λ</span></span></span></span><span class="main"><span>)</span></span><span class="main"><span>}</span></span><span>"</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹the next locale sets up notation for writing about summation in
-  commutative semigroups. We define two kinds of sums. One is the sum
-  of elements of a list (which are just functions defined on a natural number)
-  and the second one represents a more general notion the sum of values of
-  a semigroup valued function over some set of arguments. Since those two types of 
-  sums are different notions they are represented by different symbols.
-  However in the presentations they are both intended to be printed as $\sum $.›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>the next locale sets up notation for writing about summation in
+</span><span>  commutative semigroups. We define two kinds of sums. One is the sum
+</span><span>  of elements of a list (which are just functions defined on a natural number)
+</span><span>  and the second one represents a more general notion the sum of values of
+</span><span>  a semigroup valued function over some set of arguments. Since those two types of 
+</span><span>  sums are different notions they are represented by different symbols.
+</span><span>  However in the presentations they are both intended to be printed as $\sum $.</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.intro|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr_def|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.intro|thm"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr_def|thm"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr_def|axiom"><span>locale</span></span></span></span></span></span></span></span><span> </span><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr|locale"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr|const"><span>commsemigr</span></span></span><span> </span><span class="main"><span>=</span></span><span>
   
@@ -109,27 +109,27 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>X</span></span><span> </span><span class="free"><span>a</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.csgaisfun|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.csgaisfun|thm"><span class="entity_def" id="offset_4197..4206">csgaisfun</span></span></span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>a</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>:</span></a></span><span> </span><span class="free"><span>X</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.function_space|const"><span>→</span></a></span><span> </span><span class="free"><span>G</span></span><span>"</span></span></span><span>
 
-  </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>csglistsum</span></span><span> </span><span class="main"><span>(</span></span><span class="quoted"><span>"</span><span class="keyword1"><span>∑</span></span><span> _"</span></span><span> 70</span><span class="main"><span>)</span></span><span>
+  </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>csglistsum</span></span><span> </span><span class="main"><span>(</span></span><span class="quoted"><span>"</span><span class="keyword1"><span>∑</span></span><span> </span><span>_</span><span>"</span></span><span> 70</span><span class="main"><span>)</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>defines</span></span></span><span> </span><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.csglistsum_def|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.csglistsum_def|thm"><span>csglistsum_def</span></span></span><span class="main"><span>[</span></span><span class="operator"><span>simp</span></span><span class="main"><span>]</span></span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="main"><span class="free"><span>∑</span></span></span><span class="free"><span>k</span></span><span> </span><span class="main"><span>≡</span></span><span> </span><a class="entity_ref" href="Semigroup_ZF.html#Semigroup_ZF.Fold1|const"><span>Fold1</span></a><span class="main"><span>(</span></span><span class="free"><span>f</span></span><span class="main"><span>,</span></span><span class="free"><span>k</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>
 
   </span><span class="keyword2"><span class="keyword"><span>fixes</span></span></span><span> </span><span class="free"><span>csgsetsum</span></span><span> </span><span class="main"><span>(</span></span><span class="quoted"><span>"</span><span class="keyword1"><span>\&lt;ssum&gt;</span></span><span>"</span></span><span class="main"><span>)</span></span><span>
   </span><span class="keyword2"><span class="keyword"><span>defines</span></span></span><span> </span><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.csgsetsum_def|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.csgsetsum_def|thm"><span>csgsetsum_def</span></span></span><span class="main"><span>[</span></span><span class="operator"><span>simp</span></span><span class="main"><span>]</span></span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="main"><span class="free"><span>\&lt;ssum&gt;</span></span></span><span class="main"><span>(</span></span><span class="free"><span>A</span></span><span class="main"><span>,</span></span><span class="free"><span>h</span></span><span class="main"><span>)</span></span><span> </span><span class="main"><span>≡</span></span><span> </span><a class="entity_ref" href="CommutativeSemigroup_ZF.html#CommutativeSemigroup_ZF.CommSetFold|const"><span>CommSetFold</span></a><span class="main"><span>(</span></span><span class="free"><span>f</span></span><span class="main"><span>,</span></span><span class="free"><span>h</span></span><span class="main"><span>,</span></span><span class="free"><span>A</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>
 
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹Definition of a sum of function over a set in 
-  notation defined in the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>commsemigr›</span></span></span><span> locale.›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>Definition of a sum of function over a set in 
+</span><span>  notation defined in the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>commsemigr›</span></span></span><span> locale.</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>lemma</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="CommutativeSemigroup_ZF.html#CommutativeSemigroup_ZF.commsemigr|locale"><span>commsemigr</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.CommSetFolddef|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.CommSetFolddef|thm"><span class="entity_def" id="offset_4512..4526">CommSetFolddef</span></span></span><span class="main"><span>:</span></span><span> 
   </span><span class="keyword2"><span class="keyword"><span>shows</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="main"><span>(</span></span><span class="main"><span class="free"><span>\&lt;ssum&gt;</span></span></span><span class="main"><span>(</span></span><span class="free"><span>A</span></span><span class="main"><span>,</span></span><span class="free"><span>a</span></span><span class="main"><span>)</span></span><span class="main"><span>)</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.eq|const"><span>=</span></a></span><span> </span><span class="main"><span>(</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.Union|const"><span>⋃</span></a></span><span class="main"><span>{</span></span><span class="main"><span class="free"><span>∑</span></span></span><span class="main"><span>(</span></span><span class="free"><span>a</span></span><span> </span><span class="keyword1"><a class="entity_ref" href="../../FOL/ZF/Perm.html#Perm.comp|const"><span>O</span></a></span><span> </span><span class="bound"><span>b</span></span><span class="main"><span>)</span></span><span class="main"><span>.</span></span><span> </span><span class="bound"><span>b</span></span><span> </span><span class="main"><span>∈</span></span><span> </span><a class="entity_ref" href="../../FOL/ZF/Perm.html#Perm.bij|const"><span>bij</span></a><span class="main"><span>(</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/Cardinal.html#Cardinal.cardinal|const"><span>|</span></a></span><span class="free"><span>A</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/Cardinal.html#Cardinal.cardinal|const"><span>|</span></a></span><span class="main"><span>,</span></span><span> </span><span class="free"><span>A</span></span><span class="main"><span>)</span></span><span class="main"><span>}</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>
   </span><span class="keyword1"><span class="command"><span>using</span></span></span><span> </span><a class="entity_ref" href="CommutativeSemigroup_ZF.html#CommutativeSemigroup_ZF.CommSetFold_def|fact"><span>CommSetFold_def</span></a><span> </span><span class="keyword1"><span class="command"><span>by</span></span></span><span> </span><span class="operator"><span>simp</span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The next lemma states that the result of a sum does not depend
-  on the order we calculate it. This is similar to lemma 
-  </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>prod_order_irr›</span></span></span><span> in the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Semigroup›</span></span></span><span> theory,
-  except that the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>semigr1›</span></span></span><span> locale assumes
-  that the domain of the function we sum up is linearly
-  ordered, while in </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>commsemigr›</span></span></span><span> we don't have
-  this assumption.›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The next lemma states that the result of a sum does not depend
+</span><span>  on the order we calculate it. This is similar to lemma 
+</span><span>  </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>prod_order_irr›</span></span></span><span> in the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>Semigroup›</span></span></span><span> theory,
+</span><span>  except that the </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>semigr1›</span></span></span><span> locale assumes
+</span><span>  that the domain of the function we sum up is linearly
+</span><span>  ordered, while in </span><span class="antiquoted"><span class="raw_text"><span class="operator"><span>‹</span></span><span>commsemigr›</span></span></span><span> we don't have
+</span><span>  this assumption.</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>lemma</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="CommutativeSemigroup_ZF.html#CommutativeSemigroup_ZF.commsemigr|locale"><span>commsemigr</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.sum_over_set_bij|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.sum_over_set_bij|thm"><span class="entity_def" id="offset_4975..4991">sum_over_set_bij</span></span></span><span class="main"><span>:</span></span><span> 
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span> </span><span class="entity_def" id="offset_5004..5006">A1</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>A</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span> </span><a class="entity_ref" href="Finite_ZF.html#Finite_ZF.FinPow|const"><span>FinPow</span></a><span class="main"><span>(</span></span><span class="free"><span>X</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>A</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.not_equal|const"><span>≠</span></a></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.zero|const"><span>0</span></a></span><span>"</span></span></span><span> </span><span class="keyword2"><span class="keyword"><span>and</span></span></span><span> </span><span class="entity_def" id="offset_5036..5038">A2</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>b</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span> </span><a class="entity_ref" href="../../FOL/ZF/Perm.html#Perm.bij|const"><span>bij</span></a><span class="main"><span>(</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/Cardinal.html#Cardinal.cardinal|const"><span>|</span></a></span><span class="free"><span>A</span></span><span class="main"><a class="entity_ref" href="../../FOL/ZF/Cardinal.html#Cardinal.cardinal|const"><span>|</span></a></span><span class="main"><span>,</span></span><span class="free"><span>A</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span> 
@@ -175,11 +175,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </span><span class="keyword1"><span class="command"><span>then</span></span></span><span> </span><span class="keyword3"><span class="command"><span>show</span></span></span><span> </span><span class="var"><span class="quoted"><span class="var"><span>?thesis</span></span></span></span><span> </span><span class="keyword1"><span class="command"><span>using</span></span></span><span> </span><a class="entity_ref" href="CommutativeSemigroup_ZF.html#offset_4512..4526"><span>CommSetFolddef</span></a><span> </span><span class="keyword1"><span class="command"><span>by</span></span></span><span> </span><span class="operator"><span>simp</span></span><span>
 </span><span class="keyword1"><span class="command"><span>qed</span></span></span><span>
 
-</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹The result of a sum is in the semigroup. Also, as the second
-  assertion we show that every semigroup valued function
-  generates a homomorphism between the finite subsets of a semigroup 
-  and the semigroup. Adding an element to a set coresponds to adding a 
-  value.›</span></span></span><span>
+</span><span class="keyword1"><span class="command"><span>text</span></span></span><span class="quoted"><span class="plain_text"><span>‹</span><span>The result of a sum is in the semigroup. Also, as the second
+</span><span>  assertion we show that every semigroup valued function
+</span><span>  generates a homomorphism between the finite subsets of a semigroup 
+</span><span>  and the semigroup. Adding an element to a set coresponds to adding a 
+</span><span>  value.</span><span>›</span></span></span><span>
 
 </span><span class="keyword1"><span class="command"><span>lemma</span></span></span><span> </span><span class="main"><span>(</span></span><span class="keyword2"><span class="keyword"><span>in</span></span></span><span> </span><a class="entity_ref" href="CommutativeSemigroup_ZF.html#CommutativeSemigroup_ZF.commsemigr|locale"><span>commsemigr</span></a><span class="main"><span>)</span></span><span> </span><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.sum_over_set_add_point|fact"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.sum_over_set_add_point(2)|thm"><span class="entity_def" id="CommutativeSemigroup_ZF.commsemigr.sum_over_set_add_point(1)|thm"><span>sum_over_set_add_point</span></span></span></span><span class="main"><span>:</span></span><span> 
   </span><span class="keyword2"><span class="keyword"><span>assumes</span></span></span><span>  </span><span class="entity_def" id="offset_6938..6940">A1</span><span class="main"><span>:</span></span><span> </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>A</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.mem|const"><span>∈</span></a></span><span> </span><a class="entity_ref" href="Finite_ZF.html#Finite_ZF.FinPow|const"><span>FinPow</span></a><span class="main"><span>(</span></span><span class="free"><span>X</span></span><span class="main"><span>)</span></span><span>"</span></span></span><span>  </span><span class="quoted"><span class="quoted"><span>"</span><span class="free"><span>A</span></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/IFOL.html#IFOL.not_equal|const"><span>≠</span></a></span><span> </span><span class="main"><a class="entity_ref" href="../../FOL/ZF/ZF_Base.html#ZF_Base.zero|const"><span>0</span></a></span><span>"</span></span></span><span> 
