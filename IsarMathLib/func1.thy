@@ -1623,9 +1623,9 @@ text\<open>A reformulation of \<open>cart_prod_fun\<close> above in a sligtly di
 
 lemma prod_fun:
   assumes "f:X\<^sub>1\<rightarrow>X\<^sub>2"  "g:X\<^sub>3\<rightarrow>X\<^sub>4"
-  shows "{\<langle>\<langle>x,y\<rangle>,\<langle>f`x,g`y\<rangle>\<rangle>. \<langle>x,y\<rangle>\<in>X\<^sub>1\<times>X\<^sub>3}:X\<^sub>1\<times>X\<^sub>3\<rightarrow>X\<^sub>2\<times>X\<^sub>4" 
+  shows "{\<langle>\<langle>x,y\<rangle>,\<langle>f`(x),g`(y)\<rangle>\<rangle>. \<langle>x,y\<rangle>\<in>X\<^sub>1\<times>X\<^sub>3}:X\<^sub>1\<times>X\<^sub>3\<rightarrow>X\<^sub>2\<times>X\<^sub>4" 
 proof -
-  have "{\<langle>\<langle>x,y\<rangle>,\<langle>f`x,g`y\<rangle>\<rangle>. \<langle>x,y\<rangle>\<in>X\<^sub>1\<times>X\<^sub>3} = {\<langle>p,\<langle>f`(fst(p)),g`(snd(p))\<rangle>\<rangle>. p \<in> X\<^sub>1\<times>X\<^sub>3}"
+  have "{\<langle>\<langle>x,y\<rangle>,\<langle>f`(x),g`(y)\<rangle>\<rangle>. \<langle>x,y\<rangle>\<in>X\<^sub>1\<times>X\<^sub>3} = {\<langle>p,\<langle>f`(fst(p)),g`(snd(p))\<rangle>\<rangle>. p \<in> X\<^sub>1\<times>X\<^sub>3}"
     by auto
   with assms show ?thesis using cart_prod_fun by simp 
 qed
@@ -1634,24 +1634,23 @@ text\<open>Product of two surjections is a surjection.\<close>
 
 theorem prod_functions_surj:
   assumes "f\<in>surj(A,B)" "g\<in>surj(C,D)"
-  shows "{\<langle>\<langle>a1,a2\<rangle>,\<langle>f`a1,g`a2\<rangle>\<rangle>.\<langle>a1,a2\<rangle>\<in>A\<times>C} \<in> surj(A\<times>C,B\<times>D)"
+  shows "{\<langle>\<langle>a\<^sub>1,a\<^sub>2\<rangle>,\<langle>f`(a\<^sub>1),g`(a\<^sub>2)\<rangle>\<rangle>. \<langle>a\<^sub>1,a\<^sub>2\<rangle>\<in>A\<times>C} \<in> surj(A\<times>C,B\<times>D)"
 proof -
-  let ?h = "{\<langle>\<langle>x, y\<rangle>, f`(x), g`(y)\<rangle> . \<langle>x,y\<rangle> \<in> A \<times> C}"
-  from assms have fun: "f:A\<rightarrow>B""g:C\<rightarrow>D" unfolding surj_def by auto
+  let ?h = "{\<langle>\<langle>x, y\<rangle>, f`(x), g`(y)\<rangle> . \<langle>x,y\<rangle> \<in> A\<times>C}"
+  from assms have fun: "f:A\<rightarrow>B" "g:C\<rightarrow>D" unfolding surj_def by auto
   then have pfun: "?h : A \<times> C \<rightarrow> B \<times> D" using prod_fun by auto
   {
     fix b assume "b\<in>B\<times>D"
-    then obtain b1 b2 where "b=\<langle>b1,b2\<rangle>" "b1\<in>B" "b2\<in>D" by auto
-    with assms obtain a1 a2 where "f`(a1)=b1" "g`(a2)=b2" "a1\<in>A" "a2\<in>C" 
+    then obtain b\<^sub>1 b\<^sub>2 where "b=\<langle>b\<^sub>1,b\<^sub>2\<rangle>" "b\<^sub>1\<in>B" "b\<^sub>2\<in>D" by auto
+    with assms obtain a\<^sub>1 a\<^sub>2 where "f`(a\<^sub>1)=b\<^sub>1" "g`(a\<^sub>2)=b\<^sub>2" "a\<^sub>1\<in>A" "a\<^sub>2\<in>C" 
       unfolding surj_def by blast
-    hence "\<langle>\<langle>a1,a2\<rangle>,\<langle>b1,b2\<rangle>\<rangle> \<in> ?h" by auto
-    with pfun have "?h`\<langle>a1,a2\<rangle>=\<langle>b1,b2\<rangle>" using apply_equality by auto
-    with \<open>b=\<langle>b1,b2\<rangle>\<close> \<open>a1\<in>A\<close> \<open>a2\<in>C\<close> have "\<exists>a\<in>A\<times>C. ?h`(a)=b" 
+    hence "\<langle>\<langle>a\<^sub>1,a\<^sub>2\<rangle>,\<langle>b\<^sub>1,b\<^sub>2\<rangle>\<rangle> \<in> ?h" by auto
+    with pfun have "?h`\<langle>a\<^sub>1,a\<^sub>2\<rangle>=\<langle>b\<^sub>1,b\<^sub>2\<rangle>" using apply_equality by auto
+    with \<open>b=\<langle>b\<^sub>1,b\<^sub>2\<rangle>\<close> \<open>a\<^sub>1\<in>A\<close> \<open>a\<^sub>2\<in>C\<close> have "\<exists>a\<in>A\<times>C. ?h`(a)=b" 
       by auto
   } hence "\<forall>b\<in>B\<times>D. \<exists>a\<in>A\<times>C. ?h`(a) = b" by auto
   with pfun show ?thesis unfolding surj_def by auto
 qed
-
 
 text\<open>For a function of two variables created from functions of one variable as in 
   \<open>cart_prod_fun\<close> above, the inverse image of a cartesian product of sets is the 

@@ -38,7 +38,7 @@ text\<open>In this theory file we study separation axioms and the notion of base
 
 subsection\<open>Separation axioms\<close>
 
-text\<open>Topological spaces cas be classified according to certain properties
+text\<open>Topological spaces can be classified according to certain properties
   called "separation axioms". In this section we define what it means that a 
   topological space is $T_0$, $T_1$ or $T_2$.\<close>
 

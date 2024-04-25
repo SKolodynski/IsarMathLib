@@ -247,6 +247,7 @@ namespace iml
                  (" \\{in\\} ","\\text{ in }")
                  ("\\<inverse>", "^{-1}")
                  ("\\<sinv>", "^{-1}")
+                 ("~", "\\neg ")
                  ]
         
         
