@@ -298,7 +298,7 @@ proof-
   then have B:"(\<rm>\<one>) \<in> R" using Ring_ZF_1_L3(1) by auto
   have "g+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)=(\<one> \<cdot>\<^sub>S g)+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)" 
     using module_ax4 assms by auto
-  also have "\<dots>=(\<one> \<rs>\<one>) \<cdot>\<^sub>S g" using module_ax2 unfolding ringsub_def using A B assms by auto
+  also with A B assms have "\<dots>=(\<one> \<rs>\<one>) \<cdot>\<^sub>S g" using module_ax2 unfolding ringsub_def by auto
   also have "\<dots>=\<zero> \<cdot>\<^sub>S g" using Ring_ZF_1_L3(7) A by auto
   also have "\<dots>=\<Theta>" using mult_zero assms by auto
   ultimately have "g+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)=\<Theta>" by auto moreover
