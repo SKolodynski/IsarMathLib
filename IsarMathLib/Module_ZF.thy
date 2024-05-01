@@ -283,7 +283,7 @@ lemma (in module0) mult_zero:
   assumes "g\<in>\<M>"
   shows "\<zero> \<cdot>\<^sub>S g=\<Theta>"
 proof-
-  from trans[OF vec_act_homo.homomor_dest_zero add_mult_neut_elems(2)] have "H`\<zero> = ConstantFunction(\<M>,\<Theta>)" by auto
+  from vec_act_homo.homomor_dest_zero add_mult_neut_elems(2) have "H`\<zero> = ConstantFunction(\<M>,\<Theta>)" by (rule trans)
   then have "(H`\<zero>)`g = ConstantFunction(\<M>,\<Theta>)`g" by auto
   then show "\<zero> \<cdot>\<^sub>S g=\<Theta>" using func1_3_L2 assms by auto
 qed
