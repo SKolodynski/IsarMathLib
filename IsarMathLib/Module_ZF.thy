@@ -279,7 +279,7 @@ qed
 
 text\<open>Multiplying by zero is zero.\<close>
 
-lemma(in module0) mult_zero:
+lemma (in module0) mult_zero:
   assumes "g\<in>\<M>"
   shows "\<zero> \<cdot>\<^sub>S g=\<Theta>"
 proof-
@@ -291,7 +291,7 @@ qed
 
 text \<open>Taking inverses in a module is just multiplying by $-1$\<close>
 
-lemma(in module0) inv_module:
+lemma (in module0) inv_module:
   assumes "g\<in>\<M>"
   shows "(\<rm>\<one>) \<cdot>\<^sub>S g = \<midarrow> g"
 proof-
