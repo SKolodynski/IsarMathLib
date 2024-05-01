@@ -288,7 +288,7 @@ proof-
   then show "\<zero> \<cdot>\<^sub>S g=\<Theta>" using func1_3_L2 assms by auto
 qed
 
-text \<open>Taking inverses in a module is just multiplying by $-1$\<close>
+text\<open>Taking inverses in a module is just multiplying by $-1$\<close>
 
 lemma (in module0) inv_module:
   assumes "g\<in>\<M>"
