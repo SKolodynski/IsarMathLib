@@ -301,7 +301,7 @@ proof-
   also  have "\<dots>=(\<one> \<rs>\<one>) \<cdot>\<^sub>S g" using module_ax2 A B assms unfolding ringsub_def by auto
   also have "\<dots>=\<zero> \<cdot>\<^sub>S g" using Ring_ZF_1_L3(7) A by auto
   also have "\<dots>=\<Theta>" using mult_zero assms by auto
-  ultimately have "g+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)=\<Theta>" by auto moreover
+  finally have "g+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)=\<Theta>" by auto moreover
   from B have "H`(\<rm>\<one>)\<in>\<M>\<rightarrow>\<M>" using H_val_type(2) by auto
   then have "(\<rm>\<one>) \<cdot>\<^sub>S g\<in>\<M>" unfolding End_def using apply_type assms by auto
   ultimately show ?thesis using mod_ab_gr.group0_2_L9(2) assms by auto
