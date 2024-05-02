@@ -170,19 +170,25 @@ sublocale module0 < vec_act_homo: ring_homo R A M
   "\<lambda>x.  EndMult(\<M>,A\<^sub>M)`\<langle>x, x\<rangle>"
   using ring_homo_valid_module0 by auto
 
-text\<open>In the ring of endomorphisms of the module the neutral element of the additive operation 
-  is the zero valued constant function. The neutral element of the multiplicative operation is
-  the identity function.\<close>
+text\<open>In the ring of endomorphisms of the module the neutral element of the 
+  the multiplicative operation is the identity function. 
+  The neutral element of the additive operation is the zero valued constant function,
+  which is also the value of the homomorphism that defines the module at zero. \<close>
 
 lemma (in module0) add_mult_neut_elems: shows 
   "TheNeutralElement(End(\<M>, A\<^sub>M), EndMult(\<M>,A\<^sub>M)) = id(\<M>)" and 
   "TheNeutralElement(End(\<M>,A\<^sub>M),EndAdd(\<M>,A\<^sub>M)) = ConstantFunction(\<M>,\<Theta>)"
+  "H`(\<zero>) = ConstantFunction(\<M>,\<Theta>)" 
 proof -
   show "TheNeutralElement(End(\<M>, A\<^sub>M), EndMult(\<M>, A\<^sub>M)) = id(\<M>)"
     using mod_ab_gr.end_comp_monoid(2) unfolding EndMult_def
     by blast
-  show "TheNeutralElement(End(\<M>, A\<^sub>M), EndAdd(\<M>, A\<^sub>M)) = ConstantFunction(\<M>,\<Theta>)"
+  have "H`(\<zero>) = TheNeutralElement(End(\<M>,A\<^sub>M),EndAdd(\<M>,A\<^sub>M))"
+    using vec_act_homo.homomor_dest_zero by blast
+  also show 
+    "TheNeutralElement(End(\<M>, A\<^sub>M), EndAdd(\<M>, A\<^sub>M)) = ConstantFunction(\<M>,\<Theta>)"
     using mod_ab_gr.end_add_neut_elem unfolding EndAdd_def by blast
+  finally show "H`(\<zero>) = ConstantFunction(\<M>,\<Theta>)" by simp
 qed
 
 text\<open>The value of the homomorphism defining the module is an endomorphism
@@ -280,32 +286,28 @@ qed
 text\<open>Multiplying by zero is zero.\<close>
 
 lemma (in module0) mult_zero:
-  assumes "g\<in>\<M>"
-  shows "\<zero> \<cdot>\<^sub>S g=\<Theta>"
-proof-
-  from vec_act_homo.homomor_dest_zero add_mult_neut_elems(2) have "H`\<zero> = ConstantFunction(\<M>,\<Theta>)" by (rule trans)
-  then have "(H`\<zero>)`g = ConstantFunction(\<M>,\<Theta>)`g" by auto
-  then show "\<zero> \<cdot>\<^sub>S g=\<Theta>" using func1_3_L2 assms by auto
-qed
+  assumes "g\<in>\<M>" shows "\<zero>\<cdot>\<^sub>Sg = \<Theta>"
+  using assms add_mult_neut_elems(3) func1_3_L2 by simp
 
 text\<open>Taking inverses in a module is just multiplying by $-1$\<close>
 
 lemma (in module0) inv_module:
   assumes "g\<in>\<M>"
-  shows "(\<rm>\<one>) \<cdot>\<^sub>S g = \<midarrow> g"
+  shows "(\<rm>\<one>)\<cdot>\<^sub>Sg = \<midarrow> g"
 proof-
-  have A:"\<one>\<in>R" using Ring_ZF_1_L2(2) by auto
-  then have B:"(\<rm>\<one>) \<in> R" using Ring_ZF_1_L3(1) by auto
-  have "g+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)=(\<one> \<cdot>\<^sub>S g)+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)" 
-    using module_ax4 assms by auto
-  also  have "\<dots>=(\<one> \<rs>\<one>) \<cdot>\<^sub>S g" using module_ax2 A B assms unfolding ringsub_def by auto
-  also have "\<dots>=\<zero> \<cdot>\<^sub>S g" using Ring_ZF_1_L3(7) A by auto
-  also have "\<dots>=\<Theta>" using mult_zero assms by auto
-  finally have "g+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)=\<Theta>" by auto moreover
-  from B have "H`(\<rm>\<one>)\<in>\<M>\<rightarrow>\<M>" using H_val_type(2) by auto
-  then have "(\<rm>\<one>) \<cdot>\<^sub>S g\<in>\<M>" unfolding End_def using apply_type assms by auto
-  ultimately show ?thesis using mod_ab_gr.group0_2_L9(2) assms by auto
+  have "\<one>\<in>R" using Ring_ZF_1_L2(2) by auto
+  then have "(\<rm>\<one>) \<in> R" using Ring_ZF_1_L3(1) by auto
+  with assms have "g +\<^sub>V ((\<rm>\<one>)\<cdot>\<^sub>Sg) = (\<one>\<cdot>\<^sub>Sg) +\<^sub>V ((\<rm>\<one>)\<cdot>\<^sub>Sg)" 
+    using module_ax4 by auto
+  also from assms \<open>\<one>\<in>R\<close> \<open>(\<rm>\<one>) \<in> R\<close> have "\<dots> = (\<one>\<rs>\<one>)\<cdot>\<^sub>Sg" 
+    using module_ax2 unfolding ringsub_def by auto
+  also from \<open>\<one>\<in>R\<close> have "\<dots> = \<zero>\<cdot>\<^sub>Sg" using Ring_ZF_1_L3(7) by auto
+  also from assms have "\<dots> = \<Theta>" using mult_zero by auto
+  finally have "g +\<^sub>V ((\<rm>\<one>)\<cdot>\<^sub>Sg) = \<Theta>" by auto 
+  moreover
+  from \<open>(\<rm>\<one>) \<in> R\<close> have "H`(\<rm>\<one>)\<in>\<M>\<rightarrow>\<M>" using H_val_type(2) by auto
+  with assms have "(\<rm>\<one>)\<cdot>\<^sub>Sg \<in> \<M>" unfolding End_def using apply_type by auto
+  ultimately show ?thesis using assms mod_ab_gr.group0_2_L9(2) by auto
 qed
-
 
 end
