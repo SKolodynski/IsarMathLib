@@ -213,6 +213,18 @@ text\<open>A more common definition of a module assumes that $R$ is a ring, $V$
   In this section we show that the definition of a module as a ring action
   on an abelian group $V$ implies these properties.   \<close>
 
+
+text\<open> $\Theta$ is fixed by scalar multiplication.\<close>
+
+lemma (in module0) zero_fixed: assumes "r\<in>R" 
+  shows "r \<cdot>\<^sub>S \<Theta> = \<Theta>"
+proof-
+  have "Homomor(H`r,\<M>,A\<^sub>M,\<M>,A\<^sub>M)"
+    using assms H_val_type(1) unfolding End_def by simp_all
+  with image_neutral mAbGr have "(H`r)`TheNeutralElement(\<M>,A\<^sub>M) = TheNeutralElement(\<M>,A\<^sub>M)" by auto
+  then show ?thesis by auto
+qed
+
 text\<open>The scalar multiplication is distributive with respect to the module addition.\<close>
 
 lemma (in module0) module_ax1: assumes "r\<in>R" "x\<in>\<M>" "y\<in>\<M>"
@@ -265,7 +277,35 @@ proof -
   with assms show "\<one>\<cdot>\<^sub>Sx = x" by simp
 qed
 
+text\<open>Multiplying by zero is zero.\<close>
+
+lemma (in module0) mult_zero:
+  assumes "g\<in>\<M>"
+  shows "\<zero> \<cdot>\<^sub>S g=\<Theta>"
+proof-
+  from vec_act_homo.homomor_dest_zero add_mult_neut_elems(2) have "H`\<zero> = ConstantFunction(\<M>,\<Theta>)" by (rule trans)
+  then have "(H`\<zero>)`g = ConstantFunction(\<M>,\<Theta>)`g" by auto
+  then show "\<zero> \<cdot>\<^sub>S g=\<Theta>" using func1_3_L2 assms by auto
+qed
+
+text\<open>Taking inverses in a module is just multiplying by $-1$\<close>
+
+lemma (in module0) inv_module:
+  assumes "g\<in>\<M>"
+  shows "(\<rm>\<one>) \<cdot>\<^sub>S g = \<midarrow> g"
+proof-
+  have A:"\<one>\<in>R" using Ring_ZF_1_L2(2) by auto
+  then have B:"(\<rm>\<one>) \<in> R" using Ring_ZF_1_L3(1) by auto
+  have "g+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)=(\<one> \<cdot>\<^sub>S g)+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)" 
+    using module_ax4 assms by auto
+  also  have "\<dots>=(\<one> \<rs>\<one>) \<cdot>\<^sub>S g" using module_ax2 A B assms unfolding ringsub_def by auto
+  also have "\<dots>=\<zero> \<cdot>\<^sub>S g" using Ring_ZF_1_L3(7) A by auto
+  also have "\<dots>=\<Theta>" using mult_zero assms by auto
+  finally have "g+\<^sub>V ((\<rm>\<one>) \<cdot>\<^sub>S g)=\<Theta>" by auto moreover
+  from B have "H`(\<rm>\<one>)\<in>\<M>\<rightarrow>\<M>" using H_val_type(2) by auto
+  then have "(\<rm>\<one>) \<cdot>\<^sub>S g\<in>\<M>" unfolding End_def using apply_type assms by auto
+  ultimately show ?thesis using mod_ab_gr.group0_2_L9(2) assms by auto
+qed
+
+
 end
-
-
-
