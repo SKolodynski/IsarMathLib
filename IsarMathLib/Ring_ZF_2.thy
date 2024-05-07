@@ -111,26 +111,23 @@ theorem (in ring0) ideal_intro:
     "I \<subseteq> R" "I\<noteq>0"
   shows "I\<triangleleft>R"
 proof-
-  have "IsAsubgroup(I,A)"
-  proof(rule group0.group0_3_T3[of R])
-    show "I \<subseteq> R" using assms(4).
-    show "group0(R,A)" using ring0_axioms unfolding ring0_def
-      IsAring_def group0_def by auto
-    show "I {is closed under} A" unfolding IsOpClosed_def using assms(1) by auto
-    show "I \<noteq>0" using assms(5).
-    {
-      fix x assume x:"x\<in>I"
-      then have "(\<rm>x)\<in>R" using assms(4) Ring_ZF_1_L3(1) by auto
-      then have "(\<rm>x) = \<one>\<cdot>(\<rm>x)" using Ring_ZF_1_L3(6) by auto
-      then have "(\<rm>x) = \<rm>(\<one>\<cdot>x)" using Ring_ZF_1_L7(2)
-        x assms(4) Ring_ZF_1_L2(2) by auto
-      then have "(\<rm>x) = (\<rm>\<one>)\<cdot>x" using Ring_ZF_1_L7(1)
-        x assms(4) Ring_ZF_1_L2(2) by auto
-      moreover have "(\<rm>\<one>)\<in>R" using Ring_ZF_1_L2(2) Ring_ZF_1_L3(1) by auto
-      ultimately have "(\<rm>x) \<in>I" using assms(3) x by auto
-    }
-    then show "\<forall>x\<in>I. GroupInv(R, A) ` x \<in> I" by auto
-  qed moreover
+  have "I \<subseteq> R" using assms(4). moreover
+  have "I {is closed under} A" unfolding IsOpClosed_def using assms(1) by auto moreover
+  have "I \<noteq>0" using assms(5). moreover
+  {
+    fix x assume x:"x\<in>I"
+    then have "(\<rm>x)\<in>R" using assms(4) Ring_ZF_1_L3(1) by auto
+    then have "(\<rm>x) = \<one>\<cdot>(\<rm>x)" using Ring_ZF_1_L3(6) by auto
+    then have "(\<rm>x) = \<rm>(\<one>\<cdot>x)" using Ring_ZF_1_L7(2)
+      x assms(4) Ring_ZF_1_L2(2) by auto
+    then have "(\<rm>x) = (\<rm>\<one>)\<cdot>x" using Ring_ZF_1_L7(1)
+      x assms(4) Ring_ZF_1_L2(2) by auto
+    moreover have "(\<rm>\<one>)\<in>R" using Ring_ZF_1_L2(2) Ring_ZF_1_L3(1) by auto
+    ultimately have "(\<rm>x) \<in>I" using assms(3) x by auto
+  }
+  then have "\<forall>x\<in>I. GroupInv(R, A) ` x \<in> I" by auto ultimately
+  have "IsAsubgroup(I,A)" using add_group.group0_3_T3 by auto
+  moreover
   {
     fix x y assume "x\<in>I" "y\<in>R"
     then have "y \<cdot> x \<in> I \<and> x \<cdot> y \<in> I" using assms(2,3) by auto
