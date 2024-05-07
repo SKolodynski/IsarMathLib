@@ -109,9 +109,9 @@ theorem (in ring0) ideal_intro:
     "\<forall>x\<in>I. \<forall>y\<in>R. x\<cdot>y \<in>I" 
     "\<forall>x\<in>I. \<forall>y\<in>R. y\<cdot>x \<in>I"
     "I \<subseteq> R" "I\<noteq>0"
-  shows "I\<triangleleft>R" unfolding Ideal_def
-proof
-  show "IsAsubgroup(I,A)"
+  shows "I\<triangleleft>R"
+proof-
+  have "IsAsubgroup(I,A)"
   proof(rule group0.group0_3_T3[of R])
     show "I \<subseteq> R" using assms(4).
     show "group0(R,A)" using ring0_axioms unfolding ring0_def
@@ -130,12 +130,13 @@ proof
       ultimately have "(\<rm>x) \<in>I" using assms(3) x by auto
     }
     then show "\<forall>x\<in>I. GroupInv(R, A) ` x \<in> I" by auto
-  qed
+  qed moreover
   {
     fix x y assume "x\<in>I" "y\<in>R"
     then have "y \<cdot> x \<in> I \<and> x \<cdot> y \<in> I" using assms(2,3) by auto
   }
-  then show "\<forall>x\<in>I. \<forall>y\<in>R. y \<cdot> x \<in> I \<and> x \<cdot> y \<in> I" by auto
+  then have "\<forall>x\<in>I. \<forall>y\<in>R. y \<cdot> x \<in> I \<and> x \<cdot> y \<in> I" by auto
+  ultimately show ?thesis unfolding Ideal_def by auto
 qed
 
 text\<open>The simplest way to obtain an ideal from others is the intersection,
