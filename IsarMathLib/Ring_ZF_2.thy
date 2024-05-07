@@ -111,9 +111,9 @@ theorem (in ring0) ideal_intro:
     "I \<subseteq> R" "I\<noteq>0"
   shows "I\<triangleleft>R"
 proof-
-  have "I \<subseteq> R" using assms(4). moreover
+  note assms(4) moreover
   have "I {is closed under} A" unfolding IsOpClosed_def using assms(1) by auto moreover
-  have "I \<noteq>0" using assms(5). moreover
+  note assms(5) moreover
   {
     fix x assume x:"x\<in>I"
     then have "(\<rm>x)\<in>R" using assms(4) Ring_ZF_1_L3(1) by auto
