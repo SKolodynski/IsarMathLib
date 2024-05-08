@@ -102,6 +102,40 @@ lemma (in ring0) ideal_dest_zero:
   shows "\<zero> \<in> I" 
   using assms add_group.group0_3_L5 unfolding Ideal_def by auto
 
+text\<open>If the rules are satisfied, then we have an ideal\<close>
+
+theorem (in ring0) ideal_intro:
+  assumes "\<forall>x\<in>I. \<forall>y\<in>I. x\<ra>y\<in>I" 
+    "\<forall>x\<in>I. \<forall>y\<in>R. x\<cdot>y \<in>I" 
+    "\<forall>x\<in>I. \<forall>y\<in>R. y\<cdot>x \<in>I"
+    "I \<subseteq> R" "I\<noteq>0"
+  shows "I\<triangleleft>R"
+proof-
+  note assms(4) moreover
+  have "I {is closed under} A" unfolding IsOpClosed_def using assms(1) by auto moreover
+  note assms(5) moreover
+  {
+    fix x assume x:"x\<in>I"
+    then have "(\<rm>x)\<in>R" using assms(4) Ring_ZF_1_L3(1) by auto
+    then have "(\<rm>x) = \<one>\<cdot>(\<rm>x)" using Ring_ZF_1_L3(6) by auto
+    then have "(\<rm>x) = \<rm>(\<one>\<cdot>x)" using Ring_ZF_1_L7(2)
+      x assms(4) Ring_ZF_1_L2(2) by auto
+    then have "(\<rm>x) = (\<rm>\<one>)\<cdot>x" using Ring_ZF_1_L7(1)
+      x assms(4) Ring_ZF_1_L2(2) by auto
+    moreover have "(\<rm>\<one>)\<in>R" using Ring_ZF_1_L2(2) Ring_ZF_1_L3(1) by auto
+    ultimately have "(\<rm>x) \<in>I" using assms(3) x by auto
+  }
+  then have "\<forall>x\<in>I. GroupInv(R, A) ` x \<in> I" by auto ultimately
+  have "IsAsubgroup(I,A)" using add_group.group0_3_T3 by auto
+  moreover
+  {
+    fix x y assume "x\<in>I" "y\<in>R"
+    then have "y \<cdot> x \<in> I \<and> x \<cdot> y \<in> I" using assms(2,3) by auto
+  }
+  then have "\<forall>x\<in>I. \<forall>y\<in>R. y \<cdot> x \<in> I \<and> x \<cdot> y \<in> I" by auto
+  ultimately show ?thesis unfolding Ideal_def by auto
+qed
+
 text\<open>The simplest way to obtain an ideal from others is the intersection,
   since the intersection of arbitrary collection of ideals is an ideal.\<close>
 
