@@ -110,29 +110,20 @@ theorem (in ring0) ideal_intro:
     "\<forall>x\<in>I. \<forall>y\<in>R. y\<cdot>x \<in>I"
     "I \<subseteq> R" "I\<noteq>0"
   shows "I\<triangleleft>R"
-proof-
-  note assms(4) moreover
-  have "I {is closed under} A" unfolding IsOpClosed_def using assms(1) by auto moreover
-  note assms(5) moreover
-  {
-    fix x assume x:"x\<in>I"
-    then have "(\<rm>x)\<in>R" using assms(4) Ring_ZF_1_L3(1) by auto
+proof -
+  { fix x assume "x\<in>I"
+    with assms(4) have "(\<rm>x)\<in>R" using  Ring_ZF_1_L3(1) by auto
     then have "(\<rm>x) = \<one>\<cdot>(\<rm>x)" using Ring_ZF_1_L3(6) by auto
-    then have "(\<rm>x) = \<rm>(\<one>\<cdot>x)" using Ring_ZF_1_L7(2)
-      x assms(4) Ring_ZF_1_L2(2) by auto
-    then have "(\<rm>x) = (\<rm>\<one>)\<cdot>x" using Ring_ZF_1_L7(1)
-      x assms(4) Ring_ZF_1_L2(2) by auto
-    moreover have "(\<rm>\<one>)\<in>R" using Ring_ZF_1_L2(2) Ring_ZF_1_L3(1) by auto
-    ultimately have "(\<rm>x) \<in>I" using assms(3) x by auto
-  }
-  then have "\<forall>x\<in>I. GroupInv(R, A) ` x \<in> I" by auto ultimately
-  have "IsAsubgroup(I,A)" using add_group.group0_3_T3 by auto
-  moreover
-  {
-    fix x y assume "x\<in>I" "y\<in>R"
-    then have "y \<cdot> x \<in> I \<and> x \<cdot> y \<in> I" using assms(2,3) by auto
-  }
-  then have "\<forall>x\<in>I. \<forall>y\<in>R. y \<cdot> x \<in> I \<and> x \<cdot> y \<in> I" by auto
+    with assms(4) \<open>x\<in>I\<close> have "(\<rm>x) = \<rm>(\<one>\<cdot>x)" 
+      using Ring_ZF_1_L7(2) Ring_ZF_1_L2(2) by auto
+    with assms(4) \<open>x\<in>I\<close> have "(\<rm>x) = (\<rm>\<one>)\<cdot>x" 
+      using Ring_ZF_1_L7(1) Ring_ZF_1_L2(2) by auto
+    with assms(3) \<open>x\<in>I\<close> have "(\<rm>x) \<in>I" 
+      using Ring_ZF_1_L2(2) Ring_ZF_1_L3(1) by auto
+  } hence "\<forall>x\<in>I. GroupInv(R, A)`(x) \<in> I" by auto 
+  with assms(1,4,5) have "IsAsubgroup(I,A)"
+    using add_group.group0_3_T3 unfolding IsOpClosed_def by auto 
+  moreover from assms(2,3) have "\<forall>x\<in>I. \<forall>y\<in>R. y\<cdot>x \<in> I \<and> x\<cdot>y \<in> I" by auto
   ultimately show ?thesis unfolding Ideal_def by auto
 qed
 
