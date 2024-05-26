@@ -1054,8 +1054,8 @@ proof(rule nat_induct[of z2 "\<lambda>t. Fold(P,\<one>,(z1#*t)\<times>{g}) = Fol
   }
 qed
 
-text\<open>Multiplying 2 int_of natural numbers, is the same as multiplying the natural
-numbers and then applying int_of\<close>
+text\<open>Multiplying 2 int\_of natural numbers, is the same as multiplying the natural
+numbers and then applying int\_of\<close>
 
 lemma int_of_mult:
   assumes "nr:nat" "ns:nat"
@@ -1257,12 +1257,12 @@ sublocale abelian_group_int_action < int_action:module0 ints IntegerAddition Int
   using groupAssum apply simp using isAbelian apply simp using group_action_int
   unfolding IsLeftModule_def apply simp done
 
-text\<open>
+(*
 lemma (in abelian_group_int) one_one:
   shows "\<one> = TheNeutralElement(ints,IntegerMultiplication)"
 
 cannot be interpreted. First the unit integer.
-\<close>
+\<close>*)
 
 abbreviation (in abelian_group_int_action) zone ("\<one>\<^sub>\<int>") where
 "\<one>\<^sub>\<int> \<equiv> ione"
@@ -1271,3 +1271,5 @@ text\<open>Then, the unit in the abelian group\<close>
 
 abbreviation (in abelian_group_int_action) gone ("\<one>\<^sub>G") where
 "\<one>\<^sub>G \<equiv> neut"
+
+end
