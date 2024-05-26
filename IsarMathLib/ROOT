@@ -48,6 +48,7 @@ session "IsarMathLib" = "ZF" +
     Group_ZF_5
     Ring_ZF_2
     Ring_ZF_3
+    Ring_ZF_4
     Field_ZF
     Module_ZF
     VectorSpace_ZF
@@ -57,6 +58,7 @@ session "IsarMathLib" = "ZF" +
     IntDiv_ZF_IML
     Int_ZF_2
     Int_ZF_3
+    IntModule_ZF
     Real_ZF
     Real_ZF_1
     Real_ZF_2
