@@ -44,8 +44,8 @@ text\<open> The \<open>reals\<close> context (locale) defined in the \<open>Real
   positive numbers, absolute value etc. For metric spaces we reuse the notation defined there.\<close>
 
 text\<open>The \<open>pmetric_space1\<close> locale extends the \<open>reals\<close> locale, adding the carrier $X$ 
-  of the metric space and the metric $\mathfrak{d}$ to the context, together with the assumption
-  that $\mathfrak{d}:X\times X \rightarrow \mathbb{R}$ is a pseudo metric.
+  of the metric space and the metric $\mathcal{d}$ to the context, together with the assumption
+  that $\mathcal{d}:X\times X \rightarrow \mathbb{R}^+$ is a pseudo metric.
   An alternative would be to define the \<open>pmetric_space1\<close> as an extension of the \<open>pmetric_space1\<close>
   context, but that is in turn an extension of the \<open>loop1\<close> locale that defines notation
   for left and right division which which do not want in the context of real numbers. \<close>

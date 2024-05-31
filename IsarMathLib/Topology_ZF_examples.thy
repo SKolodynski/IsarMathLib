@@ -224,19 +224,17 @@ proof-
   ultimately show ?thesis by auto
 qed
 
-text\<open> $X$ is a closed set that contains $A$.
-This lemma is necessary because we cannot
-use the lemmas proven in the \<open>topology0\<close> context since
-\<open> T\<noteq>0"} \<close> is too weak for
- \<open>CoCardinal(X,T)\<close> to be a topology.\<close>
+text\<open> $X$ is a closed set that contains $A$. 
+  This lemma is necessary because we cannot use the lemmas proven in the 
+  \<open>topology0\<close> context since $T\<noteq>0$ is too weak for \<open>CoCardinal(X,T)\<close> 
+  to be a topology.\<close>
 
 lemma X_closedcov_cocardinal:
   assumes "T\<noteq>0" "A\<subseteq>X"
-  shows "X\<in>ClosedCovers(A,CoCardinal(X,T))" using ClosedCovers_def
+  shows "X \<in> ClosedCovers(A,CoCardinal(X,T))" using ClosedCovers_def
   using union_cocardinal closed_sets_cocardinal assms by auto
 
-text\<open>The closure of a set is itself if it is closed or \<open>X\<close> if
-it isn't closed.\<close>
+text\<open>The closure of a set is itself if it is closed or $X$ if it isn't closed.\<close>
 
 lemma closure_set_cocardinal:
   assumes "T\<noteq>0""A\<subseteq>X"
