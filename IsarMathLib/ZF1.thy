@@ -396,6 +396,13 @@ proof
     by blast
 qed 
 
+text\<open>Square of a reflexive relation contains the relation.
+  Recall that in ZF the identity function on $X$ is the same as the diagonal
+  of $X\times X$, i.e. $id(X) = \{\langle x,x\rangle : x\in X\}$. \<close>
+
+lemma refl_square_greater: assumes "r \<subseteq> X\<times>X" "id(X) \<subseteq> r"
+  shows "r \<subseteq> r O r" using assms by auto
+
 text\<open>A reflexive relation is contained in the union of products of its singleton images. \<close>
 
 lemma refl_union_singl_image: 

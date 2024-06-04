@@ -179,7 +179,7 @@ lemma Fol1_L9: shows "p Xor q \<longleftrightarrow> \<not>(p\<longleftrightarrow
   using Xor_def by auto
 
 text\<open>Constructions from the same sets are the same.
-  It is suprising but we do have to use this as a rule in rarte cases.\<close>
+  It is suprising but we do have to use this as a rule in rare cases.\<close>
 
 lemma same_constr: assumes "x=y" shows "P(x) = P(y)"
   using assms by simp

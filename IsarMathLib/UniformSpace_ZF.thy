@@ -33,7 +33,7 @@ begin
 
 text\<open> This theory defines uniform spaces and proves their basic properties. \<close>
 
-subsection\<open> Definition and motivation \<close>
+subsection\<open> Entourages and neighborhoods \<close>
 
 text\<open> Just like a topological space constitutes the minimal setting 
   in which one can speak of continuous functions, the notion of uniform spaces 
@@ -517,5 +517,84 @@ proof -
   with Jtop show "?J {is regular}" using is_regular_def_alt
     by simp
 qed
+
+subsection\<open> Base of a uniformity \<close>
+
+text\<open>A \<open>base\<close> or a \<open>fundamental systems of entourages\<close> of a uniformity $\Phi$ is 
+  a subset of $\Phi$ that is sufficient to uniquely determine it. This is 
+  analogous to the notion of a base of a topology (see \<open>Topology_ZF_1\<close> or a base of a filter
+  (see \<open>Topology_ZF_4\<close>). \<close>
+
+text\<open>A base of a uniformity $\Phi$ is any subset $\mathfrak{B}\subseteq \Phi$ such that
+  every entourage in $\Phi$ contains (at least) one from $\mathfrak{B}$. 
+  The phrase \<open>is a base for\<close> is already defined to mean a base for a topology, 
+  so we use the phrase \<open>is a uniform base of\<close> here. \<close>
+
+definition
+  IsUniformityBase ("_ {is a uniform base of} _" 90) where
+    "\<BB> {is a uniform base of} \<Phi> \<equiv> \<BB> \<subseteq> \<Phi> \<and> (\<forall>U\<in>\<Phi>. \<exists>B\<in>\<BB>. B\<subseteq>U)"
+
+text\<open>Symmetric entourages form a base of the uniformity.\<close>
+
+lemma symm_are_base: assumes "\<Phi> {is a uniformity on} X"
+  shows "{V\<in>\<Phi>. V = converse(V)} {is a uniform base of} \<Phi>"
+proof -
+  let ?\<BB> = "{V\<in>\<Phi>. V = converse(V)}"
+  { fix W assume "W\<in>\<Phi>"
+    with assms obtain V where "V\<in>\<Phi>" "V O V \<subseteq> W"  "V=converse(V)"
+      using half_size_symm by blast
+    from assms \<open>V\<in>\<Phi>\<close> have "V \<subseteq> V O V"
+      using entourage_props(1,2) refl_square_greater by blast
+    with \<open>V O V \<subseteq> W\<close> \<open>V\<in>\<Phi>\<close> \<open>V=converse(V)\<close> have "\<exists>V\<in>?\<BB>. V\<subseteq>W" by auto
+  } hence "\<forall>W\<in>\<Phi>. \<exists>V\<in>?\<BB>. V \<subseteq> W" by auto
+  then show ?thesis unfolding IsUniformityBase_def by auto
+qed
+
+text\<open>Given a base of a uniformity we can recover the uniformity taking the supersets.
+  The \<open>Supersets\<close> constructor is defined in \<open>ZF1\<close>.\<close>
+
+lemma uniformity_from_base: 
+  assumes "\<Phi> {is a uniformity on} X" "\<BB> {is a uniform base of} \<Phi>"
+  shows "\<Phi> = Supersets(X\<times>X,\<BB>)"
+proof
+  from assms show "\<Phi> \<subseteq> Supersets(X\<times>X,\<BB>)"
+    unfolding IsUniformityBase_def Supersets_def
+    using entourage_props(1) by auto
+  from assms show "Supersets(X\<times>X,\<BB>) \<subseteq> \<Phi>"
+    unfolding Supersets_def IsUniformityBase_def IsUniformity_def IsFilter_def
+    by auto
+qed
+
+text\<open>Analogous to the predicate "satisfies base condition" (defined in \<open>Topology_ZF_1\<close>)
+  and "is a base filter" (defined in \<open>Topology_ZF_4\<close>) we can specify conditions 
+  for a collection $\mathfrak{B}$ of subsets of $X\times X$ to be a base of some
+  uniformity on $X$. Namely, the following conditions are necessary and sufficient:
+  
+  1. Intersection of two sets of $\mathfrak{B}$ contains a set of $\mathfrak{B}$.
+
+  2. Every set of $\mathfrak{B}$ contains the diagonal of $X\times X$.
+
+  3. For each set $B_1\in \mathfrak{B}$ we can find a set $B_2\in \mathfrak{B}$ 
+  such that $B_2\subseteq B_1^{-1}$.
+  
+  4. For each set $B_1\in \mathfrak{B}$ we can find a set $B_2\in \mathfrak{B}$
+  such that $B_2\circ B_2 \subseteq B_1$.\<close>
+
+definition
+  IsUniformityBaseOn ("_ {is a uniform base on} _" 90) where
+    "\<BB> {is a uniform base on} X \<equiv> 
+      (\<forall>B\<^sub>1\<in>\<BB>. \<forall>B\<^sub>2\<in>\<BB>. \<exists>B\<^sub>3\<in>\<BB>. B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2) \<and> (\<forall>B\<in>\<BB>. id(X)\<subseteq>B) \<and>
+      (\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)) \<and> (\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1)"
+
+text\<open>The next lemma splits the definition of \<open>IsUniformityBaseOn\<close> into four condition
+  to enable more precise references in proofs.\<close>
+
+lemma uniformity_base_props: assumes "\<BB> {is a uniform base on} X"
+  shows 
+  "\<forall>B\<^sub>1\<in>\<BB>. \<forall>B\<^sub>2\<in>\<BB>. \<exists>B\<^sub>3\<in>\<BB>. B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2"
+  "\<forall>B\<in>\<BB>. id(X)\<subseteq>B"
+  "\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)"
+  "\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
+  using assms unfolding IsUniformityBaseOn_def by simp_all
 
 end

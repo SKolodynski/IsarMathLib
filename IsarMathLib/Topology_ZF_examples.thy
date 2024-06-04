@@ -226,7 +226,7 @@ qed
 
 text\<open> $X$ is a closed set that contains $A$. 
   This lemma is necessary because we cannot use the lemmas proven in the 
-  \<open>topology0\<close> context since $T\<noteq>0$ is too weak for \<open>CoCardinal(X,T)\<close> 
+  \<open>topology0\<close> context since $T\neq 0$ is too weak for \<open>CoCardinal(X,T)\<close> 
   to be a topology.\<close>
 
 lemma X_closedcov_cocardinal:
