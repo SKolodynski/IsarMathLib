@@ -586,15 +586,130 @@ definition
       (\<forall>B\<^sub>1\<in>\<BB>. \<forall>B\<^sub>2\<in>\<BB>. \<exists>B\<^sub>3\<in>\<BB>. B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2) \<and> (\<forall>B\<in>\<BB>. id(X)\<subseteq>B) \<and>
       (\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)) \<and> (\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1)"
 
-text\<open>The next lemma splits the definition of \<open>IsUniformityBaseOn\<close> into four condition
+text\<open>The next lemma splits the definition of \<open>IsUniformityBaseOn\<close> into four conditions
   to enable more precise references in proofs.\<close>
 
 lemma uniformity_base_props: assumes "\<BB> {is a uniform base on} X"
-  shows 
+  shows
   "\<forall>B\<^sub>1\<in>\<BB>. \<forall>B\<^sub>2\<in>\<BB>. \<exists>B\<^sub>3\<in>\<BB>. B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2"
   "\<forall>B\<in>\<BB>. id(X)\<subseteq>B"
   "\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)"
   "\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
   using assms unfolding IsUniformityBaseOn_def by simp_all
 
+text\<open>If supersets of some collection of subsets of $X\times X$ form a uniformity,
+  then this collection satisfies the conditions in the definition of \<open>IsUniformityBaseOn\<close>. \<close>
+
+theorem base_is_uniform_base: 
+  assumes "\<BB>\<subseteq>Pow(X\<times>X)" and "Supersets(X\<times>X,\<BB>) {is a uniformity on} X"
+  shows "\<BB> {is a uniform base on} X"
+proof -
+  let ?\<Phi> = "Supersets(X\<times>X,\<BB>)"
+  have "\<forall>B\<^sub>1\<in>\<BB>. \<forall>B\<^sub>2\<in>\<BB>. \<exists>B\<^sub>3\<in>\<BB>. B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2"
+  proof -
+    { fix B\<^sub>1 B\<^sub>2 assume "B\<^sub>1\<in>\<BB>" "B\<^sub>2\<in>\<BB>"
+      with assms(1) have "B\<^sub>1\<in>?\<Phi>" and "B\<^sub>2\<in>?\<Phi>" unfolding Supersets_def by auto
+      with assms(2) have "\<exists>B\<^sub>3\<in>\<BB>. B\<^sub>3 \<subseteq> B\<^sub>1\<inter>B\<^sub>2"
+        unfolding IsUniformity_def IsFilter_def Supersets_def by simp
+    } thus ?thesis by simp
+  qed
+  moreover have "\<forall>B\<in>\<BB>. id(X)\<subseteq>B"
+  proof -
+    { fix B assume "B\<in>\<BB>"
+      with assms(1) have "B\<in>?\<Phi>" unfolding Supersets_def by auto
+      with assms(2) have "id(X)\<subseteq>B" unfolding IsUniformity_def by simp
+    } thus ?thesis by simp
+  qed
+  moreover have "\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)"
+  proof -
+    { fix B\<^sub>1 assume "B\<^sub>1\<in>\<BB>"
+      with assms(1) have "B\<^sub>1\<in>?\<Phi>" unfolding Supersets_def by auto
+      with assms have "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)" 
+        unfolding IsUniformity_def Supersets_def by auto
+    } thus ?thesis by simp
+  qed
+  moreover have "\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
+  proof -
+    { fix B\<^sub>1 assume "B\<^sub>1\<in>\<BB>"
+      with assms(1) have "B\<^sub>1\<in>?\<Phi>" unfolding Supersets_def by auto 
+      with assms(2) obtain V where "V\<in>?\<Phi>" and "V O V \<subseteq> B\<^sub>1"
+        unfolding IsUniformity_def by blast
+      from assms(2) \<open>V\<in>?\<Phi>\<close> obtain B\<^sub>2 where "B\<^sub>2\<in>\<BB>" and "B\<^sub>2\<subseteq>V"
+        unfolding Supersets_def by auto
+      from \<open>V O V \<subseteq> B\<^sub>1\<close> \<open>B\<^sub>2\<subseteq>V\<close> have "B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1" by auto
+      with \<open>B\<^sub>2\<in>\<BB>\<close> have "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1" by auto
+    } thus ?thesis by simp
+  qed
+  ultimately show "\<BB> {is a uniform base on} X"
+    unfolding IsUniformityBaseOn_def by simp
+qed
+
+text\<open>if a nonempty collection of subsets of $X\times X$ satisfies conditions in the definition 
+  of \<open>IsUniformityBaseOn\<close> then the supersets of that collection form a uniformity on $X$. \<close>
+
+theorem uniformity_base_is_base: 
+  assumes "\<BB>\<noteq>0" "X\<noteq>0" "\<BB>\<subseteq>Pow(X\<times>X)" and "\<BB> {is a uniform base on} X"
+  shows "(Supersets(X\<times>X,\<BB>) {is a uniformity on} X)"
+proof -
+  let ?\<Phi> = "Supersets(X\<times>X,\<BB>)"
+  have "?\<Phi> {is a filter on} (X\<times>X)"
+  proof -
+    from assms have "0\<notin>?\<Phi>"
+      unfolding Supersets_def using uniformity_base_props(2) 
+      by blast
+    moreover have "X\<times>X \<in> ?\<Phi>"
+    proof -
+      from assms(1) obtain B where "B\<in>\<BB>" by auto
+      with assms(3) have "B\<subseteq>X\<times>X" by auto
+      with \<open>B\<in>\<BB>\<close> show "X\<times>X \<in> ?\<Phi>" unfolding Supersets_def by auto
+    qed
+    moreover have "?\<Phi> \<subseteq> Pow(X\<times>X)" unfolding Supersets_def by auto
+    moreover have "\<forall>U\<in>?\<Phi>. \<forall>V\<in>?\<Phi>. U\<inter>V \<in> ?\<Phi>"
+    proof -
+      { fix U V assume "U\<in>?\<Phi>" "V\<in>?\<Phi>"
+        then obtain B\<^sub>1 B\<^sub>2 where "B\<^sub>1\<in>\<BB>" "B\<^sub>2\<in>\<BB>" "B\<^sub>1\<subseteq>U" "B\<^sub>2\<subseteq>V"
+          unfolding Supersets_def by auto
+        from assms(4) \<open>B\<^sub>1\<in>\<BB>\<close> \<open>B\<^sub>2\<in>\<BB>\<close> obtain B\<^sub>3 where "B\<^sub>3\<in>\<BB>" and "B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2"
+          using uniformity_base_props(1) by blast
+        from \<open>B\<^sub>1\<subseteq>U\<close> \<open>B\<^sub>2\<subseteq>V\<close> \<open>B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2\<close> have "B\<^sub>3\<subseteq>U\<inter>V" by auto
+        with \<open>U\<in>?\<Phi>\<close> \<open>V\<in>?\<Phi>\<close> \<open>B\<^sub>3\<in>\<BB>\<close> have "U\<inter>V \<in> ?\<Phi>"
+          unfolding Supersets_def by auto
+      } thus ?thesis by simp
+    qed
+    moreover have "\<forall>U\<in>?\<Phi>. \<forall>C\<in>Pow(X\<times>X). U\<subseteq>C \<longrightarrow> C\<in>?\<Phi>"
+    proof -
+      { fix U C assume "U\<in>?\<Phi>" "C\<in>Pow(X\<times>X)" "U\<subseteq>C"
+        from \<open>U\<in>?\<Phi>\<close> obtain B where "B\<in>\<BB>" and "B\<subseteq>U"
+          unfolding Supersets_def by auto
+        with \<open>U\<subseteq>C\<close> \<open>C\<in>Pow(X\<times>X)\<close> have "C\<in>?\<Phi>"
+          unfolding Supersets_def by auto
+      } thus ?thesis by auto
+    qed
+    ultimately show "?\<Phi> {is a filter on} (X\<times>X)"
+      unfolding IsFilter_def by simp
+  qed
+  moreover have "\<forall>U\<in>?\<Phi>. id(X) \<subseteq> U \<and> (\<exists>V\<in>?\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> ?\<Phi>"
+  proof -
+    { fix U assume "U\<in>?\<Phi>"
+      then obtain B where "B\<in>\<BB>" and "B\<subseteq>U"
+        unfolding Supersets_def by auto
+      with assms(4) have "id(X) \<subseteq> U"
+        using uniformity_base_props(2) by blast
+      moreover
+      from assms(4) \<open>B\<in>\<BB>\<close> obtain V where "V\<in>\<BB>" and "V O V \<subseteq> B"
+        using uniformity_base_props(4) by blast
+      with assms(3) have "V\<in>?\<Phi>" using superset_gen by auto
+      with \<open>V O V \<subseteq> B\<close> \<open>B\<subseteq>U\<close> have "\<exists>V\<in>?\<Phi>. V O V \<subseteq> U" by blast
+      moreover 
+      from assms(4) \<open>B\<in>\<BB>\<close> \<open>B\<subseteq>U\<close> obtain W where "W\<in>\<BB>" and "W \<subseteq> converse(U)"
+        using uniformity_base_props(3) by blast
+      with \<open>U\<in>?\<Phi>\<close> have "converse(U) \<in> ?\<Phi>" unfolding Supersets_def 
+        by auto
+      ultimately have "id(X) \<subseteq> U \<and> (\<exists>V\<in>?\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> ?\<Phi>"
+        by simp
+    } thus ?thesis by simp
+  qed
+  ultimately show ?thesis unfolding IsUniformity_def by simp
+qed
+ 
 end

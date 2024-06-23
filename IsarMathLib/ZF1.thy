@@ -445,6 +445,27 @@ text\<open>The family itself is in its supersets. \<close>
 lemma superset_gen: assumes "A\<subseteq>X" "A\<in>\<A>" shows "A \<in> Supersets(X,\<A>)"
   using assms unfolding Supersets_def by auto 
 
+text\<open>The whole space is a superset of any nonempty collection of its subsets. \<close>
+
+lemma space_superset: assumes "\<A>\<noteq>0" "\<A>\<subseteq>Pow(X)" shows "X \<in> Supersets(X,\<A>)"
+proof -
+  from assms(1) obtain A where "A\<in>\<A>" by auto
+  with assms(2) show ?thesis unfolding Supersets_def by auto
+qed
+
+text\<open>The collection of supersets of an empty set is empty. In particular
+  the whole space $X$ is not a superset of an empty set. \<close>
+
+lemma supersets_of_empty: shows "Supersets(X,0) = 0"
+  unfolding Supersets_def by auto
+
+text\<open>However, when the space is empty the collection of supersets does not have
+  to be empty - the collection of supersets of the singleton collection containing
+  only the empty set is this collection. \<close>
+
+lemma supersets_in_empty: shows "Supersets(0,{0}) = {0}"
+  unfolding Supersets_def by auto
+
 text\<open>This can be done by the auto method, but sometimes takes a long time. \<close>
 
 lemma witness_exists: assumes "x\<in>X" and "\<phi>(x)" shows "\<exists>x\<in>X. \<phi>(x)"
