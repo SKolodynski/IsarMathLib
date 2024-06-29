@@ -56,6 +56,12 @@ definition
     "\<Phi> {is a uniformity on} X \<equiv>(\<Phi> {is a filter on} (X\<times>X))
     \<and> (\<forall>U\<in>\<Phi>. id(X) \<subseteq> U \<and> (\<exists>V\<in>\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> \<Phi>)"
 
+text\<open>Since the whole $X\times X$ is in a uniformity, a uniformity is never empty.\<close>
+
+lemma uniformity_non_empty: assumes "\<Phi> {is a uniformity on} X"
+    shows "\<Phi>\<noteq>\<emptyset>"
+  using assms unfolding IsUniformity_def IsFilter_def by auto
+
 text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Phi$ 
   is a certain relation on $X$ (a subset of $X\times X$) and is called 
   an ''entourage''. For an $x\in X$ we call $V\{ x\}$ a neighborhood of $x$. 
@@ -63,11 +69,11 @@ text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Ph
 
 lemma neigh_not_empty: 
   assumes "\<Phi> {is a uniformity on} X" "W\<in>\<Phi>" and "x\<in>X"
-  shows "W``{x} \<noteq> 0" and "x \<in> W``{x}"
+  shows "W``{x} \<noteq> \<emptyset>" and "x \<in> W``{x}"
 proof -
   from assms(1,2) have "id(X) \<subseteq> W" 
     unfolding IsUniformity_def IsFilter_def by auto
-  with \<open>x\<in>X\<close> show" x\<in>W``{x}" and "W``{x} \<noteq> 0" by auto
+  with \<open>x\<in>X\<close> show" x\<in>W``{x}" and "W``{x} \<noteq> \<emptyset>" by auto
 qed
 
 text\<open>The filter part of the definition of uniformity for easier reference:\<close>
@@ -181,10 +187,10 @@ proof -
   from assms have PhiFilter: "\<Phi> {is a filter on} (X\<times>X)" and 
     "\<M>:X\<rightarrow>Pow(Pow(X))" and "\<M>`(x) = {V``{x}.V\<in>\<Phi>}"
     using IsUniformity_def neigh_filt_fun by auto
-  have "0 \<notin> \<M>`(x)"
+  have "\<emptyset> \<notin> \<M>`(x)"
   proof -
-    from assms \<open>x\<in>X\<close> have "0 \<notin> {V``{x}.V\<in>\<Phi>}" using neigh_not_empty by blast  
-    with \<open>\<M>`(x) = {V``{x}.V\<in>\<Phi>}\<close> show "0 \<notin> \<M>`(x)" by simp 
+    from assms \<open>x\<in>X\<close> have "\<emptyset> \<notin> {V``{x}.V\<in>\<Phi>}" using neigh_not_empty by blast  
+    with \<open>\<M>`(x) = {V``{x}.V\<in>\<Phi>}\<close> show "\<emptyset> \<notin> \<M>`(x)" by simp 
   qed
   moreover have "X \<in> \<M>`(x)"
   proof -
@@ -452,7 +458,7 @@ proof
   moreover from \<open>z = \<langle>?x,?y\<rangle>\<close> have "{?x}\<times>{?y} = {z}" 
     by (rule pair_prod)
   ultimately have "(W``{?x})\<times>(W``{?y}) \<in> ?M`{z}" by simp
-  with zMem JJtop \<open>R \<subseteq> \<Union>(J\<times>\<^sub>tJ)\<close> have "(W``{?x})\<times>(W``{?y}) \<inter> R \<noteq> 0" 
+  with zMem JJtop \<open>R \<subseteq> \<Union>(J\<times>\<^sub>tJ)\<close> have "(W``{?x})\<times>(W``{?y}) \<inter> R \<noteq> \<emptyset>" 
     using neindisj by blast
   with assms(4) have "\<langle>?x,?y\<rangle> \<in> W O (R O W)" 
     using sym_rel_comp by simp
@@ -578,13 +584,17 @@ text\<open>Analogous to the predicate "satisfies base condition" (defined in \<o
   such that $B_2\subseteq B_1^{-1}$.
   
   4. For each set $B_1\in \mathfrak{B}$ we can find a set $B_2\in \mathfrak{B}$
-  such that $B_2\circ B_2 \subseteq B_1$.\<close>
+  such that $B_2\circ B_2 \subseteq B_1$.
+  The conditions are taken from 
+  N. Bourbaki "Elements of Mathematics, General Topology", Chapter II.1., 
+  except for the last two that are missing there.\<close>
 
 definition
   IsUniformityBaseOn ("_ {is a uniform base on} _" 90) where
     "\<BB> {is a uniform base on} X \<equiv> 
       (\<forall>B\<^sub>1\<in>\<BB>. \<forall>B\<^sub>2\<in>\<BB>. \<exists>B\<^sub>3\<in>\<BB>. B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2) \<and> (\<forall>B\<in>\<BB>. id(X)\<subseteq>B) \<and>
-      (\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)) \<and> (\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1)"
+      (\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)) \<and> (\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1) \<and>
+      \<BB>\<subseteq>Pow(X\<times>X) \<and> \<BB>\<noteq>\<emptyset>"
 
 text\<open>The next lemma splits the definition of \<open>IsUniformityBaseOn\<close> into four conditions
   to enable more precise references in proofs.\<close>
@@ -595,6 +605,7 @@ lemma uniformity_base_props: assumes "\<BB> {is a uniform base on} X"
   "\<forall>B\<in>\<BB>. id(X)\<subseteq>B"
   "\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)"
   "\<forall>B\<^sub>1\<in>\<BB>. \<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
+  "\<BB>\<subseteq>Pow(X\<times>X)" and "\<BB>\<noteq>\<emptyset>"
   using assms unfolding IsUniformityBaseOn_def by simp_all
 
 text\<open>If supersets of some collection of subsets of $X\times X$ form a uniformity,
@@ -640,28 +651,33 @@ proof -
       with \<open>B\<^sub>2\<in>\<BB>\<close> have "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1" by auto
     } thus ?thesis by simp
   qed
+  moreover from assms(2) have "\<BB>\<noteq>\<emptyset>"
+    using supersets_of_empty uniformity_non_empty by blast
   ultimately show "\<BB> {is a uniform base on} X"
-    unfolding IsUniformityBaseOn_def by simp
+    unfolding IsUniformityBaseOn_def using assms(1) by simp
 qed
 
 text\<open>if a nonempty collection of subsets of $X\times X$ satisfies conditions in the definition 
-  of \<open>IsUniformityBaseOn\<close> then the supersets of that collection form a uniformity on $X$. \<close>
+  of \<open>IsUniformityBaseOn\<close> then the supersets of that collection form a uniformity on $X$.\<close>
 
 theorem uniformity_base_is_base: 
-  assumes "\<BB>\<noteq>0" "X\<noteq>0" "\<BB>\<subseteq>Pow(X\<times>X)" and "\<BB> {is a uniform base on} X"
-  shows "(Supersets(X\<times>X,\<BB>) {is a uniformity on} X)"
+  assumes "X\<noteq>\<emptyset>" and "\<BB> {is a uniform base on} X"
+  shows "Supersets(X\<times>X,\<BB>) {is a uniformity on} X"
 proof -
   let ?\<Phi> = "Supersets(X\<times>X,\<BB>)"
+  from assms(2) have "\<BB>\<subseteq>Pow(X\<times>X)" using uniformity_base_props(5)
+    by simp
   have "?\<Phi> {is a filter on} (X\<times>X)"
   proof -
-    from assms have "0\<notin>?\<Phi>"
+    from assms have "\<emptyset>\<notin>?\<Phi>"
       unfolding Supersets_def using uniformity_base_props(2) 
       by blast
     moreover have "X\<times>X \<in> ?\<Phi>"
     proof -
-      from assms(1) obtain B where "B\<in>\<BB>" by auto
-      with assms(3) have "B\<subseteq>X\<times>X" by auto
-      with \<open>B\<in>\<BB>\<close> show "X\<times>X \<in> ?\<Phi>" unfolding Supersets_def by auto
+      from assms(2) obtain B where "B\<in>\<BB>"
+        using uniformity_base_props(6) by blast
+      with \<open>\<BB>\<subseteq>Pow(X\<times>X)\<close> show "X\<times>X \<in> ?\<Phi>" unfolding Supersets_def 
+        by blast
     qed
     moreover have "?\<Phi> \<subseteq> Pow(X\<times>X)" unfolding Supersets_def by auto
     moreover have "\<forall>U\<in>?\<Phi>. \<forall>V\<in>?\<Phi>. U\<inter>V \<in> ?\<Phi>"
@@ -669,7 +685,7 @@ proof -
       { fix U V assume "U\<in>?\<Phi>" "V\<in>?\<Phi>"
         then obtain B\<^sub>1 B\<^sub>2 where "B\<^sub>1\<in>\<BB>" "B\<^sub>2\<in>\<BB>" "B\<^sub>1\<subseteq>U" "B\<^sub>2\<subseteq>V"
           unfolding Supersets_def by auto
-        from assms(4) \<open>B\<^sub>1\<in>\<BB>\<close> \<open>B\<^sub>2\<in>\<BB>\<close> obtain B\<^sub>3 where "B\<^sub>3\<in>\<BB>" and "B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2"
+        from assms(2) \<open>B\<^sub>1\<in>\<BB>\<close> \<open>B\<^sub>2\<in>\<BB>\<close> obtain B\<^sub>3 where "B\<^sub>3\<in>\<BB>" and "B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2"
           using uniformity_base_props(1) by blast
         from \<open>B\<^sub>1\<subseteq>U\<close> \<open>B\<^sub>2\<subseteq>V\<close> \<open>B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2\<close> have "B\<^sub>3\<subseteq>U\<inter>V" by auto
         with \<open>U\<in>?\<Phi>\<close> \<open>V\<in>?\<Phi>\<close> \<open>B\<^sub>3\<in>\<BB>\<close> have "U\<inter>V \<in> ?\<Phi>"
@@ -693,15 +709,15 @@ proof -
     { fix U assume "U\<in>?\<Phi>"
       then obtain B where "B\<in>\<BB>" and "B\<subseteq>U"
         unfolding Supersets_def by auto
-      with assms(4) have "id(X) \<subseteq> U"
+      with assms(2) have "id(X) \<subseteq> U"
         using uniformity_base_props(2) by blast
       moreover
-      from assms(4) \<open>B\<in>\<BB>\<close> obtain V where "V\<in>\<BB>" and "V O V \<subseteq> B"
+      from assms(2) \<open>B\<in>\<BB>\<close> obtain V where "V\<in>\<BB>" and "V O V \<subseteq> B"
         using uniformity_base_props(4) by blast
-      with assms(3) have "V\<in>?\<Phi>" using superset_gen by auto
+      with \<open>\<BB>\<subseteq>Pow(X\<times>X)\<close> have "V\<in>?\<Phi>" using superset_gen by auto
       with \<open>V O V \<subseteq> B\<close> \<open>B\<subseteq>U\<close> have "\<exists>V\<in>?\<Phi>. V O V \<subseteq> U" by blast
       moreover 
-      from assms(4) \<open>B\<in>\<BB>\<close> \<open>B\<subseteq>U\<close> obtain W where "W\<in>\<BB>" and "W \<subseteq> converse(U)"
+      from assms(2) \<open>B\<in>\<BB>\<close> \<open>B\<subseteq>U\<close> obtain W where "W\<in>\<BB>" and "W \<subseteq> converse(U)"
         using uniformity_base_props(3) by blast
       with \<open>U\<in>?\<Phi>\<close> have "converse(U) \<in> ?\<Phi>" unfolding Supersets_def 
         by auto
@@ -711,5 +727,19 @@ proof -
   qed
   ultimately show ?thesis unfolding IsUniformity_def by simp
 qed
- 
+
+text\<open>The assumption that $X$ is empty in \<open>uniformity_base_is_base\<close> above is neccessary
+  as the assertion is false if $X$ is empty.\<close>
+
+lemma uniform_space_empty: assumes "\<BB> {is a uniform base on} \<emptyset>"
+  shows "\<not>(Supersets(\<emptyset>\<times>\<emptyset>,\<BB>) {is a uniformity on} \<emptyset>)"
+proof -
+  { let ?\<Phi> = "Supersets(\<emptyset>\<times>\<emptyset>,\<BB>)"
+    assume "?\<Phi> {is a uniformity on} \<emptyset>"
+    from assms have "\<BB>={\<emptyset>}" using uniformity_base_props(5,6) by force
+    with \<open>?\<Phi> {is a uniformity on} \<emptyset>\<close> have False
+      using supersets_in_empty unif_filter unfolding IsFilter_def by auto
+  } thus ?thesis by auto
+qed
+    
 end

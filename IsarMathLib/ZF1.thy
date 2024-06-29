@@ -55,16 +55,22 @@ proof
   with assms show "x \<in> \<Union>B" by auto
 qed
 
+text\<open>In ZF set theory the zero of natural numbers is the same as the empty set.
+  In the next abbreviation we declare that we want $0$ and $\emptyset$ to be synonyms
+  so that we can use $\emptyset$ instead of $0$ when appropriate. \<close>
+
+abbreviation empty_set ("\<emptyset>") where "\<emptyset> \<equiv> 0" 
+
 text\<open>If all sets of a nonempty collection are the same, then its union 
   is the same.\<close>
 
-lemma ZF1_1_L1: assumes "C\<noteq>0" and "\<forall>y\<in>C. b(y) = A" 
+lemma ZF1_1_L1: assumes "C\<noteq>\<emptyset>" and "\<forall>y\<in>C. b(y) = A" 
   shows "(\<Union>y\<in>C. b(y)) = A" using assms by blast
   
 text\<open>The union af all values of a constant meta-function belongs to 
 the same set as the constant.\<close>
 
-lemma ZF1_1_L2: assumes A1:"C\<noteq>0" and A2: "\<forall>x\<in>C. b(x) \<in> A" 
+lemma ZF1_1_L2: assumes A1:"C\<noteq>\<emptyset>" and A2: "\<forall>x\<in>C. b(x) \<in> A" 
   and A3: "\<forall>x y. x\<in>C \<and> y\<in>C \<longrightarrow> b(x) = b(y)"
   shows "(\<Union>x\<in>C. b(x))\<in>A"
 proof -
@@ -120,7 +126,7 @@ qed
 text\<open>A lemma about inclusion in cartesian products. Included here to remember
   that we need the $U\times V \neq \emptyset$ assumption.\<close>
 
-lemma prod_subset: assumes "U\<times>V\<noteq>0" "U\<times>V \<subseteq> X\<times>Y" shows "U\<subseteq>X" and "V\<subseteq>Y"
+lemma prod_subset: assumes "U\<times>V\<noteq>\<emptyset>" "U\<times>V \<subseteq> X\<times>Y" shows "U\<subseteq>X" and "V\<subseteq>Y"
   using assms by auto
 
 text\<open>A technical lemma about sections in cartesian products.\<close>
@@ -138,7 +144,7 @@ lemma ZF1_1_L4B: assumes "\<forall>x\<in>X. a(x) = b(x)"
 
 text\<open>A set defined by a constant meta-function is a singleton.\<close>
 
-lemma ZF1_1_L5: assumes "X\<noteq>0" and "\<forall>x\<in>X. b(x) = c"
+lemma ZF1_1_L5: assumes "X\<noteq>\<emptyset>" and "\<forall>x\<in>X. b(x) = c"
   shows "{b(x). x\<in>X} = {c}" using assms by blast
 
 text\<open>Most of the time, \<open>auto\<close> does this job, but there are strange 
@@ -150,13 +156,13 @@ lemma subset_with_property: assumes "Y = {x\<in>X. b(x)}"
 
 text\<open>We can choose an element from a nonempty set.\<close>
 
-lemma nonempty_has_element: assumes "X\<noteq>0" shows "\<exists>x. x\<in>X"
+lemma nonempty_has_element: assumes "X\<noteq>\<emptyset>" shows "\<exists>x. x\<in>X"
   using assms by auto
 
 (*text{*If after removing an element from a set we get an empty set,
   then this set must be a singleton.*}
 
-lemma rem_point_empty: assumes "a\<in>A" and "A-{a} = 0"
+lemma rem_point_empty: assumes "a\<in>A" and "A-{a} = \<emptyset>"
   shows "A = {a}" using assms by auto; *)
 
 text\<open>In Isabelle/ZF the intersection of an empty family is 
@@ -165,13 +171,13 @@ text\<open>In Isabelle/ZF the intersection of an empty family is
   difficult to find. This is one reason we need comments before every 
   theorem: so that we can search for keywords.\<close>
 
-lemma inter_empty_empty: shows "\<Inter>0 = 0" by (rule Inter_0)
+lemma inter_empty_empty: shows "\<Inter>\<emptyset> = \<emptyset>" by (rule Inter_0)
 
 text\<open>If an intersection of a collection is not empty, then the collection is
   not empty. We are (ab)using the fact the the intersection of empty collection 
   is defined to be empty.\<close>
 
-lemma inter_nempty_nempty: assumes "\<Inter>A \<noteq> 0" shows "A\<noteq>0"
+lemma inter_nempty_nempty: assumes "\<Inter>A \<noteq> \<emptyset>" shows "A\<noteq>\<emptyset>"
   using assms by auto
 
 text\<open>For two collections $S,T$ of sets we define the product collection
@@ -188,7 +194,7 @@ lemma ZF1_1_L6: shows "\<Union> ProductCollection(S,T) = \<Union>S \<times> \<Un
 
 text\<open>An intersection of subsets is a subset.\<close>
 
-lemma ZF1_1_L7: assumes A1: "I\<noteq>0" and A2: "\<forall>i\<in>I. P(i) \<subseteq> X"
+lemma ZF1_1_L7: assumes A1: "I\<noteq>\<emptyset>" and A2: "\<forall>i\<in>I. P(i) \<subseteq> X"
   shows "( \<Inter>i\<in>I. P(i) ) \<subseteq> X"
 proof -
   from A1 obtain i\<^sub>0 where "i\<^sub>0 \<in> I" by auto
@@ -306,8 +312,8 @@ lemma consdef: shows "cons(a,A) = A \<union> {a}"
 text\<open>If a difference between a set and a singleton is empty, then
   the set is empty or it is equal to the singleton.\<close>
 
-lemma singl_diff_empty: assumes "A - {x} = 0"
-  shows "A = 0 \<or> A = {x}"
+lemma singl_diff_empty: assumes "A - {x} = \<emptyset>"
+  shows "A = \<emptyset> \<or> A = {x}"
   using assms by auto
 
 text\<open>If a difference between a set and a singleton is the set, 
@@ -419,7 +425,7 @@ text\<open>If the cartesian product of the images of $x$ and $y$ by a
   then $x$ is in relation $W\circ (R\circ W)$ with $y$. \<close>
 
 lemma sym_rel_comp: 
-  assumes "W=converse(W)" and "(W``{x})\<times>(W``{y}) \<inter> R \<noteq> 0"
+  assumes "W=converse(W)" and "(W``{x})\<times>(W``{y}) \<inter> R \<noteq> \<emptyset>"
   shows "\<langle>x,y\<rangle> \<in> (W O (R O W))" 
 proof -
   from assms(2) obtain s t where "s\<in>W``{x}" "t\<in>W``{y}" and "\<langle>s,t\<rangle>\<in>R"
@@ -447,7 +453,7 @@ lemma superset_gen: assumes "A\<subseteq>X" "A\<in>\<A>" shows "A \<in> Superset
 
 text\<open>The whole space is a superset of any nonempty collection of its subsets. \<close>
 
-lemma space_superset: assumes "\<A>\<noteq>0" "\<A>\<subseteq>Pow(X)" shows "X \<in> Supersets(X,\<A>)"
+lemma space_superset: assumes "\<A>\<noteq>\<emptyset>" "\<A>\<subseteq>Pow(X)" shows "X \<in> Supersets(X,\<A>)"
 proof -
   from assms(1) obtain A where "A\<in>\<A>" by auto
   with assms(2) show ?thesis unfolding Supersets_def by auto
@@ -456,14 +462,14 @@ qed
 text\<open>The collection of supersets of an empty set is empty. In particular
   the whole space $X$ is not a superset of an empty set. \<close>
 
-lemma supersets_of_empty: shows "Supersets(X,0) = 0"
+lemma supersets_of_empty: shows "Supersets(X,\<emptyset>) = \<emptyset>"
   unfolding Supersets_def by auto
 
 text\<open>However, when the space is empty the collection of supersets does not have
   to be empty - the collection of supersets of the singleton collection containing
   only the empty set is this collection. \<close>
 
-lemma supersets_in_empty: shows "Supersets(0,{0}) = {0}"
+lemma supersets_in_empty: shows "Supersets(\<emptyset>,{\<emptyset>}) = {\<emptyset>}"
   unfolding Supersets_def by auto
 
 text\<open>This can be done by the auto method, but sometimes takes a long time. \<close>
@@ -499,7 +505,7 @@ lemma set_comp_eq: assumes "\<forall>x\<in>X. p(x) = q(x)"
 text\<open>If every element of a non-empty set $X\subseteq Y$ satisfies a condition
   then the set of elements of $Y$ that satisfy the condition is non-empty.\<close>
 
-lemma non_empty_cond: assumes "X\<noteq>0" "X\<subseteq>Y" and "\<forall>x\<in>X. P(x)"
+lemma non_empty_cond: assumes "X\<noteq>\<emptyset>" "X\<subseteq>Y" and "\<forall>x\<in>X. P(x)"
   shows "{x\<in>Y. P(x)} \<noteq> 0" using assms by auto 
 
 text\<open>If $z$ is a pair, then the cartesian product of the singletons of its 
@@ -515,11 +521,6 @@ text\<open>In Isabelle/ZF the set difference is written with a minus sign $A-B$
 
 abbreviation set_difference (infixl "\<setminus>" 65) where "A\<setminus>B \<equiv> A-B"
 
-text\<open>In ZF set theory the zero of natural numbers is the same as the empty set.
-  In the next abbreviation we declare that we want $0$ and $\emptyset$ to be synonyms
-  so that we can use $\emptyset$ instead of $0$ when appropriate. \<close>
-
-abbreviation empty_set ("\<emptyset>") where "\<emptyset> \<equiv> 0" 
 
 end
 
