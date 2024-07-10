@@ -303,19 +303,19 @@ text\<open>Since there are some problems with applying the above lemma
   split \<open>Order_ZF_2_L1\<close> into two lemmas.\<close>
 
 lemma Order_ZF_2_L1A: assumes "x \<in> Interval(r,a,b)"
-  shows "\<langle> a,x\<rangle> \<in> r"  "\<langle> x,b\<rangle> \<in> r"
+  shows "\<langle>a,x\<rangle> \<in> r"  "\<langle>x,b\<rangle> \<in> r"
   using assms  Order_ZF_2_L1 by auto
 
 text\<open> \<open>Order_ZF_2_L1\<close>, implication from right to left.\<close>
 
-lemma Order_ZF_2_L1B: assumes "\<langle> a,x\<rangle> \<in> r"  "\<langle> x,b\<rangle> \<in> r"
+lemma Order_ZF_2_L1B: assumes "\<langle>a,x\<rangle> \<in> r"  "\<langle>x,b\<rangle> \<in> r"
   shows "x \<in> Interval(r,a,b)"
   using assms Order_ZF_2_L1 by simp
 
 text\<open>If the relation is reflexive, the endpoints belong to the interval.\<close>
 
 lemma Order_ZF_2_L2: assumes "refl(X,r)" 
-  and "a\<in>X"  "b\<in>X" and "\<langle> a,b\<rangle> \<in> r"
+  and "a\<in>X"  "b\<in>X" and "\<langle>a,b\<rangle> \<in> r"
   shows 
   "a \<in> Interval(r,a,b)"  
   "b \<in> Interval(r,a,b)"  
@@ -325,7 +325,7 @@ text\<open>Under the assumptions of \<open>Order_ZF_2_L2\<close>, the interval i
   nonempty.\<close>
 
 lemma Order_ZF_2_L2A: assumes "refl(X,r)" 
-  and "a\<in>X"  "b\<in>X" and "\<langle> a,b\<rangle> \<in> r"
+  and "a\<in>X"  "b\<in>X" and "\<langle>a,b\<rangle> \<in> r"
   shows "Interval(r,a,b) \<noteq> 0"
 proof -
   from assms have "a \<in> Interval(r,a,b)"
@@ -337,18 +337,18 @@ text\<open>If $a,b,c,d$ are in this order, then $[b,c]\subseteq [a,d]$. We
   only need trasitivity for this to be true.\<close>
 
 lemma Order_ZF_2_L3: 
-  assumes A1: "trans(r)" and A2:"\<langle> a,b\<rangle>\<in>r"  "\<langle> b,c\<rangle>\<in>r"  "\<langle> c,d\<rangle>\<in>r"
+  assumes A1: "trans(r)" and A2:"\<langle>a,b\<rangle>\<in>r"  "\<langle>b,c\<rangle>\<in>r"  "\<langle>c,d\<rangle>\<in>r"
 shows "Interval(r,b,c) \<subseteq> Interval(r,a,d)"
 proof
   fix x assume A3: "x \<in> Interval(r, b, c)"
   note A1
-  moreover from A2 A3 have "\<langle> a,b\<rangle> \<in> r \<and> \<langle> b,x\<rangle> \<in> r" using Order_ZF_2_L1A
+  moreover from A2 A3 have "\<langle>a,b\<rangle> \<in> r \<and> \<langle>b,x\<rangle> \<in> r" using Order_ZF_2_L1A
     by simp
-  ultimately have T1: "\<langle> a,x\<rangle> \<in> r" by (rule Fol1_L3)
+  ultimately have T1: "\<langle>a,x\<rangle> \<in> r" by (rule Fol1_L3)
   note A1
-  moreover from A2 A3 have "\<langle> x,c\<rangle> \<in> r \<and> \<langle> c,d\<rangle> \<in> r" using Order_ZF_2_L1A
+  moreover from A2 A3 have "\<langle>x,c\<rangle> \<in> r \<and> \<langle>c,d\<rangle> \<in> r" using Order_ZF_2_L1A
     by simp
-  ultimately have "\<langle> x,d\<rangle> \<in> r" by (rule Fol1_L3)
+  ultimately have "\<langle>x,d\<rangle> \<in> r" by (rule Fol1_L3)
   with T1 show "x \<in> Interval(r,a,d)" using Order_ZF_2_L1B
     by simp
 qed

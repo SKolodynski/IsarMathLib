@@ -728,7 +728,7 @@ proof -
   ultimately show ?thesis unfolding IsUniformity_def by simp
 qed
 
-text\<open>The assumption that $X$ is empty in \<open>uniformity_base_is_base\<close> above is neccessary
+text\<open>The assumption that $X$ is not empty in \<open>uniformity_base_is_base\<close> above is neccessary
   as the assertion is false if $X$ is empty.\<close>
 
 lemma uniform_space_empty: assumes "\<BB> {is a uniform base on} \<emptyset>"

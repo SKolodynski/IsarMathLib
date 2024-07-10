@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open> Metric spaces \<close>
 
-theory MetricSpace_ZF imports Topology_ZF_1 OrderedLoop_ZF Lattice_ZF
+theory MetricSpace_ZF imports Topology_ZF_1 OrderedLoop_ZF Lattice_ZF UniformSpace_ZF
 begin
 
 text\<open>A metric space is a set on which a distance between points is defined as a function
@@ -147,11 +147,11 @@ proof
     using lrdiv_props(6) loop_strict_ord_trans disk_definition by simp
 qed
 
-text\<open> If we assume that the order on the group makes the positive set a meet semi-lattice (i.e.
-  every two-element subset of $G_+$ has a greatest lower bound) then 
+text\<open> If we assume that the loop's order relation down-directs $L_+$ then
   the collection of disks centered at points of the space and with radii in the positive set 
-  of the group satisfies the base condition. The meet semi-lattice assumption can be weakened 
-  to "each two-element subset of $G_+$ has a lower bound in $G_+$", but we don't do that here. \<close>
+  of the loop satisfies the base condition. The property that an order relation "down-directs"
+  a set is defined in \<open>Order_ZF\<close> and means that every two-element subset of the set 
+  has a lower bound in that set. \<close>
 
 lemma (in pmetric_space) disks_form_base: 
   assumes "r {down-directs} L\<^sub>+"
@@ -317,5 +317,160 @@ proof -
     ultimately have "\<exists>U\<in>T. \<exists>V\<in>T. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
   } then show ?thesis unfolding isT2_def by simp
 qed
+
+subsection\<open>Uniform structures on metric spaces\<close>
+
+text\<open>Each pseudometric space with pseudometric $d:X\times X\rightarrow L$ 
+  supports a natural uniform structure, defined as supersets of the collection
+  of inverse images $U_c = d^{-1}([0,c])$, where $c>0$.  \<close>
+
+text\<open>In the following definition $X$ is the underlying space, $L$ is the loop (carrier),
+  $A$ is the loop operation, $r$ is an order relation compatible with $A$,
+  and $d$ is a pseudometric on $X$, valued in the ordered loop $L$.
+  With this we define the uniform gauge as the collection of inverse images
+  of the closed intervals $[0,c]$ as $c$ varies of the set of positive elements of $L$.\<close>
+
+definition
+  "UniformGauge(X,L,A,r,d) \<equiv> {d-``({b\<in>Nonnegative(L,A,r). \<langle>b,c\<rangle> \<in> r}). c\<in>PositiveSet(L,A,r)}"
+
+text\<open>In the \<open>pmetric_space\<close> context we will write \<open>UniformGauge(X,L,A,r,d)\<close> as \<open>\<BB>\<close>. \<close>
+
+abbreviation (in pmetric_space) gauge ("\<BB>") where "\<BB> \<equiv> UniformGauge(X,L,A,r,d)"
+
+text\<open>In notation defined in the \<open>pmetric_space\<close> context we can write the uniform gauge
+  as $\{d^{-1}(\{b\in L^+: b\leq c\} : c\in L_+\}$.  \<close>
+
+lemma (in pmetric_space) uniform_gauge_def_alt: 
+  shows "\<BB> = {d-``({c\<in>L\<^sup>+. c\<lsq>b}). b\<in>L\<^sub>+}"
+  unfolding UniformGauge_def by simp
+
+text\<open>If the distance between two points of $X$ is less or equal $b$, then
+  this pair of points is in $d^{-1}([0,b])$. \<close>
+
+lemma (in pmetric_space) gauge_members: 
+  assumes "x\<in>X" "y\<in>X" "d`\<langle>x,y\<rangle> \<lsq> b"
+  shows "\<langle>x,y\<rangle> \<in> d-``({c\<in>L\<^sup>+. c\<lsq>b})"
+  using assms pmetric_properties(1) apply_funtype func1_1_L15
+  by simp    
+
+text\<open>Gauges corresponding to larger elements of the loop are larger. \<close>
+
+lemma (in pmetric_space) uniform_gauge_mono: 
+  assumes "b\<^sub>1\<lsq>b\<^sub>2" shows "d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>1}) \<subseteq> d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>2})" 
+  using ordLoopAssum assms vimage_mono1 
+  unfolding IsAnOrdLoop_def IsPartOrder_def trans_def by auto
+
+text\<open>For any two sets of the form $d^{-1}([0,b])$ we can find a third one that is contained
+  in both. \<close>
+
+lemma (in pmetric_space) gauge_1st_cond: 
+  assumes "r {down-directs} L\<^sub>+" "B\<^sub>1\<in>\<BB>" "B\<^sub>2\<in>\<BB>"
+  shows "\<exists>B\<^sub>3\<in>\<BB>. B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2" 
+proof -
+  from assms(2,3) obtain b\<^sub>1 b\<^sub>2 where "b\<^sub>1\<in>L\<^sub>+" "b\<^sub>2\<in>L\<^sub>+" and 
+    I: "B\<^sub>1 = d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>1})" "B\<^sub>2 = d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>2})"
+    using uniform_gauge_def_alt by auto
+  from assms(1) \<open>b\<^sub>1\<in>L\<^sub>+\<close> \<open>b\<^sub>2\<in>L\<^sub>+\<close> obtain b\<^sub>3 where "b\<^sub>3\<in>L\<^sub>+" "b\<^sub>3\<lsq>b\<^sub>1" "b\<^sub>3\<lsq>b\<^sub>2"
+    unfolding DownDirects_def by auto
+  from I \<open>b\<^sub>3\<lsq>b\<^sub>1\<close> \<open>b\<^sub>3\<lsq>b\<^sub>2\<close> have "d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>3}) \<subseteq> B\<^sub>1\<inter>B\<^sub>2"
+    using uniform_gauge_mono by blast
+  with \<open>b\<^sub>3\<in>L\<^sub>+\<close> show ?thesis using uniform_gauge_def_alt 
+    by auto
+qed
+
+text\<open>Sets of the form $d^{-1}([0,b])$ contain the diagonal. \<close>
+
+lemma (in pmetric_space) gauge_2nd_cond: assumes "B\<in>\<BB>" shows "id(X)\<subseteq>B"
+proof
+  fix p assume "p\<in>id(X)"
+  then obtain x where "x\<in>X" and "p=\<langle>x,x\<rangle>" by auto
+  then have "p\<in>X\<times>X" and "d`(p) = \<zero>" using pmetric_properties(2) by simp_all
+  from assms obtain b where "b\<in>L\<^sub>+" and "B = d-``({c\<in>L\<^sup>+. c\<lsq>b})"
+    using uniform_gauge_def_alt by auto
+  with \<open>p\<in>X\<times>X\<close> \<open>d`(p) = \<zero>\<close> show "p\<in>B"
+    using posset_definition1 loop_zero_nonneg pmetric_properties(1) func1_1_L15
+    by simp
+qed
+
+text\<open>Sets of the form $d^{-1}([0,b])$ are symmetric.\<close>
+
+lemma (in pmetric_space) gauge_symmetric: 
+  assumes "B\<in>\<BB>" shows "B = converse(B)"
+proof -
+  from assms obtain b where "B = d-``({c\<in>L\<^sup>+. c\<lsq>b})"
+    using uniform_gauge_def_alt by auto
+  with pmetricAssum show ?thesis unfolding IsApseudoMetric_def
+    using symm_vimage_symm by auto
+qed
+
+text\<open>A set of the form $d^{-1}([0,b])$ contains a symmetric set of this form.\<close>
+
+corollary (in pmetric_space) gauge_3rd_cond: 
+  assumes "B\<^sub>1\<in>\<BB>" shows "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)"
+  using assms gauge_symmetric by auto
+
+text\<open>The sets of the form $d^{-1}([0,b])$ are subsets of $X\times X$. \<close>
+
+lemma (in pmetric_space) gauge_5thCond: shows "\<BB>\<subseteq>Pow(X\<times>X)"
+  using uniform_gauge_def_alt pmetric_properties(1) func1_1_L3 by force
+
+text\<open>If the set of positive values is non-empty, then there are sets
+  of the form $d^{-1}([0,b])$ for $b>0$.\<close>
+
+lemma (in pmetric_space) gauge_6thCond: 
+  assumes "L\<^sub>+\<noteq>\<emptyset>" shows "\<BB>\<noteq>\<emptyset>"  using assms uniform_gauge_def_alt by simp
+
+text\<open>The remaining 4th condition for the sets of the form $d^{-1}([0,b])$
+  to be a uniform base (fundamental system of entourages cannot be proven
+  without additional assumptions. To see that consider the example
+  of natural numbers with the metric $d\langle x,y \rangle = |x-y|$, where we think
+  of $d$ as valued in the nonnegative set of ordered group of integers.
+  Now take the set $B_1 = d^{-1}([0,1]) = d^{-1}(\{ 0,1\} )$. Then the set $B_1 \circ B_1$ 
+  is strictly larger than $B_1$, but there is no smaller set $B_2$ we can take so that
+  $B_2 \circ B_2 \subseteq B_1$. 
+  One condition that is sufficient is that for every $b_1 >0$ there is a $b_2 >0$
+  such that $b_2 + b_2 \leq b_1$. I have not found a standard name for this property, for now
+  we will use the name \<open>IsHalfable\<close>. \<close>
+
+definition
+  "IsHalfable(L,A,r) \<equiv> \<forall>b\<^sub>1\<in>PositiveSet(L,A,r). \<exists>b\<^sub>2\<in>PositiveSet(L,A,r). \<langle>A`\<langle>b\<^sub>2,b\<^sub>2\<rangle>,b\<^sub>1\<rangle> \<in> r"
+
+text\<open>The property of halfability written in the notation used in the \<open>pmetric_space\<close> context.\<close>
+
+lemma (in pmetric_space) is_halfable_def_alt: 
+  assumes "IsHalfable(L,A,r)" "b\<^sub>1\<in>L\<^sub>+"
+  shows "\<exists>b\<^sub>2\<in>L\<^sub>+. b\<^sub>2\<ra>b\<^sub>2 \<lsq> b\<^sub>1"
+  using assms unfolding IsHalfable_def by simp
+
+text\<open>If the loop order is halfable then for every set $B_1$ of the form $d^{-1}([0,b_1])$ 
+  for some $b_1>0$ we can find another one $B_2 = d^{-1}([0,b_2])$ such that $B_2$ 
+  composed with itself is contained in $B_1$.\<close>
+
+lemma (in pmetric_space) gauge_4thCond: 
+  assumes "IsHalfable(L,A,r)" "B\<^sub>1\<in>\<BB>" shows "\<exists>B\<^sub>2\<in>\<BB>.\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
+proof -
+  from assms(2) obtain b\<^sub>1 where "b\<^sub>1\<in>L\<^sub>+" and "B\<^sub>1 = d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>1})"
+    using uniform_gauge_def_alt by auto
+  from assms(1) \<open>b\<^sub>1\<in>L\<^sub>+\<close> obtain b\<^sub>2 where "b\<^sub>2\<in>L\<^sub>+" and "b\<^sub>2\<ra>b\<^sub>2 \<lsq> b\<^sub>1"
+    using is_halfable_def_alt by auto
+  let ?B\<^sub>2 = "d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>2})"
+  from \<open>b\<^sub>2\<in>L\<^sub>+\<close> have "?B\<^sub>2\<in>\<BB>" unfolding UniformGauge_def by auto
+  { fix p assume "p \<in> ?B\<^sub>2 O ?B\<^sub>2" 
+    with \<open>?B\<^sub>2\<in>\<BB>\<close> obtain x y where "x\<in>X" "y\<in>X" and "p=\<langle>x,y\<rangle>"
+      using gauge_5thCond by blast
+    from \<open>p \<in> ?B\<^sub>2 O ?B\<^sub>2\<close> \<open>p=\<langle>x,y\<rangle>\<close> obtain z where 
+      "\<langle>x,z\<rangle> \<in> ?B\<^sub>2" and "\<langle>z,y\<rangle> \<in> ?B\<^sub>2"
+      using rel_compdef by auto
+    with \<open>?B\<^sub>2\<in>\<BB>\<close> have "z\<in>X" using gauge_5thCond by auto
+    from \<open>\<langle>x,z\<rangle> \<in> ?B\<^sub>2\<close> \<open>\<langle>z,y\<rangle> \<in> ?B\<^sub>2\<close> have "d`\<langle>x,z\<rangle> \<ra> d`\<langle>z,y\<rangle> \<lsq> b\<^sub>2\<ra> b\<^sub>2"
+      using pmetric_properties(1) func1_1_L15 add_ineq by simp
+    with \<open>b\<^sub>2\<ra>b\<^sub>2 \<lsq> b\<^sub>1\<close> have "d`\<langle>x,z\<rangle> \<ra> d`\<langle>z,y\<rangle> \<lsq> b\<^sub>1"
+      using loop_ord_trans by simp
+    with \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>z\<in>X\<close> \<open>p=\<langle>x,y\<rangle>\<close> \<open>B\<^sub>1 = d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>1})\<close> have "p\<in>B\<^sub>1"
+      using pmetric_properties(4) loop_ord_trans gauge_members by blast      
+  } hence "?B\<^sub>2 O ?B\<^sub>2 \<subseteq> B\<^sub>1" by auto
+  with \<open>?B\<^sub>2\<in>\<BB>\<close> show ?thesis by auto
+qed
+   
 
 end

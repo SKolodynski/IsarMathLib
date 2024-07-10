@@ -32,8 +32,8 @@ theory UniformSpace_ZF_2 imports UniformSpace_ZF
 begin
 
 text\<open> The \<open>UniformSpace_ZF\<close> theory defines uniform spaces based on entourages (also called surroundings 
-  sometimes). In this theory we consider an alternative definition based of the 
-  notion of uniform covers.
+  sometimes). In this theory we consider alternative definitions based of the 
+  notion of uniform covers and pseudometrics.
   \<close>
 
 subsection\<open> Uniform covers \<close>

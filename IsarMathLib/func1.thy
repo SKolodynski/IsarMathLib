@@ -231,7 +231,7 @@ text\<open>The inverse image of any set is contained in the domain.\<close>
 lemma func1_1_L6A: assumes A1: "f:X\<rightarrow>Y" shows "f-``(A)\<subseteq>X"
 proof
   fix x
-  assume A2: "x\<in>f-``(A)" then obtain y where "\<langle> x,y\<rangle> \<in> f" 
+  assume A2: "x\<in>f-``(A)" then obtain y where "\<langle>x,y\<rangle> \<in> f" 
     using vimage_iff by auto
   with A1 show  "x\<in>X" using func1_1_L5 by fast
 qed
@@ -240,6 +240,13 @@ text\<open>Image of a greater set is greater.\<close>
 
 lemma func1_1_L8: assumes A1: "A\<subseteq>B"  shows "f``(A)\<subseteq> f``(B)"
   using assms image_Un by auto
+
+text\<open>An immediate corollary of \<open>vimage_mono\<close> from the Isabelle/ZF distribution -
+  the inverse image of a greater set is greater. Note we do not require that
+  $f$ is a function, so this is true for relations as well.\<close>
+
+lemma vimage_mono1: assumes "A\<subseteq>B" shows "f-``(A) \<subseteq> f-``(B)"
+  using assms vimage_mono by simp
 
 text\<open>A set is contained in the the inverse image of its image.
   There is similar theorem in \<open>equalities.thy\<close>
@@ -281,11 +288,10 @@ lemma func1_1_L11:
   assumes "f \<subseteq> X\<times>Y" and "\<forall>x\<in>X. \<exists>!y. y\<in>Y \<and> \<langle>x,y\<rangle> \<in> f"
   shows "f: X\<rightarrow>Y" using assms func1_1_L10 Pi_iff_old by simp
 
-text\<open>A set defined by a lambda-type expression is a fuction. There is a 
+text\<open>A set defined by a lambda-type expression is a function. There is a 
   similar lemma in func.thy, but I had problems with lambda expressions syntax
   so I could not apply it. This lemma is a workaround for this. Besides, lambda
-  expressions are not readable.
-\<close>
+  expressions are not readable. \<close>
 
 lemma func1_1_L11A: assumes A1: "\<forall>x\<in>X. b(x) \<in> Y"
   shows "{\<langle>x,y\<rangle> \<in> X\<times>Y. b(x) = y} : X\<rightarrow>Y"
@@ -635,6 +641,13 @@ proof -
   with A1 show ?thesis using func1_1_L14 by auto
 qed
 
+text\<open>For symmetric functions inverse images are symmetric.\<close>
+
+lemma symm_vimage_symm: 
+  assumes "f:X\<times>X\<rightarrow>Y" and "\<forall>x\<in>X. \<forall>y\<in>X. f`\<langle>x,y\<rangle> = f`\<langle>y,x\<rangle>"
+  shows "f-``(A) = converse(f-``(A))"
+  using assms func1_1_L15 by auto
+
 text\<open>A more familiar definition of image.\<close>
 
 lemma func_imagedef: assumes A1: "f:X\<rightarrow>Y" and A2: "A\<subseteq>X"
@@ -858,7 +871,7 @@ proof -
     by simp
 qed
  
-text\<open>What is the image of a set defined by a meta-fuction?\<close>
+text\<open>What is the image of a set defined by a meta-function?\<close>
 
 lemma func1_1_L17: 
   assumes A1: "f \<in> X\<rightarrow>Y" and A2: "\<forall>x\<in>A. b(x) \<in> X"

@@ -230,8 +230,15 @@ proof -
 qed
 
 text\<open> The loop order is reflexive. \<close>
+
 lemma (in loop1) loop_ord_refl: assumes "x\<in>L" shows "x\<lsq>x"
   using assms ordLoopAssum unfolding IsAnOrdLoop_def IsPartOrder_def refl_def 
+  by simp
+
+text\<open>The neutral element is nonnegative.\<close>
+
+lemma (in loop1) loop_zero_nonneg: shows "\<zero>\<in>L\<^sup>+"
+  using neut_props_loop(1) loop_ord_refl nonneg_definition
   by simp
 
 text\<open> A form of mixed transitivity for the strict order: \<close>
