@@ -575,16 +575,17 @@ text\<open>Analogous to the predicate "satisfies base condition" (defined in \<o
   and "is a base filter" (defined in \<open>Topology_ZF_4\<close>) we can specify conditions 
   for a collection $\mathfrak{B}$ of subsets of $X\times X$ to be a base of some
   uniformity on $X$. Namely, the following conditions are necessary and sufficient:
-  
+
   1. Intersection of two sets of $\mathfrak{B}$ contains a set of $\mathfrak{B}$.
 
   2. Every set of $\mathfrak{B}$ contains the diagonal of $X\times X$.
 
   3. For each set $B_1\in \mathfrak{B}$ we can find a set $B_2\in \mathfrak{B}$ 
   such that $B_2\subseteq B_1^{-1}$.
-  
+
   4. For each set $B_1\in \mathfrak{B}$ we can find a set $B_2\in \mathfrak{B}$
   such that $B_2\circ B_2 \subseteq B_1$.
+
   The conditions are taken from 
   N. Bourbaki "Elements of Mathematics, General Topology", Chapter II.1., 
   except for the last two that are missing there.\<close>

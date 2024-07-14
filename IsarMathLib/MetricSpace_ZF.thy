@@ -338,7 +338,7 @@ text\<open>In the \<open>pmetric_space\<close> context we will write \<open>Unif
 abbreviation (in pmetric_space) gauge ("\<BB>") where "\<BB> \<equiv> UniformGauge(X,L,A,r,d)"
 
 text\<open>In notation defined in the \<open>pmetric_space\<close> context we can write the uniform gauge
-  as $\{d^{-1}(\{b\in L^+: b\leq c\} : c\in L_+\}$.  \<close>
+  as $\{ d^{-1}(\{c\in L^+: c\leq b\}: b \in L_+ \}$.  \<close>
 
 lemma (in pmetric_space) uniform_gauge_def_alt: 
   shows "\<BB> = {d-``({c\<in>L\<^sup>+. c\<lsq>b}). b\<in>L\<^sub>+}"
@@ -471,6 +471,24 @@ proof -
   } hence "?B\<^sub>2 O ?B\<^sub>2 \<subseteq> B\<^sub>1" by auto
   with \<open>?B\<^sub>2\<in>\<BB>\<close> show ?thesis by auto
 qed
-   
+
+text\<open>If $X$ and $L_+$ are not empty, the order relation $r$
+  down-directs $L_+$, and the loop order is halfable, then $\mathfrak{B}$
+  (which in the \<open>pmetric_space\<close> context is an abbreviation for 
+  $\{ d^{-1}(\{c\in L^+: c\leq b\}: b \in L_+ \}$)
+  is fundamental system of entourages, hence its supersets 
+  form a uniformity on $X$ and hence those supersets define a topology on $X$.\<close>
+
+theorem (in pmetric_space) metric_gauge_base: 
+  assumes "X\<noteq>\<emptyset>" "L\<^sub>+\<noteq>\<emptyset>" "r {down-directs} L\<^sub>+" "IsHalfable(L,A,r)"
+  shows 
+    "\<BB> {is a uniform base on} X"
+    "Supersets(X\<times>X,\<BB>) {is a uniformity on} X"
+    "UniformTopology(Supersets(X\<times>X,\<BB>),X) {is a topology}"
+  using assms gauge_1st_cond gauge_2nd_cond gauge_3rd_cond 
+    gauge_4thCond gauge_5thCond gauge_6thCond uniformity_base_is_base
+    uniform_top_is_top
+  unfolding IsUniformityBaseOn_def by simp_all
+
 
 end
