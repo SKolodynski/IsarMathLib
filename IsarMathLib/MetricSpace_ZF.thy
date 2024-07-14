@@ -65,18 +65,25 @@ text\<open>A disk is defined as set of points located less than the radius from 
 
 definition "Disk(X,d,r,c,R) \<equiv> {x\<in>X. \<langle>d`\<langle>c,x\<rangle>,R\<rangle> \<in> StrictVersion(r)}"
 
+text\<open>We define a metric topology as consisting of unions of open disks.\<close>
+
+definition
+  "MetricTopology(X,L,A,r,d) \<equiv> {\<Union>A. A \<in> Pow(\<Union>c\<in>X. {Disk(X,d,r,c,R). R\<in>PositiveSet(L,A,r)})}"
+
 text\<open>Next we define notation for metric spaces. We will reuse the additive notation defined in 
   the \<open>loop1\<close> locale adding only the assumption about $d$ being a pseudometric and notation
   for a disk centered at $c$ with radius $R$.
   Since for many theorems it is sufficient to assume the pseudometric axioms we will
-  assume in this context that the sets $d,X,L,A,r$ form a pseudometric raher than a metric.\<close>
+  assume in this context that the sets $d,X,L,A,r$ form a pseudometric raher than a metric.
+  In the \<open>pmetric_space\<close> context $\tau$ denotes the topology defined by the metric $d$. \<close>
 
 locale pmetric_space =  loop1 +
   fixes d and X 
   assumes pmetricAssum: "IsApseudoMetric(d,X,L,A,r)"
   fixes disk
   defines disk_def [simp]: "disk(c,R) \<equiv> Disk(X,d,r,c,R)"
-
+  fixes pmettop ("\<tau>") 
+  defines pmettop [simp]: "\<tau> \<equiv> MetricTopology(X,L,A,r,d)"
 
 text\<open> The next lemma shows the definition of the pseudometric in the notation used in the 
   \<open>metric_space\<close> context.\<close>
@@ -186,7 +193,8 @@ proof -
 qed
 
 text\<open>Disks centered at points farther away than the sum of radii do not overlap. \<close>
-lemma (in pmetric_space) far_disks: 
+
+lemma (in pmetric_space) far_disks:
   assumes "x\<in>X" "y\<in>X"  "r\<^sub>x\<ra>r\<^sub>y \<lsq> d`\<langle>x,y\<rangle>"
   shows "disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y) = 0"
 proof -
@@ -218,17 +226,29 @@ proof -
     using loop_ord_refl far_disks by simp
 qed
 
-text\<open>Unions of disks form a topology, hence (pseudo)metric spaces are topological spaces. \<close>
+text\<open>The definition of metric topology written in notation of \<open>pmetric_space\<close> context:\<close>
+
+lemma (in pmetric_space) metric_top_def_alt:
+  defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}"
+  shows "\<tau> = {\<Union>A. A \<in> Pow(B)}"
+proof -
+  from assms have "MetricTopology(X,L,A,r,d) =  {\<Union>A. A \<in> Pow(B)}"
+    unfolding MetricTopology_def by simp
+  thus ?thesis by simp
+qed
+
+text\<open>Unions of disks form a topology, hence (pseudo)metric spaces are topological spaces.
+  Recall that in the \<open>pmetric_space\<close> context $\tau$ is the metric topology (i.e. set of unions
+  of open disks. \<close>
 
 theorem (in pmetric_space) pmetric_is_top: 
   assumes  "r {down-directs} L\<^sub>+" 
   defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}" 
-  defines "T \<equiv> {\<Union>A. A \<in> Pow(B)}"
-  shows "T {is a topology}"  "B {is a base for} T"  "\<Union>T = X"
+  shows "\<tau> {is a topology}"  "B {is a base for} \<tau>"  "\<Union>\<tau> = X"
 proof -
-  from assms  show  "T {is a topology}"  "B {is a base for} T" 
-    using disks_form_base Top_1_2_T1 by auto
-  then have "\<Union>T = \<Union>B" using Top_1_2_L5 by simp
+  from assms show  "\<tau> {is a topology}"  "B {is a base for} \<tau>" 
+    using disks_form_base Top_1_2_T1 metric_top_def_alt by auto
+  then have "\<Union>\<tau> = \<Union>B" using Top_1_2_L5 by simp
   moreover have "\<Union>B = X"
   proof
     from assms(2) show "\<Union>B \<subseteq> X" using disk_definition by auto
@@ -237,7 +257,7 @@ proof -
       with assms(2) \<open>x\<in>X\<close> have "x \<in> \<Union>B" using center_in_disk by auto
     } thus "X \<subseteq> \<Union>B" by auto
   qed 
-  ultimately show "\<Union>T = X" by simp
+  ultimately show "\<Union>\<tau> = X" by simp
 qed
 
 text\<open>To define the \<open>metric_space\<close> locale we take the \<open>pmetric_space\<close> and add 
@@ -268,17 +288,19 @@ text\<open>An ordered loop valued metric space is $T_2$ (i.e. Hausdorff).\<close
 theorem (in metric_space) metric_space_T2:
     assumes "r {down-directs} L\<^sub>+"
     defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}" 
-    defines "T \<equiv> {\<Union>A. A \<in> Pow(B)}"
-    shows "T {is T\<^sub>2}"
+    shows "\<tau> {is T\<^sub>2}"
 proof -
-  { fix x y assume "x\<in>\<Union>T" "y\<in>\<Union>T" "x\<noteq>y"
-    from assms have "B\<subseteq>T" using pmetric_is_top(2) base_sets_open by auto
+  { fix x y assume "x\<in>\<Union>\<tau>" "y\<in>\<Union>\<tau>" "x\<noteq>y"
+    from assms have "B\<subseteq>\<tau>" 
+      using pmetric_is_top(2) base_sets_open metric_top_def_alt 
+      by auto
     moreover have "\<exists>U\<in>B. \<exists>V\<in>B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0"
     proof -
-      let ?R = "d`\<langle>x,y\<rangle>"
-      from assms have "\<Union>T = X" using pmetric_is_top(3) by simp
-      with \<open>x\<in>\<Union>T\<close> \<open>y\<in>\<Union>T\<close> have "x\<in>X" "y\<in>X" by auto
-      with \<open>x\<noteq>y\<close> have "?R\<in>L\<^sub>+" using dist_pos by simp
+      let ?R = "d`\<langle>x,y\<rangle>" 
+      from assms have "\<Union>\<tau> = X" using pmetric_is_top(3) by simp
+      with \<open>x\<in>\<Union>\<tau>\<close> have "x\<in>X" by blast
+      from \<open>\<Union>\<tau> = X\<close> \<open>y\<in>\<Union>\<tau>\<close> have "y\<in>X" by blast
+      with \<open>x\<noteq>y\<close> \<open>x\<in>X\<close> have "?R\<in>L\<^sub>+" using dist_pos by simp
       with assms(2) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?R) \<in> B" and "disk(y,?R) \<in> B"
         by auto
       { assume "disk(x,?R) \<inter> disk(y,?R) = 0"
@@ -314,7 +336,7 @@ proof -
       }
       ultimately show ?thesis by auto
     qed
-    ultimately have "\<exists>U\<in>T. \<exists>V\<in>T. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
+    ultimately have "\<exists>U\<in>\<tau>. \<exists>V\<in>\<tau>. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
   } then show ?thesis unfolding isT2_def by simp
 qed
 
@@ -489,6 +511,5 @@ theorem (in pmetric_space) metric_gauge_base:
     gauge_4thCond gauge_5thCond gauge_6thCond uniformity_base_is_base
     uniform_top_is_top
   unfolding IsUniformityBaseOn_def by simp_all
-
 
 end
