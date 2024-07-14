@@ -107,6 +107,7 @@ namespace iml
                  ("\\<Longrightarrow>", "\\Longrightarrow ")
                  ("\\<A>", "\\mathcal{A} ")
                  ("\\<B>", "\\mathcal{B} ")
+                 ("\\<BB>", "\\mathfrak{B} ")
                  ("\\<C>", "\\mathcal{C} ")
                  ("\\<F>", "\\mathcal{F} ")
                  ("\\<I>", "\\mathcal{I} ")

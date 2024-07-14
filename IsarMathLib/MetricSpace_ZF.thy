@@ -421,7 +421,7 @@ lemma (in pmetric_space) gauge_6thCond:
   assumes "L\<^sub>+\<noteq>\<emptyset>" shows "\<BB>\<noteq>\<emptyset>"  using assms uniform_gauge_def_alt by simp
 
 text\<open>The remaining 4th condition for the sets of the form $d^{-1}([0,b])$
-  to be a uniform base (fundamental system of entourages cannot be proven
+  to be a uniform base (or a fundamental system of entourages) cannot be proven
   without additional assumptions. To see that consider the example
   of natural numbers with the metric $d\langle x,y \rangle = |x-y|$, where we think
   of $d$ as valued in the nonnegative set of ordered group of integers.
@@ -429,7 +429,7 @@ text\<open>The remaining 4th condition for the sets of the form $d^{-1}([0,b])$
   is strictly larger than $B_1$, but there is no smaller set $B_2$ we can take so that
   $B_2 \circ B_2 \subseteq B_1$. 
   One condition that is sufficient is that for every $b_1 >0$ there is a $b_2 >0$
-  such that $b_2 + b_2 \leq b_1$. I have not found a standard name for this property, for now
+  such that $b_2 + b_2 \leq b_1 $. I have not found a standard name for this property, for now
   we will use the name \<open>IsHalfable\<close>. \<close>
 
 definition
