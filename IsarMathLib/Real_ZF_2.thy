@@ -272,8 +272,8 @@ text\<open>Real numbers form a Hausdorff topological space with topology generat
 
 theorem (in reals) reals_is_top: 
   shows "\<tau>\<^sub>\<real> {is a topology}" "\<Union>\<tau>\<^sub>\<real> = \<real>" "\<tau>\<^sub>\<real> {is T\<^sub>2}"
-  using rord_down_directs metric_space_valid pmetric_space_valid 
-    pmetric_space.pmetric_is_top  metric_space.metric_space_T2
+  using rord_down_directs metric_space_valid pmetric_space_valid pmetric_space.pmetric_is_top 
+    pmetric_space.metric_top_carrier metric_space.metric_space_T2
   unfolding RealTopology_def by simp_all
 
 end

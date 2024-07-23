@@ -46,8 +46,9 @@ text\<open> The \<open>reals\<close> context (locale) defined in the \<open>Real
 text\<open>The \<open>pmetric_space1\<close> locale extends the \<open>reals\<close> locale, adding the carrier $X$ 
   of the metric space and the metric $\mathcal{d}$ to the context, together with the assumption
   that $\mathcal{d}:X\times X \rightarrow \mathbb{R}^+$ is a pseudo metric.
+  We choose to denote the disk in $X$ with center $c$ and radius $r$ as \<open>ball(c,r)\<close> 
   As in the \<open>pmetric_space\<close> locale we define the $\tau$ to be the metric topology, i.e.
-  the topology induced by the pseudometric $\mathcal{d}$.
+  the topology induced by the (real valued) pseudometric $\mathcal{d}$.
   An alternative would be to define the \<open>pmetric_space1\<close> as an extension of the \<open>pmetric_space1\<close>
   context, but that is in turn an extension of the \<open>loop1\<close> locale that defines notation
   for left and right division which which do not want in the context of real numbers. \<close>
@@ -59,6 +60,10 @@ locale pmetric_space1 = reals +
   defines ball_def [simp]: "ball(c,r) \<equiv> Disk(X,\<d>,ROrd,c,r)"
   fixes pmettop ("\<tau>") 
   defines pmettop [simp]: "\<tau> \<equiv> MetricTopology(X,\<real>,Add,ROrd,\<d>)"
+  fixes interior ("int")
+  defines interior_def [simp]: "int(D) \<equiv> Interior(D,\<tau>)"
+  fixes cl
+  defines cl_def [simp]: "cl(D) \<equiv> Closure(D,\<tau>)"
 
 text\<open>The propositions proven in the \<open>pmetric_space\<close> context defined in \<open>Metric_Space_ZF\<close> theory 
   are valid in the \<open>pmetric_space1\<close> context. \<close>
@@ -68,17 +73,21 @@ lemma (in pmetric_space1) pmetric_space_pmetric_space1_valid:
   unfolding pmetric_space_def pmetric_space_axioms_def loop1_def
   using pmetricAssum reals_loop by simp
 
-text\<open>It is convenient to have the collection of all open balls in given (p) metrics defined
-  as a separate notion.\<close>
+text\<open>The context \<open>pmetric_space1\<close> is a special case of context \<open>pmetric_space\<close> 
+  where the fixed objects in \<open>pmetric_space\<close> map to (in the order defined in \<open>pmetric_space\<close>) 
+  the set of real numbers, real addition, the order relation on reals, 
+  the strict order relation on reals, the set of non-negative reals and 
+  the set of positive reals. The metrics $d$ maps to the real metrics 
+  \<open>\<d>\<close>, the carrier of the metric space $X$ is still $X$, and the \<open>disk\<close>s from \<open>pmetric_space\<close>
+  are now called \<open>ball\<close>s in \<open>pmetric_space1\<close>. The notation for right and left division from 
+  \<open>pmetric_space1\<close> is not used in \<open>pmetric_space\<close>. \<close>
 
-definition (in pmetric_space1) Open_Balls
-  where "Open_Balls \<equiv> \<Union>c\<in>X. {ball(c,r). r \<in> \<real>\<^sub>+}"
-
-text\<open>Topology on a metric space is defined as the collection of sets that are unions
-  of open balls of the (p)metric. \<close>
-
-definition (in pmetric_space1) Metric_Topology
-  where "Metric_Topology \<equiv> {\<Union>A. A \<in> Pow(Open_Balls)}"
+sublocale pmetric_space1 < pmetric_space 
+  "\<real>" Add ROrd "\<zero>" realadd lesseq sless nonnegative positiveset
+  "\<lambda>x y. LeftDiv(\<real>,Add)`\<langle>x,y\<rangle>"
+  "\<lambda>x y. RightDiv(\<real>,Add)`\<langle>y,x\<rangle>"
+  "\<d>" X ball
+  using pmetric_space_pmetric_space1_valid by simp_all
 
 text\<open>The \<open>metric_space1\<close> locale (context) specializes the the \<open>pmetric_space1\<close> context
   by adding the assumption of identity of indiscernibles. \<close>
@@ -95,31 +104,49 @@ lemma (in metric_space1) metric_space_metric_space1_valid:
   using pmetric_space_pmetric_space1_valid ident_indisc
   by simp
 
+text\<open>The \<open>metric_space1\<close> context is a special case of the \<open>metric_space\<close> context,
+  with fixed objects mapping the same as in the mapping between \<open>pmetric_space1\<close>
+  and \<open>pmetric_space\<close> above. \<close>
+
+sublocale metric_space1 < metric_space 
+   "\<real>" Add ROrd "\<zero>" realadd lesseq sless nonnegative positiveset
+  "\<lambda>x y. LeftDiv(\<real>,Add)`\<langle>x,y\<rangle>"
+  "\<lambda>x y. RightDiv(\<real>,Add)`\<langle>y,x\<rangle>"
+  "\<d>" X ball
+proof
+  from ident_indisc show "\<forall>x\<in>X. \<forall>y\<in>X. \<d> ` \<langle>x, y\<rangle> = TheNeutralElement(\<real>, Add) \<longrightarrow> x = y"
+    by simp
+qed
+
 subsection\<open>Metric spaces are Hausdorff as topological spaces\<close>
 
 text\<open>The usual (real-valued) metric spaces are a special case of ordered loop valued
   metric spaces defined in the \<open>MetricSpace_ZF\<close> theory, hence they are $T_2$ 
-  as topological spaces. \<close>
+  as topological spaces. Below we repeat the major theorems of \<open>MetricSpace_ZF\<close> theory
+  specialized the standard setting of real valued metrics. \<close>
 
 text\<open>Since in the \<open>pmetric_space1\<close> context $\mathfrak{d}$ is a pseudometrics
-  the (p)metric topology as defined above is indeed a topology,
-  the set of open balls is the base of that topology and the carrier of the
-  topology is the underlying (p)metric space carrier $X$. \<close>
+  the (real valued) metric topology indeed a topology. \<close>
 
 theorem (in pmetric_space1) rpmetric_is_top:
-  shows 
-    "\<tau> {is a topology}"
-    "Open_Balls {is a base for} \<tau>"
-    "\<Union>\<tau> = X"
-  unfolding Open_Balls_def Metric_Topology_def
-  using rord_down_directs pmetric_space_pmetric_space1_valid 
-    pmetric_space.pmetric_is_top by simp_all
+  shows  "\<tau> {is a topology}"
+  using rord_down_directs pmetric_is_top by simp
 
-text\<open>The topology generated by a metric is Hausdorff (i.e. $T_2$). \<close>
+text\<open>The collection of open disks (caled \<open>ball\<close>s in the \<open>pmetric_space1\<close> context
+  is a base for the (real valued) metric topology.\<close>
+
+theorem (in pmetric_space1) rdisks_are_base:
+  shows "(\<Union>c\<in>X. {ball(c,R). R\<in>\<real>\<^sub>+}) {is a base for} \<tau>"
+  using rord_down_directs disks_are_base by simp
+
+text\<open>$X$ is the carrier of the (real valued) metric topology.\<close>
+
+theorem (in pmetric_space1) rmetric_top_carrier: shows  "\<Union>\<tau> = X"
+  using rord_down_directs metric_top_carrier by simp
+
+text\<open>The topology generated by a (real valued) metric is Hausdorff (i.e. $T_2$). \<close>
 
 theorem (in metric_space1) rmetric_space_T2: shows "\<tau> {is T\<^sub>2}"
-  unfolding Open_Balls_def Metric_Topology_def
-  using rord_down_directs metric_space_metric_space1_valid
-    metric_space.metric_space_T2 by simp
+  using rord_down_directs metric_space_T2 by simp
 
 end

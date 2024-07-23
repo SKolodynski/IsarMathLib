@@ -104,6 +104,19 @@ text\<open>Theorems proven in the \<open>loop0\<close> locale are valid in the \
 sublocale loop1 < loop0 L A looper  
   using ordLoopAssum loop_loop0_valid unfolding IsAnOrdLoop_def by auto
 
+text\<open>The notation $-x+y$ and $x-y$ denotes left and right division, resp. 
+  These two operations are closed in a loop, see lemma \<open>lrdiv_binop\<close> in the \<open>Quasigroup_ZF\<close> theory.
+  The next lemma reiterates that fact using the notation of the \<open>loop1\<close> context. \<close>
+
+lemma (in loop1) left_right_sub_closed: assumes "x\<in>L" "y\<in>L"
+  shows "(\<rm>x\<ad>y) \<in> L" and "x\<rs>y \<in> L"
+proof -
+  from qgroupassum have "LeftDiv(L,A):L\<times>L \<rightarrow>L" and  "RightDiv(L,A):L\<times>L \<rightarrow>L"
+    using lrdiv_binop by simp_all
+  with assms show "(\<rm>x\<ad>y) \<in> L" and "x\<rs>y \<in> L"
+    using apply_funtype by simp_all
+qed
+
 text\<open>In this context $x \leq y$ implies that both $x$ and $y$ belong
   to $L$.\<close>
 
@@ -355,10 +368,12 @@ proof -
       by blast
 qed
 
-text\<open>Subtracting a positive element decreases the value. \<close>
+text\<open>Subtracting a positive element decreases the value, while adding a positive element
+  increases the value. \<close>
 
-lemma (in loop1) subtract_pos: assumes "x\<in>L" "\<zero>\<ls>y"
-  shows "x\<rs>y \<ls> x" and "(\<rm>y\<ad>x) \<ls> x"
+lemma (in loop1) add_subtract_pos: assumes "x\<in>L" "\<zero>\<ls>y"
+  shows  
+    "x\<rs>y \<ls> x" "(\<rm>y\<ad>x) \<ls> x" "x \<ls> x\<ra>y" "x \<ls> y\<ra>x"
 proof -
   from assms(2) have "y\<in>L" using less_members(2) by simp
   from assms(1) have "x\<lsq>x" 
@@ -374,6 +389,9 @@ proof -
   with assms \<open>y\<in>L\<close> show "(\<rm>y\<ad>x) \<ls> x"
     using neut_props_loop(2) lrdiv_props(6) lrdiv_props(5) strict_ineq_cancel_left
     by simp
-qed
+  from assms(1) \<open>x\<ra>\<zero> \<ls> x\<ra>y\<close> \<open>\<zero>\<ra>x \<ls> y\<ra>x\<close> 
+    show "x \<ls> x\<ra>y" "x \<ls> y\<ra>x"
+    using neut_props_loop(2) by simp_all
+qed  
 
 end

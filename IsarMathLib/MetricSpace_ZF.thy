@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2020,2021 Slawomir Kolodynski
+    Copyright (C) 2020 - 2024 Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -68,14 +68,17 @@ definition "Disk(X,d,r,c,R) \<equiv> {x\<in>X. \<langle>d`\<langle>c,x\<rangle>,
 text\<open>We define a metric topology as consisting of unions of open disks.\<close>
 
 definition
-  "MetricTopology(X,L,A,r,d) \<equiv> {\<Union>A. A \<in> Pow(\<Union>c\<in>X. {Disk(X,d,r,c,R). R\<in>PositiveSet(L,A,r)})}"
+  "MetricTopology(X,L,A,r,d) \<equiv> {\<Union>\<A>. \<A> \<in> Pow(\<Union>c\<in>X. {Disk(X,d,r,c,R). R\<in>PositiveSet(L,A,r)})}"
 
 text\<open>Next we define notation for metric spaces. We will reuse the additive notation defined in 
   the \<open>loop1\<close> locale adding only the assumption about $d$ being a pseudometric and notation
   for a disk centered at $c$ with radius $R$.
   Since for many theorems it is sufficient to assume the pseudometric axioms we will
   assume in this context that the sets $d,X,L,A,r$ form a pseudometric raher than a metric.
-  In the \<open>pmetric_space\<close> context $\tau$ denotes the topology defined by the metric $d$. \<close>
+  In the \<open>pmetric_space\<close> context $\tau$ denotes the topology defined by the metric $d$. 
+  Analogously to the notation defined in the \<open>topology0\<close> context \<open>int(A)\<close>,
+  \<open>cl(A)\<close>, \<open>\<partial>A\<close> will denote the interior, closure and boundary of the set $A$
+  with respect to the metric topology. \<close>
 
 locale pmetric_space =  loop1 +
   fixes d and X 
@@ -84,6 +87,11 @@ locale pmetric_space =  loop1 +
   defines disk_def [simp]: "disk(c,R) \<equiv> Disk(X,d,r,c,R)"
   fixes pmettop ("\<tau>") 
   defines pmettop [simp]: "\<tau> \<equiv> MetricTopology(X,L,A,r,d)"
+  fixes interior ("int")
+  defines interior_def [simp]: "int(D) \<equiv> Interior(D,\<tau>)"
+  fixes cl
+  defines cl_def [simp]: "cl(D) \<equiv> Closure(D,\<tau>)"
+ 
 
 text\<open> The next lemma shows the definition of the pseudometric in the notation used in the 
   \<open>metric_space\<close> context.\<close>
@@ -95,7 +103,8 @@ lemma (in pmetric_space) pmetric_properties: shows
   "\<forall>x\<in>X.\<forall>y\<in>X.\<forall>z\<in>X. d`\<langle>x,z\<rangle> \<lsq> d`\<langle>x,y\<rangle> \<ra> d`\<langle>y,z\<rangle>"
   using pmetricAssum unfolding IsApseudoMetric_def by auto
 
-text\<open>The values of the metric are in the loop.\<close>
+text\<open>The values of the metric are in the in the nonnegative set of the loop, 
+  hence in the loop. /\<close>
 
 lemma (in pmetric_space) pmetric_loop_valued: assumes "x\<in>X" "y\<in>X"
   shows "d`\<langle>x,y\<rangle> \<in> L\<^sup>+" "d`\<langle>x,y\<rangle> \<in> L"
@@ -110,7 +119,8 @@ text\<open>The definition of the disk in the notation used in the \<open>pmetric
 lemma (in pmetric_space) disk_definition: shows "disk(c,R) = {x\<in>X. d`\<langle>c,x\<rangle> \<ls> R}"
 proof -
   have "disk(c,R) = Disk(X,d,r,c,R)" by simp
-  then have "disk(c,R) = {x\<in>X. \<langle>d`\<langle>c,x\<rangle>,R\<rangle> \<in> StrictVersion(r)}" unfolding Disk_def by simp
+  then have "disk(c,R) = {x\<in>X. \<langle>d`\<langle>c,x\<rangle>,R\<rangle> \<in> StrictVersion(r)}" 
+    unfolding Disk_def by simp
   moreover have "\<forall>x\<in>X. \<langle>d`\<langle>c,x\<rangle>,R\<rangle> \<in> StrictVersion(r) \<longleftrightarrow> d`\<langle>c,x\<rangle> \<ls> R"
     using def_of_strict_ver by simp
   ultimately show ?thesis by auto
@@ -121,7 +131,9 @@ text\<open>If the radius is positive then the center is in disk.\<close>
 lemma (in pmetric_space) center_in_disk: assumes "c\<in>X" and "R\<in>L\<^sub>+" shows "c \<in> disk(c,R)"
   using pmetricAssum assms IsApseudoMetric_def PositiveSet_def disk_definition by simp
   
-text\<open>A technical lemma that allows us to shorten some proofs: \<close>
+text\<open>A technical lemma that allows us to shorten some proofs: if $c$ is an element
+  of $X$ and $x$ is in disk with center $c$ and radius $R$ then $R$ is a positive element of 
+  $L$ and $-d(x,y)+R$ is in the set of positive elements of the loop. \<close>
 
 lemma (in pmetric_space) radius_in_loop: assumes "c\<in>X" and "x \<in> disk(c,R)"
   shows "R\<in>L" "\<zero>\<ls>R" "R\<in>L\<^sub>+" "(\<rm>d`\<langle>c,x\<rangle> \<ad> R) \<in> L\<^sub>+"
@@ -134,7 +146,7 @@ proof -
     using ls_other_side(2) by simp
 qed
 
-text\<open>If a point $x$ is inside a disk $B$ and $m\leq R-d(c,x)$ then the disk centered 
+text\<open>If a point $x$ is inside a disk $B$ and $m\leq -d\langle c,x\rangle + R$ then the disk centered 
   at the point $x$ and with radius $m$ is contained in the disk $B$. \<close>
 
 lemma (in pmetric_space) disk_in_disk: 
@@ -153,6 +165,29 @@ proof
   with \<open>d`\<langle>c,x\<rangle> \<in> L\<close> \<open>R\<in>L\<close> \<open>d`\<langle>c,y\<rangle> \<lsq> d`\<langle>c,x\<rangle> \<ra> d`\<langle>x,y\<rangle>\<close> \<open>y\<in>X\<close> show "y \<in> disk(c,R)"
     using lrdiv_props(6) loop_strict_ord_trans disk_definition by simp
 qed
+
+text\<open>A special case of \<open>disk_in_disk\<close> where we set $m = -d\langle c,x\rangle + R$: 
+  if $x$ is an element of a disk with center $c\in X$
+  and radius $R$ then this disk contains the disk centered at $x$ and with radius 
+  $-d\langle c,x\rangle + R$. \<close>
+
+lemma (in pmetric_space) disk_in_disk1: 
+  assumes "c\<in>X"  and "x \<in> disk(c,R)"
+  shows "disk(x,\<rm>d`\<langle>c,x\<rangle> \<ad> R) \<subseteq> disk(c,R)"
+proof -
+  from assms(2) have "R\<in>L" and "d`\<langle>c,x\<rangle> \<in> L"
+    using disk_definition less_members by auto
+  with assms show ?thesis using left_right_sub_closed(1) loop_ord_refl disk_in_disk
+    by simp
+qed
+
+text\<open>Assuming that two disks have the same center, closed disk with smaller radius
+  in contained in the (open) disk with a larger radius. \<close>
+
+lemma (in pmetric_space) disk_radius_strict_mono:
+  assumes "r\<^sub>1 \<ls> r\<^sub>2" 
+  shows "{y\<in>X. d`\<langle>x,y\<rangle> \<lsq> r\<^sub>1} \<subseteq> disk(x,r\<^sub>2)"
+  using assms loop_strict_ord_trans disk_definition by auto
 
 text\<open> If we assume that the loop's order relation down-directs $L_+$ then
   the collection of disks centered at points of the space and with radii in the positive set 
@@ -242,23 +277,51 @@ text\<open>Unions of disks form a topology, hence (pseudo)metric spaces are topo
   of open disks. \<close>
 
 theorem (in pmetric_space) pmetric_is_top: 
+  assumes  "r {down-directs} L\<^sub>+"  
+  shows "\<tau> {is a topology}"
+  using assms disks_form_base Top_1_2_T1 metric_top_def_alt by simp
+
+text\<open>If $r$ down-directs $L_+$ then the collection of open disks is a base for
+  the metric topology.\<close>
+
+theorem (in pmetric_space) disks_are_base:
   assumes  "r {down-directs} L\<^sub>+" 
-  defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}" 
-  shows "\<tau> {is a topology}"  "B {is a base for} \<tau>"  "\<Union>\<tau> = X"
+  defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}"
+  shows "B {is a base for} \<tau>"
+  using assms disks_form_base Top_1_2_T1 metric_top_def_alt by simp
+
+text\<open>$X$ is the carrier of metric topology.\<close>
+
+theorem (in pmetric_space) metric_top_carrier: 
+  assumes  "r {down-directs} L\<^sub>+" shows "\<Union>\<tau> = X"
 proof -
-  from assms show  "\<tau> {is a topology}"  "B {is a base for} \<tau>" 
-    using disks_form_base Top_1_2_T1 metric_top_def_alt by auto
-  then have "\<Union>\<tau> = \<Union>B" using Top_1_2_L5 by simp
-  moreover have "\<Union>B = X"
+  let ?B = "\<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}"
+  from assms have "\<Union>\<tau> = \<Union>?B"
+    using disks_are_base Top_1_2_L5 by simp
+  moreover have "\<Union>?B = X"
   proof
-    from assms(2) show "\<Union>B \<subseteq> X" using disk_definition by auto
-    { fix x assume "x\<in>X"
-      from assms(1) obtain R where "R\<in>L\<^sub>+" unfolding DownDirects_def by blast
-      with assms(2) \<open>x\<in>X\<close> have "x \<in> \<Union>B" using center_in_disk by auto
-    } thus "X \<subseteq> \<Union>B" by auto
+    show "\<Union>?B \<subseteq> X" using disk_definition by auto
+    from assms show "X \<subseteq> \<Union>?B" unfolding DownDirects_def using center_in_disk 
+      by blast
   qed 
   ultimately show "\<Union>\<tau> = X" by simp
 qed
+
+text\<open>Under the assumption that $r$ down-directs $L_+$ the propositions proven
+  in the \<open>topology0\<close> context can be used in the \<open>pmetric_space\<close> context.\<close>
+
+lemma (in pmetric_space) topology0_valid_in_pmetric_space:
+  assumes  "r {down-directs} L\<^sub>+" 
+  shows "topology0(\<tau>)" 
+  using assms pmetric_is_top unfolding topology0_def by simp
+
+text\<open>Disks are open in the metric topology.\<close>
+
+lemma (in pmetric_space) disks_open: 
+  assumes "c\<in>X" "R\<in>L\<^sub>+" "r {down-directs} L\<^sub>+"
+  shows "disk(c,R) \<in> \<tau>"
+  using assms base_sets_open disks_are_base(1) pmetric_is_top 
+    by blast
 
 text\<open>To define the \<open>metric_space\<close> locale we take the \<open>pmetric_space\<close> and add 
   the assumption of identity of indiscernibles.\<close>
@@ -286,28 +349,26 @@ qed
 text\<open>An ordered loop valued metric space is $T_2$ (i.e. Hausdorff).\<close>
 
 theorem (in metric_space) metric_space_T2:
-    assumes "r {down-directs} L\<^sub>+"
-    defines "B \<equiv> \<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}" 
+    assumes "r {down-directs} L\<^sub>+" 
     shows "\<tau> {is T\<^sub>2}"
 proof -
+  let ?B = "\<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}"
   { fix x y assume "x\<in>\<Union>\<tau>" "y\<in>\<Union>\<tau>" "x\<noteq>y"
-    from assms have "B\<subseteq>\<tau>" 
-      using pmetric_is_top(2) base_sets_open metric_top_def_alt 
-      by auto
-    moreover have "\<exists>U\<in>B. \<exists>V\<in>B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0"
+    from assms have "?B\<subseteq>\<tau>" using metric_top_def_alt by auto
+    have "\<exists>U\<in>?B. \<exists>V\<in>?B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = \<emptyset>"
     proof -
       let ?R = "d`\<langle>x,y\<rangle>" 
-      from assms have "\<Union>\<tau> = X" using pmetric_is_top(3) by simp
+      from assms have "\<Union>\<tau> = X" using metric_top_carrier by simp
       with \<open>x\<in>\<Union>\<tau>\<close> have "x\<in>X" by blast
       from \<open>\<Union>\<tau> = X\<close> \<open>y\<in>\<Union>\<tau>\<close> have "y\<in>X" by blast
       with \<open>x\<noteq>y\<close> \<open>x\<in>X\<close> have "?R\<in>L\<^sub>+" using dist_pos by simp
-      with assms(2) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?R) \<in> B" and "disk(y,?R) \<in> B"
+      with \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?R) \<in> ?B" and "disk(y,?R) \<in> ?B"
         by auto
-      { assume "disk(x,?R) \<inter> disk(y,?R) = 0"
-        moreover from assms(2) \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>?R\<in>L\<^sub>+\<close> have 
-            "disk(x,?R)\<in>B" "disk(y,?R)\<in>B" "x\<in>disk(x,?R)" "y\<in>disk(y,?R)"
+      { assume "disk(x,?R) \<inter> disk(y,?R) = \<emptyset>"
+        moreover from \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>?R\<in>L\<^sub>+\<close> have 
+            "disk(x,?R)\<in>?B" "disk(y,?R)\<in>?B" "x\<in>disk(x,?R)" "y\<in>disk(y,?R)"
           using center_in_disk by auto
-        ultimately have "\<exists>U\<in>B. \<exists>V\<in>B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
+        ultimately have "\<exists>U\<in>?B. \<exists>V\<in>?B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by blast
       }
       moreover
       { assume "disk(x,?R) \<inter> disk(y,?R) \<noteq> 0"
@@ -321,22 +382,22 @@ proof -
           from \<open>z \<in> disk(y,?R)\<close> \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "z\<in>X" "x\<noteq>z"
             using disk_definition pmetric_properties(3) by auto
           with \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>z\<in>X\<close> show ?thesis
-            using pmetric_loop_valued dist_pos(1) subtract_pos(2) by simp 
+            using pmetric_loop_valued dist_pos(1) add_subtract_pos(2) by simp 
         qed
         with \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "disk(x,?r)\<inter>disk(y,\<rm>?r\<ad>?R) = 0"
           by (rule disjoint_disks)
         moreover 
         from \<open>\<zero>\<ls>?r\<close> \<open>?r\<ls>?R\<close> have "?r\<in>L\<^sub>+" "(\<rm>?r\<ad>?R) \<in> L\<^sub>+"
           using ls_other_side posset_definition1 by auto
-        with assms(2) \<open>x\<in>X\<close> \<open>y\<in>X\<close> have 
-            "disk(x,?r)\<in>B" "disk(y,\<rm>?r\<ad>(d`\<langle>x,y\<rangle>))\<in>B" and
+        with \<open>x\<in>X\<close> \<open>y\<in>X\<close> have 
+            "disk(x,?r)\<in>?B" "disk(y,\<rm>?r\<ad>(d`\<langle>x,y\<rangle>))\<in>?B" and
             "x\<in>disk(x,?r)" "y\<in>disk(y,\<rm>?r\<ad>(d`\<langle>x,y\<rangle>))"
           using center_in_disk by auto
-        ultimately have "\<exists>U\<in>B. \<exists>V\<in>B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
+        ultimately have "\<exists>U\<in>?B. \<exists>V\<in>?B. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by blast
       }
       ultimately show ?thesis by auto
     qed
-    ultimately have "\<exists>U\<in>\<tau>. \<exists>V\<in>\<tau>. x\<in>U \<and> y\<in>V \<and> U\<inter>V = 0" by auto
+    with \<open>?B\<subseteq>\<tau>\<close> have "\<exists>U\<in>\<tau>. \<exists>V\<in>\<tau>. x\<in>U \<and> y\<in>V \<and> U\<inter>V = \<emptyset>" by (rule exist2_subset)
   } then show ?thesis unfolding isT2_def by simp
 qed
 
@@ -366,6 +427,13 @@ lemma (in pmetric_space) uniform_gauge_def_alt:
   shows "\<BB> = {d-``({c\<in>L\<^sup>+. c\<lsq>b}). b\<in>L\<^sub>+}"
   unfolding UniformGauge_def by simp
 
+text\<open>Members of the uniform gauge are subsets of $X\times X$ i.e. relations on $X$. \<close>
+
+lemma (in pmetric_space) uniform_gauge_relations: 
+  assumes "B\<in>\<BB>" shows "B\<subseteq>X\<times>X"
+  using assms uniform_gauge_def_alt pmetric_properties(1) func1_1_L3
+  by force
+
 text\<open>If the distance between two points of $X$ is less or equal $b$, then
   this pair of points is in $d^{-1}([0,b])$. \<close>
 
@@ -373,7 +441,26 @@ lemma (in pmetric_space) gauge_members:
   assumes "x\<in>X" "y\<in>X" "d`\<langle>x,y\<rangle> \<lsq> b"
   shows "\<langle>x,y\<rangle> \<in> d-``({c\<in>L\<^sup>+. c\<lsq>b})"
   using assms pmetric_properties(1) apply_funtype func1_1_L15
-  by simp    
+  by simp
+
+text\<open>Suppose $b\in L^+$ (i.e. b is an element of the loop that is greater than the neutral element)
+  and $x\in X$. Then the set $B=\{ d^{-1}(\{c\in L^+: c\leq b\}$ is a relation on $X$ and
+  the image of the singleton set $\{ x\}$ by that relation is the set 
+  $\{ y\in X:d\langle x,y\rangle  \leq b\}$,
+  i.e. the closed disk with center $x$ and radius $b$. Hence the the image $B\{ x\}$ contains
+  the open disk with center $x$ and radius $b$. \<close>
+
+lemma (in pmetric_space) disk_in_gauge: 
+  assumes "b\<in>L\<^sub>+" "x\<in>X" 
+  defines "B \<equiv> d-``({c\<in>L\<^sup>+. c\<lsq>b})"
+  shows "B``{x} = {y\<in>X. d`\<langle>x,y\<rangle> \<lsq> b}" and "disk(x,b) \<subseteq> B``{x}"
+proof -
+  from assms(1,3) have "B\<subseteq>X\<times>X" 
+    using uniform_gauge_def_alt uniform_gauge_relations by auto
+  with assms(2,3) show "B``{x} = {y\<in>X. d`\<langle>x,y\<rangle> \<lsq> b}"
+    using pmetric_properties(1) func1_1_L15 by force
+  then show "disk(x,b) \<subseteq> B``{x}" using disk_definition by auto
+qed
 
 text\<open>Gauges corresponding to larger elements of the loop are larger. \<close>
 
@@ -498,7 +585,7 @@ text\<open>If $X$ and $L_+$ are not empty, the order relation $r$
   down-directs $L_+$, and the loop order is halfable, then $\mathfrak{B}$
   (which in the \<open>pmetric_space\<close> context is an abbreviation for 
   $\{ d^{-1}(\{c\in L^+: c\leq b\}: b \in L_+ \}$)
-  is fundamental system of entourages, hence its supersets 
+  is a fundamental system of entourages, hence its supersets 
   form a uniformity on $X$ and hence those supersets define a topology on $X$.\<close>
 
 theorem (in pmetric_space) metric_gauge_base: 
@@ -507,9 +594,76 @@ theorem (in pmetric_space) metric_gauge_base:
     "\<BB> {is a uniform base on} X"
     "Supersets(X\<times>X,\<BB>) {is a uniformity on} X"
     "UniformTopology(Supersets(X\<times>X,\<BB>),X) {is a topology}"
+    "\<Union>UniformTopology(Supersets(X\<times>X,\<BB>),X) = X"
   using assms gauge_1st_cond gauge_2nd_cond gauge_3rd_cond 
     gauge_4thCond gauge_5thCond gauge_6thCond uniformity_base_is_base
     uniform_top_is_top
   unfolding IsUniformityBaseOn_def by simp_all
+
+text\<open>At this point we know that a pseudometric induces two topologies: one consisting of unions
+  of open disks (the metric topology) and second one being the uniform topology derived 
+  from the uniformity generated the fundamental system of entourages (the base uniformity) 
+  of the sets of the form $d^{-1}([0,b])$ for $b>0$.  
+  The next theorem states that if $X$ and $L_+$ are not empty, $r$ down-directs $L_+$,
+  and the loop order is halfable, then these two topologies are in fact the same. 
+  Recall that in the \<open>pmetric_space\<close> context $\tau$ denotes the metric topology. \<close>
+
+theorem (in pmetric_space) metric_top_is_uniform_top:
+  assumes "X\<noteq>\<emptyset>" "L\<^sub>+\<noteq>\<emptyset>" "r {down-directs} L\<^sub>+" "IsHalfable(L,A,r)"
+  shows "\<tau> = UniformTopology(Supersets(X\<times>X,\<BB>),X)"
+proof
+  let ?\<Phi> = "Supersets(X\<times>X,\<BB>)"
+  from assms have "?\<Phi> {is a uniformity on} X" using metric_gauge_base
+    by simp
+  let ?T = "UniformTopology(?\<Phi>,X)"
+  { fix U assume "U\<in>?T"
+    then have "U\<in>Pow(X)" and I: "\<forall>x\<in>U. U\<in>{V``{x}. V\<in>?\<Phi>}"
+      unfolding UniformTopology_def by auto
+    { fix x assume "x\<in>U"
+      with I obtain A where "A\<in>?\<Phi>" and "U = A``{x}"
+        by auto
+      from \<open>x\<in>U\<close> \<open>U\<in>?T\<close> have "x\<in>\<Union>?T" by auto
+      with assms have "x\<in>X" using metric_gauge_base(4) by simp
+      from \<open>A\<in>?\<Phi>\<close> obtain B where "B\<in>\<BB>" and "B\<subseteq>A"
+        unfolding Supersets_def by auto
+      from \<open>B\<in>\<BB>\<close> obtain b where "b\<in>L\<^sub>+" and "B = d-``({c\<in>L\<^sup>+. c\<lsq>b})"
+        using uniform_gauge_def_alt by auto
+      with \<open>x\<in>X\<close> \<open>B\<subseteq>A\<close> \<open>U = A``{x}\<close> have "disk(x,b) \<subseteq> U"
+        using disk_in_gauge(2) by blast
+      with assms(3) \<open>x\<in>X\<close> \<open>b\<in>L\<^sub>+\<close> have "\<exists>V\<in>\<tau>. x\<in>V \<and> V\<subseteq>U"
+        using disks_open center_in_disk by force
+    } with assms(3) have "U\<in>\<tau>"
+      using topology0_valid_in_pmetric_space topology0.open_neigh_open
+        by simp
+  } thus "?T \<subseteq> \<tau>" by auto
+  let ?\<D> = "\<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}"
+  { fix U assume "U \<in> ?\<D>"
+    then obtain c b where "c\<in>X" "b\<in>L\<^sub>+" "U = disk(c,b)"
+      by blast
+    { fix x assume "x\<in>U"
+      let ?b\<^sub>1 = "\<rm>d`\<langle>c,x\<rangle> \<ad> b"
+      from \<open>x\<in>U\<close> \<open>c\<in>X\<close> \<open>U = disk(c,b)\<close> have 
+        "x\<in>X" "x\<in>disk(c,b)" "disk(x,?b\<^sub>1) \<subseteq> U" "?b\<^sub>1 \<in> L\<^sub>+"
+        using disk_in_disk1 disk_definition radius_in_loop(4) by simp_all
+      with assms(4) obtain b\<^sub>2 where "b\<^sub>2\<in>L\<^sub>+" and "b\<^sub>2\<ra>b\<^sub>2 \<lsq> ?b\<^sub>1"
+        using is_halfable_def_alt by auto
+      let ?D = "{y\<in>X. d`\<langle>x,y\<rangle> \<lsq> b\<^sub>2}"
+      from \<open>b\<^sub>2\<in>L\<^sub>+\<close> \<open>b\<^sub>2\<ra>b\<^sub>2 \<lsq> ?b\<^sub>1\<close> have "?D \<subseteq> disk(x,?b\<^sub>1)"
+        using posset_definition1 positive_subset add_subtract_pos(3) 
+          loop_strict_ord_trans1 disk_radius_strict_mono by blast 
+      let ?B = "d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>2})"
+      from \<open>b\<^sub>2\<in>L\<^sub>+\<close> have "?B\<in>\<BB>" using uniform_gauge_def_alt by auto
+      then have "?B\<in>?\<Phi>" using uniform_gauge_relations superset_gen 
+        by simp
+      from \<open>b\<^sub>2\<in>L\<^sub>+\<close> \<open>x\<in>X\<close> \<open>?D \<subseteq> disk(x,?b\<^sub>1)\<close> \<open>disk(x,?b\<^sub>1) \<subseteq> U\<close> have "?B``{x} \<subseteq> U"
+        using disk_in_gauge(1) by auto
+      with \<open>?B\<in>?\<Phi>\<close> have "\<exists>W\<in>?\<Phi>. W``{x} \<subseteq> U" by auto
+    } with \<open>U = disk(c,b)\<close> \<open>?\<Phi> {is a uniformity on} X\<close> have "U \<in> ?T"
+      using disk_definition uniftop_def_alt1 by auto
+  } hence "?\<D> \<subseteq> ?T" by auto
+  with assms show "\<tau>\<subseteq>?T"
+    using disks_are_base(1) metric_gauge_base(3) base_smallest_top
+    by simp
+qed
 
 end

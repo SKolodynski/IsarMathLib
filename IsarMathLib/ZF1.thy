@@ -154,6 +154,13 @@ lemma subset_with_property: assumes "Y = {x\<in>X. b(x)}"
   shows "Y \<subseteq> X" 
   using assms by auto
 
+text\<open>If set $A$ is contained in set $B$ and exist elements $x,y$ of the set $A$ 
+  that satisfy a predicate then exist elements of the set $B$ that satisfy the predicate. \<close>
+
+lemma exist2_subset: assumes "A\<subseteq>B" and "\<exists>x\<in>A. \<exists>y\<in>A. \<phi>(x,y)"
+  shows "\<exists>x\<in>B. \<exists>y\<in>B. \<phi>(x,y)"
+  using assms by blast
+
 text\<open>We can choose an element from a nonempty set.\<close>
 
 lemma nonempty_has_element: assumes "X\<noteq>\<emptyset>" shows "\<exists>x. x\<in>X"
