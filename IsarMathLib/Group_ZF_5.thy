@@ -49,8 +49,8 @@ definition
   "IsMorphism(G,P,F,f) \<equiv> \<forall>g\<^sub>1\<in>G. \<forall>g\<^sub>2\<in>G. f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>) = F`\<langle>f`(g\<^sub>1),f`(g\<^sub>2)\<rangle>"
 
 text\<open>A function $f:G\rightarrow H$ between algebraic structures 
-  $(G,\cdot_G)$ and $(H,\cdot_H)$ with one operation (each) is a homomorphism is it has the morphism
-  property. \<close> 
+  $(G,\cdot_G)$ and $(H,\cdot_H)$ with one operation (each) is a homomorphism if 
+  it has the morphism property. \<close> 
 
 definition
   "Homomor(f,G,P,H,F) \<equiv> f:G\<rightarrow>H \<and> IsMorphism(G,P,F,f)"
@@ -62,8 +62,10 @@ lemma homomor_eq:
   shows "f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>) = F`\<langle>f`(g\<^sub>1),f`(g\<^sub>2)\<rangle>"
   using assms unfolding Homomor_def IsMorphism_def by auto
 
-text\<open>An endomorphism is a homomorphism from a group to the same group. In case
-the group is abelian, it has a nice structure.\<close>
+text\<open>An endomorphism is a homomorphism from a group to the same group. 
+  We define \<open>End(G,P)\<close> as the set of endomorphisms for a given group.
+  As we show later when the group is abelian, the set of endomorphisms 
+  with pointwise adddition and composition as multiplication forms a ring.\<close>
 
 definition
   "End(G,P) \<equiv> {f\<in>G\<rightarrow>G. Homomor(f,G,P,G,P)}"
@@ -108,7 +110,7 @@ abbreviation InEnd("_ {in End} [_,_]")
   where "InEnd(F,G,P) \<equiv> restrict(F,End(G,P)\<times>End(G,P))"
 
 text\<open>Endomoprhisms of a group form a monoid with composition as the binary operation,
-  with the identity map as the neutral element.\<close>
+  and the identity map as the neutral element.\<close>
 
 theorem (in group0) end_comp_monoid:
   shows "IsAmonoid(End(G,P),InEnd(Composition(G),G,P))"
@@ -139,7 +141,8 @@ text\<open>The set of endomorphisms is closed under pointwise addition (derived 
    This is so because the group is abelian.\<close>
   
 theorem (in abelian_group) end_pointwise_addition:
-  assumes "f\<in>End(G,P)" "g\<in>End(G,P)" "F = P {lifted to function space over} G"
+  assumes "f\<in>End(G,P)" "g\<in>End(G,P)" 
+  defines "F \<equiv> P {lifted to function space over} G"
   shows "F`\<langle>f,g\<rangle> \<in> End(G,P)"
 proof-
   from assms(1,2) have fun: "f:G\<rightarrow>G" "g\<in>G\<rightarrow>G" unfolding End_def by simp_all
@@ -161,7 +164,7 @@ lemma (in abelian_group) end_pointwise_add_val:
   using assms group_oper_fun monoid.group0_1_L3B func_ZF_1_L4 
   unfolding End_def by simp
 
-text\<open>The inverse of an abelian group is an endomorphism.\<close>
+text\<open>The operation of taking the inverse in an abelian group is an endomorphism.\<close>
 
 lemma (in abelian_group) end_inverse_group:
   shows "GroupInv(G,P) \<in> End(G,P)"

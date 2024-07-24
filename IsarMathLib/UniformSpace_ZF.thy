@@ -526,7 +526,7 @@ qed
 
 subsection\<open> Base of a uniformity \<close>
 
-text\<open>A \<open>base\<close> or a \<open>fundamental systems of entourages\<close> of a uniformity $\Phi$ is 
+text\<open>A \<open>base\<close> or a \<open>fundamental system of entourages\<close> of a uniformity $\Phi$ is 
   a subset of $\Phi$ that is sufficient to uniquely determine it. This is 
   analogous to the notion of a base of a topology (see \<open>Topology_ZF_1\<close> or a base of a filter
   (see \<open>Topology_ZF_4\<close>). \<close>

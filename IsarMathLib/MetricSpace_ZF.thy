@@ -531,7 +531,8 @@ lemma (in pmetric_space) gauge_6thCond:
 
 text\<open>The remaining 4th condition for the sets of the form $d^{-1}([0,b])$
   to be a uniform base (or a fundamental system of entourages) cannot be proven
-  without additional assumptions. To see that consider the example
+  without additional assumptions in the context of ordered loop valued metrics. 
+  To see that consider the example
   of natural numbers with the metric $d\langle x,y \rangle = |x-y|$, where we think
   of $d$ as valued in the nonnegative set of ordered group of integers.
   Now take the set $B_1 = d^{-1}([0,1]) = d^{-1}(\{ 0,1\} )$. Then the set $B_1 \circ B_1$ 
