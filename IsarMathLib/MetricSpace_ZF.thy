@@ -65,7 +65,7 @@ text\<open>A disk is defined as set of points located less than the radius from 
 
 definition "Disk(X,d,r,c,R) \<equiv> {x\<in>X. \<langle>d`\<langle>c,x\<rangle>,R\<rangle> \<in> StrictVersion(r)}"
 
-text\<open>We define a metric topology as consisting of unions of open disks.\<close>
+text\<open>We define \<open>metric topology\<close> as consisting of unions of open disks.\<close>
 
 definition
   "MetricTopology(X,L,A,r,d) \<equiv> {\<Union>\<A>. \<A> \<in> Pow(\<Union>c\<in>X. {Disk(X,d,r,c,R). R\<in>PositiveSet(L,A,r)})}"
@@ -94,7 +94,7 @@ locale pmetric_space =  loop1 +
  
 
 text\<open> The next lemma shows the definition of the pseudometric in the notation used in the 
-  \<open>metric_space\<close> context.\<close>
+  \<open>pmetric_space\<close> context.\<close>
 
 lemma (in pmetric_space) pmetric_properties: shows 
   "d: X\<times>X \<rightarrow> L\<^sup>+"
@@ -104,7 +104,7 @@ lemma (in pmetric_space) pmetric_properties: shows
   using pmetricAssum unfolding IsApseudoMetric_def by auto
 
 text\<open>The values of the metric are in the in the nonnegative set of the loop, 
-  hence in the loop. /\<close>
+  hence in the loop.\<close>
 
 lemma (in pmetric_space) pmetric_loop_valued: assumes "x\<in>X" "y\<in>X"
   shows "d`\<langle>x,y\<rangle> \<in> L\<^sup>+" "d`\<langle>x,y\<rangle> \<in> L"
@@ -231,9 +231,9 @@ text\<open>Disks centered at points farther away than the sum of radii do not ov
 
 lemma (in pmetric_space) far_disks:
   assumes "x\<in>X" "y\<in>X"  "r\<^sub>x\<ra>r\<^sub>y \<lsq> d`\<langle>x,y\<rangle>"
-  shows "disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y) = 0"
+  shows "disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y) = \<emptyset>"
 proof -
-  { assume "disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y) \<noteq> 0"
+  { assume "disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y) \<noteq> \<emptyset>"
     then obtain z where "z \<in> disk(x,r\<^sub>x)\<inter>disk(y,r\<^sub>y)" by auto
     then have "z\<in>X" and "d`\<langle>x,z\<rangle> \<ra> d`\<langle>y,z\<rangle> \<ls> r\<^sub>x\<ra>r\<^sub>y"
       using disk_definition add_ineq_strict by auto
@@ -272,9 +272,9 @@ proof -
   thus ?thesis by simp
 qed
 
-text\<open>Unions of disks form a topology, hence (pseudo)metric spaces are topological spaces.
-  Recall that in the \<open>pmetric_space\<close> context $\tau$ is the metric topology (i.e. set of unions
-  of open disks. \<close>
+text\<open>If the order of the loop down-directs its set of positive elements 
+  then the metric topology defined as collection of unions of (open) disks is indeed a topology.
+  Recall that in the \<open>pmetric_space\<close> context $\tau$ denotes the metric topology. \<close>
 
 theorem (in pmetric_space) pmetric_is_top: 
   assumes  "r {down-directs} L\<^sub>+"  
@@ -290,7 +290,7 @@ theorem (in pmetric_space) disks_are_base:
   shows "B {is a base for} \<tau>"
   using assms disks_form_base Top_1_2_T1 metric_top_def_alt by simp
 
-text\<open>$X$ is the carrier of metric topology.\<close>
+text\<open>If $r$ down-directs $L_+$ then $X$ is the carrier of metric topology.\<close>
 
 theorem (in pmetric_space) metric_top_carrier: 
   assumes  "r {down-directs} L\<^sub>+" shows "\<Union>\<tau> = X"
@@ -315,7 +315,7 @@ lemma (in pmetric_space) topology0_valid_in_pmetric_space:
   shows "topology0(\<tau>)" 
   using assms pmetric_is_top unfolding topology0_def by simp
 
-text\<open>Disks are open in the metric topology.\<close>
+text\<open>If $r$ down-directs $L_+$ then disks are open in the metric topology.\<close>
 
 lemma (in pmetric_space) disks_open: 
   assumes "c\<in>X" "R\<in>L\<^sub>+" "r {down-directs} L\<^sub>+"
@@ -346,7 +346,7 @@ proof -
     using ident_indisc posset_definition posset_definition1 by auto
 qed
 
-text\<open>An ordered loop valued metric space is $T_2$ (i.e. Hausdorff).\<close>
+text\<open>If $r$ down-directs $L_+$ then the ordered loop valued metric space is $T_2$ (i.e. Hausdorff).\<close>
 
 theorem (in metric_space) metric_space_T2:
     assumes "r {down-directs} L\<^sub>+" 
@@ -444,9 +444,8 @@ lemma (in pmetric_space) gauge_members:
   by simp
 
 text\<open>Suppose $b\in L^+$ (i.e. b is an element of the loop that is greater than the neutral element)
-  and $x\in X$. Then the set $B=\{ d^{-1}(\{c\in L^+: c\leq b\}$ is a relation on $X$ and
-  the image of the singleton set $\{ x\}$ by that relation is the set 
-  $\{ y\in X:d\langle x,y\rangle  \leq b\}$,
+  and $x\in X$. Then the image of the singleton set $\{ x\}$ by the relation 
+  $B=\{ d^{-1}(\{c\in L^+: c\leq b\}$ is the set $\{ y\in X:d\langle x,y\rangle  \leq b\}$,
   i.e. the closed disk with center $x$ and radius $b$. Hence the the image $B\{ x\}$ contains
   the open disk with center $x$ and radius $b$. \<close>
 
@@ -518,7 +517,8 @@ corollary (in pmetric_space) gauge_3rd_cond:
   assumes "B\<^sub>1\<in>\<BB>" shows "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B\<^sub>1)"
   using assms gauge_symmetric by auto
 
-text\<open>The sets of the form $d^{-1}([0,b])$ are subsets of $X\times X$. \<close>
+text\<open>The collection of sets of the form $d^{-1}([0,b])$ for $b\in L_+$ 
+  is contained of the powerset of $X\times X$.\<close>
 
 lemma (in pmetric_space) gauge_5thCond: shows "\<BB>\<subseteq>Pow(X\<times>X)"
   using uniform_gauge_def_alt pmetric_properties(1) func1_1_L3 by force
