@@ -88,6 +88,15 @@ text\<open>A module is a ring action on an abelian group.\<close>
 definition "IsLeftModule(S,A,M,\<M>,A\<^sub>M,H) \<equiv>
   IsAring(S,A,M) \<and> IsAgroup(\<M>,A\<^sub>M) \<and> (A\<^sub>M {is commutative on} \<M>) \<and> IsAction(S,A,M,\<M>,A\<^sub>M,H)"
 
+text\<open>If $H$ defines a module then it is a ring action, hence a ring homomorphism, hence a function
+  on that ring. \<close>
+
+lemma module_action_type: assumes "IsLeftModule(S,A,M,\<M>,A\<^sub>M,H)"
+  shows 
+    "IsAction(S,A,M,\<M>,A\<^sub>M,H)"
+    "ringHomomor(H,S,A,M,End(\<M>,A\<^sub>M),EndAdd(\<M>,A\<^sub>M),EndMult(\<M>,A\<^sub>M))"
+    "H:S\<rightarrow>End(\<M>,A\<^sub>M)"
+  using assms unfolding IsLeftModule_def IsAction_def ringHomomor_def by auto
 
 text\<open>The next locale defines context (i.e. common assumptions and notation) when considering 
   modules. We reuse notation from the \<open>ring0\<close> locale and add notation specific to

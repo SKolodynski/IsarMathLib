@@ -27,194 +27,132 @@ begin
 
 section \<open>$\mathbb{Z}$ modules\<close>
 
-text\<open>In this section we show that the integers, as a ring, have only one module structure on each abelian group.
-We will show that the module structure is unique, but we will also show which action is the one that defines
-that module structure.\<close>
+text\<open>In this section we show that the integers, as a ring, have only one module structure on 
+  each abelian group. We will show that the module structure is unique, but we will also show 
+  which action is the one that defines that module structure.\<close>
 
 text \<open>When $\mathbb{Z}$ acts on a group, that action is unique.\<close>
 
-lemma action_unique:
-  assumes "IsLeftModule(int,IntegerAddition,IntegerMultiplication,G,f,S1)" and "IsLeftModule(int,IntegerAddition,IntegerMultiplication,G,f,S2)"
-  shows "S1 = S2"
-proof-
-  have mod0:"module0(int,IntegerAddition,IntegerMultiplication,G,f,S1)"
-      "module0(int,IntegerAddition,IntegerMultiplication,G,f,S2)"
-    using assms unfolding module0_def IsLeftModule_def ring0_def module0_axioms_def by auto
-  {
-    fix r assume rg:"r:int"
-    have "S1`($#0) = S1 ` TheNeutralElement(int, IntegerAddition)"
-      using int0.Int_ZF_1_L8(1) by auto
-    then have "\<forall>g\<in>G. (S1`($#0))`g = (S1 ` TheNeutralElement(int, IntegerAddition))`g" by auto
-    then have eq:"\<forall>g\<in>G. (S1`($#0))`g = TheNeutralElement(G, f)"
-      using module0.mult_zero[OF mod0(1)] by auto
-    have "(S1`($#0)):G\<rightarrow>G" using module0.H_val_type(2)[OF mod0(1)]
-      rg(1) by auto
-    from fun_is_set_of_pairs[OF this] eq
-    have "S1`($#0) = {\<langle>g,TheNeutralElement(G, f)\<rangle>. g\<in>G}" by auto
-    then have "S1`($#0) = G\<times>{TheNeutralElement(G, f)}" by auto
-    then have s1:"(S1`($#0)) = ConstantFunction(G,TheNeutralElement(G, f))"
-      unfolding ConstantFunction_def.
-    have "S2`($#0) = S2 ` TheNeutralElement(int, IntegerAddition)"
-      using int0.Int_ZF_1_L8(1) by auto
-    then have "\<forall>g\<in>G. (S2`($#0))`g = (S2 ` TheNeutralElement(int, IntegerAddition))`g" by auto
-    then have eq:"\<forall>g\<in>G. (S2`($#0))`g = TheNeutralElement(G, f)"
-      using module0.mult_zero[OF mod0(2)] by auto
-    have "(S2`($#0)):G\<rightarrow>G" using module0.H_val_type[OF mod0(2)]
-      rg(1) by auto
-    from fun_is_set_of_pairs[OF this] eq
-    have "S2`($#0) = {\<langle>g,TheNeutralElement(G, f)\<rangle>. g\<in>G}" by auto
-    then have "S2`($#0) = G\<times>{TheNeutralElement(G, f)}" by auto
-    then have "(S2`($#0)) = ConstantFunction(G,TheNeutralElement(G, f))"
-      unfolding ConstantFunction_def.
-    with s1 have ee:"S1`($#0) = S2`($#0)" by auto
-    {
-      assume k:"\<langle>r,$#0\<rangle>\<in>IntegerOrder"
-      then have kint:"r\<in>int" unfolding IntegerOrder_def by auto
-      have "S1 ` r = S2 ` r"
-      proof (rule int0.Back_induct_on_int[of r "$#0" "\<lambda>q. S1`q = S2`q"])
-        from k show "\<langle>r,$#0\<rangle>\<in>IntegerOrder" .
-        from ee show "S1`($#0) = S2`($#0)" .
-        {
-          fix n assume n:"\<langle>n, $# 0\<rangle> \<in> IntegerOrder" "S1 ` n = S2 ` n"
-          from n(1) have nint:"n:int" unfolding IntegerOrder_def by auto
-          have minone:"GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication):int"
-            using group0.inverse_in_group[OF Int_ZF_1_T2(3)]
-            ring0.Ring_ZF_1_L2(2)[OF int0.Int_ZF_1_1_L2(3)] by auto
-          {
-            fix t assume t:"t\<in>G"
-            have "S1 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-                 TheNeutralElement(int, IntegerMultiplication)\<rangle>) `t = 
-            (f`\<langle>S1`n`t,S1`(GroupInv(int, IntegerAddition) `
-                 TheNeutralElement(int, IntegerMultiplication))`t\<rangle>)"
-              using minone nint module0.module_ax2[OF mod0(1)] t by auto
-            then have "S1 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-                 TheNeutralElement(int, IntegerMultiplication)\<rangle>) `t = 
-            (f`\<langle>S2`n`t,S1`(GroupInv(int, IntegerAddition) `
-                 TheNeutralElement(int, IntegerMultiplication))`t\<rangle>)" using n(2) by auto moreover
-            from module0.inv_module[OF mod0(1) apply_type[OF module0.H_val_type(2)[OF mod0(1) ring0.Ring_ZF_1_L2(2)[OF int0.Int_ZF_1_1_L2(3)]]]] have
-           ex:"\<forall>g\<in>G. S1 ` (GroupInv(int, IntegerAddition) ` TheNeutralElement(int, IntegerMultiplication))` g =
-             GroupInv(G, f) ` g" using module0.module_ax4[OF mod0(1)] by auto
-          have f1:"S1 ` (GroupInv(int, IntegerAddition) ` TheNeutralElement(int, IntegerMultiplication)): G\<rightarrow>G"
-            using module0.H_val_type(2)[OF mod0(1)] ring0.Ring_ZF_1_L2(2)[OF int0.Int_ZF_1_1_L2(3)]
-            ring0.Ring_ZF_1_L3(1)[OF int0.Int_ZF_1_1_L2(3)] by auto
-          have f2:"GroupInv(G, f) : G\<rightarrow>G"
-            using group0_2_T2[of G f] using assms(1) unfolding IsLeftModule_def by blast
-          from ex f1 f2 have "S1 ` (GroupInv(int, IntegerAddition) ` TheNeutralElement(int, IntegerMultiplication)) =
-            GroupInv(G, f)" using func_eq by blast
-          ultimately have A:"S1 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-          f`\<langle>S2`n`t,GroupInv(G, f) `t\<rangle>" by auto
-          have "S2 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-          f`\<langle>S2`n`t,S2`(GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication))`t\<rangle>"
-            using assms(2) minone nint module0.module_ax2[OF mod0(2)] t by auto
-          then have "S2 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-          f`\<langle>S2`n`t,S2`(GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication))`t\<rangle>" using n(2) by auto moreover
-          from module0.inv_module[OF mod0(2) apply_type[OF module0.H_val_type(2)[OF mod0(2) ring0.Ring_ZF_1_L2(2)[OF int0.Int_ZF_1_1_L2(3)]]]]
-          have ex:"\<forall>g\<in>G. S2 ` (GroupInv(int, IntegerAddition) ` TheNeutralElement(int, IntegerMultiplication))` g =
-             GroupInv(G, f) ` g" using module0.module_ax4[OF mod0(2)] by auto
-          have f1:"S2 ` (GroupInv(int, IntegerAddition) ` TheNeutralElement(int, IntegerMultiplication)): G\<rightarrow>G"
-            using module0.H_val_type(2)[OF mod0(2)] ring0.Ring_ZF_1_L2(2)[OF int0.Int_ZF_1_1_L2(3)]
-            ring0.Ring_ZF_1_L3(1)[OF int0.Int_ZF_1_1_L2(3)] by auto
-          from ex f1 f2 have "S2 ` (GroupInv(int, IntegerAddition) ` TheNeutralElement(int, IntegerMultiplication)) =
-            GroupInv(G, f)" using func_eq by blast
-          ultimately have "S2 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-          f`\<langle>S2`n`t,GroupInv(G, f)`t\<rangle>"
-            by auto
-          with A have "S1 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t =S2 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t" by auto
-        }
-        then have "\<forall>t\<in>G. S1 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t =S2 ` (IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t" by auto
-        moreover from minone nint have "IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>:int"
-          using group0.group_op_closed[OF Int_ZF_1_T2(3)] by auto
-        then have "S1`(IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>):G\<rightarrow>G" "S2`(IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>):G\<rightarrow>G" using module0.H_val_type(2)[OF mod0(1)]
-          module0.H_val_type(2)[OF mod0(2)] by auto
-        ultimately have "S1`(IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) ` TheNeutralElement(int, IntegerMultiplication)\<rangle>) = S2`(IntegerAddition ` \<langle>n, GroupInv(int, IntegerAddition) ` TheNeutralElement(int, IntegerMultiplication)\<rangle>)"
-          using func_eq[of _ G G] by auto
-      }
-      then show " \<forall>n. \<langle>n, $# 0\<rangle> \<in> IntegerOrder \<and> S1 ` n = S2 ` n \<longrightarrow>
-          S1 `
-          (IntegerAddition `
-           \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>) =
-          S2 `
-          (IntegerAddition `
-           \<langle>n, GroupInv(int, IntegerAddition) `
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>)" by auto
+lemma (in int0) action_unique:
+  assumes "IsLeftModule(int,IntegerAddition,IntegerMultiplication,G,f,S\<^sub>1)" and  
+    "IsLeftModule(int,IntegerAddition,IntegerMultiplication,G,f,S\<^sub>2)"
+  shows "S\<^sub>1 = S\<^sub>2"
+proof -
+  let ?A\<^sub>Z = "IntegerAddition"
+  let ?M\<^sub>Z = "IntegerMultiplication"
+  from assms have mod0: "module0(\<int>,?A\<^sub>Z,?M\<^sub>Z,G,f,S\<^sub>1)" "module0(\<int>,?A\<^sub>Z,?M\<^sub>Z,G,f,S\<^sub>2)"
+      unfolding module0_def IsLeftModule_def ring0_def module0_axioms_def by auto
+  { fix r assume rg: "r\<in>\<int>"    
+    from mod0(1) have eq: "\<forall>g\<in>G. (S\<^sub>1`(\<zero>))`(g) = TheNeutralElement(G, f)"
+      using module0.mult_zero by simp
+    with mod0(1) have "S\<^sub>1`(\<zero>) = {\<langle>g,TheNeutralElement(G,f)\<rangle>. g\<in>G}"
+      using Int_ZF_1_L8A(1) module0.H_val_type(2) fun_is_set_of_pairs
+      by force
+    then have s1: "S\<^sub>1`(\<zero>) = ConstantFunction(G,TheNeutralElement(G, f))"
+      unfolding ConstantFunction_def by auto
+    from mod0(2) have eq: "\<forall>g\<in>G. (S\<^sub>2`(\<zero>))`(g) = TheNeutralElement(G, f)"
+      using module0.mult_zero by auto
+    with mod0(2) have "(S\<^sub>2`(\<zero>)):G\<rightarrow>G" using Int_ZF_1_L8A(1) module0.H_val_type
+      by auto
+    with eq s1 have "S\<^sub>1`(\<zero>) = S\<^sub>2`(\<zero>)"
+      unfolding ConstantFunction_def using fun_is_set_of_pairs by force
+    { assume "r\<lsq>\<zero>"
+      then have "r\<in>\<int>" using OrderedGroup_ZF_1_L4(1) by simp
+      have "S\<^sub>1`(r) = S\<^sub>2`(r)"
+      proof -
+        { fix n assume "n\<lsq>\<zero>" "S\<^sub>1`(n) = S\<^sub>2`(n)"
+          from \<open>n\<lsq>\<zero>\<close> have "n\<in>\<int>" using OrderedGroup_ZF_1_L4(1) by simp
+          have "(\<rm>\<one>) \<in> \<int>" using group0.inverse_in_group Int_ZF_1_T2(3)
+              ring0.Ring_ZF_1_L2(2) Int_ZF_1_1_L2(3) by simp
+          { fix t assume t: "t\<in>G"
+            with mod0(1) \<open>S\<^sub>1`(n) = S\<^sub>2`(n)\<close> \<open>n\<in>\<int>\<close> \<open>(\<rm>\<one>)\<in>\<int>\<close> have 
+              "S\<^sub>1`(n\<ra>(\<rm> \<one>))`(t) = (f`\<langle>(S\<^sub>2`(n))`(t),(S\<^sub>1`(\<rm>\<one>))`(t)\<rangle>)"
+              using  module0.module_ax2 t by simp
+            moreover from mod0(1) have ex: "\<forall>g\<in>G. S\<^sub>1`(\<rm>\<one>)`(g) = GroupInv(G, f)`(g)" 
+              using module0.inv_module apply_type module0.H_val_type(2) ring0.Ring_ZF_1_L2(2) 
+                Int_ZF_1_1_L2(3) module0.module_ax4 by simp
+            moreover from mod0(1) have "S\<^sub>1`(\<rm> \<one>):G\<rightarrow>G"
+              using module0.H_val_type(2) ring0.Ring_ZF_1_L2(2) Int_ZF_1_1_L2(3)
+                ring0.Ring_ZF_1_L3(1) Int_ZF_1_1_L2(3) by auto
+            moreover 
+            from assms(1) have "GroupInv(G, f): G\<rightarrow>G"
+              using group0_2_T2 unfolding IsLeftModule_def by blast
+            with ex \<open>S\<^sub>1`(\<rm> \<one>):G\<rightarrow>G\<close> have "S\<^sub>1`(\<rm> \<one>) =  GroupInv(G, f)" 
+              using func_eq by simp
+            ultimately have A: "S\<^sub>1`(n\<ra>(\<rm>\<one>))`(t) = f`\<langle>(S\<^sub>2`(n))`(t),GroupInv(G, f) `t\<rangle>" 
+              by simp
+            from assms(2) \<open>(\<rm>\<one>) \<in> \<int>\<close> \<open>n\<in>\<int>\<close> mod0(2) t \<open>S\<^sub>1`(n) = S\<^sub>2`(n)\<close> have
+              "(S\<^sub>2`(n\<ra>\<rm>\<one>))`(t) = f`\<langle>(S\<^sub>2`(n))`(t),(S\<^sub>2`(\<rm>\<one>))`(t)\<rangle>"
+              using module0.module_ax2 by simp
+            moreover from mod0(2) have ex: "\<forall>g\<in>G. (S\<^sub>2`(\<rm>\<one>))`(g) = GroupInv(G, f)`(g)"
+              using module0.inv_module apply_type module0.H_val_type(2) 
+                ring0.Ring_ZF_1_L2(2) Int_ZF_1_1_L2(3) module0.module_ax4 by simp
+            moreover 
+            from mod0(2) have "S\<^sub>2`(\<rm> \<one>): G\<rightarrow>G"
+              using module0.H_val_type(2) ring0.Ring_ZF_1_L2(2) Int_ZF_1_1_L2(3)
+                ring0.Ring_ZF_1_L3(1) Int_ZF_1_1_L2(3) by auto
+            with ex \<open>GroupInv(G, f): G\<rightarrow>G\<close> have "S\<^sub>2`(\<rm>\<one>) = GroupInv(G, f)" 
+              using func_eq by blast
+            ultimately have "S\<^sub>2`(n\<ra>(\<rm>\<one>))`(t) = f`\<langle>(S\<^sub>2`(n))`(t),GroupInv(G, f)`(t)\<rangle>"
+              by simp
+            with A have "(S\<^sub>1`(n\<ra>(\<rm> \<one>)))`(t) = S\<^sub>2`(n\<ra>(\<rm>\<one>))`(t)" by simp
+          } hence "\<forall>t\<in>G. S\<^sub>1`(n \<ra> \<rm> \<one>)`(t) = S\<^sub>2`(n\<ra>(\<rm>\<one>))`(t)" by simp
+          moreover from mod0 \<open>(\<rm>\<one>) \<in> \<int>\<close> \<open>n\<in>\<int>\<close> have 
+            "S\<^sub>1`(n\<ra>(\<rm>\<one>)):G\<rightarrow>G" and "S\<^sub>2`(n\<ra>(\<rm>\<one>)):G\<rightarrow>G"
+            using group0.group_op_closed Int_ZF_1_T2(3) module0.H_val_type(2) 
+            by simp_all
+          ultimately have "S\<^sub>1`(n\<ra>(\<rm>\<one>)) = S\<^sub>2`(n\<ra>(\<rm>\<one>))"
+            using func_eq by simp
+        } hence "\<forall>n. (n\<lsq>\<zero>) \<and> (S\<^sub>1`(n) = S\<^sub>2`(n))\<longrightarrow>S\<^sub>1`(n\<rs>\<one>) = S\<^sub>2`(n\<rs>\<one>)"
+          by auto
+        with \<open>r\<lsq>\<zero>\<close> \<open>S\<^sub>1`(\<zero>) = S\<^sub>2`(\<zero>)\<close> show "S\<^sub>1`(r) = S\<^sub>2`(r)"
+          using Back_induct_on_int by simp
       qed
     }
     moreover
-    {
-      assume k:"\<langle>$#0,r\<rangle>\<in>IntegerOrder"
-      then have kint:"r\<in>int" unfolding IntegerOrder_def by auto
-      have "S1 ` r = S2 ` r"
-      proof (rule int0.Induction_on_int[of "$#0" r "\<lambda>q. S1`q = S2`q"])
-        from k show "\<langle>$#0,r\<rangle>\<in>IntegerOrder" .
-        from ee show "S1 ` ($# 0) = S2 ` ($# 0)" .
-        {
-          fix m assume m:"\<langle>$# 0, m\<rangle> \<in> IntegerOrder" "S1 ` m = S2 ` m"
-          from m(1) have mint:"m\<in>int" unfolding IntegerOrder_def by auto
-          have n:"TheNeutralElement(int, IntegerMultiplication)\<in>int"
-            using ring0.Ring_ZF_1_L2(2)[OF int0.Int_ZF_1_1_L2(3)].
-          {
-            fix t assume t:"t\<in>G"
-            have "S1 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-            f`\<langle>S1`m`t,S1`(TheNeutralElement(int, IntegerMultiplication))`t\<rangle>"
-              using assms(1) mint n t module0.module_ax2[OF mod0(1)] by auto
-            then have "S1 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-            f`\<langle>S2`m`t,t\<rangle>"
-              using module0.module_ax4[OF mod0(1)] m(2) t by auto
-            moreover
-            have "S2 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-            f`\<langle>S2`m`t,S2`(TheNeutralElement(int, IntegerMultiplication))`t\<rangle>"
-            using assms(2) mint n t module0.module_ax2[OF mod0(2)] by auto
-          then have "S2 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-          f`\<langle>S2`m`t,t\<rangle>"
-            using module0.module_ax4[OF mod0(2)] m(2) t by auto
-          ultimately
-          have "S1 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-            S2 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t" by auto
-        }
-        then have "\<forall>t\<in>G. S1 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t = 
-            S2 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)`t" by auto
-        moreover from n mint have "IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>:int"
-          using group0.group_op_closed[OF Int_ZF_1_T2(3)] by auto
-        then have "S1`(IntegerAddition ` \<langle>m,
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>):G\<rightarrow>G" "S2`(IntegerAddition ` \<langle>m,
-               TheNeutralElement(int, IntegerMultiplication)\<rangle>):G\<rightarrow>G" using module0.H_val_type(2)[OF mod0(1)]
-          module0.H_val_type(2)[OF mod0(2)] by auto
-        ultimately have "S1`(IntegerAddition ` \<langle>m,TheNeutralElement(int, IntegerMultiplication)\<rangle>) = S2`(IntegerAddition ` \<langle>m,TheNeutralElement(int, IntegerMultiplication)\<rangle>)"
-          using func_eq[of _ G G] by auto
-      }
-      then show "\<forall>m. \<langle>$# 0, m\<rangle> \<in> IntegerOrder \<and> S1 ` m = S2 ` m \<longrightarrow>
-          S1 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>) =
-          S2 ` (IntegerAddition ` \<langle>m, TheNeutralElement(int, IntegerMultiplication)\<rangle>)" by auto
+    { assume "\<zero>\<lsq>r"
+      then have "r\<in>\<int>" using OrderedGroup_ZF_1_L4(2) by simp
+      have "S\<^sub>1`(r) = S\<^sub>2`(r)"
+      proof -
+        { fix m assume "\<zero>\<lsq>m" "S\<^sub>1`(m) = S\<^sub>2`(m)"
+          from \<open>\<zero>\<lsq>m\<close> have "m\<in>\<int>" using OrderedGroup_ZF_1_L4(2) by simp
+          have "\<one>\<in>\<int>" using Int_ZF_1_L8A(2) by simp
+          { fix t assume  "t\<in>G"
+            with assms(1) \<open>m\<in>\<int>\<close> \<open>\<one>\<in>\<int>\<close> mod0(1) \<open>S\<^sub>1`(m) = S\<^sub>2`(m)\<close> have 
+              "S\<^sub>1`(m\<ra>\<one>)`t = f`\<langle>(S\<^sub>2`(m))`(t),t\<rangle>"
+              using module0.module_ax2 module0.module_ax4 by simp
+            moreover from mod0(2) \<open>m\<in>\<int>\<close> \<open>\<one>\<in>\<int>\<close> \<open>t\<in>G\<close> have 
+              "(S\<^sub>2`(m\<ra>\<one>))`(t) = f`\<langle>(S\<^sub>2`(m))`(t),t\<rangle>"
+              using module0.module_ax2 module0.module_ax4 by simp
+            ultimately have "(S\<^sub>1`(m\<ra>\<one>))`(t) = (S\<^sub>2`(m\<ra>\<one>))`(t)" 
+              by simp
+          } hence "\<forall>t\<in>G. (S\<^sub>1`(m\<ra>\<one>))`(t) = (S\<^sub>2`(m\<ra>\<one>))`(t)" by simp
+          moreover from mod0 \<open>\<one>\<in>\<int>\<close> \<open>m\<in>\<int>\<close> have 
+            "S\<^sub>1`(m\<ra>\<one>):G\<rightarrow>G" and "S\<^sub>2`(m\<ra>\<one>):G\<rightarrow>G"
+            using group0.group_op_closed Int_ZF_1_T2(3) module0.H_val_type(2)
+              module0.H_val_type(2) by simp_all
+          ultimately have "S\<^sub>1`(m\<ra>\<one>) = S\<^sub>2`(m\<ra>\<one>)"
+            using func_eq by simp
+        } hence "\<forall>m. (\<zero>\<lsq>m) \<and> S\<^sub>1`(m) = S\<^sub>2`(m) \<longrightarrow> S\<^sub>1`(m\<ra>\<one>) = S\<^sub>2`(m\<ra>\<one>)"
+            by simp
+          with \<open>\<zero>\<lsq>r\<close> \<open>S\<^sub>1`(\<zero>) = S\<^sub>2`(\<zero>)\<close> show "S\<^sub>1`(r) = S\<^sub>2`(r)" using Induction_on_int 
+            by simp
       qed
-    } moreover note int0.Int_ZF_2_T1(2)
-    ultimately have "S1`r = S2`r" unfolding IsTotal_def using rg(1)
-      int0.Int_ZF_1_L8(1) ring0.Ring_ZF_1_L2(1)[OF int0.Int_ZF_1_1_L2(3)] by auto
-  }
-  then have "\<forall>r\<in>int. S1`r = S2`r" by auto
-  from func_eq[OF _ _ this] show "S1 = S2" using 
-      module0.mAction[OF mod0(1)] module0.mAction[OF mod0(2)]
-      unfolding IsAction_def ringHomomor_def by auto
+    }
+    moreover have "IntegerOrder {is total on} \<int>" using Int_ZF_2_T1(2) by simp
+    ultimately have "S\<^sub>1`(r) = S\<^sub>2`(r)" unfolding IsTotal_def 
+      using rg int0.Int_ZF_1_L8(1) ring0.Ring_ZF_1_L2(1) Int_ZF_1_1_L2(3) 
+      by auto
+  } hence "\<forall>r\<in>\<int>. S\<^sub>1`(r) = S\<^sub>2`(r)" by auto
+  moreover from assms have "S\<^sub>1:\<int>\<rightarrow>End(G,f)" "S\<^sub>2:\<int>\<rightarrow>End(G,f)"
+    using module_action_type(3) by simp_all
+  ultimately show "S\<^sub>1 = S\<^sub>2" using func_eq by simp
 qed
 
 text \<open>The action we will show works is $n\mapsto (g\mapsto g^n)$.
-It is a well-defined function\<close>
+  It is a well-defined function\<close>
 
-lemma(in abelian_group) group_action_int_fun:
+lemma (in abelian_group) group_action_int_fun:
   defines "S \<equiv> {\<langle>$# n,{\<langle>x,Fold(P,\<one>,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}\<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,\<one>, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}"
   shows "S:int \<rightarrow> End(G,P)" unfolding Pi_def apply simp unfolding function_def
 proof-
@@ -1240,7 +1178,7 @@ it is the one found in the previous result\<close>
 corollary(in abelian_group) group_action_int_rev:
   assumes "IsLeftModule(int,IntegerAddition,IntegerMultiplication,G,P,S)"
   shows "S={\<langle>$# n,{\<langle>x,Fold(P,\<one>,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat} \<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,\<one>, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}"
-  using group_action_int assms action_unique[of G P S "{\<langle>$# n,{\<langle>x,Fold(P,\<one>,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat} \<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,\<one>, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}"]
+  using group_action_int assms int0.action_unique[of G P S "{\<langle>$# n,{\<langle>x,Fold(P,\<one>,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat} \<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,\<one>, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}"]
   by auto
 
 text\<open>New assumption to consider integers and an abelian group\<close>

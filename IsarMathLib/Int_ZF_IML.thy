@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005, 2006  Slawomir Kolodynski
+    Copyright (C) 2005 - 2024  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -164,6 +164,9 @@ locale int0 =
   fixes lesseq (infix "\<lsq>" 60)
   defines lesseq_def [simp]: "m \<lsq> n \<equiv> \<langle>m,n\<rangle> \<in> IntegerOrder"
 
+  fixes sless (infix "\<ls>" 68)
+  defines sless_def [simp]: "a \<ls> b \<equiv> a\<lsq>b \<and> a\<noteq>b"
+
   fixes interval (infix ".." 70)
   defines interval_def [simp]: "m..n \<equiv> Interval(IntegerOrder,m,n)"
 
@@ -172,6 +175,9 @@ locale int0 =
 
   fixes minf
   defines minf_def [simp]: "minf(f,A) \<equiv> Minimum(IntegerOrder,f``(A))"
+
+  fixes oddext ("_ \<degree>")
+  defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(\<int>,IntegerAddition,IntegerOrder,f)"
 
 text\<open>IntegerAddition adds integers and IntegerMultiplication multiplies
   integers. This states that the ZF functions \<open>IntegerAddition\<close> and
@@ -565,6 +571,13 @@ proof -
     using IsAnOrdGroup_def IsPartOrder_def IsLinOrder_def by simp
 qed
 
+text\<open>Another way of stating that we can apply theorems proven in the \<open>group3\<close> context
+  (defined \<open>OrderedGroup_ZF\<close> theory) to the ordered group of integers. \<close>
+
+sublocale int0 < group3 int IntegerAddition IntegerOrder 
+  "\<zero>" ia iminus lesseq sless nonnegative positive setneg abs oddext
+  using Int_ZF_2_T1(3) by auto
+
 text\<open>If a pair $(i,m)$ belongs to the order relation on integers and
   $i\neq m$, then $i<m$ in the sense of defined in the standard Isabelle's 
   Int.thy.\<close>
@@ -622,7 +635,6 @@ lemma (in int0) Int_ZF_2_L10: assumes "k \<lsq> i"
   "$-i \<lsq> $-k" 
   using assms Int_ZF_2_L1A Int_ZF_1_L9A Int_ZF_2_T1 
     group3.OrderedGroup_ZF_1_L5 by auto
-
 
 text\<open>Taking minus on both sides of inequality reverses it, 
   version with a negative on one side.\<close>
@@ -1244,7 +1256,7 @@ proof -
     by (rule Int_ZF_3_L10)
   with A1 A2 show "P(k)" by (rule Int_ZF_3_L9A)
 qed
-    
+
 subsection\<open>Bounded vs. finite subsets of integers\<close>
 
 text\<open>The goal of this section is to establish that a subset of integers 
@@ -1413,6 +1425,5 @@ proof -
     using Int_ZF_2_T1 group3.OrderedGroup_ZF_2_L2A
     by auto
 qed
-
 
 end
