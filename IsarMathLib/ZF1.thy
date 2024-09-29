@@ -218,13 +218,14 @@ lemma ZF1_1_L8: shows "\<Union> {x} = x" by auto
 
 text\<open>Some properties of singletons.\<close>
 
-lemma ZF1_1_L9: assumes A1: "\<exists>! x. x\<in>A \<and> \<phi>(x)"
+lemma ZF1_1_L9: assumes "\<exists>! x. x\<in>A \<and> \<phi>(x)"
   shows 
   "\<exists>a. {x\<in>A. \<phi>(x)} = {a}"
   "\<Union> {x\<in>A. \<phi>(x)} \<in> A"
   "\<phi>(\<Union> {x\<in>A. \<phi>(x)})"
+  "\<exists>x\<in>A. \<phi>(x)" 
 proof -
-  from A1 show "\<exists>a. {x\<in>A. \<phi>(x)} = {a}" by auto
+  from assms(1) show "\<exists>a. {x\<in>A. \<phi>(x)} = {a}" by auto
   then obtain a where I: "{x\<in>A. \<phi>(x)} = {a}" by auto
   then have "\<Union> {x\<in>A. \<phi>(x)} = a" by auto
   moreover
@@ -232,6 +233,7 @@ proof -
   hence "a\<in>A" and "\<phi>(a)" by auto
   ultimately show "\<Union> {x\<in>A. \<phi>(x)} \<in> A" and "\<phi>(\<Union> {x\<in>A. \<phi>(x)})"
     by auto
+  from assms show "\<exists>x\<in>A. \<phi>(x)" by auto
 qed
 
 text\<open>A simple version of \<open> ZF1_1_L9\<close>.\<close>

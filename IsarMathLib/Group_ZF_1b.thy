@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *)
 
-section \<open>Groups - and alternative definition\<close>
+section \<open>Groups - an alternative definition\<close>
 
 theory Group_ZF_1b imports Group_ZF
 
@@ -165,6 +165,21 @@ proof -
       "\<forall>a\<in>G.\<forall>b\<in>G. \<exists>y\<in>G. y\<cdot>a = b"
     by auto
 qed
-    
+
+text\<open>An associative quasigroup is a group. This is a bit weaker than \<open>altgroup_is_group\<close> 
+  as the definition of quasigroup requires uniqueness of solutions of $a\cdot x = b$ and 
+  $y\cdot a = b$ equations. \<close>
+
+lemma assoc_quasigroup_group: 
+  assumes "IsAquasigroup(G,P)" and "P {is associative on} G" "G\<noteq>\<emptyset>" 
+  shows "IsAgroup(G,P)"
+proof -
+  from assms(1) have 
+    "\<forall>a\<in>G.\<forall>b\<in>G. \<exists>y\<in>G. P`\<langle>a,y\<rangle> = b" and "\<forall>a\<in>G.\<forall>b\<in>G. \<exists>x\<in>G. P`\<langle>x,a\<rangle> = b"
+    unfolding IsAquasigroup_def HasLatinSquareProp_def HasLeftDiv_def HasRightDiv_def
+    using ZF1_1_L9(4) by simp_all
+  with assms(2,3) show ?thesis using group2.altgroup_is_group by auto
+qed
+ 
 end
   
