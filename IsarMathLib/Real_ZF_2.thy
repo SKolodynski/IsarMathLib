@@ -42,7 +42,8 @@ subsection\<open>Basic notation for real numbers\<close>
 text\<open> In this section we define notation that we will use whenever real numbers play a role, i.e. 
   most of mathematics.\<close>
 
-text\<open> The next locale sets up notation for contexts where real numbers are used. \<close>
+text\<open> The next locale sets up notation for contexts where real numbers are used. 
+  Note we define the (real) natural numbers $\mathbb{N}$ as starting from one. \<close>
 
 locale reals =
   fixes Reals("\<real>") and Add and Mul and ROrd
@@ -105,6 +106,9 @@ locale reals =
 
   fixes disk
   defines disk_def [simp]: "disk(c,r) \<equiv> Disk(\<real>,dist,ROrd,c,r)"
+
+  fixes rxn ("\<nat>")
+  defines rxn_def [simp]: "\<nat> \<equiv> \<Inter> {N \<in> Pow(\<real>). \<one> \<in> N \<and> (\<forall>n. n\<in>N \<longrightarrow> n\<ra>\<one> \<in> N)}"
 
 text\<open> The assumtions of the \<open>field1\<close> locale (that sets the context for ordered fields) 
   hold in the \<open>reals\<close> locale \<close>
