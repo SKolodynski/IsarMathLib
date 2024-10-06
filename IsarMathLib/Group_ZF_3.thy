@@ -95,7 +95,7 @@ lemma (in group0) Group_ZF_3_1_L3:
   shows "GroupInv(G,P) O s \<in> FinRangeFunctions(X,G)"
   using groupAssum assms group0_2_T2 Finite1_L20 by simp
 
-text\<open>The set of finite range functions is s subgroup of the lifted group.\<close>
+text\<open>The set of finite range functions is a subgroup of the lifted group.\<close>
 
 theorem Group_ZF_3_1_T1: 
   assumes A1: "IsAgroup(G,P)" 

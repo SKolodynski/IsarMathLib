@@ -403,7 +403,7 @@ qed
 
 subsection\<open>Uniform structures on metric spaces\<close>
 
-text\<open>Each pseudometric space with pseudometric $d:X\times X\rightarrow L$ 
+text\<open>Each pseudometric space with pseudometric $d:X\times X\rightarrow L^+$ 
   supports a natural uniform structure, defined as supersets of the collection
   of inverse images $U_c = d^{-1}([0,c])$, where $c>0$.  \<close>
 
@@ -414,7 +414,7 @@ text\<open>In the following definition $X$ is the underlying space, $L$ is the l
   of the closed intervals $[0,c]$ as $c$ varies of the set of positive elements of $L$.\<close>
 
 definition
-  "UniformGauge(X,L,A,r,d) \<equiv> {d-``({b\<in>Nonnegative(L,A,r). \<langle>b,c\<rangle> \<in> r}). c\<in>PositiveSet(L,A,r)}"
+  "UniformGauge(X,L,A,r,d) \<equiv> {d-``({c\<in>Nonnegative(L,A,r). \<langle>c,b\<rangle> \<in> r}). b\<in>PositiveSet(L,A,r)}"
 
 text\<open>In the \<open>pmetric_space\<close> context we will write \<open>UniformGauge(X,L,A,r,d)\<close> as \<open>\<BB>\<close>. \<close>
 
@@ -443,7 +443,7 @@ lemma (in pmetric_space) gauge_members:
   using assms pmetric_properties(1) apply_funtype func1_1_L15
   by simp
 
-text\<open>Suppose $b\in L^+$ (i.e. b is an element of the loop that is greater than the neutral element)
+text\<open>Suppose $b\in L_+$ (i.e. b is an element of the loop that is greater than the neutral element)
   and $x\in X$. Then the image of the singleton set $\{ x\}$ by the relation 
   $B=\{ d^{-1}(\{c\in L^+: c\leq b\}$ is the set $\{ y\in X:d\langle x,y\rangle  \leq b\}$,
   i.e. the closed disk with center $x$ and radius $b$. Hence the the image $B\{ x\}$ contains

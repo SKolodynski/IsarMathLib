@@ -52,8 +52,8 @@ definition
   "HasLeftDiv(G,A) \<equiv> \<forall>a\<in>G.\<forall>b\<in>G.\<exists>!x. (x\<in>G \<and> A`\<langle>a,x\<rangle> = b)" 
 
 
-text\<open> An operation $A$ has the right inverse if for all elements $a,b \in G$ the equation $x\cdot a=b$ 
-  has a unique solution. \<close>
+text\<open> An operation $A$ has the right division if for all elements $a,b \in G$ the equation 
+  $x\cdot a=b$ has a unique solution. \<close>
 
 definition
   "HasRightDiv(G,A) \<equiv> \<forall>a\<in>G.\<forall>b\<in>G.\<exists>!x. (x\<in>G \<and> A`\<langle>x,a\<rangle> = b)" 

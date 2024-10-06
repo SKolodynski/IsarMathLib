@@ -50,7 +50,12 @@ text\<open> The canonical example of a vector space is $\mathbb{R}^n$ - the set 
   properties $x(v_1 + v_2) = s v_1 + s v_2$ and $(s_1+s_2)v =s_1 v + s_2 v$ are satisfied for any
   scalars $s,s_1,s_2$ and vectors $v,v_1,v_2$. \<close>
 
-text\<open>A vector space is a field action on an abelian group. \<close>
+text\<open>A vector space is a field action on an abelian group. The notion of an action is defined  
+  in \<open>Module_ZF\<close> theory as a ring homomorphism valuesd in the ring of endomorphisms of some 
+  (abelian) group. In the definition $S$ is a the ring carrier, $A$ is the set representing the 
+  addition operation of the ring, $M$ is the ring multiplication, $V$ is the carrier of the abelian
+  group, $A_V$ represents the group operation, i.e. the vector addition and $H$ is the
+  ring homomorphism defining the action. \<close>
 
 definition "IsVectorSpace(S,A,M,V,A\<^sub>V,H) \<equiv>
   IsAfield(S,A,M) \<and> IsAgroup(V,A\<^sub>V) \<and> (A\<^sub>V {is commutative on} V) \<and> IsAction(S,A,M,V,A\<^sub>V,H)"
