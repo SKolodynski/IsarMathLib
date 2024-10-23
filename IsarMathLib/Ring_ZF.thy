@@ -98,6 +98,12 @@ locale ring0 =
   fixes ringsq ("_\<^sup>2" [96] 97)
   defines ringsq_def [simp]: "x\<^sup>2 \<equiv> x\<cdot>x"
 
+  fixes rlistsum ("\<Sum> _" 70)
+  defines rlistsum_def [simp]: "\<Sum>s \<equiv> Fold(A,\<zero>,s)"
+
+  fixes rnat_mult (infix "\<nm>" 95)
+  defines nat_mult_def [simp]: "n\<nm>x \<equiv> \<Sum>{\<langle>k,x\<rangle>. k\<in>n}"
+
 text\<open>In the \<open>ring0\<close> context we can use theorems proven in some 
   other contexts.\<close>
 
@@ -110,7 +116,7 @@ lemma (in ring0) Ring_ZF_1_L1: shows
 text\<open>The theorems proven in in \<open>group0\<close> context (locale) are valid
   in the \<open>ring0\<close> context when applied to the additive group of the ring. \<close>
 
-sublocale ring0 < add_group: group0 R A ringzero ringa ringminus
+sublocale ring0 < add_group: group0 R A ringzero ringa ringminus rlistsum rnat_mult
   using Ring_ZF_1_L1(2) unfolding ringa_def ringminus_def ringzero_def by auto
 
 text\<open>The theorem proven in the \<open>monoid0\<close> context are valid in the \<open>ring0\<close> context 

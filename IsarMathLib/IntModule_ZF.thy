@@ -1188,9 +1188,12 @@ locale abelian_group_int_action = abelian_group + int0
 text\<open>Under this assumptions, we have an action\<close>
 
 sublocale abelian_group_int_action < int_action:module0 ints IntegerAddition IntegerMultiplication 
-  ia iminus isub imult izero ione itwo "\<lambda>q. imult(q,q)" G P "{\<langle>$# n,{\<langle>x,Fold(P,neut,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat} \<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,neut, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}"
+  ia iminus isub imult izero ione itwo "\<lambda>q. imult(q,q)" 
+  "\<lambda> s. Fold(IntegerAddition,izero,s)"
+  "\<lambda> n x.  Fold(IntegerAddition,izero,{\<langle>k,x\<rangle>. k\<in>n})"
+  G P "{\<langle>$# n,{\<langle>x,Fold(P,neut,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat} \<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,neut, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}"
   neut groper "\<lambda>s g. ({\<langle>$# n,{\<langle>x,Fold(P,neut,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat} \<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,neut, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat})`s`g" inv 
-  "\<lambda>g h. groper(g,inv(h))"
+  "\<lambda>g h. groper(g,inv(h))" 
   unfolding module0_def module0_axioms_def apply auto using Int_ZF_1_1_L2(3) apply simp
   using groupAssum apply simp using isAbelian apply simp using group_action_int
   unfolding IsLeftModule_def apply simp done
@@ -1203,11 +1206,11 @@ cannot be interpreted. First the unit integer.
 \<close>*)
 
 abbreviation (in abelian_group_int_action) zone ("\<one>\<^sub>\<int>") where
-"\<one>\<^sub>\<int> \<equiv> ione"
+  "\<one>\<^sub>\<int> \<equiv> ione"
 
 text\<open>Then, the unit in the abelian group\<close>
 
 abbreviation (in abelian_group_int_action) gone ("\<one>\<^sub>G") where
-"\<one>\<^sub>G \<equiv> neut"
+  "\<one>\<^sub>G \<equiv> neut"
 
 end

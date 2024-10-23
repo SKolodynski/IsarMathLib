@@ -1113,6 +1113,12 @@ text\<open>Another way of looking at the constant function - it's a set of pairs
 lemma const_fun_def_alt: shows "ConstantFunction(X,c) = {\<langle>x,c\<rangle>. x\<in>X}"
   unfolding ConstantFunction_def by auto
 
+text\<open>Yet another definition of a constant function: it's a cartesian product
+  of its domain and the singleton of its value.\<close>
+
+lemma const_fun_def_alt1: shows "ConstantFunction(X,c) = X\<times>{c}"
+  using const_fun_def_alt by auto
+
 text\<open>If $c\in A$ then the inverse image of $A$ by the constant function $x\mapsto c$ 
   is the whole domain. \<close>
 

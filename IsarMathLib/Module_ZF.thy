@@ -146,6 +146,7 @@ text\<open>Another way to state that theorems proven in the \<open>abelian_group
   can be used in the \<open>module0\<close> context:  \<close>
 
 sublocale module0 < mod_ab_gr: abelian_group "\<M>" "A\<^sub>M" "\<Theta>" vAdd negV
+  "\<lambda>s. Fold(A\<^sub>M, \<Theta>, s)" "\<lambda> n x. Fold(A\<^sub>M, \<Theta>, {\<langle>k, x\<rangle> . k \<in> n})"
   using abelian_group_valid_module0 by auto
   
 text\<open>Theorems proven in the \<open>ring_homo\<close> context are valid in the \<open>module0\<close> context, as

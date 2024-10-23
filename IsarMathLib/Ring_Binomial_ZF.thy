@@ -45,14 +45,9 @@ text\<open>The next locale (context) extends the \<open>ring0\<close> locale wit
   multiplicities and sums and products of finite lists of ring elements.\<close>
 
 locale ring3 = ring0 +
-  fixes listsum ("\<Sum> _" 70)
-  defines listsum_def [simp]: "\<Sum>s \<equiv> Fold(A,\<zero>,s)"
 
   fixes listprod ("\<Prod> _" 70)
   defines listprod_def [simp]: "\<Prod>s \<equiv> Fold(M,\<one>,s)"
-
-  fixes nat_mult (infix "\<nm>" 95)
-  defines nat_mult_def [simp]: "n\<nm>x \<equiv> \<Sum>{\<langle>k,x\<rangle>. k\<in>n}"
 
   fixes pow
   defines pow_def [simp]: "pow(n,x) \<equiv> \<Prod>{\<langle>k,x\<rangle>. k\<in>n}"
@@ -61,16 +56,24 @@ text\<open>A ring with addition forms a monoid, hence all propositions proven in
   (defined in the \<open>Monoid_ZF_1\<close> theory) can be used in the \<open>ring3\<close> locale, applied to the 
   additive operation. \<close>
 
-sublocale ring3 < add_monoid: monoid1 R A ringa ringzero listsum nat_mult
+sublocale ring0 < add_monoid: monoid1 R A ringa ringzero rlistsum rnat_mult 
   using ringAssum 
   unfolding IsAring_def IsAgroup_def monoid1_def monoid0_def 
   by auto
 
 text\<open>A ring with multiplication forms a monoid, hence all propositions proven in the \<open>monoid1\<close> locale
   (defined in the \<open>Monoid_ZF_1\<close> theory) can be used in the \<open>ring3\<close> locale, applied to the
-  multiplicative operation. \<close>
+  multiplicative operation. 
+  (For some reason the sublocale below is not seen by Isabelle when we try to use it). \<close>
 
 sublocale ring3 < mul_monoid: monoid1 R M ringm ringone listprod pow
+  using ringAssum 
+  unfolding IsAring_def IsAgroup_def monoid1_def monoid0_def 
+  by auto
+
+text\<open>The assumptions of the \<open>monoid1\<close> context hold in the \<open>ring0\<close> context\<close>
+
+lemma (in ring0) monoid0_valid_in_ring0: shows "monoid1(R,A)"
   using ringAssum 
   unfolding IsAring_def IsAgroup_def monoid1_def monoid0_def 
   by auto
@@ -80,13 +83,13 @@ text\<open>$0\cdot x = 0$ and $x^0=1$. It is a bit surprising that we do not nee
   theory where there is no assumption that $x$ is an element of the monoid. \<close>
 
 lemma (in ring3) mult_pow_zero: shows "0\<nm>x = \<zero>" and "pow(0,x) = \<one>"
-  using add_monoid.nat_mult_zero mul_monoid.nat_mult_zero by simp_all
+  using monoid0_valid_in_ring0 monoid1.nat_mult_zero mul_monoid.nat_mult_zero by simp_all
 
 text\<open>Natural multiple and power of a ring element is a ring element.\<close>
 
 lemma (in ring3) mult_pow_type: assumes "n\<in>nat" "x\<in>R"
   shows "n\<nm>x \<in> R" and "pow(n,x) \<in> R"
-  using assms add_monoid.nat_mult_type mul_monoid.nat_mult_type 
+  using assms monoid0_valid_in_ring0 monoid1.nat_mult_type mul_monoid.nat_mult_type 
   by simp_all
 
 text\<open>The usual properties of multiples and powers: $(n+1)x = nx+x$ and 
@@ -95,7 +98,7 @@ text\<open>The usual properties of multiples and powers: $(n+1)x = nx+x$ and
 
 lemma (in ring3) nat_mult_pow_add_one: assumes  "n\<in>nat" "x\<in>R"
   shows "(n #+ 1)\<nm>x = (n\<nm>x) \<ra> x" and "pow(n #+ 1,x) = pow(n,x)\<cdot>x"
-  using assms add_monoid.nat_mult_add_one mul_monoid.nat_mult_add_one 
+  using assms monoid0_valid_in_ring0 monoid1.nat_mult_add_one mul_monoid.nat_mult_add_one 
   by simp_all
 
 text\<open>Associativity for the multiplication by natural number and the ring multiplication:\<close>
@@ -118,7 +121,7 @@ text\<open>Addition of natural numbers is distributive with respect to natural m
 
 lemma (in ring3) nat_add_mult_distrib: assumes "n\<in>nat" "m\<in>nat" "x\<in>R"
   shows "(n #+ m)\<nm>x = n\<nm>x \<ra> m\<nm>x"
-  using assms add_monoid.nat_mult_add by simp
+  using assms monoid0_valid_in_ring0 monoid1.nat_mult_add by simp
 
 text\<open>Associativity for the multiplication by natural number and the ring multiplication
   extended to three elements of the ring:\<close>
@@ -133,7 +136,7 @@ text\<open>When we multiply an expression whose value belongs to a ring by a rin
 lemma (in ring3) mult_elem_ring_type: 
   assumes "n\<in>nat" "x\<in>R" and "\<forall>k\<in>n. q(k) \<in> R" 
   shows "\<forall>k\<in>n. q(k)\<cdot>x \<in> R" and "(\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>n}) \<in> R"
-  using assms Ring_ZF_1_L4(3) add_monoid.sum_in_mono by simp_all
+  using assms Ring_ZF_1_L4(3) monoid0_valid_in_ring0 monoid1.sum_in_mono by simp_all
 
 text\<open>The sum of expressions whose values belong to a ring is an expression
   whose value belongs to a ring. \<close>
@@ -141,7 +144,7 @@ text\<open>The sum of expressions whose values belong to a ring is an expression
 lemma (in ring3) sum_expr_ring_type: 
   assumes "n\<in>nat" "\<forall>k\<in>n. q(k) \<in> R" "\<forall>k\<in>n. p(k) \<in> R"
   shows "\<forall>k\<in>n. q(k)\<ra>p(k) \<in> R" and "(\<Sum>{\<langle>k,q(k)\<ra>p(k)\<rangle>. k\<in>n}) \<in> R"
-  using assms Ring_ZF_1_L4(1) add_monoid.sum_in_mono by simp_all
+  using assms Ring_ZF_1_L4(1) monoid0_valid_in_ring0 monoid1.sum_in_mono by simp_all
 
 text\<open>Combining \<open>mult_elem_ring_type\<close> and \<open>sum_expr_ring_type\<close> we obtain that
   a (kind of) linear combination of expressions whose values belong to a ring
@@ -157,7 +160,7 @@ proof -
   with assms(1) show "\<forall>k\<in>n. q(k)\<cdot>x\<ra>p(k)\<cdot>y \<in> R" 
     using sum_expr_ring_type(1) by simp
   with assms(1) show "(\<Sum>{\<langle>k,q(k)\<cdot>x\<ra>p(k)\<cdot>y\<rangle>. k\<in>n}) \<in> R" 
-    using add_monoid.sum_in_mono by simp
+    using monoid0_valid_in_ring0 monoid1.sum_in_mono by simp
 qed
 
 text\<open>A \<open>ring3\<close> version of \<open>seq_sum_pull_one_elem\<close> from \<open>Monoid_ZF_1\<close>: \<close>
@@ -167,7 +170,7 @@ lemma (in ring3) rng_seq_sum_pull_one_elem:
   shows
     "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = q(0)\<ra>(\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>j})"
     "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j})\<ra> q(j)"
-  using assms add_monoid.seq_sum_pull_one_elem by simp_all
+  using assms monoid0_valid_in_ring0 monoid1.seq_sum_pull_one_elem by simp_all
 
 text\<open>Distributive laws for finite sums in a ring: 
   $(\sum_{k=0}^{n-1}q(k))\cdot x = \sum_{k=0}^{n-1}q(k)\cdot x$ and 
@@ -181,7 +184,7 @@ theorem (in ring3) fin_sum_distrib:
 proof -
   from assms(1,2) have "n\<in>nat" and 
     "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>0})\<cdot>x = \<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>0}"
-    using add_monoid.sum_empty Ring_ZF_1_L6(1) by simp_all
+    using monoid0_valid_in_ring0 monoid1.sum_empty Ring_ZF_1_L6(1) by simp_all
   moreover have 
     "\<forall>j\<in>n. (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j})\<cdot>x = (\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j})
     \<longrightarrow> (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = \<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j #+ 1}"
@@ -194,13 +197,13 @@ proof -
         using mem_add_one_subset by blast
       ultimately have     
         "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> q(j)"
-        using add_monoid.seq_sum_pull_one_elem(2) by simp
+        using monoid0_valid_in_ring0 monoid1.seq_sum_pull_one_elem(2) by simp
       hence 
         "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = ((\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> q(j))\<cdot>x"
         by simp
       moreover from assms(1) \<open>j\<in>nat\<close> II have
         "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<in> R" "q(j) \<in> R" and "x\<in>R" 
-        using add_monoid.sum_in_mono by simp_all
+        using monoid0_valid_in_ring0 monoid1.sum_in_mono by simp_all
       ultimately have 
         "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j})\<cdot>x \<ra> q(j)\<cdot>x"
         using ring_oper_distr(2) by simp
@@ -212,7 +215,7 @@ proof -
         using Ring_ZF_1_L4(3) by simp
       with \<open>j\<in>nat\<close> have 
         "(\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j #+ 1}) = (\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j}) \<ra> q(j)\<cdot>x"
-        using add_monoid.seq_sum_pull_one_elem(2) by simp
+        using monoid0_valid_in_ring0 monoid1.seq_sum_pull_one_elem(2) by simp
       ultimately have 
         "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1})\<cdot>x = (\<Sum>{\<langle>k,q(k)\<cdot>x\<rangle>. k\<in>j #+ 1})"
         by simp
@@ -222,7 +225,7 @@ proof -
     by (rule fin_nat_ind1)
   from assms(1,2) have "n\<in>nat" and 
     "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>0}) = \<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>0}"
-    using add_monoid.sum_empty Ring_ZF_1_L6(2) by simp_all
+    using monoid0_valid_in_ring0 monoid1.sum_empty Ring_ZF_1_L6(2) by simp_all
   moreover have 
     "\<forall>j\<in>n. x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) = (\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j})
     \<longrightarrow> x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = \<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j #+ 1}" 
@@ -235,13 +238,13 @@ proof -
         using mem_add_one_subset by blast
       ultimately have     
         "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> q(j)"
-        using add_monoid.seq_sum_pull_one_elem(2) by simp
+        using monoid0_valid_in_ring0 monoid1.seq_sum_pull_one_elem(2) by simp
       hence 
         "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = x\<cdot>((\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> q(j))"
         by simp
       moreover from assms(1) \<open>j\<in>nat\<close> II have
         "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<in> R" "q(j) \<in> R" and "x\<in>R" 
-        using add_monoid.sum_in_mono by simp_all
+        using monoid0_valid_in_ring0 monoid1.sum_in_mono by simp_all
        ultimately have 
         "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j}) \<ra> x\<cdot>q(j)"
         using ring_oper_distr(1) by simp
@@ -253,7 +256,7 @@ proof -
         using Ring_ZF_1_L4(3) by simp
       with \<open>j\<in>nat\<close> have 
         "(\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j #+ 1}) = (\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j}) \<ra> x\<cdot>q(j)"
-        using add_monoid.seq_sum_pull_one_elem(2) by simp
+        using monoid0_valid_in_ring0 monoid1.seq_sum_pull_one_elem(2) by simp
       ultimately have 
         "x\<cdot>(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>j #+ 1}) = (\<Sum>{\<langle>k,x\<cdot>q(k)\<rangle>. k\<in>j #+ 1})"
         by simp
@@ -273,7 +276,7 @@ lemma (in ring3) sum_ring_distrib:
   assumes "n\<in>nat" and  "\<forall>k\<in>n. p(k) \<in> R" "\<forall>k\<in>n. q(k) \<in> R"
   shows
     "(\<Sum>{\<langle>k,p(k)\<ra>q(k)\<rangle>. k\<in>n}) = (\<Sum>{\<langle>k,p(k)\<rangle>. k\<in>n}) \<ra> (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n})"
-  using assms Ring_ZF_1_L1(3) add_monoid.sum_comm_distrib by simp
+  using assms Ring_ZF_1_L1(3) monoid0_valid_in_ring0 monoid1.sum_comm_distrib by simp
 
 text\<open>To shorten the notation in the proof of the binomial theorem we give a name to the
   binomial term ${n \choose k} x^{n-k} y^k$.\<close>
@@ -293,7 +296,7 @@ text\<open>The binomial term is $1$ when the $n=0$ and $k=0$.
   Somehow we do not need the assumption that $x,y$ are ring elements. \<close>
 
 lemma (in ring3) bt_at_zero: shows "BT(0,0,x,y) = \<one>"
-  using binom_zero_zero mult_pow_zero(2) add_monoid.nat_mult_one 
+  using binom_zero_zero mult_pow_zero(2) monoid0_valid_in_ring0 monoid1.nat_mult_one 
         Ring_ZF_1_L2(2) Ring_ZF_1_L3(5)
   unfolding BT_def by simp
 
@@ -302,7 +305,7 @@ text\<open>The binomial term is $x^n$ when $k=0$. \<close>
 lemma (in ring3) bt_at_zero1: assumes "n\<in>nat" "x\<in>R"
   shows "BT(n,0,x,y) = pow(n,x)" 
   unfolding BT_def using assms mult_pow_zero(2) binom_left_boundary
-    mult_pow_type(2) add_monoid.nat_mult_one Ring_ZF_1_L3(5) 
+    mult_pow_type(2) monoid0_valid_in_ring0 monoid1.nat_mult_one Ring_ZF_1_L3(5) 
     by simp
 
 text\<open>When $k=0$ multiplying the binomial term by $x$ is the same as adding one to $n$. \<close>
@@ -316,7 +319,7 @@ text\<open>The binomial term is $y^n$ when $k=n$.\<close>
 lemma (in ring3) bt_at_right: assumes "n\<in>nat" "y\<in>R"
   shows "BT(n,n,x,y) = pow(n,y)" 
   unfolding BT_def using assms binom_right_boundary mult_pow_zero(2)
-    add_monoid.nat_mult_one Ring_ZF_1_L2(2) mult_pow_type(2) Ring_ZF_1_L3(6)
+    monoid0_valid_in_ring0 monoid1.nat_mult_one Ring_ZF_1_L2(2) mult_pow_type(2) Ring_ZF_1_L3(6)
   by simp
 
 text\<open>When $k=n$ multiplying the binomial term by $x$ is the same as adding one to $n$. \<close>
@@ -385,7 +388,7 @@ proof -
   moreover have "pow(0,x\<ra>y) = \<Sum>{\<langle>k,BT(0,k,x,y)\<rangle>. k\<in>0 #+ 1}"
   proof -
     from assms(3,4) have "(\<Sum>{\<langle>k,BT(0,k,x,y)\<rangle>. k\<in>0 #+ 1}) = \<one>"
-      using bt_at_zero Ring_ZF_1_L2(2) add_monoid.seq_sum_singleton
+      using bt_at_zero Ring_ZF_1_L2(2) monoid0_valid_in_ring0 monoid1.seq_sum_singleton
       by simp
     then show ?thesis using mult_pow_zero(2) by simp
   qed
@@ -460,7 +463,7 @@ proof -
       also from assms(3,4) IV V \<open>j\<in>nat\<close> have
         "(BT(j,0,x,y)\<cdot>x \<ra> ?s\<^sub>3) \<ra> (?s\<^sub>4 \<ra> BT(j,j,x,y)\<cdot>y) =
         BT(j,0,x,y)\<cdot>x \<ra> (?s\<^sub>3 \<ra> ?s\<^sub>4) \<ra> BT(j,j,x,y)\<cdot>y"
-        using bt_type Ring_ZF_1_L4(3) add_monoid.sum_in_mono Ring_ZF_2_L2(3)
+        using bt_type Ring_ZF_1_L4(3) monoid0_valid_in_ring0 monoid1.sum_in_mono Ring_ZF_2_L2(3)
         by simp
       also have "BT(j,0,x,y)\<cdot>x \<ra> (?s\<^sub>3 \<ra> ?s\<^sub>4) \<ra> BT(j,j,x,y)\<cdot>y = 
         BT(j,0,x,y)\<cdot>x \<ra> ?s\<^sub>5 \<ra> BT(j,j,x,y)\<cdot>y"

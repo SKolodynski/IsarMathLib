@@ -117,7 +117,10 @@ qed
 text\<open>Propositions proven in the \<open>module0\<close> context are valid in the \<open>vector_spce0\<close> context.\<close>
 
 sublocale vector_space0 < vspce_mod: module0 K A M 
-    ringa ringminus ringsub ringm ringzero ringone ringtwo ringsq V "A\<^sub>V"
+    ringa ringminus ringsub ringm ringzero ringone ringtwo ringsq 
+    "\<lambda>s. Fold(A,\<zero>,s)"
+    "\<lambda> n x. Fold(A,\<zero>,{\<langle>k,x\<rangle>. k\<in>n})"
+    V "A\<^sub>V"
   using vec_spce_mod by auto
 
 subsection\<open>Vector space axioms\<close>

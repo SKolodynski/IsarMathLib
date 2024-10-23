@@ -118,7 +118,11 @@ locale topgroup = topology0 +
   defines zerohoods_def [simp]: "\<N>\<^sub>0 \<equiv> {A \<in> Pow(G). \<zero> \<in> int(A)}"
 
   fixes listsum ("\<Sum> _" 70)
-  defines listsum_def[simp]: "\<Sum>k \<equiv> Fold1(f,k)"
+  defines listsum_def[simp]: "\<Sum>s \<equiv> Fold(f,\<zero>,s)"
+
+  fixes nat_mult (infix "\<nm>" 95)
+  defines nat_mult_def [simp]: "n\<nm>x \<equiv> \<Sum>{\<langle>k,x\<rangle>. k\<in>n}"
+
 
 text\<open>The first lemma states that we indeeed talk about topological group
   in the context of \<open>topgroup\<close> locale.\<close>
@@ -143,7 +147,7 @@ lemma (in topgroup) group0_valid_in_tgroup: shows "group0(G,f)"
 
 text\<open>We can use the \<open>group0\<close> locale in the context of \<open>topgroup\<close>.\<close>
 
-sublocale topgroup < group0 G f gzero grop grinv 
+sublocale topgroup < group0 G f gzero grop grinv listsum nat_mult
     unfolding group0_def gzero_def grop_def grinv_def using Ggroup by auto
 
 text\<open>We can use \<open>semigr0\<close> locale in the context of \<open>topgroup\<close>.\<close>
@@ -796,12 +800,7 @@ text\<open>Let's recall first that the sum of elements of a group is an element 
 lemma (in topgroup) sum_list_in_group:
   assumes "n \<in> nat" and "x: succ(n)\<rightarrow>G"
   shows "(\<Sum>x) \<in> G"
-proof -
-  from assms have "semigr0(G,f)" and "n \<in> nat" "x: succ(n)\<rightarrow>G"
-    using semigr0_valid_in_tgroup by auto
-  then have "Fold1(f,x) \<in> G" by (rule semigr0.prod_type)
-  thus "(\<Sum>x) \<in> G" by simp
-qed
+  using assms list_prod_in_group by blast
 
 text\<open>In this context \<open>x\<ra>y\<close> is the same as the value of the group operation
   on the elements $x$ and $y$. Normally we shouldn't need to state this a s separate lemma.\<close>
@@ -818,8 +817,12 @@ proof -
   from assms have "semigr0(G,f)" and "n \<in> nat" "x: succ(succ(n))\<rightarrow>G"
     using semigr0_valid_in_tgroup by auto
   then have "Fold1(f,x) = f`\<langle>Fold1(f,Init(x)),x`(succ(n))\<rangle>"
-    by (rule semigr0.shorter_seq)
-  thus ?thesis by simp   
+    by (rule semigr0.shorter_seq) 
+  moreover from assms have "(\<Sum>x) = Fold1(f,x)"
+    using nempty_list_prod_as_fold1 by auto
+  moreover from assms have "(\<Sum>Init(x)) = Fold1(f,Init(x))"
+    using init_props(1) nempty_list_prod_as_fold1 by simp
+  ultimately show ?thesis by simp
 qed
 
 text\<open>Sum is a continuous function in the product topology.\<close>
@@ -830,8 +833,8 @@ theorem (in topgroup) sum_continuous: assumes "n \<in> nat"
     note \<open>n \<in> nat\<close>
     moreover have "IsContinuous(SeqProductTopology(succ(0),T),T,{\<langle>x,\<Sum>x\<rangle>.x\<in>succ(0)\<rightarrow>G})"
     proof -
-      have "{\<langle>x,\<Sum>x\<rangle>.x\<in>succ(0)\<rightarrow>G} = {\<langle>x,x`(0)\<rangle>. x\<in>1\<rightarrow>G}"
-        using semigr0_valid_in_tgroup semigr0.prod_of_1elem by simp
+      have "{\<langle>x,\<Sum>x\<rangle>. x\<in>succ(0)\<rightarrow>G} = {\<langle>x,x`(0)\<rangle>. x\<in>1\<rightarrow>G}"
+        using prod_singleton by simp
       moreover have
         "IsAhomeomorphism(SeqProductTopology(1,T),T,{\<langle>x,x`(0)\<rangle>. x\<in>1\<rightarrow>\<Union>T})" using topSpaceAssum singleton_prod_top1
           by simp

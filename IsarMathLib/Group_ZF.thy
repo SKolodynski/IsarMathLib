@@ -2,7 +2,7 @@
 This file is a part of IsarMathLib - 
 a library of formalized mathematics for Isabelle/Isar.
 
-Copyright (C) 2005 - 2008  Slawomir Kolodynski
+Copyright (C) 2005 - 2024  Slawomir Kolodynski
 
 This program is free software; Redistribution and use in source and binary forms, 
 with or without modification, are permitted provided that the 
@@ -31,7 +31,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Groups - introduction\<close>
 
-theory Group_ZF imports Monoid_ZF
+theory Group_ZF imports Monoid_ZF_1 Semigroup_ZF
 
 begin
 
@@ -60,8 +60,17 @@ text\<open>We define the group inverse as the set
 definition
   "GroupInv(G,f) \<equiv> {\<langle>x,y\<rangle> \<in> G\<times>G. f`\<langle>x,y\<rangle> = TheNeutralElement(G,f)}"
 
-text\<open>We will use the miltiplicative notation for groups. The neutral
-  element is denoted $1$.\<close>
+text\<open>Next we define the context \<open>group0\<close> in which groups will be discussed. 
+  The common assumption for all proposition proven in the context \<open>group0\<close> is that
+  fixed the pair $(G,P)$ is a group. We will use the multiplicative notation for groups. 
+  The neutral element is denoted $1$. \<open>x\<inverse>\<close>  will denote the inverse of $x$, i.e. the value
+  of the group inverse operation on $x$. We define the notation for product of a finite 
+  list of elements of $G$ using the notion of \<open>Fold\<close>, defined in the \<open>Fold_ZF\<close> theory.
+  Finally we define the notation \<open>pow(n,x)\<close> which is a product of the list
+  of length $n$ with value $x$ repeated $n$ times. Such list is a function that
+  assigns $x$ to every element of the set $n=\{0,1,...,n-1\}$ and is represented by a set of pairs
+  $\{\langle k,x\rangle : k\in n\}$, which is the same as the set $n\times\{ x\}$ 
+  (see lemma \<open>fun_def_alt1\<close> in the \<open>func1\<close> theory. \<close>
 
 locale group0 =
   fixes G 
@@ -77,16 +86,27 @@ locale group0 =
   fixes inv ("_\<inverse> " [90] 91)
   defines inv_def[simp]: "x\<inverse> \<equiv> GroupInv(G,P)`(x)"
 
+  fixes listprod ("\<Prod> _" 70)
+  defines listprod_def [simp]: "\<Prod>s \<equiv> Fold(P,\<one>,s)"
+
+  fixes pow
+  defines pow_def [simp]: "pow(n,x) \<equiv> \<Prod>{\<langle>k,x\<rangle>. k\<in>n}"
+
 text\<open>First we show a lemma that says that we can use theorems proven in
   the \<open>monoid0\<close> context (locale).\<close>
 
 lemma (in group0) group0_2_L1: shows "monoid0(G,P)"
   using groupAssum IsAgroup_def monoid0_def by simp
 
-text\<open>The theorems proven in the \<open>monoid\<close> context are valid in the \<open>group0\<close> context.\<close>
+text\<open>Assumptions of the \<open>monoid1\<close> context are satisfied in the \<open>group0\<close> context.\<close>
 
-sublocale group0 < monoid: monoid0 G P groper
-  unfolding groper_def using group0_2_L1 by auto
+lemma (in group0) monoid1_valid_in_group: shows "monoid1(G,P)"
+  using group0_2_L1 monoid1_def by simp 
+
+text\<open>The theorems proven in the \<open>monoid1\<close> context are valid in the \<open>group0\<close> context.\<close>
+
+sublocale group0 < monoid: monoid1 G P groper "\<one>" listprod pow
+  using monoid1_valid_in_group by auto
 
 text\<open>In some strange cases Isabelle has difficulties with applying
   the definition of a group. The next lemma defines a rule to be applied
@@ -1166,5 +1186,51 @@ proof -
   ultimately show "RightInv(G,P) = GroupInv(G,P)" using func_eq by blast  
 qed
 
+subsection\<open>Product of a list of group elements\<close>
+
+text\<open>The \<open>group0\<close> context defines notation for a product of a finite list of group elements. This
+  sections shows basic properties of that notation.\<close>
+
+text\<open>The assumptions of the \<open>semigr0\<close> context hold in the \<open>group0\<close> context.\<close>
+
+lemma (in group0) semigr0_valid_in_group0: shows "semigr0(G,P)"
+  using groupAssum IsAgroup_def IsAmonoid_def semigr0_def by simp
+
+text\<open>Since semigroups do not have a neutral element the product operator in the \<open>semigr0\<close>
+  is defined for nonempty lists only as \<open>Fold1(f,a)\<close>, where $f$ is the semigroup operation
+  and $a$ is a (nonempty) list. This is a bit different from the product of a finite
+  list in the \<open>group0\<close> context. The next lemma helps in translating between these two notations
+  by asserting that in the \<open>group0\<close> context the sum of a finite list $s$ is the same as \<open>Fold1(s\<^sub>1)\<close>
+  where $s_1$ is the list $s$ with the neutral element of the group prepended to it. \<close>
+
+lemma (in group0) list_prod_as_fold1: assumes "n\<in>nat" "s:n\<rightarrow>G"
+  shows "(\<Prod>s) = Fold1(P,Prepend(s,\<one>))"
+  using assms prepend_props group0_2_L2 tail_prepend
+  unfolding Fold1_def by simp
+
+text\<open>For nonempty lists the product is the the same as \<open>Fold1\<close> of the list with respect to the 
+  operation.\<close>
+
+lemma (in group0) nempty_list_prod_as_fold1: assumes "n\<in>nat" "s:(n #+ 1)\<rightarrow>G"
+  shows "(\<Prod>s) = Fold1(P,s)"
+  using assms group_oper_fun group0_2_L2 fold_detach_first
+    succ_add_one(6) apply_funtype
+  unfolding Fold1_def by simp
+
+text\<open>The product of a list is an element of the group.\<close>
+
+lemma (in group0) list_prod_in_group: assumes "n\<in>nat" "s:n\<rightarrow>G"
+  shows "(\<Prod>s) \<in> G"
+proof -
+  have "P:G\<times>G\<rightarrow>G" "\<one>\<in>G" "G\<noteq>\<emptyset>" using group_oper_fun group0_2_L2 by auto
+  with assms show "(\<Prod>s) \<in> G" using fold_props(2) by simp
+qed
+
+text\<open>Product of a singleton list is its only element.\<close>
+
+lemma (in group0) prod_singleton: assumes  "s:1\<rightarrow>G"
+  shows "(\<Prod>s) = s`(0)"
+  using assms nempty_list_prod_as_fold1 semigr0_valid_in_group0 semigr0.prod_of_1elem
+    by force
 
 end

@@ -1046,6 +1046,20 @@ proof -
     using func1_1_L1 unfolding Prepend_def by simp
 qed
 
+text\<open>The tail of a list prepended by an element is equal to the list.\<close>
+
+lemma tail_prepend: assumes "n\<in>nat" "a:n\<rightarrow>X" "x\<in>X"
+  shows "Tail(Prepend(a,x)) = a"
+proof -
+  let ?b = "Prepend(a,x)"
+  from assms have "?b:(n #+ 1)\<rightarrow>X" using prepend_props(1) by simp
+  with assms(1) have "Tail(?b):n\<rightarrow>X" using tail_props(1) by simp
+  from assms \<open>?b:(n #+ 1)\<rightarrow>X\<close> have "\<forall>k\<in>n. Tail(?b)`(k) = a`(k)"
+    using tail_props2 prepend_val by simp
+  with assms(2) \<open>Tail(?b):n\<rightarrow>X\<close> show ?thesis using func_eq
+    by blast
+qed
+
 subsection\<open>Lists and cartesian products\<close>
 
 text\<open>Lists of length $n$ of elements of some set $X$ can be thought of as a 

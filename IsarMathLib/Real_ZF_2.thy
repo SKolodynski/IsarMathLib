@@ -98,6 +98,12 @@ locale reals =
   defines inv_def[simp]: 
     "x\<inverse> \<equiv> GroupInv(\<real>\<^sub>0,restrict(Mul,\<real>\<^sub>0\<times>\<real>\<^sub>0))`(x)"
 
+  fixes listsum ("\<Sum> _" 70)
+  defines listsum_def[simp]: "\<Sum>s \<equiv> Fold(Add,\<zero>,s)"
+
+  fixes nat_mult (infix "\<nm>" 95)
+  defines nat_mult_def [simp]: "n\<nm>x \<equiv> \<Sum>{\<langle>k,x\<rangle>. k\<in>n}"
+
   fixes realsq ("_\<^sup>2" [96] 97)
   defines realsq_def [simp]: "x\<^sup>2 \<equiv> x\<rmu>x"
 
@@ -129,7 +135,8 @@ text\<open> We can use theorems proven in the  \<open>field1\<close> locale in t
   extension of \<open>ring0\<close> locale , this makes available also the theorems proven in 
   the \<open>ring1\<close> and \<open>ring0\<close> locales. \<close>
 
-sublocale reals < field1 Reals Add Mul realadd realminus realsub realmul zero one two realsq ROrd
+sublocale reals < field1 Reals Add Mul realadd realminus realsub realmul 
+  zero one two realsq listsum nat_mult ROrd
   using field1_is_valid by auto
 
 text\<open> The \<open>group3\<close> locale from the \<open>OrderedGroup_ZF\<close> theory defines context for theorems about 
@@ -142,7 +149,7 @@ sublocale reals < group3 Reals Add ROrd zero realadd realminus lesseq sless nonn
 text\<open>Since real numbers with addition form a group we can use the theorems proven in the  \<open>group0\<close> 
   locale defined in the \<open>Group_ZF\<close> theory in the \<open>reals\<close> locale. \<close>
 
-sublocale reals < group0 Reals Add zero realadd realminus 
+sublocale reals < group0 Reals Add zero realadd realminus listsum nat_mult
   unfolding group3_def using OrderedGroup_ZF_1_L1 by auto
 
 text\<open>Let's recall basic properties of the real line. \<close>

@@ -319,6 +319,8 @@ sublocale abelian_group < endo_ring: ring0
      \<langle>TheNeutralElement (End(G, P), InEnd(Composition(G),G,P)),
       TheNeutralElement (End(G, P), InEnd(Composition(G),G,P))\<rangle>"
   "\<lambda>x. InEnd(Composition(G),G,P)`\<langle>x, x\<rangle>"
+  "\<lambda>s. Fold(InEnd(P {lifted to function space over} G,G,P), TheNeutralElement(End(G, P), InEnd(P {lifted to function space over} G,G,P)),s)"
+  "\<lambda>n x. Fold(InEnd(P {lifted to function space over} G,G,P), TheNeutralElement(End(G, P), InEnd(P {lifted to function space over} G,G,P)),{\<langle>k,x\<rangle>. k\<in>n})"
   using end_is_ring unfolding ring0_def by blast
 
 subsection\<open>First isomorphism theorem\<close>
