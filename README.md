@@ -20,6 +20,8 @@ Process the theory files with the "isabelle build -D ./IsarMathLib" command issu
 
 The best place to start is the [isamathlib.org](http://www.isarmathlib.org/) site which provides an experimental HTML rendering of most of the IsarMathLib theories.
 
+![Animated GIF](./IsarMathLib_Uniform_Space_ZF_2.gif)
+
 The Isabelle generated [proof document](https://skolodynski.github.io/IsarMathLib/IsarMathLib/document.pdf) contains all definitions and theorems with formally verified proofs from the last release. The [outline](https://skolodynski.github.io/IsarMathLib/IsarMathLib/outline.pdf) contains all theorems and comments, but does not contain the proofs. Isabelle generated HTML rendering can be browsed [here](https://skolodynski.github.io/IsarMathLib/IsarMathLib/index.html).
 
 
