@@ -1145,7 +1145,7 @@ proof -
   ultimately have "?B(n,n #+ 1) = 0"
     unfolding Binom_def by simp
   with assms \<open>?B(n,n) \<in> nat\<close> show ?thesis
-    using succ_add_one(2) binom_prop add_subctract add_0 add_commute
+    using succ_add_one(2) binom_prop add_subtract add_0 add_commute
     by simp
 qed
 

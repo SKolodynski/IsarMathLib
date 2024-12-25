@@ -259,7 +259,7 @@ lemma (in group_int0) powz_hom_neg_nneg2:
   by simp
 
 text\<open>The next theorem collects the results from the above lemmas to show
-  the power homomorphism property hols for any pair of integer numbers
+  the power homomorphism property holds for any pair of integer numbers
   and any group element. \<close>
 
 theorem (in group_int0) powz_hom_prop: assumes "z\<^sub>1\<in>\<int>" "z\<^sub>2\<in>\<int>" "x\<in>G"
