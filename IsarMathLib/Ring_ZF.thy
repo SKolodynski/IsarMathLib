@@ -375,7 +375,7 @@ lemma (in ring0) Ring_ZF_1_L13:
 text\<open>Square of an element and its opposite are the same.\<close>
 
 lemma (in ring0) Ring_ZF_1_L14:
-  assumes "a\<in>R" shows "(\<rm>a)\<^sup>2 = ((a)\<^sup>2)"
+  assumes "a\<in>R" shows "(\<rm>a)\<^sup>2 = (a\<^sup>2)"
   using assms Ring_ZF_1_L7A by simp
 
 text\<open>Adding zero to a set that is closed under addition results
@@ -409,7 +409,7 @@ next assume A1: "\<zero> = \<one>"
   ultimately show "R = {\<zero>}" by auto
 qed
 
-text\<open>The sets $\{m\cdot x. x\in R\}$ and  $\{-m\cdot x. x\in R\}$
+text\<open>The sets $\{m\cdot x: x\in R\}$ and  $\{-m\cdot x: x\in R\}$
   are the same.\<close>
 
 lemma (in ring0) Ring_ZF_1_L18: assumes A1: "m\<in>R"

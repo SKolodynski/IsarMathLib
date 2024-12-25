@@ -438,7 +438,7 @@ text\<open>A nonzero natural number is of the form $n=m+1$ for some natural numb
   This is very similar to \<open>Nat_ZF_1_L3\<close> except that we use $n+1$ instead of \<open>succ(n)\<close>. \<close>
 
 lemma nat_not0_succ: assumes "n\<in>nat" "n\<noteq>0"
-  shows "\<exists>m\<in>nat. n = m #+1"
+  shows "\<exists>m\<in>nat. n = m #+ 1"
   using assms Nat_ZF_1_L3 succ_add_one(1) by simp
   
 text\<open>A version of induction on natural numbers that uses the $n+1$ notation
@@ -471,23 +471,23 @@ text\<open>This section collects useful simplification rules involving addition 
 
 text\<open>Adding and subtracting a natural number cancel each other.\<close>
 
-lemma add_subctract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"
+lemma add_subtract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"
   using assms diff_add_inverse2 by simp
 
-text\<open>A simplification rule for natural numbers: if $k<n$ then $n-(k+1)+1 = n-k$: \<close>
+text\<open>A simplification rule for natural numbers: if $k < n$ then $n-(k+1)+1 = n-k$: \<close>
 
 lemma nat_subtr_simpl0: assumes "n\<in>nat" "k\<in>n" 
   shows "n #- (k #+ 1) #+ 1 = n #- k"
 proof -
-  from assms obtain m where "m\<in>nat" and "n = m #+1"
+  from assms obtain m where "m\<in>nat" and "n = m #+ 1"
     using nat_not0_succ by blast
   with assms have "succ(m) = m #+ 1" "succ(m #- k) = m #- k #+ 1"
     using elem_nat_is_nat(2) succ_add_one by simp_all
-  moreover from assms(2) \<open>m\<in>nat\<close> \<open>n = m #+1\<close> have 
+  moreover from assms(2) \<open>m\<in>nat\<close> \<open>n = m #+ 1\<close> have 
     "succ(m) #- k = succ(m #- k)" 
     using diff_succ succ_ineq2(2) by simp
   ultimately have "m  #- k #+ 1 = m #+ 1 #- k" by simp
-  with \<open>n = m #+1\<close> show ?thesis using diff_cancel2 by simp
+  with \<open>n = m #+ 1\<close> show ?thesis using diff_cancel2 by simp
 qed
 
 text\<open>If $k$ is a natural number then $n+k = n + ((n+k) \#- n))$. \<close>

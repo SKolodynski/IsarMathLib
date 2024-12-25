@@ -26,7 +26,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *)
 
-section \<open> Modules\<close>
+section \<open>Modules\<close>
 
 theory Module_ZF imports Ring_ZF_3 Field_ZF
 
@@ -73,10 +73,11 @@ lemma (in abelian_group) end_is_ring1:
 
 text\<open>We define an \<open>action\<close> as a homomorphism into a space of endomorphisms (typically of some
   abelian group). In the definition below $S$ is the set of scalars, $A$ is the addition operation
-  on this set, $M$ is multiplication on the set, $V$ is the group, $A_V$ is the 
+  on this set, $M$ is multiplication on the set, $\mathcal{M}$ is the group, $A_M$ is the 
   group operation, and $H$ is the ring homomorphism that of the ring of scalars 
   to the ring of endomorphisms of the group.
-  On the right hand side of the definition \<open>End(V,A\<^sub>V)\<close> is the set of endomorphisms,  
+  On the right hand side of the definition \<open>End(\<M>,A\<^sub>V)\<close> is the set of endomorphisms
+  of the group $\mathcal{M}$ with operation $A_M$.
   This definition is only ever used as part of the definition of a module and vector space, 
   it's just convenient to split it off to shorten the main definitions. \<close>
 

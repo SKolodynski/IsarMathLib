@@ -1089,7 +1089,7 @@ text\<open>Constant function is a function (i.e. belongs to a function space).\<
 lemma func1_3_L1: 
   assumes A1: "c\<in>Y" shows "ConstantFunction(X,c) : X\<rightarrow>Y"
 proof -
-   from A1 have "X\<times>{c} = {\<langle> x,y\<rangle> \<in> X\<times>Y. c = y}" 
+   from A1 have "X\<times>{c} = {\<langle>x,y\<rangle> \<in> X\<times>Y. c = y}" 
      by auto
    with A1 show ?thesis using func1_1_L11A ConstantFunction_def
      by simp
