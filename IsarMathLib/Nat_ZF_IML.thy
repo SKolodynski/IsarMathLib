@@ -262,6 +262,11 @@ lemma nat_mem_lt: assumes "n\<in>nat"
   shows "k<n \<longleftrightarrow> k\<in>n" and "k\<le>n \<longleftrightarrow> k \<in> succ(n)"
   using assms nat_into_Ord Ord_mem_iff_lt by auto
 
+text\<open>If $n$ is a natural number and $k\leq n$, then k is a natural number.\<close>
+
+lemma leq_nat_is_nat: assumes "n\<in>nat" "k\<le>n" shows "k\<in>nat"
+  using assms nat_mem_lt elem_nat_is_nat(2) by auto
+  
 text\<open>The term $k \leq n$ is the same as $k < \textrm{succ}(n)$.  \<close>
 
 lemma leq_mem_succ: shows "k\<le>n \<longleftrightarrow> k < succ(n)" by simp
@@ -436,11 +441,6 @@ lemma nat_not0_succ: assumes "n\<in>nat" "n\<noteq>0"
   shows "\<exists>m\<in>nat. n = m #+1"
   using assms Nat_ZF_1_L3 succ_add_one(1) by simp
   
-text\<open>Adding and subtracting a natural number cancel each other.\<close>
-
-lemma add_subctract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"
-  using assms diff_add_inverse2 by simp
-
 text\<open>A version of induction on natural numbers that uses the $n+1$ notation
   instead of $\<open>succ(n)\<close>$.\<close>
 
@@ -464,6 +464,16 @@ proof -
   with assms(1) show "P(n)" by simp
 qed
 
+subsection\<open>Simplification rules for addition and subtraction of natural numbers\<close>
+
+text\<open>This section collects useful simplification rules involving addition and subtraction
+  of natural numbers that we couldn't find in standard Isabelle's \<open>ArithSimp\<close> theory. \<close>
+
+text\<open>Adding and subtracting a natural number cancel each other.\<close>
+
+lemma add_subctract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"
+  using assms diff_add_inverse2 by simp
+
 text\<open>A simplification rule for natural numbers: if $k<n$ then $n-(k+1)+1 = n-k$: \<close>
 
 lemma nat_subtr_simpl0: assumes "n\<in>nat" "k\<in>n" 
@@ -479,6 +489,12 @@ proof -
   ultimately have "m  #- k #+ 1 = m #+ 1 #- k" by simp
   with \<open>n = m #+1\<close> show ?thesis using diff_cancel2 by simp
 qed
+
+text\<open>If $k$ is a natural number then $n+k = n + ((n+k) \#- n))$. \<close>
+
+lemma nat_subtr_simpl1: assumes "k\<in>nat" 
+  shows  "n #+ ((n #+ k) #- n) = n #+ k"
+  using assms diff_add_inverse by simp
 
 subsection\<open>Intervals\<close>
 

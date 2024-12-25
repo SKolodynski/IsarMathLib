@@ -346,9 +346,9 @@ qed
 text\<open>Subtracting integers corresponds to adding the negative.\<close>
 
 lemma (in int0) Int_ZF_1_L10: assumes A1: "m\<in>\<int>"  "n\<in>\<int>"
-  shows "m\<rs>n = m $+ $-n"
-  using assms Int_ZF_1_T2  group0.inverse_in_group Int_ZF_1_L9A Int_ZF_1_L2
-  by simp
+  shows "m\<rs>n = m $+ $-n" "m\<rs>n = m $- n"
+  using assms Int_ZF_1_T2  group0.inverse_in_group Int_ZF_1_L9A Int_ZF_1_L2 zdiff_def
+  by simp_all
 
 text\<open>Negative of zero is zero.\<close>
 
@@ -369,12 +369,13 @@ lemma (in int0) Int_ZF_1_L13: assumes "m\<in>\<int>"
   using assms Int_ZF_1_L8A Int_ZF_1_L2 Int_ZF_1_L8 Int_ZF_1_L12
   by simp
 
-text\<open>Adding or subtracing one changes integers.\<close>
+text\<open>Adding or subtracing one changes integers, but subtracting zero does not. .\<close>
 
 lemma (in int0) Int_ZF_1_L14: assumes A1: "m\<in>\<int>" 
   shows 
   "m\<ra>\<one> \<noteq> m"
   "m\<rs>\<one> \<noteq> m"
+  "m\<rs>\<zero> = m"
 proof -
   { assume "m\<ra>\<one> = m" 
     with A1 have 
@@ -393,6 +394,8 @@ proof -
     ultimately have "m \<ra> \<one> = m" by simp
     with I have False by simp
   } then show "m\<rs>\<one> \<noteq> m" by auto
+  from assms show  "m\<rs>\<zero> = m" using Int_ZF_1_T2(3) group0.div_by_neutral
+    by simp
 qed
 
 text\<open>If the difference is zero, the integers are equal.\<close>
@@ -415,7 +418,7 @@ subsection\<open>Integers as an ordered group\<close>
 
 text\<open>In this section we define order on integers as a relation, that is a 
   subset of $Z\times Z$ and show that integers form an ordered group.\<close>
-
+  
 text\<open>The next lemma interprets the order definition one way.\<close>
 
 lemma (in int0) Int_ZF_2_L1: 
@@ -578,9 +581,21 @@ sublocale int0 < group3 int IntegerAddition IntegerOrder
   "\<zero>" ia iminus lesseq sless nonnegative positive setneg abs oddext
   using Int_ZF_2_T1(3) by auto
 
+text\<open>Negative numbers are not nonnegative. This is a special case of \<open>ls_not_leq\<close>
+  from \<open>OrderedGroup_ZF\<close> theory.\<close>
+
+corollary (in int0) neg_not_nonneg: assumes "m\<ls>\<zero>" shows "\<not>(\<zero>\<lsq>m)"
+  using assms ls_not_leq by simp
+
+text\<open>An integer is nonnegative or negative. This is a special case of \<open>OrdGroup_2cases\<close>
+  from \<open>OrderedGroup_ZF\<close> theory and useful for splitting proofs into cases.\<close>
+
+lemma (in int0) int_nonneg_or_neg: assumes "z\<in>\<int>" shows "\<zero>\<lsq>z \<or> z\<ls>\<zero>"
+  using assms OrdGroup_2cases Int_ZF_1_L8A(1) Int_ZF_2_T1(2) by simp
+
 text\<open>If a pair $(i,m)$ belongs to the order relation on integers and
-  $i\neq m$, then $i<m$ in the sense of defined in the standard Isabelle's 
-  Int.thy.\<close>
+  $i\neq m$, then $i$ is smaller that $m$ in the sense of defined in the standard Isabelle's 
+  \<open>Int.thy\<close>.\<close>
 
 lemma (in int0) Int_ZF_2_L9: assumes A1: "i \<lsq> m" and A2: "i\<noteq>m"
   shows "i $< m"
@@ -595,7 +610,7 @@ text\<open>This shows how Isabelle's \<open>$<\<close> operator translates to Is
 
 lemma (in int0) Int_ZF_2_L9AA: assumes A1: "m\<in>\<int>"  "n\<in>\<int>"
   and A2: "m $< n"
-  shows "m\<lsq>n"  "m \<noteq> n"
+  shows "m\<lsq>n"  "m \<noteq> n" "m\<ls>n"
   using assms zle_def Int_ZF_2_L1 by auto
 
 text\<open>A small technical lemma about putting one on the other side
@@ -752,7 +767,7 @@ lemma (in int0) Int_ZF_2_L14A:
   "\<zero> \<lsq> m \<ra> n"
   using assms Int_ZF_2_T1 
     group3.OrderedGroup_ZF_1_L5AC group3.OrderedGroup_ZF_1_L12
-  by auto
+      by auto
 
 text\<open>We can increase components in an estimate.\<close>
 
@@ -1083,7 +1098,64 @@ text\<open>If an nonnegative integer is less or equal than another,
 lemma (in int0) Int_ZF_2_L23: 
   assumes "\<zero>\<lsq>m"   "m\<lsq>k"
   shows "abs(m) \<lsq> k"
-  using assms Int_ZF_2_L16 by simp(* this is probably not worth the effort*)
+  using assms Int_ZF_2_L16 by simp
+
+text\<open>The standard Isabelle/ZF defined \<open>znegative\<close> predicate on integers.
+  The next lemma expresses that in terms of the order relation on integers.\<close>
+
+lemma (in int0) znegative_as_ls_zero: assumes "z\<in>\<int>" 
+  shows "znegative(z) \<longleftrightarrow> z\<ls>\<zero>"
+proof
+  assume "znegative(z)"
+  with assms show "z\<ls>\<zero>"
+    using Int_ZF_1_L14 Int_ZF_1_L8A(1) Int_ZF_1_L10(2) Int_ZF_2_L9AA(3)
+    unfolding zless_def by simp
+next
+  assume "z\<ls>\<zero>"
+  with assms have "znegative(z\<rs>\<zero>)"
+    using Int_ZF_1_L8A(1) Int_ZF_2_L9 Int_ZF_1_L10(2)
+    unfolding zless_def by simp
+  with assms show "znegative(z)" using Int_ZF_1_L14 by simp
+qed
+
+text\<open>A nonnegative integer (i.e. $0\leq z$) is not negative in the sense of \<open>znegative\<close> predicate.
+  We also use the opportunity to mention that such a nonnegative integer is an integer.\<close>
+
+lemma (in int0) nonnegative_not_znegative: assumes  "\<zero>\<lsq>z"
+  shows "\<not>znegative(z)" and "z\<in>\<int>"
+proof -
+  from assms show "z\<in>\<int>" using OrderedGroup_ZF_1_L4(2) by simp
+  { assume "znegative(z)"
+    with \<open>z\<in>\<int>\<close> have "z\<ls>\<zero>" using znegative_as_ls_zero by simp
+    with assms have "\<zero>\<ls>\<zero>" using group_strict_ord_transit by blast
+    hence False by simp
+  } thus "\<not>znegative(z)" by auto
+qed
+
+text\<open>A nonnegative integer (i.e. one that belongs to $\mathbb{Z}^+$) 
+  is not negative in the sense of \<open>znegative\<close> predicate.
+  We also use the opportunity to mention that a nonnegative integer is an integer.\<close>
+
+lemma (in int0) nonnegative_not_znegative1: assumes  "z\<in>\<int>\<^sup>+"
+  shows "\<not>znegative(z)" and "z\<in>\<int>"
+  using assms OrderedGroup_ZF_1_L2 nonnegative_not_znegative by simp_all
+
+text\<open>A negative integer is \<open>znegative\<close>.\<close>
+
+lemma (in int0) negative_is_znegative: assumes "z\<in>\<int>\<setminus>\<int>\<^sup>+" shows "znegative(z)"
+  using assms OrderedGroup_ZF_1_L2 Int_ZF_2_T1(2) Int_ZF_1_L8A(1) 
+    OrderedGroup_ZF_1_L8(4) znegative_as_ls_zero by simp
+
+text\<open>An integer that is not \<open>znegative\<close> is nonegative.\<close>
+
+corollary (in int0) notzneg_is_nonneg: assumes "z\<in>\<int>" and "\<not>znegative(z)"
+  shows "z\<in>\<int>\<^sup>+" using assms negative_is_znegative by auto
+
+text\<open>An integers that is not \<open>znegative\<close> is greater or equal than zero..\<close>
+
+lemma (in int0) notzneg_is_geq_zero: assumes "z\<in>\<int>" and "\<not>znegative(z)"
+  shows "\<zero>\<lsq>z"
+  using assms notzneg_is_nonneg Nonnegative_def by simp
 
 subsection\<open>Induction on integers.\<close>
 
@@ -1424,6 +1496,202 @@ proof -
     "A \<notin> Fin(\<int>)"
     using Int_ZF_2_T1 group3.OrderedGroup_ZF_2_L2A
     by auto
+qed
+
+subsection\<open>Addition on integers in terms of magnitudes\<close>
+
+text\<open>In standard (informal) mathematics natural numbers form a subset of integers.
+  In ZF that is not true as integers are defined as certain classes of pairs of natural numbers.
+  As a result, addition on natural numbers is not a special case of addition on integers.
+  The standard Isabelle/ZF's \<open>Int\<close> theory defines the notion of \<open>zmagnitude\<close> i.e. the magnitude
+  of an integer. If $z$ is an integer then \<open>zmagnitude(z)\<close> is its absolute value, 
+  interpreted as a natural number.
+  The goal of this section is to provide facts about \<open>zmagnitude\<close> that are missing
+  from the standard Isabelle/ZF's \<open>Int\<close> library and formulae that express addition of integers in 
+  terms of addition of their magnitudes. \<close>
+
+text\<open>The next lemma shows that \<open>zmagnitude\<close> of an integer is the same as \<open>zmagnitude\<close> 
+  of its opposite. \<close>
+
+lemma (in int0) zmag_opposite_same: assumes "z\<in>\<int>" 
+  shows "zmagnitude(z) = zmagnitude($-z)"
+proof -
+  from assms obtain n where "n\<in>nat" and "z=$#n \<or> z=$-($# succ(n))"
+    using int_cases by auto
+  then show ?thesis using zmagnitude_int_of zmagnitude_zminus_int_of
+    by auto
+qed
+
+text\<open>If $z_1,z_1$ is a pair of integers then (at least) one of the following six cases holds:
+  
+  1. Both integers are nonnegative.
+
+  2. Both integers are negative.
+
+  3. $z_1$ is nonnegative, $z_2$ is negative and magnitude of $z_2$ is less or equal than
+    magnitude of $z_1$.
+
+  4. $z_1$ is nonnegative, $z_2$ is negative and magnitude of $z_1$ is (strictly) smaller
+    than magnitude of $z_2$.
+
+  5. $z_1$ is negative, $z_2$ is nonnegative and magnitude of $z_1$ is less or equal than
+  magnitude of $z_2$.
+
+  6. $z_1$ is negative, $z_2$ is nonnegative and magnitude of $z_2$ is (strictly) less than
+  magnitude of $z_1$.
+ \<close>
+
+lemma (in int0) int_pair_6cases: assumes "z\<^sub>1\<in>\<int>" "z\<^sub>2\<in>\<int>"
+  shows "(\<zero>\<lsq>z\<^sub>1 \<and> \<zero>\<lsq>z\<^sub>2) \<or> (z\<^sub>1\<ls>\<zero> \<and> z\<^sub>2\<ls>\<zero>) \<or>
+    (\<zero>\<lsq>z\<^sub>1 \<and> z\<^sub>2\<ls>\<zero> \<and> zmagnitude(z\<^sub>2) \<le> zmagnitude(z\<^sub>1)) \<or>
+    (\<zero>\<lsq>z\<^sub>1 \<and> z\<^sub>2\<ls>\<zero> \<and> zmagnitude(z\<^sub>1) < zmagnitude(z\<^sub>2)) \<or>
+    (z\<^sub>1\<ls>\<zero> \<and> \<zero>\<lsq>z\<^sub>2 \<and> zmagnitude(z\<^sub>1) \<le> zmagnitude(z\<^sub>2)) \<or>
+    (z\<^sub>1\<ls>\<zero> \<and> \<zero>\<lsq>z\<^sub>2 \<and> zmagnitude(z\<^sub>2) < zmagnitude(z\<^sub>1))"
+  using assms int_nonneg_or_neg zmagnitude_type nat_order_2cases by blast
+
+text\<open>Sum of nonnegative integers in nonnegative. The magnitude of the sum of such integers
+  is the sum of their magnitudes.
+  We can add nonnegative integers by adding their magnitudes and converting the result
+  to an integer. \<open>zmagnitude\<close> (defined in standard Isabelle/ZF's \<open>Int\<close> theory) is
+  the natural number corresponding to the absolute value of an integer number.  \<close>
+
+lemma (in int0) add_nonneg_ints: assumes "\<zero>\<lsq>z\<^sub>1" "\<zero>\<lsq>z\<^sub>2"
+  shows 
+    "\<zero>\<lsq>z\<^sub>1\<ra>z\<^sub>2"
+    "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>1) #+ zmagnitude(z\<^sub>2)"
+    "z\<^sub>1\<ra>z\<^sub>2 = $# (zmagnitude(z\<^sub>1) #+ zmagnitude(z\<^sub>2))"
+proof -
+  let ?m\<^sub>1 = "zmagnitude(z\<^sub>1)" 
+  let ?m\<^sub>2 = "zmagnitude(z\<^sub>2)"
+  from assms show "\<zero>\<lsq>z\<^sub>1\<ra>z\<^sub>2" using OrderedGroup_ZF_1_L12 by simp
+  from assms show "z\<^sub>1\<ra>z\<^sub>2 = $#(?m\<^sub>1 #+ ?m\<^sub>2)"
+    using nonnegative_not_znegative int_of_add Int_ZF_1_L2(1) by simp
+  then show "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = ?m\<^sub>1 #+ ?m\<^sub>2" 
+    using add_type natify_ident zmagnitude_int_of by simp
+qed
+
+text\<open>Sum of negative integers is negative. The magnitude of the sum of such integers
+  is the sum of their magnitudes.
+  We can calculate the sum of negative integers by taking the sum of their magnitudes, 
+  converting that to an integer and taking negative of the result. \<close>
+
+lemma (in int0) add_neg_ints: assumes "z\<^sub>1\<ls>\<zero>" "z\<^sub>2\<ls>\<zero>"
+  shows 
+    "z\<^sub>1\<ra>z\<^sub>2\<ls>\<zero> "
+    "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>1) #+ zmagnitude(z\<^sub>2)"
+    "z\<^sub>1\<ra>z\<^sub>2 = $-($#(zmagnitude(z\<^sub>1) #+ zmagnitude(z\<^sub>2)))"
+proof -
+  from assms show "z\<^sub>1\<ra>z\<^sub>2\<ls>\<zero>" 
+    using Int_ZF_2_T1(2,3) group3.group_less_less by simp
+  let ?m\<^sub>1 = "zmagnitude(z\<^sub>1)" 
+  let ?m\<^sub>2 = "zmagnitude(z\<^sub>2)"
+  from assms show "z\<^sub>1\<ra>z\<^sub>2 = $-($#(?m\<^sub>1 #+ ?m\<^sub>2))"
+    using znegative_as_ls_zero zneg_mag int_of_add zminus_zadd_distrib 
+      zadd_type zminus_zminus Int_ZF_1_L2(1) less_are_members by auto
+  then show "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = ?m\<^sub>1 #+ ?m\<^sub>2"
+    using add_type zmagnitude_zminus_int_of by simp
+qed
+
+text\<open>If $z_1$ is a nonegative integer and $z_2$ is a negative integer with a less or equal
+  magnitude, then their sum is nonnegative and its magnitude is the difference between magnitudes
+  of $z_1$ and $z_2$.\<close>
+
+lemma (in int0) add_nonneg_neg1: 
+  assumes "\<zero>\<lsq>z\<^sub>1"  "z\<^sub>2\<ls>\<zero>" "zmagnitude(z\<^sub>2) \<le> zmagnitude(z\<^sub>1)"
+  shows 
+    "\<zero>\<lsq>z\<^sub>1\<ra>z\<^sub>2"
+    "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>1) #- zmagnitude(z\<^sub>2)"
+    "z\<^sub>1\<ra>z\<^sub>2 = $#(zmagnitude(z\<^sub>1) #- zmagnitude(z\<^sub>2))"
+proof - 
+  let ?m\<^sub>1 = "zmagnitude(z\<^sub>1)" 
+  let ?m\<^sub>2 = "zmagnitude(z\<^sub>2)"
+  from assms(1,2) have 
+    "z\<^sub>1\<in>\<int>" "z\<^sub>1 = $#?m\<^sub>1" and "z\<^sub>2\<in>\<int>" "z\<^sub>2 = $-($#(?m\<^sub>2))"
+    using nonnegative_not_znegative not_zneg_mag
+      znegative_as_ls_zero less_are_members zneg_mag zminus_zminus
+    by auto
+  with assms(3) show  "z\<^sub>1\<ra>z\<^sub>2 = $#(?m\<^sub>1 #- ?m\<^sub>2)"
+    using Int_ZF_1_L2(1) zmagnitude_type int_of_diff unfolding zdiff_def 
+    by simp      
+  then show "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = ?m\<^sub>1 #- ?m\<^sub>2" 
+    using zmagnitude_type diff_type zmagnitude_int_of by simp
+  from \<open>z\<^sub>1\<ra>z\<^sub>2 = $#(?m\<^sub>1 #- ?m\<^sub>2)\<close> \<open>z\<^sub>1\<in>\<int>\<close> \<open>z\<^sub>2\<in>\<int>\<close> show "\<zero>\<lsq>z\<^sub>1\<ra>z\<^sub>2"
+    using not_znegative_int_of notzneg_is_geq_zero Int_ZF_1_T2(3) group0.group_op_closed 
+    by simp
+qed
+
+text\<open>If $z_1$ is a nonegative integer and $z_2$ is a negative integer with a greater
+  magnitude, then their sum is negative and its magnitude is the difference between magnitudes
+  of $z_2$ and $z_1$.\<close>
+
+lemma (in int0) add_nonneg_neg2: 
+  assumes "\<zero>\<lsq>z\<^sub>1"  "z\<^sub>2\<ls>\<zero>"  "zmagnitude(z\<^sub>1) < zmagnitude(z\<^sub>2)"
+  shows 
+    "z\<^sub>1\<ra>z\<^sub>2 \<ls> \<zero>"
+    "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>2) #- zmagnitude(z\<^sub>1)"
+    "z\<^sub>1\<ra>z\<^sub>2 = $-($#(zmagnitude(z\<^sub>2) #- zmagnitude(z\<^sub>1)))"
+proof -
+  let ?m\<^sub>1 = "zmagnitude(z\<^sub>1)" 
+  let ?m\<^sub>2 = "zmagnitude(z\<^sub>2)"
+  from assms(1,2) have 
+    "z\<^sub>1\<in>\<int>" "\<not>znegative(z\<^sub>1)" "z\<^sub>1 = $#?m\<^sub>1" and
+    "z\<^sub>2\<in>\<int>" "znegative(z\<^sub>2)" "z\<^sub>2 = $-($#(?m\<^sub>2))"
+    using nonnegative_not_znegative not_zneg_mag less_are_members 
+      znegative_as_ls_zero zneg_mag zminus_zminus by auto
+  then have "z\<^sub>1\<ra>z\<^sub>2 = ($#?m\<^sub>1) $- ($#(?m\<^sub>2))"
+    using Int_ZF_1_L2(1) unfolding zdiff_def by simp
+  with assms(3) show "z\<^sub>1\<ra>z\<^sub>2 \<ls> \<zero>"
+    using zmagnitude_type zless_int_of zdiff_type znegative_as_ls_zero
+    unfolding zless_def by simp
+  from assms(3) \<open>z\<^sub>1\<ra>z\<^sub>2 = ($#?m\<^sub>1) $- ($#(?m\<^sub>2))\<close>
+  show "z\<^sub>1\<ra>z\<^sub>2 = $-($#(?m\<^sub>2 #- ?m\<^sub>1))"
+    using leI zmagnitude_type int_of_diff zminus_zdiff_eq by simp  
+  then show "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = ?m\<^sub>2 #- ?m\<^sub>1"
+    using zmagnitude_zminus_int_of by simp
+qed
+
+text\<open>If $z_1$ is a negative integer and $z_2$ is a nonnegative integer
+  with a greater or equal magnitude, then their sum is nonnegative and its magnitude
+  is the difference between magnitudes of $z_2$ and $z_1$.
+  This is essentially \<open>add_nonneg_neg1\<close> with $z_1$ and $z_2$ swapped.\<close>
+
+lemma (in int0) add_neg_nonneg1: 
+  assumes "z\<^sub>1\<ls>\<zero>" "\<zero>\<lsq>z\<^sub>2" "zmagnitude(z\<^sub>1) \<le> zmagnitude(z\<^sub>2)"
+  shows
+  "\<zero>\<lsq>z\<^sub>1\<ra>z\<^sub>2"
+  "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>2) #- zmagnitude(z\<^sub>1)"
+  "z\<^sub>1\<ra>z\<^sub>2 = $#(zmagnitude(z\<^sub>2) #- zmagnitude(z\<^sub>1))"
+proof -
+  from assms(1,2) have "z\<^sub>1\<ra>z\<^sub>2 = z\<^sub>2\<ra>z\<^sub>1"
+    using OrderedGroup_ZF_1_L4(2) less_are_members(1) Int_ZF_1_L4(1) 
+    by auto
+  with assms show
+      "\<zero>\<lsq>z\<^sub>1\<ra>z\<^sub>2"
+      "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>2) #- zmagnitude(z\<^sub>1)"
+      "z\<^sub>1\<ra>z\<^sub>2 = $#(zmagnitude(z\<^sub>2) #- zmagnitude(z\<^sub>1))"
+    using add_nonneg_neg1 by simp_all
+qed
+
+text\<open>If $z_1$ is a negative integer and $z_2$ is a nonnegative integer
+  with a smaller magnitude, the their sum is negative and its magnitude
+  is the difference between magnitudes of $z_1$ and $z_2$.
+  This is essentially \<open>add_nonneg_neg2\<close> with $z_1$ and $z_2$ swapped.\<close>
+
+lemma (in int0) add_neg_nonneg2: 
+  assumes "z\<^sub>1\<ls>\<zero>" "\<zero>\<lsq>z\<^sub>2" "zmagnitude(z\<^sub>2) < zmagnitude(z\<^sub>1)"
+  shows
+    "z\<^sub>1\<ra>z\<^sub>2 \<ls> \<zero>"
+    "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>1) #- zmagnitude(z\<^sub>2)"
+    "z\<^sub>1\<ra>z\<^sub>2 = $-($#(zmagnitude(z\<^sub>1) #- zmagnitude(z\<^sub>2)))"
+proof -
+  from assms(1,2) have "z\<^sub>1\<ra>z\<^sub>2 = z\<^sub>2\<ra>z\<^sub>1"
+    using OrderedGroup_ZF_1_L4(2) less_are_members(1) Int_ZF_1_L4(1) 
+    by auto
+  with assms show
+    "z\<^sub>1\<ra>z\<^sub>2 \<ls> \<zero>"
+    "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>1) #- zmagnitude(z\<^sub>2)"
+    "z\<^sub>1\<ra>z\<^sub>2 = $-($#(zmagnitude(z\<^sub>1) #- zmagnitude(z\<^sub>2)))"
+    using add_nonneg_neg2 by simp_all
 qed
 
 end

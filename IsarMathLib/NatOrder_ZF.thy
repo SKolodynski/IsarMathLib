@@ -42,21 +42,29 @@ subsection\<open>Order on natural numbers\<close>
 
 text\<open>This is the only section in this theory.\<close>
 
-text\<open>To prove that $\leq$ is a total order, we use a result on ordinals.\<close>
+text\<open>If $a,b$ are natural numbers then $a$ is less or equal $b$ or $b$ is
+  (strictly) less than $a$. We use a result on ordinals in the proof. \<close>
 
-lemma NatOrder_ZF_1_L1:
-  assumes "a\<in>nat" and "b\<in>nat"
-  shows "a \<le> b \<or> b \<le> a"
+lemma nat_order_2cases:  assumes "a\<in>nat" and "b\<in>nat"
+  shows "a \<le> b \<or> b < a"
 proof -
-  from assms have I: "Ord(a) \<and> Ord(b)"
+   from assms have I: "Ord(a) \<and> Ord(b)"
     using nat_into_Ord by auto
   then have "a \<in> b \<or> a = b \<or> b \<in> a"
     using Ord_linear by simp
   with I have "a < b \<or> a = b \<or> b < a"
     using ltI by auto
-  with I show "a \<le> b \<or> b \<le> a"
+  with I show "a \<le> b \<or> b < a"
     using le_iff by auto
 qed
+
+text\<open>A special case of \<open>nat_order_2cases\<close>: If $a,b$ are natural numbers then 
+  $a$ is less or equal $b$ or $b$ is less or equal than $a$. \<close>
+
+lemma NatOrder_ZF_1_L1:
+  assumes "a\<in>nat" and "b\<in>nat"
+  shows "a \<le> b \<or> b \<le> a"
+  using assms nat_order_2cases leI by auto
 
 text\<open>$\leq$ is antisymmetric, transitive, total, and linear. Proofs by
   rewrite using definitions.\<close>

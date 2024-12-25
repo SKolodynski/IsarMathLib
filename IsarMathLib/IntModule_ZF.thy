@@ -149,15 +149,13 @@ proof -
   ultimately show "S\<^sub>1 = S\<^sub>2" using func_eq by simp
 qed
 
-text \<open>The action we will show works is $n\mapsto (g\mapsto g^n)$.
-  It is a well-defined function\<close>
+text \<open>The action we will show works is $n\mapsto (g\mapsto g^n)$. \<close>
 
 lemma (in abelian_group) group_action_int_fun:
-  defines "S \<equiv> {\<langle>$# n,{\<langle>x,Fold(P,\<one>,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}\<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,\<one>, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}"
+  defines "S \<equiv> {\<langle>$# n,{\<langle>x,Fold(P,\<one>,n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat} \<union> {\<langle>$- $# n,GroupInv(G,P) O {\<langle>x,Fold(P,\<one>, n\<times>{x})\<rangle>. x\<in>G}\<rangle>. n\<in>nat}"
   shows "S:int \<rightarrow> End(G,P)" unfolding Pi_def apply simp unfolding function_def
-proof-
-  {
-    fix n assume n:"n\<in>nat"
+proof -
+  { fix n assume n: "n\<in>nat"
     {
       fix x na assume x:"x\<in>G" "na\<in>nat"
       have "Fold(P,\<one>,na\<times>{x})\<in>G" using fold_props(2)[OF x(2) group_oper_fun,

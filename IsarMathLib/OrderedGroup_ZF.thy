@@ -103,7 +103,7 @@ locale group3 =
   defines inv_def [simp]: "x\<inverse> \<equiv> GroupInv(G,P)`(x)"
 
   fixes lesseq (infix "\<lsq>" 68)
-  defines lesseq_def [simp]: "a \<lsq> b \<equiv> \<langle> a,b\<rangle> \<in> r"
+  defines lesseq_def [simp]: "a \<lsq> b \<equiv> \<langle>a,b\<rangle> \<in> r"
 
   fixes sless (infix "\<ls>" 68)
   defines sless_def [simp]: "a \<ls> b \<equiv> a\<lsq>b \<and> a\<noteq>b"
@@ -157,13 +157,13 @@ text\<open>For total order if $g$ is not in $G^{+}$, then it has to be
   less or equal the unit.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L2B: 
-  assumes A1: "r {is total on} G" and A2: "a\<in>G-G\<^sup>+"
-  shows "a\<lsq>\<one>"
+  assumes A1: "r {is total on} G" and A2: "a\<in>G\<setminus>G\<^sup>+"
+  shows "a\<lsq>\<one>" "a\<ls>\<one>"
 proof -
   from A2 have "a\<in>G"   "\<one> \<in> G"  "\<not>(\<one>\<lsq>a)" 
     using OrderedGroup_ZF_1_L1 group0.group0_2_L2 OrderedGroup_ZF_1_L2 
     by auto
-  with A1 show ?thesis using IsTotal_def by auto
+  with A1 show "a\<lsq>\<one>" "a\<ls>\<one>" using IsTotal_def by auto
 qed
 
 text\<open>The group order is reflexive.\<close>
@@ -212,7 +212,7 @@ lemma (in group3) group_order_antisym:
   assumes A1: "a\<lsq>b"  "b\<lsq>a" shows "a=b"
 proof -
   from ordGroupAssum A1 have 
-    "antisym(r)"  "\<langle> a,b\<rangle> \<in> r"  "\<langle> b,a\<rangle> \<in> r"
+    "antisym(r)"  "\<langle>a,b\<rangle> \<in> r"  "\<langle>b,a\<rangle> \<in> r"
     using IsAnOrdGroup_def IsPartOrder_def by auto
   then show "a=b" by (rule Fol1_L4) 
 qed
@@ -227,6 +227,15 @@ proof -
   then have "a\<lsq>c" by (rule Group_order_transitive)
   moreover from A1 A2 have "a\<noteq>c" using group_order_antisym by auto
   ultimately show "a\<ls>c" by simp
+qed
+
+text\<open>If $a<b$ then it's not true that $b\leq a$. \<close>
+
+lemma (in group3) ls_not_leq: assumes "a\<ls>b" shows "\<not>(b\<lsq>a)"
+proof -
+  { assume "b\<lsq>a"
+    with assms have "a\<ls>a" using OrderedGroup_ZF_1_L4A by blast
+  } thus "\<not>(b\<lsq>a)" by auto
 qed
 
 text\<open>Another version of transitivity for the strict order: 
@@ -281,7 +290,7 @@ text\<open>If $a\leq 1$ and $a\neq 1$, then $a \in G\setminus G^{+}$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L4C:
   assumes A1: "a\<lsq>\<one>" and A2: "a\<noteq>\<one>"
-  shows "a \<in> G-G\<^sup>+"
+  shows "a \<in> G\<setminus>G\<^sup>+"
 proof - 
   { assume "a \<notin> G-G\<^sup>+" 
     with ordGroupAssum A1 A2 have False 
@@ -291,14 +300,21 @@ proof -
   } thus ?thesis by auto
 qed
 
+text\<open>If $a$ is smaller than the neutral element then $a$ is in the complement
+  of the set of nonnegative elements. This is just \<open>OrderedGroup_ZF_1_L4C\<close> 
+  with assumptions in a different form.\<close>
+
+corollary (in group3) smaller_one_negative: assumes "a\<ls>\<one>"
+  shows "a \<in> G\<setminus>G\<^sup>+" using assms OrderedGroup_ZF_1_L4C by simp 
+
 text\<open>An element smaller than an element in $G\setminus G^+$ is in 
   $G\setminus G^+$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L4D:
-  assumes A1: "a\<in>G-G\<^sup>+" and A2: "b\<lsq>a"
-  shows "b\<in>G-G\<^sup>+"
+  assumes A1: "a\<in>G\<setminus>G\<^sup>+" and A2: "b\<lsq>a"
+  shows "b\<in>G\<setminus>G\<^sup>+"
 proof - 
-  { assume "b \<notin> G - G\<^sup>+"
+  { assume "b \<notin> G\<setminus>G\<^sup>+"
     with A2 have "\<one>\<lsq>b" "b\<lsq>a"
       using OrderedGroup_ZF_1_L4 OrderedGroup_ZF_1_L2 by auto
     then have "\<one>\<lsq>a" by (rule Group_order_transitive)
@@ -474,6 +490,17 @@ proof -
   then show "a\<cdot>c \<lsq> b\<cdot>d" by (rule Group_order_transitive)
 qed
 
+text\<open>The set of nonnegative elements is closed with respect to the group operation.\<close>
+
+lemma (in group3) group_nonnegative_closed: assumes "a\<in>G\<^sup>+" "b\<in>G\<^sup>+"
+  shows "a\<cdot>b \<in> G\<^sup>+"
+proof -
+  from assms have "\<one>\<cdot>\<one> \<lsq> a\<cdot>b" 
+    using OrderedGroup_ZF_1_L2 OrderedGroup_ZF_1_L5B by simp
+  then show ?thesis using OrderedGroup_ZF_1_L1 group0.group0_2_L2
+    OrderedGroup_ZF_1_L2 by simp
+qed
+
 text\<open>We can replace first of the factors on one side of an inequality 
   with a greater one.\<close>
 
@@ -630,7 +657,7 @@ text\<open>If the order is total, the elements that do not belong
   nonnegative set.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L6: 
-  assumes A1: "r {is total on} G" and A2: "a\<in>G-G\<^sup>+"
+  assumes A1: "r {is total on} G" and A2: "a\<in>G\<setminus>G\<^sup>+"
   shows "a\<lsq>\<one>"  "a\<inverse> \<in> G\<^sup>+"  "restrict(GroupInv(G,P),G-G\<^sup>+)`(a) \<in> G\<^sup>+" 
 proof - 
   from A2 have T1: "a\<in>G" "a\<notin>G\<^sup>+" "\<one>\<in>G" 
@@ -689,6 +716,13 @@ proof -
     qed }
   ultimately show "Q(a,b)" by auto
 qed
+
+text\<open>If $a,b$ are an elements of an ordered group where the order is total, then
+  $a\leq b$ or $b<a$.  \<close>
+
+lemma (in group3) OrdGroup_2cases: assumes "r {is total on} G" "a\<in>G"  "b\<in>G"
+  shows "a\<lsq>b \<or> b\<ls>a"
+  using assms IsTotal_def by auto
 
 text\<open>A lemma about splitting the ordered group "plane" into 6 subsets. Useful
   for proofs by cases.\<close>
@@ -1019,9 +1053,34 @@ proof -
     using group_strict_ord_transl_inv by simp
   moreover from ordGroupAssum A1 T have "a\<cdot>d \<lsq> b\<cdot>d"
      using IsAnOrdGroup_def by simp
-   ultimately show "a\<cdot>c \<ls> b\<cdot>d"
-     by (rule OrderedGroup_ZF_1_L4A)
+  ultimately show "a\<cdot>c \<ls> b\<cdot>d"
+    by (rule OrderedGroup_ZF_1_L4A)
 qed
+
+text\<open>If two elements of the group are smaller than the neutral element then
+  their product is also smaller.\<close>
+
+lemma (in group3) group_less_less: assumes "a\<ls>\<one>" "b\<ls>\<one>"
+  shows "a\<cdot>b \<ls> \<one>"
+proof -
+  from assms have "a\<cdot>b \<ls> \<one>\<cdot>\<one>" using OrderedGroup_ZF_1_L12D
+    by simp
+  then show "a\<cdot>b \<ls> \<one>" using OrderedGroup_ZF_1_L1 group0.group0_2_L2
+    by simp
+qed
+
+ text\<open>If the order is total the complement of the set of nonnegative elements is 
+  closed with respect to the group operation.\<close>
+
+lemma (in group3) group_negative_closed: 
+  assumes "r {is total on} G" "a\<in>G\<setminus>G\<^sup>+" "b\<in>G\<setminus>G\<^sup>+"
+  shows "a\<cdot>b \<in> G\<setminus>G\<^sup>+"
+proof -
+  from assms have "a\<cdot>b \<ls> \<one>\<cdot>\<one>"
+    using OrderedGroup_ZF_1_L2B(2) OrderedGroup_ZF_1_L12D by simp
+  then show "a\<cdot>b \<in> G\<setminus>G\<^sup>+" using OrderedGroup_ZF_1_L1 group0.group0_2_L2
+    smaller_one_negative by simp
+qed  
 
 subsection\<open>The set of positive elements\<close>
 

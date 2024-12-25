@@ -238,6 +238,14 @@ text\<open>A special case of summing (or, using more notation-neutral term \<ope
   multiplication operation. In that case the natural multiple maps into natural powers of a ring
   element. \<close>
 
+text\<open>Another way of looking at a multiple of a monoid element: it's a sum of the 
+  cartesian product of $n$ and the singleton $\{x\}$. This is because
+  the expression $\{\langle k,x\rangle : k\in n\}$ in the defintion of the notation for natural 
+  multiple i.e. a constant list of the length $n$ is the same as the set $n\times\{ x\}$.\<close>
+
+lemma (in monoid1) monoid_nat_mult_def_alt: shows "n\<cdot>x = \<Sum>n\<times>{x}"
+  using const_fun_def_alt const_fun_def_alt1 by simp
+
 text\<open>The zero's multiple of a monoid element is its neutral element.\<close>
 
 lemma (in monoid1) nat_mult_zero: shows "0\<cdot>x = \<zero>" using sum_empty by simp

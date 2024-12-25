@@ -60,6 +60,7 @@ session "IsarMathLib" = "ZF" +
     IntDiv_ZF_IML
     Int_ZF_2
     Int_ZF_3
+    IntGroup_ZF
     IntModule_ZF
     Real_ZF
     Real_ZF_1

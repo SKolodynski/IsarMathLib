@@ -268,6 +268,11 @@ text\<open>The inverse of the neutral element is the neutral element.\<close>
 lemma (in group0) group_inv_of_one: shows "\<one>\<inverse> = \<one>"
   using group0_2_L2 inverse_in_group group0_2_L6 group0_2_L7 by blast
 
+text\<open>Dividing by the neutral element does not change the dividend. \<close>
+
+lemma (in group0) div_by_neutral: assumes "x\<in>G" shows "x\<cdot>\<one>\<inverse> = x"
+  using assms group_inv_of_one group0_2_L2 by simp
+
 text\<open>if $a^{-1} = 1$, then $a=1$.\<close>
 
 lemma (in group0) group0_2_L8A:  
@@ -1231,6 +1236,25 @@ text\<open>Product of a singleton list is its only element.\<close>
 lemma (in group0) prod_singleton: assumes  "s:1\<rightarrow>G"
   shows "(\<Prod>s) = s`(0)"
   using assms nempty_list_prod_as_fold1 semigr0_valid_in_group0 semigr0.prod_of_1elem
-    by force
+  by force
+
+text\<open>The \<open>group0\<close> locale defines a notation for a natural power of a group element.
+  The next lemma provides two alternative definitions for that notation: a natural power 
+  of a group element $x$ is the product of the constant list $n\{x\}$, 
+  i.e. the fold of the group operation starting from the neutral element of $n\{x\}$. 
+  It's really the \<open>monoid_nat_mult_def_alt\<close> lemma from \<open>Monoid_ZF_1\<close> theory, just written in the 
+  multiplicative notation used in the \<open>group0\<close> context.\<close>
+
+lemma (in group0) group_nat_pow_def_alt: 
+  shows "pow(n,x) = \<Prod>n\<times>{x}" and "pow(n,x) =  Fold(P,\<one>,n\<times>{x})"
+  using monoid.monoid_nat_mult_def_alt by simp_all
+
+text\<open> $x$ raised to a power $n+1$ can be written as $x\cdot x^n$ or $(x^n)\cdot x$.
+  This is just lemma \<open>nat_mult_add_one\<close> from \<open>Monoid_ZF_1\<close> theory written in multiplicative 
+  notation. \<close>
+
+lemma (in group0) nat_pow_add_one: assumes "n\<in>nat" "x\<in>G"
+  shows "pow(n #+ 1,x) = pow(n,x)\<cdot>x" and "pow(n #+ 1,x) = x\<cdot>pow(n,x)"
+  using assms monoid.nat_mult_add_one by simp_all
 
 end
