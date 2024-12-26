@@ -9,7 +9,6 @@
     <Compile Include="IMLP_datatypes.fs" />
     <Compile Include="ProcessThys.fs" />
     <Compile Include="Export2Html.fs" />
-    <Compile Include="IMLP_datatypes.fs" />
     <Compile Include="IMLParser.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

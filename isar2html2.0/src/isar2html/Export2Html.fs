@@ -1,7 +1,7 @@
 (*
     This file is part of isar2html2.0 - a tool for rendering IsarMathLib
 	theories in in HTML.
-    Copyright (C) 2022-2023  Slawomir Kolodynski
+    Copyright (C) 2022-2024  Slawomir Kolodynski
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or

@@ -29,12 +29,24 @@ namespace iml
             if args[1].Length = 1 then args[1]+"^{"+args[0]+"}"
             else "("+args[1]+")"+"^{"+args[0]+"}"
 
+        /// expands integer power in the same way as the natural power, 
+        /// i.e. powz(n,x) --> x^n
+        
+        let macroPowz = macroPow 
+
+        /// macro that expands zmagnitude(z) --> |z|_N
+        let macroZmagnitude (args:string array) :string =
+            if args[0].Length = 1 then "| "+args[0]+"|\\<^isub>N "
+            else "\\left| "+args[0]+" \\right|\\<^isub>N "
+
 
         /// list of macros to be expanded, the first string is macro name, 
         /// the second is the template
         let macros : (string*((string array -> string))) array = 
             [| "Binom", macroBinom;
-                "pow",macroPow|]
+                "pow", macroPow;
+                "powz", macroPowz;
+                "zmagnitude", macroZmagnitude |]
 
         /// list of translations from Isar symbols to LaTeX symbols
         // TODO: read from a file maybe?
@@ -43,8 +55,10 @@ namespace iml
                  ("%","\\%")
                  ("$#","\\$\\!\\#\\!")
                  ("$+","\\ \\$\\!+\\ ")
+                 ("$*","\\ \\$\\!*\\ ")
                  ("$-","\\ \\$\\!-\\!")
                  ("$- ","\\ \\$\\!-\\ ")
+                 ("$\\leq ","\\ \\$\\!\\leq\\ ")
                  // ("$", "\\ \\$ ")
                  ("\\<longrightarrow>", "\\longrightarrow ")
                  (".", ".\\ ")
