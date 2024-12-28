@@ -351,7 +351,7 @@ proof -
     group0.group0_2_L6 by simp
 qed
 
-text\<open>If an element is smaller that the unit, then its inverse is greater.\<close>
+text\<open>If an element is nonnegative, then its inverse is less or equal than the unit.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L5A: 
   assumes A1: "a\<lsq>\<one>" shows "\<one>\<lsq>a\<inverse>"
@@ -391,6 +391,18 @@ proof -
     with A1 have False using group_order_antisym
       by blast
   } then show "\<not>(a\<lsq>\<one> \<and> a\<noteq>\<one>)" by auto
+qed
+
+text\<open>If an element is positive, then its inverse is negative.\<close>
+
+lemma (in group3) pos_inv_neg: assumes  "\<one>\<ls>a"
+  shows "a\<inverse>\<ls>\<one>"
+proof -
+  from assms have "a\<in>G" and "a\<noteq>\<one>"
+    using less_are_members(2) by auto
+  with assms show "a\<inverse>\<ls>\<one>"
+    using OrderedGroup_ZF_1_L1 group0.group0_2_L8B OrderedGroup_ZF_1_L5AB(1)
+    by simp
 qed
 
 text\<open>If two elements are greater or equal than the unit, then the inverse

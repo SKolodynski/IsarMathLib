@@ -470,6 +470,12 @@ text\<open>The order on integers is reflexive.\<close>
 lemma (in int0) int_ord_is_refl: shows "refl(\<int>,IntegerOrder)"
   using Int_ZF_2_L1 zle_refl refl_def by auto
 
+text\<open>A more explicit version of "integer order is reflexive" claim\<close>
+
+lemma (in int0) int_ord_is_refl1: assumes "z\<in>\<int>"
+  shows "z\<lsq>z"
+  using assms int_ord_is_refl unfolding refl_def by simp
+
 text\<open>The essential condition to show antisymmetry of the order on integers.\<close>
 
 lemma (in int0) Int_ZF_2_L3: 
@@ -876,7 +882,8 @@ lemma (in int0) Int_ZF_2_L16:
 
 text\<open>$0\leq 1$, so $|1| = 1$.\<close>
 
-lemma (in int0) Int_ZF_2_L16A: shows "\<zero>\<lsq>\<one>" and "abs(\<one>) = \<one>"
+lemma (in int0) Int_ZF_2_L16A: 
+  shows "\<zero>\<lsq>\<one>" "\<zero>\<ls>\<one>" "abs(\<one>) = \<one>"
 proof -
   have "($# 0) \<in> \<int>" "($# 1)\<in> \<int>" by auto
   then have "\<zero>\<lsq>\<zero>" and T1: "\<one>\<in>\<int>" 
@@ -884,8 +891,14 @@ proof -
   then have "\<zero>\<lsq>\<zero>\<ra>\<one>" using Int_ZF_2_L12A by simp
   with T1 show "\<zero>\<lsq>\<one>" using Int_ZF_1_T2 group0.group0_2_L2
     by simp
-  then show "abs(\<one>) = \<one>" using Int_ZF_2_L16 by simp
+  then show "abs(\<one>) = \<one>" and "\<zero>\<ls>\<one>" 
+    using Int_ZF_2_L16 int_zero_not_one by simp_all
 qed
+
+text\<open>Negative one is smaller than zero.\<close>
+
+lemma (in int0) neg_one_less_zero: shows "(\<rm>\<one>)\<ls>\<zero>"
+  using Int_ZF_2_L16A(2) pos_inv_neg by simp
 
 text\<open>$1\leq 2$.\<close>
 
@@ -1514,15 +1527,31 @@ text\<open>The next lemma shows that \<open>zmagnitude\<close> of an integer is 
   of its opposite. \<close>
 
 lemma (in int0) zmag_opposite_same: assumes "z\<in>\<int>" 
-  shows "zmagnitude(z) = zmagnitude($-z)"
+  shows 
+    "zmagnitude(z) = zmagnitude($-z)"
+    "zmagnitude(z) = zmagnitude(\<rm>z)"
 proof -
   from assms obtain n where "n\<in>nat" and "z=$#n \<or> z=$-($# succ(n))"
     using int_cases by auto
-  then show ?thesis using zmagnitude_int_of zmagnitude_zminus_int_of
+  then show "zmagnitude(z) = zmagnitude($-z)" using zmagnitude_int_of 
     by auto
+  with assms show "zmagnitude(z) = zmagnitude(\<rm>z)" using Int_ZF_1_L9A
+    by simp
+qed
+
+text\<open>The magnitude of zero (the integer) is zero (the natural number)
+  and the magnitude of one (the integer) is one (the natural number).\<close>
+
+lemma (in int0) zmag_zero_one: shows "zmagnitude(\<zero>) = 0" and "zmagnitude(\<one>) = 1"
+proof -
+  have "zmagnitude(\<zero>) = zmagnitude($#0)" and "zmagnitude(\<one>) = zmagnitude($#1)" 
+    using Int_ZF_1_L8 by simp_all
+  then show "zmagnitude(\<zero>) = 0" and "zmagnitude(\<one>) = 1" using zmagnitude_int_of
+    by simp_all
 qed
 
 text\<open>If $z_1,z_1$ is a pair of integers then (at least) one of the following six cases holds:
+  
   
   1. Both integers are nonnegative.
 

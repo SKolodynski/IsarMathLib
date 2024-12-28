@@ -119,7 +119,7 @@ text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, the
 lemma (in group0) nat_pow_cancel_more: assumes "n\<in>nat" "k\<le>n" "x\<in>G"
   shows "pow(k,x\<inverse>)\<cdot>pow(n,x) = pow(n #- k,x)"
 proof -
-  from assms have 
+  from assms have
     "k\<in>nat" "n #- k \<in> nat" "pow((n #- k),x) \<in> G" "pow(k,x) \<in> G" "pow(k,x\<inverse>) \<in> G"
     using leq_nat_is_nat diff_type monoid.nat_mult_type inverse_in_group 
       by simp_all
@@ -157,7 +157,8 @@ text\<open>We extend the \<open>group0\<close> context with some notation from \
   that we can use to convert one into the other. 
   Hence, we define the integer power \<open>powz(z,x)\<close> as $x$ raised to the corresponding
   natural power if $z$ is a nonnegative and  $x^{-1}$ raised to natural power corresponding
-  to $-z$ otherwise.   \<close>
+  to $-z$ otherwise. Since we inherit the multiplicative notation from the \<open>group0\<close> context
+  the integer "one" is denoted \<open>\<one>\<^sub>Z\<close> rather than just \<open>\<one>\<close> (which is the group's neutral element). \<close>
 
 locale group_int0 = group0 +
 
@@ -175,6 +176,9 @@ locale group_int0 = group0 +
 
   fixes izero ("\<zero>")
   defines izero_def [simp]: "\<zero> \<equiv> TheNeutralElement(\<int>,IntegerAddition)"
+
+  fixes ione ("\<one>\<^sub>Z")
+  defines ione_def [simp]: "\<one>\<^sub>Z \<equiv> TheNeutralElement(\<int>,IntegerMultiplication)"
 
   fixes nonnegative ("\<int>\<^sup>+")
   defines nonnegative_def [simp]: 
@@ -278,5 +282,28 @@ proof -
     powz_hom_neg_nneg1 powz_hom_neg_nneg2
     by blast
 qed
+
+text\<open>A group element raised to (integer) zero'th power is equal to the group's neutral element. 
+  An element raised to (integer) power one is the same element. \<close>
+
+lemma (in group_int0) int_power_zero_one: assumes "x\<in>G"
+  shows "powz(\<zero>,x) = \<one>" and "powz(\<one>\<^sub>Z,x) = x"
+  using assms int0.Int_ZF_1_L8A(1) int0.int_ord_is_refl1 int0.zmag_zero_one 
+    monoid.nat_mult_zero int0.Int_ZF_2_L16A(1) monoid.nat_mult_one by auto
+
+text\<open>A group element raised to power $-1$ is the inverse of that group element.\<close>
+
+lemma (in group_int0) inpt_power_neg_one: assumes "x\<in>G"
+  shows "powz(\<rm>\<one>\<^sub>Z,x) = x\<inverse>"
+  using assms int0.neg_not_nonneg int0.neg_one_less_zero int0.zmag_opposite_same(2) 
+    int0.Int_ZF_1_L8A(2) int0.zmag_zero_one(2) inverse_in_group monoid.nat_mult_one 
+  by simp
+
+text\<open>Increasing the (integer) power by one is the same as multiplying by the group element.\<close>
+
+lemma (in group_int0) int_power_add_one: assumes "z\<in>\<int>" "x\<in>G"
+  shows "powz(z\<ra>\<one>\<^sub>Z,x) = powz(z,x)\<cdot>x"
+  using assms int0.Int_ZF_1_L8A(2) powz_hom_prop int_power_zero_one(2)
+  by simp
 
 end
