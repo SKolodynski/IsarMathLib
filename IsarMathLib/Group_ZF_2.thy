@@ -33,9 +33,10 @@ theory Group_ZF_2 imports AbelianGroup_ZF func_ZF EquivClass1
 
 begin
 
-text\<open>This theory continues Group\_ZF.thy and considers lifting the group 
+text\<open>This theory continues \<open>Group_ZF\<close> and considers lifting the group 
   structure to function spaces and projecting the group structure to 
-  quotient spaces, in particular the quotient qroup.\<close>
+  quotient spaces, in particular the quotient qroup. We also define group homomorphisms
+  and in particular the space \<open>End(G,P)\<close> of homomorphisms of a group into itself.\<close>
 
 subsection\<open>Lifting groups to function spaces\<close>
 
@@ -774,6 +775,110 @@ proof -
     using id_type func_ZF_6_L1A by simp
   ultimately show "?I = TheNeutralElement(X\<rightarrow>X,?F)"
     using monoid0.group0_1_L4 by auto
+qed
+
+subsection\<open>Homomorphisms\<close>
+
+text\<open>A homomorphism is a function between groups that preserves the group operations.\<close>
+
+text\<open>In general we may have a homomorphism not only between groups, but also between various 
+  algebraic structures with one operation like magmas, semigroups, quasigroups, loops and monoids. 
+  In all cases the homomorphism is defined by using the morphism property. In the 
+  multiplicative notation we we will write that $f$ has a morphism property if 
+  $f(x\cdot_G y) = f(x)\cdot_H f(y)$ for all $x,y\in G$. Below we write this definition 
+  in raw set theory notation and use the expression \<open>IsMorphism\<close> instead of the possible, but longer
+  \<open>HasMorphismProperty\<close>. \<close>
+
+definition 
+  "IsMorphism(G,P,F,f) \<equiv> \<forall>g\<^sub>1\<in>G. \<forall>g\<^sub>2\<in>G. f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>) = F`\<langle>f`(g\<^sub>1),f`(g\<^sub>2)\<rangle>"
+
+text\<open>A function $f:G\rightarrow H$ between algebraic structures 
+  $(G,\cdot_G)$ and $(H,\cdot_H)$ with one operation (each) is a homomorphism if 
+  it has the morphism property. \<close> 
+
+definition
+  "Homomor(f,G,P,H,F) \<equiv> f:G\<rightarrow>H \<and> IsMorphism(G,P,F,f)"
+
+text\<open>Now a lemma about the definition:\<close>
+
+lemma homomor_eq:
+  assumes "Homomor(f,G,P,H,F)" "g\<^sub>1\<in>G" "g\<^sub>2\<in>G"
+  shows "f`(P`\<langle>g\<^sub>1,g\<^sub>2\<rangle>) = F`\<langle>f`(g\<^sub>1),f`(g\<^sub>2)\<rangle>"
+  using assms unfolding Homomor_def IsMorphism_def by auto
+
+text\<open>An endomorphism is a homomorphism from a group to the same group. 
+  We define \<open>End(G,P)\<close> as the set of endomorphisms for a given group.
+  As we show later when the group is abelian, the set of endomorphisms 
+  with pointwise adddition and composition as multiplication forms a ring.\<close>
+
+definition
+  "End(G,P) \<equiv> {f\<in>G\<rightarrow>G. Homomor(f,G,P,G,P)}"
+
+text\<open>The defining property of an endomorphism written in notation used in \<open>group0\<close> context:\<close>
+
+lemma (in group0) endomor_eq: assumes "f \<in> End(G,P)" "g\<^sub>1\<in>G" "g\<^sub>2\<in>G"
+  shows "f`(g\<^sub>1\<cdot>g\<^sub>2) = f`(g\<^sub>1)\<cdot>f`(g\<^sub>2)"
+  using assms homomor_eq unfolding End_def by auto
+
+text\<open>A function that maps a group $G$ into itself and satisfies 
+  $f(g_1\cdot g2) = f(g_1)\cdot f(g_2)$ is an endomorphism.\<close>
+
+lemma (in group0) eq_endomor: 
+  assumes "f:G\<rightarrow>G" and "\<forall>g\<^sub>1\<in>G. \<forall>g\<^sub>2\<in>G. f`(g\<^sub>1\<cdot>g\<^sub>2)=f`(g\<^sub>1)\<cdot>f`(g\<^sub>2)"
+  shows "f \<in> End(G,P)"
+  using assms  unfolding End_def Homomor_def IsMorphism_def by simp
+
+text\<open>The set of endomorphisms forms a submonoid of the monoid of function
+from a set to that set under composition.\<close>
+
+lemma (in group0) end_composition:
+  assumes "f\<^sub>1\<in>End(G,P)" "f\<^sub>2\<in>End(G,P)"
+  shows "Composition(G)`\<langle>f\<^sub>1,f\<^sub>2\<rangle> \<in> End(G,P)"
+proof-
+  from assms have fun: "f\<^sub>1:G\<rightarrow>G" "f\<^sub>2:G\<rightarrow>G" unfolding End_def by auto
+  then have "f\<^sub>1 O f\<^sub>2:G\<rightarrow>G" using comp_fun by auto
+  from assms fun(2) have 
+    "\<forall>g\<^sub>1\<in>G. \<forall>g\<^sub>2\<in>G. (f\<^sub>1 O f\<^sub>2)`(g\<^sub>1\<cdot>g\<^sub>2) = ((f\<^sub>1 O f\<^sub>2)`(g\<^sub>1))\<cdot>((f\<^sub>1 O f\<^sub>2)`(g\<^sub>2))"
+    using group_op_closed comp_fun_apply endomor_eq apply_type 
+    by simp    
+  with fun \<open>f\<^sub>1 O f\<^sub>2:G\<rightarrow>G\<close> show ?thesis using eq_endomor func_ZF_5_L2 
+    by simp
+qed
+
+text\<open>We will use some binary operations that are naturally defined on the function space 
+   $G\rightarrow G$, but we consider them restricted to the endomorphisms of $G$.
+  To shorten the notation in such case we define an abbreviation \<open>InEnd(F,G,P)\<close> 
+  which restricts a binary operation $F$ to the set of endomorphisms of $G$. \<close>
+
+abbreviation InEnd("_ {in End} [_,_]")
+  where "InEnd(F,G,P) \<equiv> restrict(F,End(G,P)\<times>End(G,P))"
+
+text\<open>Endomoprhisms of a group form a monoid with composition as the binary operation,
+  and the identity map as the neutral element.\<close>
+
+theorem (in group0) end_comp_monoid:
+  shows "IsAmonoid(End(G,P),InEnd(Composition(G),G,P))"
+  and "TheNeutralElement(End(G,P),InEnd(Composition(G),G,P)) = id(G)"
+proof -
+  let ?C\<^sub>0 = "InEnd(Composition(G),G,P)"
+  have fun: "id(G):G\<rightarrow>G" unfolding id_def by auto
+  { fix g h assume "g\<in>G""h\<in>G"
+    then have "id(G)`(g\<cdot>h)=(id(G)`g)\<cdot>(id(G)`h)"
+      using group_op_closed by simp
+  } 
+  with groupAssum fun have "id(G) \<in> End(G,P)" using eq_endomor by simp 
+  moreover  have A0: "id(G)=TheNeutralElement(G \<rightarrow> G, Composition(G))" 
+    using Group_ZF_2_5_L2(2) by auto 
+  ultimately have A1: "TheNeutralElement(G \<rightarrow> G, Composition(G)) \<in> End(G,P)" by auto 
+  moreover have A2: "End(G,P) \<subseteq> G\<rightarrow>G" unfolding End_def by blast 
+  moreover have A3: "End(G,P) {is closed under} Composition(G)" 
+    using end_composition unfolding IsOpClosed_def by blast
+  ultimately show "IsAmonoid(End(G,P),?C\<^sub>0)" 
+    using monoid0.group0_1_T1 Group_ZF_2_5_L2(1) unfolding monoid0_def
+    by blast
+  have "IsAmonoid(G\<rightarrow>G,Composition(G))" using Group_ZF_2_5_L2(1) by auto
+  with A0 A1 A2 A3 show "TheNeutralElement(End(G,P),?C\<^sub>0) = id(G)"
+    using group0_1_L6 by auto
 qed
 
 end

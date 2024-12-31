@@ -194,13 +194,17 @@ locale group_int0 = group0 +
   defines powz_def [simp]: 
     "powz(z,x) \<equiv> pow(zmagnitude(z),if \<zero>\<lsq>z then x else x\<inverse>)"
 
+text\<open>An integer power of a group element is in the group.\<close>
+
+lemma (in group_int0) powz_type: assumes "z\<in>\<int>" "x\<in>G" shows "powz(z,x) \<in> G"
+  using assms zmagnitude_type monoid.nat_mult_type inverse_in_group by simp
+
 text\<open>If $x$ is an element of the group and $z_1,z_2$ are nonnegative integers then
   $x^{z_1+z_2}=x^{z_1}\cdot x^{z_2}$, i.e. the power homomorphism property holds.\<close>
 
 lemma (in group_int0) powz_hom_nneg_nneg: assumes "\<zero>\<lsq>z\<^sub>1" "\<zero>\<lsq>z\<^sub>2" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
-  using assms int0.add_nonneg_ints(1,2) monoid.nat_mult_add
-    by simp
+  using assms int0.add_nonneg_ints(1,2) monoid.nat_mult_add by simp
 
 text\<open>If $x$ is an element of the group and $z_1,z_2$ are negative integers then
   the power homomorphism property holds.\<close>
