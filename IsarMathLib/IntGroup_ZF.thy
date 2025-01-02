@@ -199,6 +199,14 @@ text\<open>An integer power of a group element is in the group.\<close>
 lemma (in group_int0) powz_type: assumes "z\<in>\<int>" "x\<in>G" shows "powz(z,x) \<in> G"
   using assms zmagnitude_type monoid.nat_mult_type inverse_in_group by simp
 
+text\<open>A group element raised to (integer) zero'th power is equal to the group's neutral element. 
+  An element raised to (integer) power one is the same element. \<close>
+
+lemma (in group_int0) int_power_zero_one: assumes "x\<in>G"
+  shows "powz(\<zero>,x) = \<one>" and "powz(\<one>\<^sub>Z,x) = x"
+  using assms int0.Int_ZF_1_L8A(1) int0.int_ord_is_refl1 int0.zmag_zero_one 
+    monoid.nat_mult_zero int0.Int_ZF_2_L16A(1) monoid.nat_mult_one by auto
+
 text\<open>If $x$ is an element of the group and $z_1,z_2$ are nonnegative integers then
   $x^{z_1+z_2}=x^{z_1}\cdot x^{z_2}$, i.e. the power homomorphism property holds.\<close>
 
@@ -287,14 +295,6 @@ proof -
     by blast
 qed
 
-text\<open>A group element raised to (integer) zero'th power is equal to the group's neutral element. 
-  An element raised to (integer) power one is the same element. \<close>
-
-lemma (in group_int0) int_power_zero_one: assumes "x\<in>G"
-  shows "powz(\<zero>,x) = \<one>" and "powz(\<one>\<^sub>Z,x) = x"
-  using assms int0.Int_ZF_1_L8A(1) int0.int_ord_is_refl1 int0.zmag_zero_one 
-    monoid.nat_mult_zero int0.Int_ZF_2_L16A(1) monoid.nat_mult_one by auto
-
 text\<open>A group element raised to power $-1$ is the inverse of that group element.\<close>
 
 lemma (in group_int0) inpt_power_neg_one: assumes "x\<in>G"
@@ -309,5 +309,95 @@ lemma (in group_int0) int_power_add_one: assumes "z\<in>\<int>" "x\<in>G"
   shows "powz(z\<ra>\<one>\<^sub>Z,x) = powz(z,x)\<cdot>x"
   using assms int0.Int_ZF_1_L8A(2) powz_hom_prop int_power_zero_one(2)
   by simp
+
+text\<open>For integer power taking a negative of the exponent is the same as taking inverse of the 
+  group element. \<close>
+
+lemma (in group_int0) minus_exp_inv_base: assumes "z\<in>\<int>" "x\<in>G"
+  shows "powz(\<rm>z,x) = powz(z,x\<inverse>)"
+proof -
+  from assms(1) have "\<zero>\<ls>z \<or> z=\<zero> \<or> z\<ls>\<zero>"
+    using int0.int_neg_zero_pos by simp
+  moreover from assms(1) have "\<zero>\<ls>z \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
+    using int0.neg_pos_int_neg int0.neg_not_nonneg int0.zmag_opposite_same(2) 
+    by simp
+  moreover from assms(2) have "z=\<zero> \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
+    using int0.Int_ZF_1_L11 int_power_zero_one(1) inverse_in_group by simp
+  moreover from assms have "z\<ls>\<zero> \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
+    using int0.neg_not_nonneg int0.neg_neg_int_pos group_inv_of_inv 
+        int0.zmag_opposite_same(2) by simp
+  ultimately show "powz(\<rm>z,x) = powz(z,x\<inverse>)" by auto
+qed
+
+text\<open>Integer power of a group element is the same as the inverse of the element
+  raised to negative of the exponent. \<close>
+
+lemma (in group_int0) minus_exp_inv_base1: assumes "z\<in>\<int>" "x\<in>G"
+  shows "powz(z,x) = powz(\<rm>z,x\<inverse>)"
+proof -
+  from assms(1) have "(\<rm>z)\<in>\<int>" using int0.int_neg_type by simp
+  with assms show ?thesis using minus_exp_inv_base int0.neg_neg_noop
+    by force
+qed
+
+text\<open>The next context is like \<open>group_int0\<close> but adds the assumption that the group 
+  operation is commutative (i.e. the group is abelian). \<close>
+
+locale abgroup_int0 = group_int0 +
+  assumes isAbelian: "P {is commutative on} G"
+
+text\<open>In abelian groups taking a nonnegative integer power commutes with the group operation.
+  Unfortunately we have to drop to raw set theory notation in the proof to be able to use 
+  \<open>int0.Induction_on_int\<close> from the \<open>abgroup_int0\<close> context.\<close>
+
+lemma (in abgroup_int0) powz_groupop_commute0: assumes "\<zero>\<lsq>k" "x\<in>G" "y\<in>G"
+  shows "powz(k,x\<cdot>y) = powz(k,x)\<cdot>powz(k,y)"
+proof -
+  from assms(1) have "\<langle>\<zero>,k\<rangle> \<in> IntegerOrder" by simp
+  moreover 
+  from assms(2,3) have "powz(\<zero>,x\<cdot>y) = powz(\<zero>,x)\<cdot>powz(\<zero>,y)"
+    using group_op_closed int_power_zero_one(1) group0_2_L2
+    by simp
+  moreover
+  { fix m assume "\<zero>\<lsq>m" and I: "powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y)"
+    from assms(2,3) \<open>\<zero>\<lsq>m\<close> have  "m\<in>\<int>" and "x\<cdot>y \<in> G"  
+      using int0.Int_ZF_2_L1A(3) group_op_closed by simp_all
+    with isAbelian assms(2,3) I have "powz(m\<ra>\<one>\<^sub>Z,x\<cdot>y) = powz(m\<ra>\<one>\<^sub>Z,x)\<cdot>powz(m\<ra>\<one>\<^sub>Z,y)"
+      using int_power_add_one group0_4_L8(3) powz_type by simp
+  } hence "\<forall>m. \<zero>\<lsq>m \<and> powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y) \<longrightarrow>
+     powz(m\<ra>\<one>\<^sub>Z,x\<cdot>y) = powz(m\<ra>\<one>\<^sub>Z,x)\<cdot>powz(m\<ra>\<one>\<^sub>Z,y)" by simp
+  hence "\<forall>m. \<langle>\<zero>, m\<rangle> \<in> IntegerOrder \<and> powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y) \<longrightarrow> 
+    powz(IntegerAddition`\<langle>m,TheNeutralElement(int,IntegerMultiplication)\<rangle>,x\<cdot>y) = 
+    powz(IntegerAddition`\<langle>m,TheNeutralElement(int,IntegerMultiplication)\<rangle>,x)\<cdot>
+    powz(IntegerAddition`\<langle>m,TheNeutralElement(int,IntegerMultiplication)\<rangle>,y)"
+    by simp
+  ultimately show "powz(k,x\<cdot>y) = powz(k,x)\<cdot>powz(k,y)" by (rule int0.Induction_on_int)
+qed
+
+text\<open>In abelian groups taking a nonpositive integer power commutes with the group operation.
+  We could use backwards induction in the proof but it is shorter to use the nonnegative 
+  case from \<open>powz_groupop_commute0\<close>. \<close>
+
+lemma (in abgroup_int0) powz_groupop_commute1: assumes "k\<lsq>\<zero>" "x\<in>G" "y\<in>G"
+  shows "powz(k,x\<cdot>y) = powz(k,x)\<cdot>powz(k,y)"
+proof -
+  from isAbelian assms have "powz(k,x\<cdot>y) = powz(\<rm>k,x\<inverse>\<cdot>y\<inverse>)"
+    using int0.Int_ZF_2_L1A(2) group_op_closed minus_exp_inv_base1 group_inv_of_two
+    unfolding IsCommutative_def by simp
+  with assms show ?thesis
+    using int0.Int_ZF_2_L10A inverse_in_group powz_groupop_commute0 
+      int0.Int_ZF_2_L1A(2) minus_exp_inv_base1 by simp
+qed
+
+text\<open>In abelian groups taking an integer power commutes with the group operation.\<close>
+
+theorem (in abgroup_int0) powz_groupop_commute: assumes "z\<in>\<int>" "x\<in>G" "y\<in>G"
+  shows "powz(z,x\<cdot>y) = powz(z,x)\<cdot>powz(z,y)"
+proof -
+  from assms(1) have "\<zero>\<lsq>z \<or> z\<lsq>\<zero>" using int0.int_nonneg_or_nonpos
+    by auto
+  with assms(2,3) show ?thesis using powz_groupop_commute0 powz_groupop_commute1
+    by blast
+qed
 
 end

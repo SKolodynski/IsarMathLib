@@ -330,6 +330,16 @@ theorem Int_ZF_1_T2: shows
   using int0.Int_ZF_1_T1 int0.Int_ZF_1_L9 IsAgroup_def
   group0_def int0.Int_ZF_1_L4 IsCommutative_def by auto
 
+text\<open>Negative of an integer is an integer.\<close>
+
+lemma (in int0) int_neg_type: assumes "m\<in>\<int>" shows "(\<rm>m) \<in> \<int>"
+  using assms Int_ZF_1_T2(3) group0.inverse_in_group by simp
+
+text\<open>Taking a negative twice we get back the same integer. \<close>
+
+lemma (in int0) neg_neg_noop: assumes "m\<in>\<int>" shows "(\<rm>(\<rm>m)) = m"
+  using assms Int_ZF_1_T2(3) group0.group_inv_of_inv by simp
+
 text\<open>What is the additive group inverse in the group of integers?\<close>
 
 lemma (in int0) Int_ZF_1_L9A: assumes A1: "m\<in>\<int>" 
@@ -593,11 +603,32 @@ text\<open>Negative numbers are not nonnegative. This is a special case of \<ope
 corollary (in int0) neg_not_nonneg: assumes "m\<ls>\<zero>" shows "\<not>(\<zero>\<lsq>m)"
   using assms ls_not_leq by simp
 
+text\<open>Negative of a positive integer is negative.\<close>
+
+lemma (in int0) neg_pos_int_neg: assumes "\<zero>\<ls>z" shows "(\<rm>z)\<ls>\<zero>"
+  using assms inv_both_strict_ineq Int_ZF_1_L11 by force
+
+text\<open>Negative of a negative integer is positive.\<close>
+
+lemma (in int0) neg_neg_int_pos: assumes "z\<ls>\<zero>" shows "\<zero>\<ls>(\<rm>z)"
+  using assms inv_both_strict_ineq Int_ZF_1_L11 by force
+
 text\<open>An integer is nonnegative or negative. This is a special case of \<open>OrdGroup_2cases\<close>
   from \<open>OrderedGroup_ZF\<close> theory and useful for splitting proofs into cases.\<close>
 
 lemma (in int0) int_nonneg_or_neg: assumes "z\<in>\<int>" shows "\<zero>\<lsq>z \<or> z\<ls>\<zero>"
   using assms OrdGroup_2cases Int_ZF_1_L8A(1) Int_ZF_2_T1(2) by simp
+
+text\<open>Slightly weaker assertion than \<open>int_nonneg_or_neg\<close> with overlap at zero:
+ an integer is nonnegative or nonpositive. \<close>
+
+corollary (in int0) int_nonneg_or_nonpos: assumes "z\<in>\<int>" shows "\<zero>\<lsq>z \<or> z\<lsq>\<zero>"
+  using assms int_nonneg_or_neg by auto
+
+text\<open>Another variant of splitting into cases: an integer is positive, zero or negative.\<close>
+
+lemma (in int0) int_neg_zero_pos: assumes "z\<in>\<int>" shows "\<zero>\<ls>z \<or> z=\<zero> \<or> z\<ls>\<zero>"
+  using assms OrdGroup_3cases Int_ZF_1_L8A(1) Int_ZF_2_T1(2) by auto
 
 text\<open>If a pair $(i,m)$ belongs to the order relation on integers and
   $i\neq m$, then $i$ is smaller that $m$ in the sense of defined in the standard Isabelle's 
@@ -910,7 +941,9 @@ proof -
     by simp
 qed
 
-text\<open>Integers greater or equal one are greater or equal zero.\<close>
+text\<open>Assume an integer is greater or equal one. Then it is greater or equal than zero,
+  is not equal zero, if we add one to it then it is greater or equal one, two and zero.  
+  Two is .\<close>
 
 lemma (in int0) Int_ZF_2_L16C: 
   assumes A1: "\<one>\<lsq>a" shows 
@@ -930,6 +963,17 @@ proof -
   with I show "\<zero> \<lsq> a\<ra>\<one>" by (rule Int_order_transitive)
   from A1 show "a\<noteq>\<zero>" using
     Int_ZF_2_L16A Int_ZF_2_L3 int_zero_not_one by auto 
+qed
+
+text\<open>If we add one to a nonnegative integer, the result is greater than zero.\<close>
+
+lemma (in int0) nneg_add_one: assumes "\<zero>\<lsq>a"
+  shows "\<zero>\<ls>a\<ra>\<one>"
+proof -
+  from assms have "\<zero>\<ra>\<zero> \<ls> a\<ra>\<one>"
+    using Int_ZF_2_L16A(2) OrderedGroup_ZF_1_L12D by simp
+  then show "\<zero>\<ls>a\<ra>\<one>" using OrderedGroup_ZF_1_L1 group0.group0_2_L2
+    by simp
 qed
 
 text\<open>Absolute value is the same for an integer and its opposite.\<close>

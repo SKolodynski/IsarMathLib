@@ -1,7 +1,7 @@
 (*    This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005, 2006  Slawomir Kolodynski
+    Copyright (C) 2005-2024  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -351,7 +351,18 @@ proof -
     group0.group0_2_L6 by simp
 qed
 
-text\<open>If an element is nonnegative, then its inverse is less or equal than the unit.\<close>
+text\<open>Taking the inverse on both sides reverses the strict inequality.\<close>
+
+lemma (in group3) inv_both_strict_ineq:
+  assumes "a\<ls>b" shows "b\<inverse>\<ls>a\<inverse>"
+proof -
+  from assms have "b\<inverse>\<lsq>a\<inverse>" using OrderedGroup_ZF_1_L5 by simp
+  from assms have "a\<in>G" "b\<in>G" "a\<noteq>b" using less_are_members by simp_all
+  with \<open>b\<inverse>\<lsq>a\<inverse>\<close> show "b\<inverse>\<ls>a\<inverse>"
+    using OrderedGroup_ZF_1_L1 group0.el_neq_inv_neq by auto
+qed
+
+text\<open>If an element is less or equal than the unit, then its inverse is nonnegative.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L5A: 
   assumes A1: "a\<lsq>\<one>" shows "\<one>\<lsq>a\<inverse>"
@@ -730,11 +741,18 @@ proof -
 qed
 
 text\<open>If $a,b$ are an elements of an ordered group where the order is total, then
-  $a\leq b$ or $b<a$.  \<close>
+  $a\leq b$ or $b < a$.  \<close>
 
 lemma (in group3) OrdGroup_2cases: assumes "r {is total on} G" "a\<in>G"  "b\<in>G"
   shows "a\<lsq>b \<or> b\<ls>a"
   using assms IsTotal_def by auto
+
+text\<open>If $a,b$ are an elements of an ordered group where the order is total, then
+  $a < b$ or $a=b$ or $b\leq a$. \<close>
+
+lemma (in group3) OrdGroup_3cases: assumes "r {is total on} G" "a\<in>G"  "b\<in>G"
+  shows "a\<ls>b \<or> a=b \<or> b\<ls>a"
+  using assms assms IsTotal_def by auto
 
 text\<open>A lemma about splitting the ordered group "plane" into 6 subsets. Useful
   for proofs by cases.\<close>

@@ -462,6 +462,17 @@ proof -
   with A1 show "a=b" using group_inv_of_inv by simp
 qed
 
+text\<open>Inverses of different group elements are different.\<close>
+
+lemma (in group0) el_neq_inv_neq: assumes "a\<in>G"  "b\<in>G" "a\<noteq>b"
+  shows "a\<inverse> \<noteq> b\<inverse>"
+proof -
+  { assume "a\<inverse> = b\<inverse>"
+    hence "(a\<inverse>)\<inverse> = (b\<inverse>)\<inverse>" by simp
+    with assms have False using group_inv_of_inv by simp
+  } thus "a\<inverse> \<noteq> b\<inverse>" by auto
+qed
+
 text\<open>If if the inverse of $b$ is different than $a$, then the
   inverse of $a$ is different than $b$.\<close>
 
