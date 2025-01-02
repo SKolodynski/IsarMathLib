@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Integer powers of group elements\<close>
 
-theory IntGroup_ZF imports Int_ZF_1
+theory IntGroup_ZF imports Group_ZF_2 Int_ZF_1
 
 begin
 
@@ -353,11 +353,8 @@ text\<open>In abelian groups taking a nonnegative integer power commutes with th
 lemma (in abgroup_int0) powz_groupop_commute0: assumes "\<zero>\<lsq>k" "x\<in>G" "y\<in>G"
   shows "powz(k,x\<cdot>y) = powz(k,x)\<cdot>powz(k,y)"
 proof -
-  from assms(1) have "\<langle>\<zero>,k\<rangle> \<in> IntegerOrder" by simp
-  moreover 
-  from assms(2,3) have "powz(\<zero>,x\<cdot>y) = powz(\<zero>,x)\<cdot>powz(\<zero>,y)"
-    using group_op_closed int_power_zero_one(1) group0_2_L2
-    by simp
+  from assms have "\<langle>\<zero>,k\<rangle> \<in> IntegerOrder" and "powz(\<zero>,x\<cdot>y) = powz(\<zero>,x)\<cdot>powz(\<zero>,y)"
+    using group_op_closed int_power_zero_one(1) group0_2_L2 by simp_all
   moreover
   { fix m assume "\<zero>\<lsq>m" and I: "powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y)"
     from assms(2,3) \<open>\<zero>\<lsq>m\<close> have  "m\<in>\<int>" and "x\<cdot>y \<in> G"  
@@ -399,5 +396,27 @@ proof -
   with assms(2,3) show ?thesis using powz_groupop_commute0 powz_groupop_commute1
     by blast
 qed
+
+text\<open>For any integer $n$ the mapping $x\mapsto x^n$ maps $G$ into $G$ and is a homomorphism  
+  hence an endomorphism of $(G,P)$.\<close>
+
+theorem (in abgroup_int0) powz_end: assumes "n\<in>\<int>"
+  defines "h \<equiv> {\<langle>x,powz(n,x)\<rangle>. x\<in>G}"
+  shows "h:G\<rightarrow>G" "Homomor(h,G,P,G,P)" "h \<in> End(G,P)"
+proof -
+  from assms show "h:G\<rightarrow>G" using powz_type ZF_fun_from_total by simp 
+  with assms have "IsMorphism(G,P,P,h)"
+    using ZF_fun_from_tot_val(1) group_op_closed powz_groupop_commute
+    unfolding IsMorphism_def by simp
+  with \<open>h:G\<rightarrow>G\<close> show "Homomor(h,G,P,G,P)" and "h \<in> End(G,P)"
+    unfolding Homomor_def End_def by simp_all
+qed
+
+text\<open>The mapping $\mathbb{Z}\ni n\mapsto (x\mapsto x^n\in G)$ maps integers
+  to endomorphisms of $(G,P)$.\<close>
+
+theorem (in abgroup_int0) powz_maps_int_End: 
+  shows "{\<langle>n,{\<langle>x,powz(n,x)\<rangle>. x\<in>G}\<rangle>. n\<in>\<int>} : \<int>\<rightarrow>End(G,P)"
+  using powz_end(3) ZF_fun_from_total by simp
 
 end
