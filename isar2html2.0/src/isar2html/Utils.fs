@@ -108,8 +108,8 @@ namespace iml
         /// contain the open parenthesis. The function returns the extracted 
         /// parameters and the position of the closing parenthesis.
         /// for example: 
-        /// getPars "ab(a,ab,(dc)e)def" 2 
-        /// extracts parameters "a";"ab";"(dc)e" and the ending position 13
+        /// getPars "ab(a,ab,(d,c)e)def" 2 
+        /// extracts parameters "a";"ab";"(d,c)e" and the ending position 13
         let getPars (s:string) (pos:int) : (string array * int ) =
             let mutable (res:string list) = []
             let mutable lev = 1

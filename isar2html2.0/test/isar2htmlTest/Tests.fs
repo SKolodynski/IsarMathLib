@@ -669,8 +669,8 @@ let ``test beforeParen`` () =
 
 [<Fact>]
 let ``test getPars`` () =
-  let expected = ([|"a";"ab";"dc(e)"|],13)
-  Assert.Equal(expected,getPars "ab(a,ab,dc(e))def" 2)
+  let expected = ([|"a";"ab";"(d,c)e"|],13)
+  Assert.Equal(expected,getPars "ab(a,ab,(d,c)e)def" 2)
 
 [<Fact>]
 let ``test macro expansion`` () =
