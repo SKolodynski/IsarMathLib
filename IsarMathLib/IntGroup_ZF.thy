@@ -353,7 +353,10 @@ text\<open>In abelian groups taking a nonnegative integer power commutes with th
 lemma (in abgroup_int0) powz_groupop_commute0: assumes "\<zero>\<lsq>k" "x\<in>G" "y\<in>G"
   shows "powz(k,x\<cdot>y) = powz(k,x)\<cdot>powz(k,y)"
 proof -
-  from assms have "\<langle>\<zero>,k\<rangle> \<in> IntegerOrder" and "powz(\<zero>,x\<cdot>y) = powz(\<zero>,x)\<cdot>powz(\<zero>,y)"
+  let ?A\<^sub>Z = "IntegerAddition"
+  let ?M\<^sub>Z = "IntegerMultiplication"
+  let ?O\<^sub>Z = "IntegerOrder"
+  from assms have "\<langle>\<zero>,k\<rangle> \<in> ?O\<^sub>Z" and "powz(\<zero>,x\<cdot>y) = powz(\<zero>,x)\<cdot>powz(\<zero>,y)"
     using group_op_closed int_power_zero_one(1) group0_2_L2 by simp_all
   moreover
   { fix m assume "\<zero>\<lsq>m" and I: "powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y)"
@@ -363,10 +366,9 @@ proof -
       using int_power_add_one group0_4_L8(3) powz_type by simp
   } hence "\<forall>m. \<zero>\<lsq>m \<and> powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y) \<longrightarrow>
      powz(m\<ra>\<one>\<^sub>Z,x\<cdot>y) = powz(m\<ra>\<one>\<^sub>Z,x)\<cdot>powz(m\<ra>\<one>\<^sub>Z,y)" by simp
-  hence "\<forall>m. \<langle>\<zero>, m\<rangle> \<in> IntegerOrder \<and> powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y) \<longrightarrow> 
-    powz(IntegerAddition`\<langle>m,TheNeutralElement(int,IntegerMultiplication)\<rangle>,x\<cdot>y) = 
-    powz(IntegerAddition`\<langle>m,TheNeutralElement(int,IntegerMultiplication)\<rangle>,x)\<cdot>
-    powz(IntegerAddition`\<langle>m,TheNeutralElement(int,IntegerMultiplication)\<rangle>,y)"
+  hence "\<forall>m. \<langle>\<zero>, m\<rangle> \<in> ?O\<^sub>Z \<and> powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y) \<longrightarrow> 
+    powz(?A\<^sub>Z`(\<langle>m,TheNeutralElement(int,?M\<^sub>Z)\<rangle>),x\<cdot>y) = 
+    powz(?A\<^sub>Z`(\<langle>m,TheNeutralElement(int,?M\<^sub>Z)\<rangle>),x)\<cdot>powz(?A\<^sub>Z`(\<langle>m,TheNeutralElement(int,?M\<^sub>Z)\<rangle>),y)"
     by simp
   ultimately show "powz(k,x\<cdot>y) = powz(k,x)\<cdot>powz(k,y)" by (rule int0.Induction_on_int)
 qed
