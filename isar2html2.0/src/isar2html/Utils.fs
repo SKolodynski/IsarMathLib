@@ -130,8 +130,10 @@ namespace iml
                     lev <- lev-1
                     if lev>0 then cpar <- ')'::cpar
                 | ',' -> 
-                    res <- (cpar |> arrToString)::res
-                    cpar <- []
+                    if lev > 1 then cpar <- ','::cpar // commas on lev>1 do not separate parameters
+                    else 
+                        res <- (cpar |> arrToString)::res
+                        cpar <- []
                 | c -> cpar <- c::cpar
             (cpar|>arrToString)::res |> Array.ofList |> Array.rev, cpos
 

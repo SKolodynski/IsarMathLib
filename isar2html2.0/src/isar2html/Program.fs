@@ -38,25 +38,6 @@ exportTheories templ kb |> writeFiles
 
 // ----------------- debugging code, do not commit uncommented
     
-// open FParsec
-// let s = """locale ring2 = ring0 +
-//   fixes I
-//   assumes idealAssum: "I\<triangleleft>R"
-
-//   fixes quot ("R\<^sub>I")
-//   defines quot_def [simp]: "R\<^sub>I \<equiv> QuotientBy(I)"
-
-//   fixes qrel ("r\<^sub>I")
-//   defines qrel_def [simp]: "r\<^sub>I \<equiv> QuotientGroupRel(R,A,I)"
-// """
-
-// let s = "abbreviation FilConvTop(\"_ \\<rightarrow>\\<^sub>F _ {in} _\")\n\
-//                     where \"\\<FF> \\<rightarrow>\\<^sub>F x {in} T \\<equiv> topology0.FilterConverges(T,\\<FF>,x)\""
-
-// let parseRes = run abbreviation  s
-// let res = match parseRes with
-//             | Success(result, _, _) -> result
-//             | Failure(errorMsg, _, _) -> 
-//                 raise (ParsingError errorMsg)
-
-// res |> printfn "%A" 
+// open iml.Utils
+// let pars = getPars "ab(a,ab,(d,c)e)def" 2
+// printfn "%A" pars
