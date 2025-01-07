@@ -151,13 +151,7 @@ text\<open>In this section we introduce notation basic properties of integer pow
   and $n,m$ are integers then $x^{n+m}=x^n\cdot x^m$. \<close>
 
 text\<open>We extend the \<open>group0\<close> context with some notation from \<open>int0\<close> context.
-  We also define notation for the integer power \<open>powz(z,x)\<close>. 
-  The difficulty there is that in ZF set theory nonnegative integers and natural numbers are 
-  different things. However, standard Isabelle/ZF defines a meta-function \<open>nat_of\<close> 
-  that we can use to convert one into the other. 
-  Hence, we define the integer power \<open>powz(z,x)\<close> as $x$ raised to the corresponding
-  natural power if $z$ is a nonnegative and  $x^{-1}$ raised to natural power corresponding
-  to $-z$ otherwise. Since we inherit the multiplicative notation from the \<open>group0\<close> context
+  Since we inherit the multiplicative notation from the \<open>group0\<close> context
   the integer "one" is denoted \<open>\<one>\<^sub>Z\<close> rather than just \<open>\<one>\<close> (which is the group's neutral element). \<close>
 
 locale group_int0 = group0 +
@@ -190,14 +184,23 @@ locale group_int0 = group0 +
   fixes sless (infix "\<ls>" 68)
   defines sless_def [simp]: "a \<ls> b \<equiv> a\<lsq>b \<and> a\<noteq>b"
 
-  fixes powz
-  defines powz_def [simp]: 
-    "powz(z,x) \<equiv> pow(zmagnitude(z),if \<zero>\<lsq>z then x else x\<inverse>)"
+text\<open>Next define notation for the integer power \<open>powz(z,x)\<close>. 
+  The difficulty here is that in ZF set theory nonnegative integers and natural numbers are 
+  different things. So, we use the notion of \<open>zmagnitude\<close> defined in the standard Isabelle/ZF 
+  \<open>Int\<close> theory. For an integer number $z$, \<open>zmagnitude(z)\<close> is like absolute value of $z$ 
+  but interpreted as a natural number. 
+  Hence, we define the integer power \<open>powz(z,x)\<close> as $x$ raised to the corresponding
+  natural power if $z$ is a nonnegative or  $x^{-1}$ raised to the same power 
+  natural power corresponding otherwise.\<close>
+
+definition (in group_int0) powz where
+  "powz(z,x) \<equiv> pow(zmagnitude(z),if \<zero>\<lsq>z then x else x\<inverse>)"
 
 text\<open>An integer power of a group element is in the group.\<close>
 
 lemma (in group_int0) powz_type: assumes "z\<in>\<int>" "x\<in>G" shows "powz(z,x) \<in> G"
-  using assms zmagnitude_type monoid.nat_mult_type inverse_in_group by simp
+  using assms zmagnitude_type monoid.nat_mult_type inverse_in_group 
+  unfolding powz_def by simp
 
 text\<open>A group element raised to (integer) zero'th power is equal to the group's neutral element. 
   An element raised to (integer) power one is the same element. \<close>
@@ -205,14 +208,16 @@ text\<open>A group element raised to (integer) zero'th power is equal to the gro
 lemma (in group_int0) int_power_zero_one: assumes "x\<in>G"
   shows "powz(\<zero>,x) = \<one>" and "powz(\<one>\<^sub>Z,x) = x"
   using assms int0.Int_ZF_1_L8A(1) int0.int_ord_is_refl1 int0.zmag_zero_one 
-    monoid.nat_mult_zero int0.Int_ZF_2_L16A(1) monoid.nat_mult_one by auto
+    monoid.nat_mult_zero int0.Int_ZF_2_L16A(1) monoid.nat_mult_one 
+    unfolding powz_def by auto
 
 text\<open>If $x$ is an element of the group and $z_1,z_2$ are nonnegative integers then
   $x^{z_1+z_2}=x^{z_1}\cdot x^{z_2}$, i.e. the power homomorphism property holds.\<close>
 
 lemma (in group_int0) powz_hom_nneg_nneg: assumes "\<zero>\<lsq>z\<^sub>1" "\<zero>\<lsq>z\<^sub>2" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
-  using assms int0.add_nonneg_ints(1,2) monoid.nat_mult_add by simp
+  using assms int0.add_nonneg_ints(1,2) monoid.nat_mult_add 
+  unfolding powz_def by simp
 
 text\<open>If $x$ is an element of the group and $z_1,z_2$ are negative integers then
   the power homomorphism property holds.\<close>
@@ -221,7 +226,8 @@ lemma (in group_int0) powz_hom_neg_neg:
   assumes "z\<^sub>1\<ls>\<zero>" "z\<^sub>2\<ls>\<zero>" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
   using assms int0.neg_not_nonneg int0.add_neg_ints(1,2) 
-    inverse_in_group monoid.nat_mult_add by simp
+    inverse_in_group monoid.nat_mult_add 
+  unfolding powz_def by simp
 
 text\<open>When the integers are of different signs we further split into cases depending on
   which magnitude is greater. If $x$ is an element of the group and $z_1$ is nonnegative, 
@@ -237,13 +243,13 @@ proof -
   let ?m\<^sub>1 = "zmagnitude(z\<^sub>1)" 
   let ?m\<^sub>2 = "zmagnitude(z\<^sub>2)"
   from assms(1,2,3) have "powz(z\<^sub>1\<ra>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>1\<ra>z\<^sub>2),x)"
-    using int0.add_nonneg_neg1(1) by simp
+    using int0.add_nonneg_neg1(1) unfolding powz_def by simp
   also from assms(1,2,3) have "... =  pow(?m\<^sub>1 #- ?m\<^sub>2,x)" 
     using int0.add_nonneg_neg1(2) by simp
   also from assms(3,4) have "... = pow(?m\<^sub>1,x)\<cdot>pow(?m\<^sub>2,x\<inverse>)"
     using nat_pow_cancel_less by simp
   also from assms(1,2) have "... = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)" 
-    using int0.neg_not_nonneg by simp
+    using int0.neg_not_nonneg unfolding powz_def by simp
   finally show ?thesis by simp
 qed
 
@@ -254,7 +260,7 @@ lemma (in group_int0) powz_hom_nneg_neg2:
   assumes "\<zero>\<lsq>z\<^sub>1"  "z\<^sub>2\<ls>\<zero>"  "zmagnitude(z\<^sub>1) < zmagnitude(z\<^sub>2)" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
   using assms int0.add_nonneg_neg2 int0.neg_not_nonneg leI nat_pow_cancel_more1
-  by simp
+  unfolding powz_def by simp
 
 text\<open>If $x$ is an element of the group and $z_1$ is negative, 
   $z_2$ is nonnegative and $|z_1|\leq |z_2|$ then the power homomorphism property holds.\<close>
@@ -263,7 +269,7 @@ lemma (in group_int0) powz_hom_neg_nneg1:
   assumes "z\<^sub>1\<ls>\<zero>" "\<zero>\<lsq>z\<^sub>2" "zmagnitude(z\<^sub>1) \<le> zmagnitude(z\<^sub>2)" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
   using assms int0.add_neg_nonneg1 nat_pow_cancel_more int0.neg_not_nonneg
-  by simp
+  unfolding powz_def by simp
 
 text\<open>If $x$ is an element of the group and $z_1$ is negative, 
   $z_2$ is nonnegative and $|z_2| < |z_1|$ then the power homomorphism property holds.\<close>
@@ -272,7 +278,7 @@ lemma (in group_int0) powz_hom_neg_nneg2:
   assumes "z\<^sub>1\<ls>\<zero>" "\<zero>\<lsq>z\<^sub>2" "zmagnitude(z\<^sub>2) < zmagnitude(z\<^sub>1)" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
   using assms int0.add_neg_nonneg2 int0.neg_not_nonneg leI nat_pow_cancel_less1
-  by simp
+  unfolding powz_def by simp
 
 text\<open>The next theorem collects the results from the above lemmas to show
   the power homomorphism property holds for any pair of integer numbers
@@ -301,7 +307,7 @@ lemma (in group_int0) inpt_power_neg_one: assumes "x\<in>G"
   shows "powz(\<rm>\<one>\<^sub>Z,x) = x\<inverse>"
   using assms int0.neg_not_nonneg int0.neg_one_less_zero int0.zmag_opposite_same(2) 
     int0.Int_ZF_1_L8A(2) int0.zmag_zero_one(2) inverse_in_group monoid.nat_mult_one 
-  by simp
+  unfolding powz_def by simp
 
 text\<open>Increasing the (integer) power by one is the same as multiplying by the group element.\<close>
 
@@ -320,12 +326,12 @@ proof -
     using int0.int_neg_zero_pos by simp
   moreover from assms(1) have "\<zero>\<ls>z \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
     using int0.neg_pos_int_neg int0.neg_not_nonneg int0.zmag_opposite_same(2) 
-    by simp
+    unfolding powz_def by simp
   moreover from assms(2) have "z=\<zero> \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
     using int0.Int_ZF_1_L11 int_power_zero_one(1) inverse_in_group by simp
   moreover from assms have "z\<ls>\<zero> \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
     using int0.neg_not_nonneg int0.neg_neg_int_pos group_inv_of_inv 
-        int0.zmag_opposite_same(2) by simp
+    int0.zmag_opposite_same(2) unfolding powz_def by simp
   ultimately show "powz(\<rm>z,x) = powz(z,x\<inverse>)" by auto
 qed
 
