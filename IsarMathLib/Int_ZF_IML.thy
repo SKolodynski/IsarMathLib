@@ -58,15 +58,14 @@ text\<open>In this section we provide definitions of addition and multiplication
 text\<open>Definition of addition of integers as a binary operation 
   on \<open>int\<close>.
   Recall that in standard Isabelle/ZF \<open>int\<close> is the set of integers 
-  and the sum of integers is denoted by prependig $+$ with a dollar sign.\<close>
+  and the sum of integers is denoted by prepending $+$ with a dollar sign.\<close>
 
 definition
   "IntegerAddition \<equiv> { \<langle> x,c\<rangle> \<in> (int\<times>int)\<times>int. fst(x) $+ snd(x) = c}"
 
 text\<open>Definition of multiplication of integers as a binary operation 
   on \<open>int\<close>. In standard Isabelle/ZF product of integers is denoted by
-  prepending the dollar sign to \<open>*\<close>.  
-\<close>
+  prepending the dollar sign to \<open>*\<close>. \<close>
 
 definition
   "IntegerMultiplication \<equiv> 

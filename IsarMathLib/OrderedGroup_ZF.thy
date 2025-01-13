@@ -229,7 +229,7 @@ proof -
   ultimately show "a\<ls>c" by simp
 qed
 
-text\<open>If $a<b$ then it's not true that $b\leq a$. \<close>
+text\<open>If $a < b$ then it's not true that $b\leq a$. \<close>
 
 lemma (in group3) ls_not_leq: assumes "a\<ls>b" shows "\<not>(b\<lsq>a)"
 proof -
@@ -748,7 +748,7 @@ lemma (in group3) OrdGroup_2cases: assumes "r {is total on} G" "a\<in>G"  "b\<in
   using assms IsTotal_def by auto
 
 text\<open>If $a,b$ are an elements of an ordered group where the order is total, then
-  $a < b$ or $a=b$ or $b\leq a$. \<close>
+  $a < b$ or $a=b$ or $b\leq a$.\<close>
 
 lemma (in group3) OrdGroup_3cases: assumes "r {is total on} G" "a\<in>G"  "b\<in>G"
   shows "a\<ls>b \<or> a=b \<or> b\<ls>a"

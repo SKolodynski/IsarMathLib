@@ -51,8 +51,7 @@ text\<open>This section is not interesting and should not be read.
   Here we will prove formulas is which right hand side uses the same
   factors as the left hand side, just in different order. These facts
   are obvious in informal math sense, but Isabelle prover is not able
-  to derive them automatically, so we have to prove them by hand. 
-\<close>
+  to derive them automatically, so we have to provide explicit proofs. \<close>
 
 text\<open>Proving the facts about associative and commutative operations is 
   quite tedious in formalized mathematics. To a human the thing is simple:

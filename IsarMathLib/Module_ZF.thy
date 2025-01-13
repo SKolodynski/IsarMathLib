@@ -45,9 +45,9 @@ text\<open>Let $R$ be a ring and $M$ be an abelian group. The most common defini
 
 text\<open>We know that endomorphisms of an abelian group $\cal{M}$ form a ring with pointwise addition
   as the additive operation and composition as the ring multiplication. 
-  This asssertion is a bit imprecise though as the domain of pointwise addition 
+  This asssertion is a bit imprecise though as pointwise addition 
   is a binary operation on the space of functions $\cal{M}\rightarrow \cal{M}$ 
-  (i.e. its domain is  $(\cal{M}\rightarrow \cal{M})\times \cal{M}\rightarrow \cal{M}$) 
+  (i.e. its domain is  $(\cal{M}\rightarrow \cal{M})\times (\cal{M}\rightarrow \cal{M})$) 
   while we need the space of endomorphisms to be the
   domain of the ring addition and multiplication. Therefore, to get the actual additive operation
   we need to restrict the pointwise addition of functions $\cal{M}\rightarrow \cal{M}$ 
@@ -74,7 +74,7 @@ lemma (in abelian_group) end_is_ring1:
 text\<open>We define an \<open>action\<close> as a homomorphism into a space of endomorphisms (typically of some
   abelian group). In the definition below $S$ is the set of scalars, $A$ is the addition operation
   on this set, $M$ is multiplication on the set, $\mathcal{M}$ is the group, $A_M$ is the 
-  group operation, and $H$ is the ring homomorphism that of the ring of scalars 
+  group operation, and $H$ is the ring homomorphism of the ring of scalars 
   to the ring of endomorphisms of the group.
   On the right hand side of the definition \<open>End(\<M>,A\<^sub>V)\<close> is the set of endomorphisms
   of the group $\mathcal{M}$ with operation $A_M$.
@@ -235,12 +235,7 @@ text\<open> $\Theta$ is fixed by scalar multiplication.\<close>
 
 lemma (in module0) zero_fixed: assumes "r\<in>R" 
   shows "r \<cdot>\<^sub>S \<Theta> = \<Theta>"
-proof-
-  have "Homomor(H`r,\<M>,A\<^sub>M,\<M>,A\<^sub>M)"
-    using assms H_val_type(1) unfolding End_def by simp_all
-  with image_neutral mAbGr have "(H`r)`TheNeutralElement(\<M>,A\<^sub>M) = TheNeutralElement(\<M>,A\<^sub>M)" by auto
-  then show ?thesis by auto
-qed
+  using mAbGr assms H_val_type(1) image_neutral unfolding End_def by auto
 
 text\<open>The scalar multiplication is distributive with respect to the module addition.\<close>
 

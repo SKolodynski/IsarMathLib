@@ -134,7 +134,7 @@ proof -
 qed
 
 text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, then
-  $(x^{-1})^k\cdot x^n = x^(k-n)$. \<close>
+  $(x^{-1})^k\cdot x^n = x^{(k-n)}$. \<close>
 
 lemma (in group0) nat_pow_cancel_more1: assumes "n\<in>nat" "k\<le>n" "x\<in>G"
   shows "pow(k,x)\<cdot>pow(n,x\<inverse>) = pow(n #- k,x\<inverse>)"
@@ -189,9 +189,8 @@ text\<open>Next define notation for the integer power \<open>powz(z,x)\<close>.
   different things. So, we use the notion of \<open>zmagnitude\<close> defined in the standard Isabelle/ZF 
   \<open>Int\<close> theory. For an integer number $z$, \<open>zmagnitude(z)\<close> is like absolute value of $z$ 
   but interpreted as a natural number. 
-  Hence, we define the integer power \<open>powz(z,x)\<close> as $x$ raised to the corresponding
-  natural power if $z$ is a nonnegative or  $x^{-1}$ raised to the same power 
-  natural power corresponding otherwise.\<close>
+  Hence, we define the integer power \<open>powz(z,x)\<close> as $x$ raised to the magnitude of $z$ if $z$ is 
+  nonnegative or $x^{-1}$ raised to the same natural power otherwise.\<close>
 
 definition (in group_int0) powz where
   "powz(z,x) \<equiv> pow(zmagnitude(z),if \<zero>\<lsq>z then x else x\<inverse>)"
