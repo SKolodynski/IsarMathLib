@@ -40,6 +40,17 @@ subsection\<open>Lemmas in Zermelo-Fraenkel set theory\<close>
 text\<open>Here we put lemmas from the set theory that we could not find in 
   the standard Isabelle distribution or just so that they are easier to find.\<close>
 
+text\<open>In Isabelle/ZF the set difference is written with a minus sign $A-B$
+  because the standard backslash character is reserved for other purposes. 
+  The next abbreviation declares that we want the set difference character $A\setminus B$
+  to be synonymous with the minus sign. \<close>
+
+abbreviation set_difference (infixl "\<setminus>" 65) where "A\<setminus>B \<equiv> A-B"
+
+text\<open>Complement of the complement is the set.\<close>
+
+lemma diff_diff_eq: assumes "A\<subseteq>X" shows "X\<setminus>(X\<setminus>A) = A" using assms by auto
+
 text\<open>A set cannot be a member of itself. This is exactly lemma \<open>mem_not_refl\<close>
   from Isabelle/ZF \<open>upair.thy\<close>, we put it here for easy reference. \<close>
 
@@ -214,7 +225,7 @@ text\<open>Isabelle/ZF has a "THE" construct that allows to define an element
   if there is only one such that is satisfies given predicate.
   In pure ZF we can express something similar using the indentity proven below.\<close>
 
-lemma ZF1_1_L8: shows "\<Union> {x} = x" by auto
+lemma ZF1_1_L8: shows "\<Union>{x} = x" by auto
 
 text\<open>Some properties of singletons.\<close>
 
@@ -321,14 +332,14 @@ lemma consdef: shows "cons(a,A) = A \<union> {a}"
 text\<open>If a difference between a set and a singleton is empty, then
   the set is empty or it is equal to the singleton.\<close>
 
-lemma singl_diff_empty: assumes "A - {x} = \<emptyset>"
+lemma singl_diff_empty: assumes "A\<setminus>{x} = \<emptyset>"
   shows "A = \<emptyset> \<or> A = {x}"
   using assms by auto
 
 text\<open>If a difference between a set and a singleton is the set, 
   then the only element of the singleton is not in the set.\<close>
 
-lemma singl_diff_eq: assumes A1: "A - {x} = A"
+lemma singl_diff_eq: assumes A1: "A\<setminus>{x} = A"
   shows "x \<notin> A"
 proof -
   have "x \<notin> A - {x}" by auto
@@ -523,12 +534,6 @@ text\<open>If $z$ is a pair, then the cartesian product of the singletons of its
 lemma pair_prod: assumes "z = \<langle>x,y\<rangle>" shows "{x}\<times>{y} = {z}"
   using assms by blast
 
-text\<open>In Isabelle/ZF the set difference is written with a minus sign $A-B$
-  because the standard backslash character is reserved for other purposes. 
-  The next abbreviation declares that we want the set difference character $A\setminus B$
-  to be synonymous with the minus sign. \<close>
-
-abbreviation set_difference (infixl "\<setminus>" 65) where "A\<setminus>B \<equiv> A-B"
 
 
 end

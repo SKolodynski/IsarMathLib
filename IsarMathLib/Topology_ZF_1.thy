@@ -88,7 +88,7 @@ proof
       qed
       with \<open>?W\<in>T\<close> show "?U\<in>T" by simp
     qed
-    with \<open>x\<in>?X\<close> have "(?X-?U) {is closed in} T" and "?X-?U = {x}"
+    with \<open>x\<in>?X\<close> have "(?X-?U) {is closed in} T" and "?X\<setminus>?U = {x}"
       using Top_3_L9 by auto
     hence "{x} {is closed in} T" by simp
   } thus "\<forall>x\<in>?X. {x} {is closed in} T" by blast
@@ -221,6 +221,53 @@ proof -
     with A3 have False by auto
   } then show "x=y" by auto
 qed
+
+text\<open>A topology is $T_3$ if it is regular and $T_0$. $T_3$ spaces are called 
+  "regular Hausdorff", which is a bit confusing as the definition requires the space to be
+  $T_0$ rather than $T_2$. It is ok though as we we will show that $T_3$ as defined here 
+  implies $T_2$ so indeed $T_3$ spaces are regular and Hausdorff.
+  In some older sources the definitions of a regular and a $T_3$ space are swapped.
+  We follow the terminology from Wikipedia's "Separation axiom" entry, 
+  where $T_3$ implies "regular". \<close>
+
+definition
+  isT3 ("_ {is T\<^sub>3}" [90] 91) where
+  "T {is T\<^sub>3} \<equiv> (T {is regular}) \<and> T {is T\<^sub>0}"
+
+text\<open>If a topology is $T_3$ then it is $T_2$. It's interesting that even here we do not have
+  to assume that $T$ is a topology. \<close>
+
+lemma T3_is_T2: assumes "T {is T\<^sub>3}" shows "T {is T\<^sub>2}"
+proof -
+  let ?X = "\<Union>T" 
+  { fix x y assume "x\<in>?X" "y\<in>?X" "x\<noteq>y"
+    with assms obtain U where "U\<in>T" and "(x\<in>U \<and> y\<notin>U) \<or> (y\<in>U \<and> x\<notin>U)"
+      unfolding isT3_def isT0_def by auto
+    let ?F = "?X\<setminus>U"
+    from assms \<open>U\<in>T\<close> have I: "\<forall>t\<in>?X\<setminus>?F.\<exists>V\<in>T.\<exists>W\<in>T. ?F\<subseteq>V \<and> t\<in>W \<and> V\<inter>W=\<emptyset>"
+      unfolding isT3_def IsRegular_def using compl_open_closed by blast
+    note \<open>(x\<in>U \<and> y\<notin>U) \<or> (y\<in>U \<and> x\<notin>U)\<close>
+    moreover
+    { assume "y\<in>U" and "x\<notin>U"
+      with \<open>x\<in>?X\<close> have "x\<in>?F" by simp
+      from I \<open>y\<in>U\<close> \<open>U\<in>T\<close> have "\<exists>V\<in>T.\<exists>W\<in>T. ?F\<subseteq>V \<and> y\<in>W \<and> V\<inter>W=\<emptyset>" by auto
+      with \<open>x\<in>?F\<close> have "\<exists>V\<in>T.\<exists>W\<in>T. x\<in>V \<and> y\<in>W \<and> V\<inter>W=\<emptyset>" by blast
+    }
+    moreover
+    { assume "x\<in>U" and "y\<notin>U"
+      with \<open>y\<in>?X\<close> have "y\<in>?F" by simp
+      from I \<open>U\<in>T\<close> \<open>x\<in>U\<close> have "\<exists>V\<in>T.\<exists>W\<in>T. ?F\<subseteq>V \<and> x\<in>W \<and> V\<inter>W=\<emptyset>" by auto
+      with \<open>y\<in>?F\<close> have "\<exists>V\<in>T.\<exists>W\<in>T. y\<in>V \<and> x\<in>W \<and> V\<inter>W=\<emptyset>" by blast
+    }
+    ultimately have "\<exists>V\<in>T.\<exists>W\<in>T. x\<in>V \<and> y\<in>W \<and> V\<inter>W=\<emptyset>" by blast
+  } then show "T {is T\<^sub>2}" unfolding isT2_def by simp
+qed
+
+text\<open>Sometimes $T_3$ space is defined as one that is regular and $T_1$ (rather than
+  $T_0$). The next lemma shows that this definition is equivalent to the standard one.\<close>
+
+lemma T3_def_alt: shows "T {is T\<^sub>3} \<longleftrightarrow> (T {is regular}) \<and> T {is T\<^sub>1}"
+  using T3_is_T2 T2_is_T1 T1_is_T0 unfolding isT3_def by auto
 
 subsection\<open>Bases and subbases\<close>
 

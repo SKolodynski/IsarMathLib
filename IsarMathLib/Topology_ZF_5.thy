@@ -407,10 +407,6 @@ qed
 text\<open>There are more separation axioms that just $T_0$, $T_1$ or $T_2$\<close>
 
 definition
-  isT3 ("_{is T\<^sub>3}" 90)
-  where "T{is T\<^sub>3} \<equiv> (T{is T\<^sub>1}) \<and> (T{is regular})"
-
-definition
   IsNormal ("_{is normal}" 90)
   where "T{is normal} \<equiv> \<forall>A. A{is closed in}T \<longrightarrow> (\<forall>B. B{is closed in}T \<and> A\<inter>B=0 \<longrightarrow>
   (\<exists>U\<in>T. \<exists>V\<in>T. A\<subseteq>U\<and>B\<subseteq>V\<and>U\<inter>V=0))"
@@ -447,32 +443,7 @@ proof-
     then have "\<forall>x\<in>\<Union>T-A. \<exists>U\<in>T. \<exists>V\<in>T. A\<subseteq>U\<and> x\<in>V\<and>U\<inter>V=0" by auto
   }
   then have "T{is regular}" using IsRegular_def by blast
-  with \<open>T{is T\<^sub>1}\<close> show ?thesis using isT3_def by auto
-qed
-
-lemma (in topology0) T3_is_T2:
-  assumes "T{is T\<^sub>3}" shows "T{is T\<^sub>2}"
-proof-
-  from assms have "T{is regular}" using isT3_def by auto
-  from assms have "T{is T\<^sub>1}" using isT3_def by auto
-  then have "Cofinite (\<Union>T)\<subseteq>T" using T1_cocardinal_coarser by auto
-  {
-    fix x y
-    assume "x\<in>\<Union>T""y\<in>\<Union>T""x\<noteq>y"
-    have "Finite({x})" by auto
-    then obtain n where "{x}\<approx>n" "n\<in>nat" unfolding Finite_def by auto
-    then have "{x}\<lesssim>n" "n\<in>nat" using eqpoll_imp_lepoll by auto
-    then have "{x}\<prec>nat" using n_lesspoll_nat lesspoll_trans1 by auto
-    with \<open>x\<in>\<Union>T\<close> have "{x} {is closed in} (Cofinite (\<Union>T))" using Cofinite_def 
-      closed_sets_cocardinal by auto
-    then have "\<Union>T-{x}\<in>Cofinite(\<Union>T)" unfolding IsClosed_def using union_cocardinal Cofinite_def
-       by auto
-    with \<open>Cofinite (\<Union>T)\<subseteq>T\<close> have "\<Union>T-{x}\<in>T" by auto
-    with \<open>x\<in>\<Union>T\<close>\<open>y\<in>\<Union>T\<close>\<open>x\<noteq>y\<close> have "{x}{is closed in}T" "y\<in>\<Union>T-{x}" using IsClosed_def by auto
-    with \<open>T{is regular}\<close> have "\<exists>U\<in>T. \<exists>V\<in>T. {x}\<subseteq>U\<and>y\<in>V\<and>U\<inter>V=0" unfolding IsRegular_def by force
-    then have "\<exists>U\<in>T. \<exists>V\<in>T. x\<in>U\<and>y\<in>V\<and>U\<inter>V=0" by auto
-  }
-  then show ?thesis using isT2_def by auto
+  with \<open>T{is T\<^sub>1}\<close> show ?thesis unfolding isT3_def using T1_is_T0 by simp
 qed
 
 text\<open>Regularity can be rewritten in terms of existence of certain neighboorhoods.\<close>
@@ -842,7 +813,8 @@ lemma here_and:
   shows "(\<lambda>T. P(T) \<and> Q(T)) {is hereditary}" using assms unfolding IsHer_def by auto
 
 corollary here_T3:
-  shows "isT3 {is hereditary}" using here_and[OF here_T1 here_regular] unfolding IsHer_def isT3_def.
+  shows "isT3 {is hereditary}" using here_and[OF here_T1 here_regular] 
+  unfolding IsHer_def using T3_def_alt by blast
 
 lemma T2_here:
   assumes "T{is T\<^sub>2}" "A\<in>Pow(\<Union>T)" shows "(T{restricted to}A){is T\<^sub>2}"
@@ -946,7 +918,7 @@ proof
     then have "({A}\<union>{0}) {is a topology} \<and> \<Union>({A}\<union>{0})=A" using top_of_filter by auto
     then have top:"({A}\<union>{0}) {is a topology}" "\<Union>({A}\<union>{0})\<approx>A" using eqpoll_refl by auto
     then have "({A}\<union>{0}) {is T\<^sub>4}" using reg by auto
-    then have "({A}\<union>{0}) {is T\<^sub>2}" using topology0.T3_is_T2 topology0.T4_is_T3 topology0_def top by auto
+    then have "({A}\<union>{0}) {is T\<^sub>2}" using T3_is_T2 topology0.T4_is_T3 topology0_def top by auto
     ultimately have "\<Union>{A}={x}" using filter_T2_imp_card1[of "{A}""x"] by auto
     then have "A={x}" by auto
     then have "A\<approx>1" using singleton_eqpoll_1 by auto
@@ -1086,7 +1058,7 @@ next
   {
     fix T
     assume "T{is a topology}"
-    then have "(T{is T\<^sub>4})\<longrightarrow>(T{is T\<^sub>0})" using topology0.T4_is_T3 topology0.T3_is_T2 T2_is_T1 T1_is_T0 
+    then have "(T{is T\<^sub>4})\<longrightarrow>(T{is T\<^sub>0})" using topology0.T4_is_T3 T3_is_T2 T2_is_T1 T1_is_T0 
       topology0_def by auto
   }
   then have "\<forall>T. T{is a topology} \<longrightarrow> ((T{is T\<^sub>4})\<longrightarrow>(T{is T\<^sub>0}))" by auto
@@ -1098,7 +1070,7 @@ qed
 theorem T1_spectrum:
   shows "(A {is in the spectrum of} isT1) \<longleftrightarrow> A \<lesssim> 1"
 proof-
-  note T2_is_T1 topology0.T3_is_T2 topology0.T4_is_T3
+  note T2_is_T1 T3_is_T2 topology0.T4_is_T3
   then have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT1)"
     using P_imp_Q_spec_inv[of "isT4""isT1"] topology0_def by auto
   moreover
@@ -1113,7 +1085,7 @@ qed
 theorem T2_spectrum:
   shows "(A {is in the spectrum of} isT2) \<longleftrightarrow> A \<lesssim> 1"
 proof-
-  note topology0.T3_is_T2 topology0.T4_is_T3
+  note T3_is_T2 topology0.T4_is_T3
   then have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT2)"
     using P_imp_Q_spec_inv[of "isT4""isT2"] topology0_def by auto
   moreover
@@ -1132,7 +1104,7 @@ proof-
   then have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT3)"
     using P_imp_Q_spec_inv[of "isT4""isT3"] topology0_def by auto
   moreover
-  note topology0.T3_is_T2
+  note T3_is_T2
   then have "(A {is in the spectrum of} isT3) \<longrightarrow> (A {is in the spectrum of}isT2)"
     using P_imp_Q_spec_inv[of "isT3""isT2"] topology0_def by auto
   moreover
@@ -1884,7 +1856,7 @@ next
   then have "T{is anti-}isT1" using anti_T1 by auto
   moreover
   have "\<forall>T. T{is a topology} \<longrightarrow> (T{is T\<^sub>4}) \<longrightarrow> (T{is T\<^sub>1})" using topology0.T4_is_T3 
-    topology0.T3_is_T2 T2_is_T1 topology0_def by auto
+    T3_is_T2 T2_is_T1 topology0_def by auto
   moreover
   have " \<forall>A. (A {is in the spectrum of} isT1) \<longrightarrow> (A {is in the spectrum of} isT4)" using T1_spectrum T4_spectrum
     by auto
@@ -1908,7 +1880,7 @@ next
   then have "T{is anti-}isT1" using anti_T1 by auto
   moreover
   have "\<forall>T. T{is a topology} \<longrightarrow> (T{is T\<^sub>3}) \<longrightarrow> (T{is T\<^sub>1})" using
-    topology0.T3_is_T2 T2_is_T1 topology0_def by auto
+    T3_is_T2 T2_is_T1 topology0_def by auto
   moreover
   have " \<forall>A. (A {is in the spectrum of} isT1) \<longrightarrow> (A {is in the spectrum of} isT3)" using T1_spectrum T3_spectrum
     by auto
@@ -1921,7 +1893,7 @@ proof
   assume "T{is anti-}isT2"
   moreover
   have "\<forall>T. T{is a topology} \<longrightarrow> (T{is T\<^sub>4}) \<longrightarrow> (T{is T\<^sub>2})" using topology0.T4_is_T3 
-    topology0.T3_is_T2 topology0_def by auto
+    T3_is_T2 topology0_def by auto
   moreover
   have " \<forall>A. (A {is in the spectrum of} isT2) \<longrightarrow> (A {is in the spectrum of} isT4)" using T2_spectrum T4_spectrum
     by auto

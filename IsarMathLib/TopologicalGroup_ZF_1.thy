@@ -432,6 +432,6 @@ text\<open>The promised corollary follows:\<close>
     
 corollary (in topgroup) T2_imp_T3:
   assumes "T{is T\<^sub>2}"
-  shows "T{is T\<^sub>3}" using T2_is_T1 topgroup_reg isT3_def assms by auto
+  shows "T{is T\<^sub>3}" using T2_is_T1 T1_is_T0 topgroup_reg isT3_def assms by auto
 
 end

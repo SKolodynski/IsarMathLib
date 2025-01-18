@@ -77,7 +77,7 @@ text\<open>A set is closed if it is contained in the carrier of topology
 
 definition
   IsClosed (infixl "{is closed in}" 90) where
-  "D {is closed in} T \<equiv> (D \<subseteq> \<Union>T \<and> \<Union>T - D \<in> T)"
+  "D {is closed in} T \<equiv> (D \<subseteq> \<Union>T \<and> (\<Union>T)\<setminus>D \<in> T)"
 
 text\<open>To prove various properties of closure we will often use 
   the collection of  closed sets that contain a given set $A$. 
@@ -125,7 +125,7 @@ qed
 text\<open>Empty set is open.\<close>
 
 lemma empty_open: 
-  assumes "T {is a topology}" shows "0 \<in> T"
+  assumes "T {is a topology}" shows "\<emptyset> \<in> T"
 proof -
   have "0 \<in> Pow(T)" by simp
   with assms have "\<Union>0 \<in> T" using IsATopology_def by blast
@@ -133,18 +133,31 @@ proof -
 qed
 
 text\<open>The carrier is open.\<close>
+
 lemma carr_open: assumes "T {is a topology}" shows "(\<Union>T) \<in> T"
   using assms IsATopology_def by auto
 
 text\<open>Union of a collection of open sets is open.\<close>
+
 lemma union_open: assumes "T {is a topology}" and "\<forall>A\<in>\<A>. A \<in> T"
   shows "(\<Union>\<A>) \<in> T" using assms IsATopology_def by auto 
 
 text\<open>Union of a indexed family of open sets is open.\<close>
+
 lemma union_indexed_open: assumes A1: "T {is a topology}" and A2: "\<forall>i\<in>I. P(i) \<in> T"
   shows "(\<Union>i\<in>I. P(i)) \<in> T"  using assms union_open by simp
 
+text\<open>The complement of an open set is closed.\<close>
+
+lemma compl_open_closed: assumes "U\<in>T" shows "((\<Union>T)\<setminus>U) {is closed in} T"
+proof -
+  let ?D = "(\<Union>T)\<setminus>U"
+  from assms have "?D \<subseteq> \<Union>T" and "(\<Union>T)\<setminus>?D = U" by auto 
+  with assms show ?thesis unfolding IsClosed_def by simp
+qed
+
 text\<open>The intersection of any nonempty collection of topologies on a set $X$ is a topology.\<close>
+
 lemma Inter_tops_is_top: 
   assumes A1: "\<M> \<noteq> 0" and A2: "\<forall>T\<in>\<M>. T {is a topology}"
   shows "(\<Inter>\<M>) {is a topology}"
@@ -502,7 +515,7 @@ text\<open>Closure of a subset of the carrier is a subset of the carrier and clo
 lemma (in topology0) Top_3_L11: assumes A1: "A \<subseteq> \<Union>T" 
   shows 
   "cl(A) \<subseteq> \<Union>T"
-  "cl(\<Union>T - A) = \<Union>T - int(A)"
+  "cl(\<Union>T \<setminus> A) = \<Union>T \<setminus> int(A)"
 proof -
   from A1 show "cl(A) \<subseteq> \<Union>T" using Top_3_L1 Closure_def ClosedCovers_def
     by auto
