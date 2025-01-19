@@ -566,6 +566,40 @@ proof -
   } with \<open>\<Union>?T = X\<close> show ?thesis unfolding isT1_def by simp
 qed
 
+text\<open>If $\Phi$ is a uniformity on $X$ then the intersection of $\Phi$ is contained in 
+  diagonal of $X$ if and only if $\bigcup \Phi$ is equal to that diagonal. Some people call
+  such uniform space "separating".\<close>
+
+theorem unif_inter_diag: assumes "\<Phi> {is a uniformity on} X"
+  shows "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> \<Inter>\<Phi> = {\<langle>x,x\<rangle>. x\<in>X}"
+  using assms entourage_props(2) uniformity_non_empty by force
+
+
+text\<open>The next theorem collects the information we have to show that
+  if $\Phi$ is a uniformity on $X$, with the induced topology $T$ then
+  conditions $T$ is $T_0$, $T$ is $T_1$, $T$ is $T_2$ $T$ is $T_3$ are all equivalent to
+  the intersection of $\Phi$ being contained in the diagonal 
+  (which is equivalent to the intersection of $\Phi$ being equal to the diagonal, see 
+  \<open>unif_inter_diag\<close> above.\<close>
+
+theorem unif_sep_axioms_diag: assumes "\<Phi> {is a uniformity on} X"
+  defines "T \<equiv> UniformTopology(\<Phi>,X)"
+  shows 
+    "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> T {is T\<^sub>0}"
+    "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> T {is T\<^sub>1}"
+    "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> T {is T\<^sub>2}"
+    "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> T {is T\<^sub>3}"
+proof -
+  from assms show "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> T {is T\<^sub>1}"
+    using unif_t1_inter_diag unif_inter_diag_t1 by auto
+  with assms show 
+    "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> T {is T\<^sub>0}"
+    "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> T {is T\<^sub>2}"
+    "\<Inter>\<Phi> \<subseteq> {\<langle>x,x\<rangle>. x\<in>X} \<longleftrightarrow> T {is T\<^sub>3}"
+    using utopreg T1_is_T0 T3_is_T2 T2_is_T1
+    unfolding isT3_def by auto
+qed
+
 subsection\<open> Base of a uniformity \<close>
 
 text\<open>A \<open>base\<close> or a \<open>fundamental system of entourages\<close> of a uniformity $\Phi$ is 
