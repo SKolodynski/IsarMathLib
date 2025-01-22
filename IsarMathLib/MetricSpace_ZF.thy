@@ -26,7 +26,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
-section \<open> Metric spaces \<close>
+section \<open>Metric spaces\<close>
 
 theory MetricSpace_ZF imports Topology_ZF_1 OrderedLoop_ZF Lattice_ZF UniformSpace_ZF
 begin
@@ -321,7 +321,50 @@ lemma (in pmetric_space) disks_open:
   assumes "c\<in>X" "R\<in>L\<^sub>+" "r {down-directs} L\<^sub>+"
   shows "disk(c,R) \<in> \<tau>"
   using assms base_sets_open disks_are_base(1) pmetric_is_top 
+  by blast
+
+text\<open>If $r$ down-directs $L_+$ and $x$ is an element of an open set $U$ then
+  there exist radius $R\in L_+$ such that the disk with center $x$ and radius $R$
+  is contained in $U$. \<close>
+
+lemma (in pmetric_space) point_open_disk: 
+  assumes "r {down-directs} L\<^sub>+" "U\<in>\<tau>" "x\<in>U"
+  shows "\<exists>R\<in>L\<^sub>+. disk(x,R) \<subseteq> U"
+proof -
+  let ?B = "\<Union>c\<in>X. {disk(c,R). R\<in>L\<^sub>+}"
+  from assms have "\<exists>V\<in>?B. V\<subseteq>U \<and> x\<in>V"
+    using disks_are_base point_open_base_neigh by force
+  then obtain c R where "c\<in>X" "R\<in>L\<^sub>+" "x\<in>disk(c,R)" "disk(c,R)\<subseteq>U"
+    by auto
+  then show ?thesis using radius_in_loop(4) disk_in_disk1
     by blast
+qed
+
+text\<open>If $r$ down-directs $L_+$ then the generated topology cannot distinguish
+  two points if their distance is zero. "Cannot distinguish" here means that if one is 
+  in an open set then the second one is in that set too. \<close>
+
+lemma (in pmetric_space) zero_dist_same_open:
+  assumes "r {down-directs} L\<^sub>+" "U\<in>\<tau>" "x\<in>U" "y\<in>X" "d`\<langle>x,y\<rangle>=\<zero>"
+  shows "y\<in>U"
+  using assms point_open_disk posset_definition1 disk_definition
+    by force
+
+text\<open>A pseudometric that induces a $T_0$ topology is a metric.\<close>
+
+theorem (in pmetric_space) pmetric_t0_metric:
+  assumes "r {down-directs} L\<^sub>+" "\<tau> {is T\<^sub>0}"
+  shows "IsAmetric(d,X,L,A,r)"
+proof -
+  { fix x y
+    assume "x\<in>X" "y\<in>X" "d`\<langle>x,y\<rangle>=\<zero>"
+    with assms(1) have "\<forall>U\<in>\<tau>. (x\<in>U \<longleftrightarrow> y\<in>U)"
+      using zero_dist_same_open pmetric_properties(3) by auto
+    with assms \<open>x\<in>X\<close> \<open>y\<in>X\<close> have "x=y" using metric_top_carrier Top_1_1_L1
+      by blast
+  } then show "IsAmetric(d,X,L,A,r)"
+    using pmetricAssum unfolding IsAmetric_def by auto
+qed
 
 text\<open>To define the \<open>metric_space\<close> locale we take the \<open>pmetric_space\<close> and add 
   the assumption of identity of indiscernibles.\<close>
@@ -401,7 +444,7 @@ proof -
   } then show ?thesis unfolding isT2_def by simp
 qed
 
-subsection\<open>Uniform structures on metric spaces\<close>
+subsection\<open>Uniform structures on (pseudo-)metric spaces\<close>
 
 text\<open>Each pseudometric space with pseudometric $d:X\times X\rightarrow L^+$ 
   supports a natural uniform structure, defined as supersets of the collection
