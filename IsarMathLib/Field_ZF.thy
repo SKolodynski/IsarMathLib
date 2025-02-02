@@ -281,6 +281,12 @@ proof -
     using Field_ZF_1_L7 by simp
 qed
 
+text\<open>Inverse of an inverse of a non-zero element is the element.\<close>
+
+lemma (in field0) non_zero_inv_inv: assumes "a\<in>K" "a\<noteq>\<zero>"
+  shows "(a\<inverse>)\<inverse> = a"
+  using assms Field_ZF_1_L4(2) group0.group_inv_of_inv by simp
+ 
 subsection\<open>1/0=0\<close>
 
 text\<open>In ZF if $f: X\rightarrow Y$ and $x\notin X$ we have $f(x)=\emptyset$.

@@ -102,9 +102,16 @@ lemma OrdRing_ZF_1_L2: assumes "IsAnOrdRing(R,A,M,r)"
 text\<open>In the \<open>ring1\<close> context $a\leq b$ implies that $a,b$ are
   elements of the ring.\<close>
 
-lemma (in  ring1) OrdRing_ZF_1_L3: assumes "a\<lsq>b"
+lemma (in ring1) OrdRing_ZF_1_L3: assumes "a\<lsq>b"
   shows "a\<in>R"  "b\<in>R"
   using assms ordincl by auto
+
+text\<open>In the \<open>ring1\<close> context $a < b$ implies that $a,b$ are
+  elements of the ring.\<close>
+
+lemma (in  ring1) ord_ring_less_members: assumes "a\<ls>b"
+  shows "a\<in>R"  "b\<in>R"
+  using assms OrdRing_ZF_1_L3 by auto
 
 text\<open>Ordered ring is an ordered group, hence we can use theorems
   proven in the \<open>group3\<close> context.\<close>
@@ -135,6 +142,12 @@ proof -
     using IsAring_def Order_ZF_1_L2 IsAnOrdGroup_def group3_def IsLinOrder_def
     by auto
 qed
+
+text\<open>We can express that $x$ is positive by stating that $0<x$ or by writing that $x$ is an
+  element $R_+$.\<close>
+
+lemma (in  ring1) element_pos: shows "a\<in>R\<^sub>+ \<longleftrightarrow> \<zero>\<ls>a"
+  using OrdRing_ZF_1_L4(4) group3.OrderedGroup_ZF_1_L2A by auto
 
 text\<open>The order relation in rings is transitive.\<close>
 
@@ -177,6 +190,11 @@ proof -
   then have "\<langle>a,c\<rangle> \<in> r \<and> a\<noteq>c" by (rule group3.group_strict_ord_transit)
   then show "a\<ls>c" by simp
 qed
+
+text\<open>The ring order is reflexive.\<close>
+
+lemma (in ring1) ring_ord_refl: assumes "a\<in>R" shows "a\<lsq>a"
+  using assms OrdRing_ZF_1_L4(4) group3.OrderedGroup_ZF_1_L3 by simp
 
 text\<open>The next lemma shows what happens when one element of an ordered
   ring is not greater or equal than another.\<close>
@@ -343,9 +361,9 @@ qed
 text\<open>In nontrivial rings one is positive.\<close>
 
 lemma (in ring1) ordring_one_is_pos: assumes "\<zero>\<noteq>\<one>"
-  shows "\<one> \<in> R\<^sub>+"
+  shows "\<one> \<in> R\<^sub>+" "\<zero>\<ls>\<one>"
   using assms Ring_ZF_1_L2 ordring_one_is_nonneg PositiveSet_def
-  by auto
+  by simp_all
     
 text\<open>Nonnegative is not negative. Property of ordered groups.\<close>
 
@@ -458,6 +476,18 @@ lemma (in ring1) OrdRing_ZF_1_L20:
   shows "a\<ra>c \<ls> b\<ra>d"
   using assms OrdRing_ZF_1_L4 group3.OrderedGroup_ZF_1_L12D
   by simp
+
+text\<open>In a non-trivial ring one is less than two.\<close> 
+
+lemma (in ring1) one_less_two: assumes "\<zero>\<noteq>\<one>" shows "\<one>\<ls>\<two>"
+  using assms ordring_one_is_pos Ring_ZF_1_L2(2) ring_strict_ord_trans_inv(1) 
+    Ring_ZF_1_L3(4) by force
+
+text\<open>In a non-trivial ring two is positive.\<close>
+
+lemma (in ring1) two_positive: assumes "\<zero>\<noteq>\<one>" shows "\<two> \<in> R\<^sub>+" "\<zero>\<ls>\<two>"
+  using assms ordring_one_is_pos one_less_two ring_strict_ord_transit element_pos
+    by simp_all
 
 subsection\<open>Absolute value for ordered rings\<close>
 
@@ -590,8 +620,7 @@ lemma (in ring1) OrdRing_ZF_3_L2A: assumes "a\<in>R"  "a\<noteq>\<zero>"  "a \<n
   using assms OrdRing_ZF_1_L4 group3.OrdGroup_cases
   by simp
 
-text\<open>\<open>R\<^sub>+\<close> is closed under
-  multiplication iff the ring has no zero divisors.\<close>
+text\<open>$R_+$ is closed under multiplication iff the ring has no zero divisors.\<close>
 
 lemma (in ring1) OrdRing_ZF_3_L3: 
   shows "(R\<^sub>+ {is closed under} M)\<longleftrightarrow> HasNoZeroDivs(R,A,M)"

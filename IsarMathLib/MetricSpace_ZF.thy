@@ -464,7 +464,7 @@ text\<open>In the \<open>pmetric_space\<close> context we will write \<open>Unif
 abbreviation (in pmetric_space) gauge ("\<BB>") where "\<BB> \<equiv> UniformGauge(X,L,A,r,d)"
 
 text\<open>In notation defined in the \<open>pmetric_space\<close> context we can write the uniform gauge
-  as $\{ d^{-1}(\{c\in L^+: c\leq b\}: b \in L_+ \}$.  \<close>
+  as $\{ d^{-1}(\{c\in L^+: c\leq b\}): b \in L_+ \}$.  \<close>
 
 lemma (in pmetric_space) uniform_gauge_def_alt: 
   shows "\<BB> = {d-``({c\<in>L\<^sup>+. c\<lsq>b}). b\<in>L\<^sub>+}"

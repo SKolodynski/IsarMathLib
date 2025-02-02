@@ -138,9 +138,9 @@ text\<open>Zero and one of the ring are elements of the ring. The negative of ze
   is zero.\<close>
 
 lemma (in ring0) Ring_ZF_1_L2: 
-  shows "\<zero>\<in>R"  "\<one>\<in>R"   "(\<rm>\<zero>) = \<zero>"
+  shows "\<zero>\<in>R"  "\<one>\<in>R"  "(\<rm>\<zero>) = \<zero>" "\<two>\<in>R" 
   using add_group.group0_2_L2 mult_monoid.unit_is_neutral 
-    add_group.group_inv_of_one by auto
+    add_group.group_inv_of_one add_group.group_op_closed by auto
   
 text\<open>The next lemma lists some properties of a ring that require one element
   of a ring.\<close>

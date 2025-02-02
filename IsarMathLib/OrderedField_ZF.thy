@@ -162,7 +162,6 @@ proof -
     by simp
 qed
 
-
 text\<open>In fields square of a nonzero element is positive.\<close>
 
 lemma (in field1) OrdField_ZF_1_L6: assumes "a\<in>R"  "a\<noteq>\<zero>"
@@ -210,6 +209,11 @@ proof -
   from I show  "a\<cdot>(a\<inverse>) = \<one>"  "(a\<inverse>)\<cdot>a = \<one>"
     using OrdField_ZF_1_L7 by auto
 qed
+
+text\<open>$\frac{1}{2}$ is a positive member of the field.\<close>
+
+lemma (in field1) one_half_pos: shows "\<two>\<inverse> \<in> R\<^sub>+" "\<zero>\<ls>\<two>\<inverse>" 
+  using not_triv two_positive OrdField_ZF_1_L8(1) element_pos by simp_all
 
 text\<open>If $a$ is smaller than $b$, then $(b-a)^{-1}$ is positive.\<close>
 
@@ -380,6 +384,18 @@ proof -
   with A1 A2 show "b\<inverse> \<ls> a"
     using OrdField_ZF_2_L7 by simp
 qed
+
+text\<open>If the left side of the strict inequality is positive then taking inverses of both sides 
+  reverses the inequality.\<close>
+
+lemma (in field1) poz_elem_inverse_sides: assumes "\<zero>\<ls>a" "a\<ls>b"
+  shows "b\<inverse> \<ls> a\<inverse>"
+proof -
+  from assms(1) have "a = (a\<inverse>)\<inverse>" 
+    using OrdRing_ZF_1_L3(2) OrdField_ZF_1_L1B field0.non_zero_inv_inv by force
+  with assms show ?thesis using element_pos OrdField_ZF_1_L8(1) OrdField_ZF_2_L8
+    by simp
+qed
     
 text\<open>A technical lemma about solving a strict inequality with three
   field elements and inverse of a difference.\<close>
@@ -403,6 +419,17 @@ proof -
   with T1 T2 show "\<one> \<ra> a\<cdot>c \<ls> b\<cdot>c"
     using ring_oper_distr OrdField_ZF_1_L8
     by simp
+qed
+
+text\<open>One half is field member and sum of two halfs is one.\<close>
+
+lemma (in field1) half_half_one: shows "\<two>\<inverse>\<in>R" "\<two>\<inverse>\<ra>\<two>\<inverse> = \<one>"
+proof -
+  show "\<two>\<inverse>\<in>R" using one_half_pos(2) ord_ring_less_members by simp
+  from not_triv have "\<two>\<in>R" and "\<two>\<noteq>\<zero>" using Ring_ZF_1_L2(4) two_positive(2) by auto
+  then have "\<two>\<cdot>\<two>\<inverse> = \<one>" using OrdField_ZF_1_L1B field0.Field_ZF_1_L6 
+    by simp
+  with \<open>\<two>\<inverse>\<in>R\<close>  show "\<two>\<inverse>\<ra>\<two>\<inverse> = \<one>" using Ring_ZF_1_L3(9) by simp
 qed
 
 subsection\<open>Definition of real numbers\<close>

@@ -55,8 +55,8 @@ locale reals =
   fixes one ("\<one>")
   defines one_def[simp]: "\<one> \<equiv> TheNeutralElement(\<real>,Mul)"
 
-  fixes realmul (infixl "\<rmu>" 71)
-  defines realmul_def[simp]: "x \<rmu> y \<equiv> Mul`\<langle>x,y\<rangle>"
+  fixes realmul (infixl "\<cdot>" 71)
+  defines realmul_def[simp]: "x \<cdot> y \<equiv> Mul`\<langle>x,y\<rangle>"
 
   fixes realadd (infixl "\<ra>" 69)
   defines realadd_def[simp]: "x \<ra> y \<equiv> Add`\<langle>x,y\<rangle>"
@@ -105,7 +105,7 @@ locale reals =
   defines nat_mult_def [simp]: "n\<nm>x \<equiv> \<Sum>{\<langle>k,x\<rangle>. k\<in>n}"
 
   fixes realsq ("_\<^sup>2" [96] 97)
-  defines realsq_def [simp]: "x\<^sup>2 \<equiv> x\<rmu>x"
+  defines realsq_def [simp]: "x\<^sup>2 \<equiv> x\<cdot>x"
 
   fixes oddext ("_ \<degree>")
   defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(\<real>,Add,ROrd,f)"
