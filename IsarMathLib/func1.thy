@@ -193,7 +193,7 @@ text\<open>The next theorem illustrates the meaning of the concept of
   function in ZF.\<close>
 
 theorem fun_is_set_of_pairs: assumes A1: "f:X\<rightarrow>Y"
-  shows "f = {\<langle>x, f`(x)\<rangle>. x \<in> X}"
+  shows "f = {\<langle>x,f`(x)\<rangle>. x \<in> X}"
 proof
   from A1 show "{\<langle>x, f`(x)\<rangle>. x \<in> X} \<subseteq> f" using func1_1_L5A
     by auto
@@ -204,6 +204,17 @@ next
     with A1 \<open>p \<in> f\<close> have "p \<in> {\<langle>x, f`(x)\<rangle>. x \<in> X}" 
       using apply_equality by auto
   } thus "f \<subseteq> {\<langle>x, f`(x)\<rangle>. x \<in> X}" by auto
+qed
+
+text\<open>If a pair $\langle x,y\rangle$ is a member of a function $f$, then
+  $x$ is in the domain and $y=f(x)$. \<close>
+
+lemma pair_fun_member: assumes "f:X\<rightarrow>Y" and "\<langle>x,y\<rangle> \<in> f"
+  shows "x\<in>X" and "y=f`(x)"
+proof -
+  from assms have "\<langle>x,y\<rangle> \<in> {\<langle>x,f`(x)\<rangle>. x \<in> X}" using fun_is_set_of_pairs
+    by simp
+  then show "x\<in>X" and "y=f`(x)" by auto
 qed
 
 text\<open>The range of function that maps $X$ into $Y$ is contained in $Y$.\<close>
@@ -287,6 +298,7 @@ one $y\in Y$ such that $(x,y)\in f$ then $f$ maps $X$ to $Y$.\<close>
 lemma func1_1_L11: 
   assumes "f \<subseteq> X\<times>Y" and "\<forall>x\<in>X. \<exists>!y. y\<in>Y \<and> \<langle>x,y\<rangle> \<in> f"
   shows "f: X\<rightarrow>Y" using assms func1_1_L10 Pi_iff_old by simp
+
 
 text\<open>A set defined by a lambda-type expression is a function. There is a 
   similar lemma in func.thy, but I had problems with lambda expressions syntax
@@ -938,6 +950,65 @@ proof -
   with A2 have "\<langle>x, f`(x)\<rangle> \<in> \<Union>F" by auto
   with A1 show "(\<Union>F)`(x) = f`(x)" using apply_equality
     by simp
+qed
+
+subsection\<open>Dependent function space\<close>
+
+text\<open>The standard Isabelle/ZF \<open>ZF_Base\<close> theory defines a general notion of
+  a dependent function space $\text{Pi}(X,N)$, where $X$ wher $X$ is any set and 
+  $N$ is a collection of sets indexed by $X$. We rarely use that notion in IsarMathLib.
+  The facts shown in this section provide information on how to interpret the 
+  dependent function space notion in terms of a regular space of functions defined on $X$
+  with values in $Y=\bigcup_{x\in X} N(x)$.\<close>
+
+text\<open> The \<open>Pi_iff_old\<close> lemma from the standard Isabelle/ZF \<open>func\<close> theory
+  shows that if $f$ is a member of the dependent function space \<open>Pi(X,N)\<close> 
+  and $x\in X$ then there exist exactly one $y$ such that $\langle x,y\rangle \in f$.
+  The next lemma shows that we can slightly strengthen this assertion and claim
+  that there exist exactly one $y\in N(x)$ such that $\langle x,y\rangle \in f$.
+  Consequently, there exists exactly one $y\in \bigcup_{t\in X} N(t)$
+  such that $\langle x,y\rangle \in f$.\<close>
+
+lemma pi_then: assumes "f\<in>Pi(X,N)" "x\<in>X" 
+  shows "\<exists>!y. y\<in>N(x) \<and> \<langle>x,y\<rangle> \<in> f" and "\<exists>!y. y\<in>(\<Union>t\<in>X. N(t)) \<and> \<langle>x,y\<rangle> \<in> f"
+proof -
+  from assms have "f`(x)\<in>N(x)" and "\<exists>!y. \<langle>x,y\<rangle> \<in> f" 
+    using Pi_iff_old apply_type by simp_all
+  with assms show "\<exists>!y. y\<in>N(x) \<and> \<langle>x,y\<rangle> \<in> f" and "\<exists>!y. y\<in>(\<Union>t\<in>X. N(t)) \<and> \<langle>x,y\<rangle> \<in> f" 
+    using apply_equality by auto
+qed
+
+text\<open>The next lemma demonstrates a way to understand the dependent function space \<open>Pi(X,N)\<close>:
+  it is the space of functions that map $X$ into $\bigcup_{t\in X} N(t)$ such that
+  for all $x\in X$ we have $f(x)\in N(x)$. \<close>
+
+theorem pi_fun_space: shows "Pi(X,N) = {f\<in>X\<rightarrow>(\<Union>x\<in>X. N(x)). \<forall>x\<in>X. f`(x)\<in>N(x)}"
+proof
+  let ?Y = "(\<Union>x\<in>X. N(x))"
+  let ?R = "{f\<in>X\<rightarrow>?Y. \<forall>x\<in>X. f`(x)\<in>N(x)}"
+  { fix f assume "f\<in>Pi(X,N)"        
+    then have "f\<subseteq>Sigma(X,N)" using Pi_iff by auto 
+    hence "f \<subseteq> X\<times>(\<Union>x\<in>X. N(x))" by auto
+    with \<open>f\<in>Pi(X,N)\<close> have "f: X\<rightarrow>?Y" and "\<forall>x\<in>X. f`(x)\<in>N(x)" 
+      using pi_then(2) func1_1_L11 apply_type by simp_all
+  } thus "Pi(X,N) \<subseteq> ?R" by auto
+  { fix f assume "f\<in>?R"
+    then have "f:X\<rightarrow>?Y" and "\<forall>x\<in>X. f`(x)\<in>N(x)"
+      by auto
+    { fix p assume "p\<in>f"
+      let ?x = "fst(p)"
+      let ?y = "snd(p)"
+      from \<open>f:X\<rightarrow>?Y\<close> have "f \<subseteq> X\<times>?Y" using fun_subset_prod by simp
+      with \<open>p\<in>f\<close> have "p = \<langle>?x,?y\<rangle>" and "\<langle>?x,?y\<rangle> \<in> f" by auto 
+      from \<open>f:X\<rightarrow>?Y\<close> \<open>\<langle>?x,?y\<rangle> \<in> f\<close> have "?x\<in>X" and "?y=f`(?x)" 
+        using pair_fun_member by simp_all
+      with \<open>\<forall>x\<in>X. f`(x)\<in>N(x)\<close> have "\<langle>?x,?y\<rangle> \<in> Sigma(X,N)" using SigmaI by simp
+      with \<open>p = \<langle>?x,?y\<rangle>\<close> have "p\<in>Sigma(X,N)" by simp
+    } hence "f\<subseteq>Sigma(X,N)" by auto
+    from \<open>f:X\<rightarrow>?Y\<close> have "function(f)" and "X = domain(f)"
+      using func1_1_L1 fun_is_fun by simp_all
+    with \<open>f\<subseteq>Sigma(X,N)\<close> have "f\<in>Pi(X,N)" using Pi_iff by simp
+  } thus "?R \<subseteq> Pi(X,N)" by auto
 qed
 
 subsection\<open>Functions restricted to a set\<close>
