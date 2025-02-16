@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Cardinal numbers\<close>
 
-theory Cardinal_ZF imports ZF.CardinalArith func1
+theory Cardinal_ZF imports ZF.CardinalArith Finite_ZF func1
 
 begin
 
@@ -408,97 +408,9 @@ definition
   AxiomCardinalChoiceGen ("{the axiom of}_{choice holds}") where
   "{the axiom of} Q {choice holds} \<equiv> Card(Q) \<and> (\<forall> M N. (M \<lesssim>Q \<and>  (\<forall>t\<in>M. N`t\<noteq>0)) \<longrightarrow> (\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t)))"
 
-text\<open>The axiom of finite choice always holds.\<close>
-
-theorem finite_choice:
-  assumes "n\<in>nat"
-  shows "{the axiom of} n {choice holds}"
-proof -
-  note assms(1)
-  moreover
-  {
-    fix M N assume "M\<lesssim>0" "\<forall>t\<in>M. N`t\<noteq>0"
-    then have "M=0" using lepoll_0_is_0 by auto
-    then have "{\<langle>t,0\<rangle>. t\<in>M}:Pi(M,\<lambda>t. N`t)" unfolding Pi_def domain_def function_def Sigma_def by auto
-    moreover from \<open>M=0\<close> have "\<forall>t\<in>M. {\<langle>t,0\<rangle>. t\<in>M}`t\<in>N`t" by auto
-    ultimately have "(\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t))" by auto
-  }
-  then have "(\<forall> M N. (M \<lesssim>0 \<and>  (\<forall>t\<in>M. N`t\<noteq>0)) \<longrightarrow> (\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t)))" 
-    by auto
-  then have "{the axiom of} 0 {choice holds}" using AxiomCardinalChoiceGen_def nat_into_Card 
-    by auto
-  moreover { 
-    fix x
-    assume as: "x\<in>nat" "{the axiom of} x {choice holds}"
-    {
-      fix M N assume ass: "M\<lesssim>succ(x)" "\<forall>t\<in>M. N`t\<noteq>0"
-      {
-        assume "M\<lesssim>x"
-        from as(2) ass(2) have 
-          "(M \<lesssim> x \<and> (\<forall>t\<in>M. N ` t \<noteq> 0)) \<longrightarrow> (\<exists>f. f \<in> Pi(M,\<lambda>t. N ` t) \<and> (\<forall>t\<in>M. f ` t \<in> N ` t))" 
-            unfolding AxiomCardinalChoiceGen_def by auto
-        with \<open>M\<lesssim>x\<close> ass(2) have "(\<exists>f. f \<in> Pi(M,\<lambda>t. N ` t) \<and> (\<forall>t\<in>M. f ` t \<in> N ` t))" 
-          by auto
-      }
-      moreover
-      {
-        assume "M\<approx>succ(x)"
-        then obtain f where f:"f\<in>bij(succ(x),M)" using eqpoll_sym eqpoll_def by blast 
-        moreover
-        have "x\<in>succ(x)" unfolding succ_def by auto
-        ultimately have "restrict(f,succ(x)-{x})\<in>bij(succ(x)-{x},M-{f`x})" using bij_restrict_rem 
-          by auto 
-        moreover
-        have "x\<notin>x" using mem_not_refl by auto
-        then have "succ(x)-{x}=x" unfolding succ_def by auto
-        ultimately have "restrict(f,x)\<in>bij(x,M-{f`x})" by auto
-        then have "x\<approx>M-{f`x}" unfolding eqpoll_def by auto
-        then have "M-{f`x}\<approx>x" using eqpoll_sym by auto
-        then have "M-{f`x}\<lesssim>x" using eqpoll_imp_lepoll by auto
-        with as(2) ass(2) have "(\<exists>g. g \<in> Pi(M-{f`x},\<lambda>t. N ` t) \<and> (\<forall>t\<in>M-{f`x}. g ` t \<in> N ` t))" 
-          unfolding AxiomCardinalChoiceGen_def by auto
-        then obtain g where g: "g\<in> Pi(M-{f`x},\<lambda>t. N ` t)" "\<forall>t\<in>M-{f`x}. g ` t \<in> N ` t" 
-          by auto
-        from f have ff: "f`x\<in>M" using bij_def inj_def apply_funtype by auto
-        with ass(2) have "N`(f`x)\<noteq>0" by auto
-        then obtain y where y: "y\<in>N`(f`x)" by auto
-        from g(1) have gg: "g\<subseteq>Sigma(M-{f`x},(`)(N))" unfolding Pi_def by auto
-        with y ff have "g \<union>{\<langle>f`x, y\<rangle>}\<subseteq>Sigma(M, (`)(N))" unfolding Sigma_def by auto 
-        moreover
-        from g(1) have dom: "M-{f`x}\<subseteq>domain(g)" unfolding Pi_def by auto
-        then have "M\<subseteq>domain(g \<union>{\<langle>f`x, y\<rangle>})" unfolding domain_def by auto 
-        moreover
-        from gg g(1) have noe: "~(\<exists>t. \<langle>f`x,t\<rangle>\<in>g)" and "function(g)"
-          unfolding domain_def Pi_def Sigma_def by auto  
-        with dom have fg: "function(g \<union>{\<langle>f`x, y\<rangle>})" unfolding function_def by blast 
-        ultimately have PP: "g \<union>{\<langle>f`x, y\<rangle>}\<in>Pi(M,\<lambda>t. N ` t)" unfolding Pi_def by auto
-        have "\<langle>f`x, y\<rangle> \<in> g \<union>{\<langle>f`x, y\<rangle>}" by auto
-        from this fg have "(g \<union>{\<langle>f`x, y\<rangle>})`(f`x)=y" by (rule function_apply_equality)
-        with y have "(g \<union>{\<langle>f`x, y\<rangle>})`(f`x)\<in>N`(f`x)" by auto 
-        moreover
-        {
-          fix t assume A:"t\<in>M-{f`x}"
-          with g(1) have "\<langle>t,g`t\<rangle>\<in>g" using apply_Pair by auto
-          then have "\<langle>t,g`t\<rangle>\<in>(g \<union>{\<langle>f`x, y\<rangle>})" by auto
-          then have "(g \<union>{\<langle>f`x, y\<rangle>})`t=g`t" using apply_equality PP by auto
-          with A have "(g \<union>{\<langle>f`x, y\<rangle>})`t\<in>N`t" using g(2) by auto
-        }
-        ultimately have "\<forall>t\<in>M. (g \<union>{\<langle>f`x, y\<rangle>})`t\<in>N`t" by auto
-        with PP have "\<exists>g. g\<in>Pi(M,\<lambda>t. N ` t) \<and> (\<forall>t\<in>M. g`t\<in>N`t)" by auto
-      }
-    ultimately have "\<exists>g. g \<in> Pi(M, \<lambda>t. N`t) \<and> (\<forall>t\<in>M. g ` t \<in> N ` t)" using as(1) ass(1)
-      lepoll_succ_disj by auto
-    }
-    then have "\<forall>M N. M \<lesssim> succ(x)\<and>(\<forall>t\<in>M. N`t\<noteq>0)\<longrightarrow>(\<exists>g. g \<in> Pi(M,\<lambda>t. N ` t) \<and> (\<forall>t\<in>M. g ` t \<in> N ` t))" 
-      by auto
-    then have "{the axiom of}succ(x){choice holds}" 
-      using AxiomCardinalChoiceGen_def nat_into_Card as(1) nat_succI by auto
-  }
-  ultimately show ?thesis by (rule nat_induct)
-qed
 
 text\<open>The axiom of choice holds if and only if the \<open>AxiomCardinalChoice\<close>
-holds for every couple of a cardinal \<open>Q\<close> and a set \<open>K\<close>.\<close>
+  holds for every couple of a cardinal \<open>Q\<close> and a set \<open>K\<close>.\<close>
 
 lemma choice_subset_imp_choice:
   shows "{the axiom of} Q {choice holds} \<longleftrightarrow> (\<forall> K. {the axiom of} Q {choice holds for subsets}K)"
@@ -589,5 +501,125 @@ proof-
   ultimately show "B\<lesssim>A" using lepoll_eq_trans by auto
 qed
 
+subsection\<open>Finite choice\<close>
+
+text\<open>In ZF every finite collection of non-empty sets has a choice function, i.e. a function that
+  selects one element from each set of the collection. In this section we prove various forms of 
+  that claim.\<close>
+
+text\<open>The axiom of finite choice always holds.\<close>
+
+theorem finite_choice:
+  assumes "n\<in>nat"
+  shows "{the axiom of} n {choice holds}"
+proof -
+  note assms(1)
+  moreover
+  {
+    fix M N assume "M\<lesssim>0" "\<forall>t\<in>M. N`t\<noteq>0"
+    then have "M=0" using lepoll_0_is_0 by auto
+    then have "{\<langle>t,0\<rangle>. t\<in>M}:Pi(M,\<lambda>t. N`t)" unfolding Pi_def domain_def function_def Sigma_def by auto
+    moreover from \<open>M=0\<close> have "\<forall>t\<in>M. {\<langle>t,0\<rangle>. t\<in>M}`t\<in>N`t" by auto
+    ultimately have "(\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t))" by auto
+  }
+  then have "(\<forall> M N. (M \<lesssim>0 \<and>  (\<forall>t\<in>M. N`t\<noteq>0)) \<longrightarrow> (\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t)))" 
+    by auto
+  then have "{the axiom of} 0 {choice holds}" using AxiomCardinalChoiceGen_def nat_into_Card 
+    by auto
+  moreover { 
+    fix x
+    assume as: "x\<in>nat" "{the axiom of} x {choice holds}"
+    {
+      fix M N assume ass: "M\<lesssim>succ(x)" "\<forall>t\<in>M. N`t\<noteq>0"
+      {
+        assume "M\<lesssim>x"
+        from as(2) ass(2) have 
+          "(M \<lesssim> x \<and> (\<forall>t\<in>M. N ` t \<noteq> 0)) \<longrightarrow> (\<exists>f. f \<in> Pi(M,\<lambda>t. N ` t) \<and> (\<forall>t\<in>M. f ` t \<in> N ` t))" 
+            unfolding AxiomCardinalChoiceGen_def by auto
+        with \<open>M\<lesssim>x\<close> ass(2) have "(\<exists>f. f \<in> Pi(M,\<lambda>t. N ` t) \<and> (\<forall>t\<in>M. f ` t \<in> N ` t))" 
+          by auto
+      }
+      moreover
+      {
+        assume "M\<approx>succ(x)"
+        then obtain f where f:"f\<in>bij(succ(x),M)" using eqpoll_sym eqpoll_def by blast 
+        moreover
+        have "x\<in>succ(x)" unfolding succ_def by auto
+        ultimately have "restrict(f,succ(x)-{x})\<in>bij(succ(x)-{x},M-{f`x})" using bij_restrict_rem 
+          by auto 
+        moreover
+        have "x\<notin>x" using mem_not_refl by auto
+        then have "succ(x)-{x}=x" unfolding succ_def by auto
+        ultimately have "restrict(f,x)\<in>bij(x,M-{f`x})" by auto
+        then have "x\<approx>M-{f`x}" unfolding eqpoll_def by auto
+        then have "M-{f`x}\<approx>x" using eqpoll_sym by auto
+        then have "M-{f`x}\<lesssim>x" using eqpoll_imp_lepoll by auto
+        with as(2) ass(2) have "(\<exists>g. g \<in> Pi(M-{f`x},\<lambda>t. N ` t) \<and> (\<forall>t\<in>M-{f`x}. g ` t \<in> N ` t))" 
+          unfolding AxiomCardinalChoiceGen_def by auto
+        then obtain g where g: "g\<in> Pi(M-{f`x},\<lambda>t. N ` t)" "\<forall>t\<in>M-{f`x}. g ` t \<in> N ` t" 
+          by auto
+        from f have ff: "f`x\<in>M" using bij_def inj_def apply_funtype by auto
+        with ass(2) have "N`(f`x)\<noteq>0" by auto
+        then obtain y where y: "y\<in>N`(f`x)" by auto
+        from g(1) have gg: "g\<subseteq>Sigma(M-{f`x},(`)(N))" unfolding Pi_def by auto
+        with y ff have "g \<union>{\<langle>f`x, y\<rangle>}\<subseteq>Sigma(M, (`)(N))" unfolding Sigma_def by auto 
+        moreover
+        from g(1) have dom: "M-{f`x}\<subseteq>domain(g)" unfolding Pi_def by auto
+        then have "M\<subseteq>domain(g \<union>{\<langle>f`x, y\<rangle>})" unfolding domain_def by auto 
+        moreover
+        from gg g(1) have noe: "~(\<exists>t. \<langle>f`x,t\<rangle>\<in>g)" and "function(g)"
+          unfolding domain_def Pi_def Sigma_def by auto  
+        with dom have fg: "function(g \<union>{\<langle>f`x, y\<rangle>})" unfolding function_def by blast 
+        ultimately have PP: "g \<union>{\<langle>f`x, y\<rangle>}\<in>Pi(M,\<lambda>t. N ` t)" unfolding Pi_def by auto
+        have "\<langle>f`x, y\<rangle> \<in> g \<union>{\<langle>f`x, y\<rangle>}" by auto
+        from this fg have "(g \<union>{\<langle>f`x, y\<rangle>})`(f`x)=y" by (rule function_apply_equality)
+        with y have "(g \<union>{\<langle>f`x, y\<rangle>})`(f`x)\<in>N`(f`x)" by auto 
+        moreover
+        {
+          fix t assume A:"t\<in>M-{f`x}"
+          with g(1) have "\<langle>t,g`t\<rangle>\<in>g" using apply_Pair by auto
+          then have "\<langle>t,g`t\<rangle>\<in>(g \<union>{\<langle>f`x, y\<rangle>})" by auto
+          then have "(g \<union>{\<langle>f`x, y\<rangle>})`t=g`t" using apply_equality PP by auto
+          with A have "(g \<union>{\<langle>f`x, y\<rangle>})`t\<in>N`t" using g(2) by auto
+        }
+        ultimately have "\<forall>t\<in>M. (g \<union>{\<langle>f`x, y\<rangle>})`t\<in>N`t" by auto
+        with PP have "\<exists>g. g\<in>Pi(M,\<lambda>t. N ` t) \<and> (\<forall>t\<in>M. g`t\<in>N`t)" by auto
+      }
+    ultimately have "\<exists>g. g \<in> Pi(M, \<lambda>t. N`t) \<and> (\<forall>t\<in>M. g ` t \<in> N ` t)" using as(1) ass(1)
+      lepoll_succ_disj by auto
+    }
+    then have "\<forall>M N. M \<lesssim> succ(x)\<and>(\<forall>t\<in>M. N`t\<noteq>0)\<longrightarrow>(\<exists>g. g \<in> Pi(M,\<lambda>t. N ` t) \<and> (\<forall>t\<in>M. g ` t \<in> N ` t))" 
+      by auto
+    then have "{the axiom of}succ(x){choice holds}" 
+      using AxiomCardinalChoiceGen_def nat_into_Card as(1) nat_succI by auto
+  }
+  ultimately show ?thesis by (rule nat_induct)
+qed
+
+text\<open>The choice functions of a collection $\mathcal{A}$ are functions $f$ defined on 
+  $\mathcal{A}$ and valued in $\bigcup \mathcal{A}$ such that $f(A)\in A$ 
+  for every $A\in \mathcal{A}$.\<close>
+
+definition
+  "ChoiceFunctions(\<A>) \<equiv> {f\<in>\<A>\<rightarrow>\<Union>\<A>. \<forall>A\<in>\<A>. f`(A)\<in>A}"
+
+text\<open>For finite collections of non-empty sets the set of choice functions is non-empty.\<close>
+
+theorem finite_choice1: assumes "Finite(\<A>)" and "\<forall>A\<in>\<A>. A\<noteq>\<emptyset>"
+  shows "ChoiceFunctions(\<A>) \<noteq> \<emptyset>"
+proof -
+  let ?N = "id(\<A>)"
+  let ?\<N> = "(\<lambda>t. ?N`(t))"
+  from assms(1) obtain n where "n\<in>nat" and "\<A>\<approx>n"
+    unfolding Finite_def by auto  
+  from assms(2) \<open>\<A>\<approx>n\<close> have "\<A>\<lesssim>n" and "\<forall>A\<in>\<A>. ?N`(A)\<noteq>\<emptyset>" 
+    using eqpoll_imp_lepoll by simp_all
+  with \<open>n\<in>nat\<close> obtain f where "f\<in>Pi(\<A>,?\<N>)"
+    using finite_choice unfolding AxiomCardinalChoiceGen_def by blast
+  have "Pi(\<A>,?\<N>) = {f\<in>\<A>\<rightarrow>(\<Union>A\<in>\<A>. ?\<N>(A)). \<forall>A\<in>\<A>. f`(A)\<in>?\<N>(A)}"
+    by (rule pi_fun_space)
+  with \<open>f\<in>Pi(\<A>,?\<N>)\<close> show ?thesis
+    unfolding ChoiceFunctions_def by auto
+qed
 
 end

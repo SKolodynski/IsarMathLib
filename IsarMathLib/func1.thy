@@ -955,7 +955,7 @@ qed
 subsection\<open>Dependent function space\<close>
 
 text\<open>The standard Isabelle/ZF \<open>ZF_Base\<close> theory defines a general notion of
-  a dependent function space $\text{Pi}(X,N)$, where $X$ wher $X$ is any set and 
+  a dependent function space \<open>Pi(X,N)\<close>, where $X$ is any set and 
   $N$ is a collection of sets indexed by $X$. We rarely use that notion in IsarMathLib.
   The facts shown in this section provide information on how to interpret the 
   dependent function space notion in terms of a regular space of functions defined on $X$

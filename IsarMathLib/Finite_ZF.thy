@@ -64,6 +64,11 @@ lemma card_fin_is_nat: assumes "A \<in> FinPow(X)"
   using assms FinPow_def Finite_def cardinal_cong nat_into_Card 
     Card_cardinal_eq by auto
 
+text\<open>The cardinality of a finite set is a natural number.\<close>
+
+lemma card_fin_is_nat1: assumes "Finite(A)" shows "|A| \<in> nat"
+  using assms card_fin_is_nat(1) unfolding FinPow_def by auto
+
 text\<open>A reformulation of \<open>card_fin_is_nat\<close>: for a finit
   set $A$ there is a bijection between $|A|$ and $A$.\<close>
 
