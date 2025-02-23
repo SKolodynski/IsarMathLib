@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2008-2023  Slawomir Kolodynski
+    Copyright (C) 2008-2025  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -165,7 +165,7 @@ proof -
   with assms(1) show "\<forall>j\<in>n #+ 1. P(j)" and "P(n)" 
     using succ_add_one(1) by simp_all
 qed
-  
+
 subsection\<open>Order isomorphisms of finite sets\<close>
 
 text\<open>In this section we establish that if two linearly 
@@ -478,7 +478,5 @@ proof
     using ord_iso_def comp_inv_id_eq_bij
     by auto
 qed
-
-
 
 end

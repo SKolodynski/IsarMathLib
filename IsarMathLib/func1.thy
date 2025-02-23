@@ -427,6 +427,17 @@ proof -
   } thus ?thesis by auto
 qed
 
+text\<open>If $x$ is not in the domain of the function then both the image of the singleton $\{x \}$ 
+  and the value of the function are empty. The second of the assertions is also proven
+  by standard Isabelle/ZF \<open>apply_0\<close> lemma in the \<open>func\<close> theory.\<close>
+
+lemma arg_not_in_domain: assumes "f:X\<rightarrow>Y" and "x\<notin>X"
+  shows "f``{x} = \<emptyset>" and "f`(x) = \<emptyset>"
+proof -
+  from assms show "f``{x} = \<emptyset>" using func1_1_L1 by blast
+  then show "f`(x) = \<emptyset>" unfolding apply_def by simp
+qed
+
 text\<open>We can extend a function by specifying its values on a set
   disjoint with the domain.\<close>
 

@@ -622,4 +622,25 @@ proof -
     unfolding ChoiceFunctions_def by auto
 qed
 
+text\<open>If a set $X$ is finite and such that for every $x\in X$ we can find
+  $y\in $ such that the property $P(x,y)$ holds, then there there is a 
+  function $f:X\rightarrow Y$ such that $P(x,f(x))$ holds for every $x\in X$. \<close>
+
+lemma finite_choice_fun: assumes "Finite(X)" "\<forall>x\<in>X. \<exists>y\<in>Y. P(x,y)"
+  shows "\<exists>f\<in>X\<rightarrow>Y. \<forall>x\<in>X. P(x,f`(x))"
+proof -
+  let ?N = "{\<langle>x,{y\<in>Y. P(x,y)}\<rangle>. x\<in>X}"
+  let ?\<N> = "(\<lambda>t. ?N`(t))"
+  from assms(1) obtain n where "n\<in>nat" and "X\<approx>n"
+    unfolding Finite_def by auto
+  have I: "\<forall>x\<in>X. ?N`(x) = {y\<in>Y. P(x,y)}" using ZF_fun_from_tot_val2 by simp
+  with assms(2) \<open>X\<approx>n\<close> have "X\<lesssim>n" and "\<forall>x\<in>X. ?N`(x)\<noteq>\<emptyset>" 
+    using eqpoll_imp_lepoll by auto
+  with \<open>n\<in>nat\<close> obtain f where "f\<in>Pi(X,?\<N>)" and II: "\<forall>x\<in>X. f`(x)\<in>?N`(x)"
+    using finite_choice unfolding AxiomCardinalChoiceGen_def by blast
+  have "Pi(X,?\<N>) = {f\<in>X\<rightarrow>(\<Union>x\<in>X. ?\<N>(x)). \<forall>x\<in>X. f`(x)\<in>?\<N>(x)}"
+    by (rule pi_fun_space)
+  with \<open>f\<in>Pi(X,?\<N>)\<close> I II show ?thesis using func1_1_L1A by auto
+qed
+
 end

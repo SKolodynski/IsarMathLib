@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2008 - 2019 Slawomir Kolodynski
+    Copyright (C) 2008 - 2025 Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -28,7 +28,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Finite sets - introduction\<close>
 
-theory Finite_ZF imports ZF1 Nat_ZF_IML ZF.Cardinal
+theory Finite_ZF imports ZF1 Nat_ZF_IML ZF.Cardinal func1
 
 begin
 
@@ -156,8 +156,12 @@ text\<open>A finite subset is a finite subset of itself.\<close>
 lemma fin_finpow_self: assumes "A \<in> FinPow(X)" shows "A \<in> FinPow(A)"
   using assms FinPow_def by auto
 
-text\<open>If we remove an element and put it back we get the set back.
-\<close>
+text\<open>A set is finite iff it is in its finite powerset.\<close>
+
+lemma fin_finpow_iff: shows "Finite(A) \<longleftrightarrow> A \<in> FinPow(A)"
+  unfolding FinPow_def by simp
+
+text\<open>If we remove an element and put it back we get the set back.\<close>
 
 lemma rem_add_eq: assumes "a\<in>A" shows "(A-{a}) \<union> {a} = A"
   using assms by auto
@@ -518,6 +522,30 @@ proof -
     by (rule FinPow_induct)
 qed
 
+text\<open>If a set $X$ is finite then the set $\{ K(x). x\in X\}$ is also finite.
+  Its basically standard Isalelle/ZF \<open>Finite_RepFun\<close> in nicer notation.\<close>
+
+lemma fin_rep_fin: assumes "Finite(X)" shows "Finite({K(x). x\<in>X})"
+  using assms Finite_RepFun by simp
+
+text\<open>The image of a singleton by any function is finite. It's of course either
+  empty or has exactly one element, but showing that it's a finite subset of the codomain
+  is good enough for us. \<close>
+
+lemma image_singleton_fin: assumes "f:X\<rightarrow>Y" shows "f``{x} \<in> FinPow(Y)"
+proof -
+  { assume "x\<in>X"
+    with assms have "f``{x} \<in> FinPow(Y)"
+      using singleton_image singleton_in_finpow by simp
+  }
+  moreover
+  { assume "x\<notin>X"
+    with assms have "f``{x} \<in> FinPow(Y)"
+      using arg_not_in_domain(1) empty_in_finpow by simp
+  }
+  ultimately show ?thesis by auto
+qed
+    
 text\<open>Union of a finite indexed family of finite sets is finite.\<close>
 
 lemma union_fin_list_fin: 

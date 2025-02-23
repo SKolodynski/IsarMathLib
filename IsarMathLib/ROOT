@@ -17,6 +17,7 @@ session "IsarMathLib" = "ZF" +
     Finite1
     Finite_ZF_1
     FinOrd_ZF
+    FinOrd_ZF_1
     EquivClass1
     FiniteSeq_ZF
     Finite_State_Machines_ZF
