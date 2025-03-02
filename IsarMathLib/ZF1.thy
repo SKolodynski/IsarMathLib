@@ -221,6 +221,26 @@ proof -
   thus "( \<Inter>i\<in>I. P(i) ) \<subseteq> X" by auto
 qed
 
+text\<open>A stronger version of \<open>ZF1_1_L7\<close> without the assumption
+  that the collection of subsets is nonempty.\<close>
+
+lemma inter_subsets_subset: assumes "\<forall>i\<in>I. P(i) \<subseteq> X"
+  shows "(\<Inter>i\<in>I. P(i)) \<subseteq> X"
+proof -
+  { assume "I=\<emptyset>" 
+    hence "(\<Inter>i\<in>I. P(i)) = \<emptyset>" by auto
+    hence ?thesis by simp
+  }
+  with assms show ?thesis using ZF1_1_L7 by blast
+qed
+
+text\<open>Intersection of a smaller (but nonempty) collection of sets is larger.
+  Note the assumption that the smaller collection is nonepty in necessary here.\<close>
+
+lemma inter_index_mono: assumes "I\<subseteq>M" "I\<noteq>\<emptyset>"
+  shows "(\<Inter>i\<in>M. P(i)) \<subseteq> (\<Inter>i\<in>I. P(i))"
+  using assms by auto
+
 text\<open>Isabelle/ZF has a "THE" construct that allows to define an element
   if there is only one such that is satisfies given predicate.
   In pure ZF we can express something similar using the indentity proven below.\<close>

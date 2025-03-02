@@ -254,6 +254,12 @@ lemma part_ord_restr: assumes "IsPartOrder(X,r)"
   shows "IsPartOrder(X,r \<inter> X\<times>X)"
   using assms unfolding IsPartOrder_def refl_def antisym_def trans_def by auto
 
+text\<open>Partial order on a set implies partial order on a subset.\<close>
+
+lemma part_ord_subset: assumes "IsPartOrder(X,r)" and "A\<subseteq>X"
+  shows "IsPartOrder(A,r)"
+  using assms unfolding IsPartOrder_def refl_def by auto
+  
 text\<open> We can restrict a total order relation to the domain. \<close>
 
 lemma total_ord_restr: assumes "r {is total on} X"
@@ -271,6 +277,16 @@ proof -
     by auto
   then show "IsLinOrder(A,r \<inter> A\<times>A)" using Order_ZF_1_L3 by simp
 qed
+
+text\<open>If a relation is a partial order on $X$ and it down-directs a subset of $X$
+  then that is is a down-directed set.\<close>
+
+lemma down_directs_subset: 
+  assumes "r {down-directs} A" "IsPartOrder(X,r)" "A\<subseteq>X"
+  shows "IsDownDirectedSet(A,r)"
+  using assms part_ord_subset 
+  unfolding IsPartOrder_def IsPreorder_def IsDownDirectedSet_def
+    by simp
 
 text\<open>If the relation is total, then every set is a union of those elements
   that are nongreater than a given one and nonsmaller than a given one.\<close>

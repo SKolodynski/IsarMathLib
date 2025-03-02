@@ -392,6 +392,15 @@ proof -
   from assms(1) \<open>x\<ra>\<zero> \<ls> x\<ra>y\<close> \<open>\<zero>\<ra>x \<ls> y\<ra>x\<close> 
     show "x \<ls> x\<ra>y" "x \<ls> y\<ra>x"
     using neut_props_loop(2) by simp_all
-qed  
+qed
+
+text\<open>In ordered loop if the order relation down-directs the set of positive elements $L_+$
+  then $L_+$ is a down-directed set (see \<open>Order_ZF\<close> for definitions of those related but different
+  notions).\<close>
+
+lemma (in loop1) down_directs_directed: assumes "r {down-directs} L\<^sub>+"
+  shows "IsDownDirectedSet(L\<^sub>+,r)"
+  using ordLoopAssum assms positive_subset down_directs_subset
+  unfolding IsAnOrdLoop_def by auto
 
 end

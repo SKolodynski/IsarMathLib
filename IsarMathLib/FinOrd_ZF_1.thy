@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2008-2025  Slawomir Kolodynski
+    Copyright (C) 2025  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
