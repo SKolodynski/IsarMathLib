@@ -476,6 +476,17 @@ proof -
   with assms(1) \<open>\<langle>x,t\<rangle> \<in> R O W\<close> show ?thesis by auto
 qed
 
+text\<open>Suppose we have two families of sets $\{ A(i)\}_{i\in I}$
+  and $\{ B(i)\}_{i\in I}$, indexed by a nonepty set of indices $I$
+  and such that for every index $i\in I$ we have inclusion
+  $A(i)\circ A(i) \subseteq B(i)$. Then a similar inclusion holds
+  for the products of the families, namely 
+  $(\bigcap_{i\in I}A(i))\circ (\bigcap_{i\in I}A(i)) \subseteq (\bigcap_{i\in I}B(i)$.\<close>
+
+lemma square_incl_product: assumes "I\<noteq>\<emptyset>" "\<forall>i\<in>I. A(i) O A(i) \<subseteq> B(i)"
+  shows "(\<Inter>i\<in>I. A(i)) O (\<Inter>i\<in>I. A(i)) \<subseteq> (\<Inter>i\<in>I. B(i))"
+  using assms by force
+
 text\<open> It's hard to believe but there are cases where we have to reference this rule. \<close>
 
 lemma set_mem_eq: assumes "x\<in>A" "A=B" shows "x\<in>B" using assms by simp

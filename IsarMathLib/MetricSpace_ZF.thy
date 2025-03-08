@@ -596,34 +596,43 @@ lemma (in pmetric_space) is_halfable_def_alt:
   shows "\<exists>b\<^sub>2\<in>L\<^sub>+. b\<^sub>2\<ra>b\<^sub>2 \<lsq> b\<^sub>1"
   using assms unfolding IsHalfable_def by simp
 
+text\<open>If $B_i = d^{-1}(\{c \in L_+: c\leq b_i\})$ for $i=1,2$
+  and $b_2+b_2\leq b1$ then $B_2\circ B_2 \leq B_1$. The proof uses the triangle
+  inequality so it's not really a property of ordered loops only.\<close>
+
+lemma (in pmetric_space) half_vimage_square:
+  assumes "b\<^sub>2\<in>L\<^sub>+" and "b\<^sub>2\<ra>b\<^sub>2 \<lsq> b\<^sub>1"
+  defines "B\<^sub>1 \<equiv> d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>1})" and "B\<^sub>2 \<equiv> d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>2})"
+  shows "B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
+proof
+  from assms(1,4) have "B\<^sub>2\<subseteq>X\<times>X" using pmetric_properties(1) func1_1_L3 by simp
+  fix p assume "p \<in> B\<^sub>2 O B\<^sub>2" 
+  with \<open>B\<^sub>2\<subseteq>X\<times>X\<close> obtain x y where "x\<in>X" "y\<in>X" and "p=\<langle>x,y\<rangle>"
+    by blast
+  from \<open>p \<in> B\<^sub>2 O B\<^sub>2\<close> \<open>p=\<langle>x,y\<rangle>\<close> obtain z where "\<langle>x,z\<rangle> \<in> B\<^sub>2" and "\<langle>z,y\<rangle> \<in> B\<^sub>2"
+      using rel_compdef by auto
+  with \<open>B\<^sub>2\<subseteq>X\<times>X\<close> have "z\<in>X" by auto
+  from assms(4) \<open>\<langle>x,z\<rangle> \<in> B\<^sub>2\<close> \<open>\<langle>z,y\<rangle> \<in> B\<^sub>2\<close> have "d`\<langle>x,z\<rangle> \<ra> d`\<langle>z,y\<rangle> \<lsq> b\<^sub>2\<ra> b\<^sub>2"
+    using pmetric_properties(1) func1_1_L15 add_ineq by simp
+  with \<open>b\<^sub>2\<ra>b\<^sub>2 \<lsq> b\<^sub>1\<close> have "d`\<langle>x,z\<rangle> \<ra> d`\<langle>z,y\<rangle> \<lsq> b\<^sub>1"
+    using loop_ord_trans by simp
+  with assms(3) \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>z\<in>X\<close> \<open>p=\<langle>x,y\<rangle>\<close> show "p\<in>B\<^sub>1"
+    using pmetric_properties(4) loop_ord_trans gauge_members by blast
+qed
+
 text\<open>If the loop order is halfable then for every set $B_1$ of the form $d^{-1}([0,b_1])$ 
   for some $b_1>0$ we can find another one $B_2 = d^{-1}([0,b_2])$ such that $B_2$ 
   composed with itself is contained in $B_1$.\<close>
 
 lemma (in pmetric_space) gauge_4thCond: 
-  assumes "IsHalfable(L,A,r)" "B\<^sub>1\<in>\<BB>" shows "\<exists>B\<^sub>2\<in>\<BB>.\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
+  assumes "IsHalfable(L,A,r)" "B\<^sub>1\<in>\<BB>" shows "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
 proof -
   from assms(2) obtain b\<^sub>1 where "b\<^sub>1\<in>L\<^sub>+" and "B\<^sub>1 = d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>1})"
     using uniform_gauge_def_alt by auto
   from assms(1) \<open>b\<^sub>1\<in>L\<^sub>+\<close> obtain b\<^sub>2 where "b\<^sub>2\<in>L\<^sub>+" and "b\<^sub>2\<ra>b\<^sub>2 \<lsq> b\<^sub>1"
     using is_halfable_def_alt by auto
-  let ?B\<^sub>2 = "d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>2})"
-  from \<open>b\<^sub>2\<in>L\<^sub>+\<close> have "?B\<^sub>2\<in>\<BB>" unfolding UniformGauge_def by auto
-  { fix p assume "p \<in> ?B\<^sub>2 O ?B\<^sub>2" 
-    with \<open>?B\<^sub>2\<in>\<BB>\<close> obtain x y where "x\<in>X" "y\<in>X" and "p=\<langle>x,y\<rangle>"
-      using gauge_5thCond by blast
-    from \<open>p \<in> ?B\<^sub>2 O ?B\<^sub>2\<close> \<open>p=\<langle>x,y\<rangle>\<close> obtain z where 
-      "\<langle>x,z\<rangle> \<in> ?B\<^sub>2" and "\<langle>z,y\<rangle> \<in> ?B\<^sub>2"
-      using rel_compdef by auto
-    with \<open>?B\<^sub>2\<in>\<BB>\<close> have "z\<in>X" using gauge_5thCond by auto
-    from \<open>\<langle>x,z\<rangle> \<in> ?B\<^sub>2\<close> \<open>\<langle>z,y\<rangle> \<in> ?B\<^sub>2\<close> have "d`\<langle>x,z\<rangle> \<ra> d`\<langle>z,y\<rangle> \<lsq> b\<^sub>2\<ra> b\<^sub>2"
-      using pmetric_properties(1) func1_1_L15 add_ineq by simp
-    with \<open>b\<^sub>2\<ra>b\<^sub>2 \<lsq> b\<^sub>1\<close> have "d`\<langle>x,z\<rangle> \<ra> d`\<langle>z,y\<rangle> \<lsq> b\<^sub>1"
-      using loop_ord_trans by simp
-    with \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>z\<in>X\<close> \<open>p=\<langle>x,y\<rangle>\<close> \<open>B\<^sub>1 = d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>1})\<close> have "p\<in>B\<^sub>1"
-      using pmetric_properties(4) loop_ord_trans gauge_members by blast      
-  } hence "?B\<^sub>2 O ?B\<^sub>2 \<subseteq> B\<^sub>1" by auto
-  with \<open>?B\<^sub>2\<in>\<BB>\<close> show ?thesis by auto
+  with \<open>B\<^sub>1 = d-``({c\<in>L\<^sup>+. c\<lsq>b\<^sub>1})\<close> show ?thesis 
+    using half_vimage_square unfolding UniformGauge_def by force
 qed
 
 text\<open>If $X$ and $L_+$ are not empty, the order relation $r$

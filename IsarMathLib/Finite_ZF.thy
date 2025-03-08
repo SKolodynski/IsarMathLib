@@ -452,15 +452,20 @@ proof -
   ultimately show "\<Union>N \<in> C" by (rule FinPow_induct)
 qed
 
-text\<open>Empty set is in finite power set.\<close>
+text\<open>Empty set is in finite power set, hence finite power set is never empty.\<close>
 
-lemma empty_in_finpow: shows "0 \<in> FinPow(X)"
-  using FinPow_def by simp
+lemma empty_in_finpow: shows "\<emptyset> \<in> FinPow(X)" and "FinPow(X)\<noteq>\<emptyset>"
+  using FinPow_def by auto
 
 text\<open>Singleton is in the finite powerset.\<close>
 
 lemma singleton_in_finpow: assumes "x \<in> X"
   shows "{x} \<in> FinPow(X)" using assms FinPow_def by simp
+
+text\<open>If a set is nonempty then its finite power set contains a nonempty set.\<close>
+
+lemma finpow_nempty_nempty: assumes "X\<noteq>\<emptyset>" shows "FinPow(X)\<setminus>{\<emptyset>} \<noteq> \<emptyset>"
+  using assms singleton_in_finpow by blast
 
 text\<open>Union of two finite subsets is a finite subset.\<close>
 

@@ -97,9 +97,20 @@ text\<open>The next lemma just shows the definition of $\mathfrak{B}$ in notatio
   used in the \<open>muliple_pmetric\<close>. \<close>
 
 lemma (in muliple_pmetric) mgauge_def_alt: shows 
-  "UniformGaugeSets(X,L,A,r,M) = {(\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})). f\<in>M\<rightarrow>L\<^sub>+}"
   "\<BB> = (\<Union>M\<in>FinPow(\<M>)\<setminus>{\<emptyset>}. {(\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})). f\<in>M\<rightarrow>L\<^sub>+})"
-  unfolding UniformGaugeSets_def UniformGauges_def by simp_all
+  unfolding UniformGaugeSets_def UniformGauges_def by simp
+
+text\<open>$\mathfrak{B}$ consists of (finite) intersections of sets of the
+  form $d^{-1}(\{c\in L^+:c\leq f(d)\})$ where $f:M\rightarrow L_+$
+  some finite subset $M\subseteq \mathcal{M}$.
+  More precisely, if $M$ is a nonempty finite subset of $\mathcal{M}$ and $f$ maps 
+  $M$ to the positive set of the loop $L$, then the set 
+  $\bigcap_{d\in M} d^{-1}(\{c\in L^+:c\leq f(d)\}$ is in $\mathfrak{B}$.\<close>
+
+lemma (in muliple_pmetric) mgauge_finset_fun:
+  assumes "M\<in>FinPow(\<M>)" "M\<noteq>\<emptyset>" "f:M\<rightarrow>L\<^sub>+"
+  shows "(\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})) \<in> \<BB>"
+  using assms mgauge_def_alt by auto
 
 text\<open>If $d$ is one of the pseudometrics from $\mathcal{M}$ then theorems
   proven in \<open>pmetric_space\<close> can are valid. \<close>
@@ -157,7 +168,7 @@ proof -
   with I show "?L\<subseteq>?R" by (rule subset_trans)
 qed
 
-text\<open>For any two sets $B_1,B_2$ in $\mathcal{B}$ there exist a third one
+text\<open>For any two sets $B_1,B_2$ in $\mathfrak{B}$ there exist a third one
   that is contained in both. \<close>
 
 lemma (in muliple_pmetric) mgauge_1st_cond:
@@ -179,7 +190,7 @@ proof -
       by auto
   let ?B\<^sub>3 = "\<Inter>d\<in>?M\<^sub>3. d-``({c\<in>L\<^sup>+. c\<lsq>f\<^sub>3`(d)})"
   from I(1,2) \<open>M\<^sub>1\<noteq>\<emptyset>\<close> \<open>f\<^sub>3:?M\<^sub>3\<rightarrow>L\<^sub>+\<close> have "?B\<^sub>3\<in>\<BB>"
-    using union_finpow mgauge_def_alt(2) by auto
+    using union_finpow mgauge_def_alt by auto
   moreover have "?B\<^sub>3\<subseteq>B\<^sub>1\<inter>B\<^sub>2"
   proof - 
     from I(1,2) have "M\<^sub>1\<subseteq>\<M>" "M\<^sub>1\<subseteq>?M\<^sub>3" "M\<^sub>2\<subseteq>\<M>" "M\<^sub>2\<subseteq>?M\<^sub>3"
@@ -190,5 +201,72 @@ proof -
   qed
   ultimately show "\<exists>B\<in>\<BB>. B\<subseteq>B\<^sub>1\<inter>B\<^sub>2" by (rule witness_exists)
 qed
-  
+
+text\<open>Sets in $\mathfrak{B}$ contain the diagonal and are symmetric,
+  hence contain a symmetric subset from $\mathfrak{B}$.\<close>
+
+lemma (in muliple_pmetric) mgauge_2nd_and_3rd_cond: assumes "B\<in>\<BB>" 
+  shows "id(X)\<subseteq>B" "B = converse(B)" "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B)" 
+proof -
+  from assms obtain M f where "M\<in>FinPow(\<M>)" "M\<noteq>\<emptyset>" "f:M\<rightarrow>L\<^sub>+" and
+    I: "B = (\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)}))"
+    using mgauge_def_alt by auto
+  { fix d assume "d\<in>M"
+    let ?B\<^sub>d = "d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})"
+    from \<open>d\<in>M\<close> \<open>f:M\<rightarrow>L\<^sub>+\<close> \<open>M\<in>FinPow(\<M>)\<close> have
+      "pmetric_space(L,A,r,d,X)" and "?B\<^sub>d \<in> UniformGauge(X,L,A,r,d)"
+      unfolding FinPow_def UniformGauge_def 
+      using apply_funtype pmetric_space_valid_in_mpm by auto
+    then have "id(X)\<subseteq>?B\<^sub>d" and "?B\<^sub>d = converse(?B\<^sub>d)" 
+      using pmetric_space.gauge_2nd_cond pmetric_space.gauge_symmetric 
+      by simp_all
+  } with I \<open>M\<noteq>\<emptyset>\<close> show "id(X)\<subseteq>B" and "B = converse(B)" by auto
+  from assms \<open>B = converse(B)\<close> show "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 \<subseteq> converse(B)"
+    by auto
+qed
+
+text\<open>$\mathfrak{B}$ is a subset of the power set of $X\times X$.\<close>
+
+lemma (in muliple_pmetric) mgauge_5thCond: shows "\<BB>\<subseteq>Pow(X\<times>X)"
+  using muniform_gauge_relations by auto
+
+text\<open>If $\mathcal{M}$ and $L_+$ are nonempty then $\mathfrak{B}$ is also nonempty.\<close>
+
+lemma (in muliple_pmetric) mgauge_6thCond:
+  assumes "\<M>\<noteq>\<emptyset>" and "L\<^sub>+\<noteq>\<emptyset>" shows "\<BB>\<noteq>\<emptyset>" 
+proof -
+  from assms obtain M y where "M\<in>FinPow(\<M>)" "M\<noteq>\<emptyset>" and "y\<in>L\<^sub>+"
+    using finpow_nempty_nempty by blast
+  from \<open>y\<in>L\<^sub>+\<close> have "ConstantFunction(M,y):M\<rightarrow>L\<^sub>+" using func1_3_L1 by simp
+  with \<open>M\<in>FinPow(\<M>)\<close> \<open>M\<noteq>\<emptyset>\<close> show "\<BB>\<noteq>\<emptyset>" using mgauge_finset_fun by auto
+qed
+
+text\<open>If the loop order is halfable then for every set $B_1\in \mathfrak{B}$
+  there is another set $B_2\in \mathfrak{B}$ such that $B_2\circ B_2 \subseteq B_1$.\<close>
+
+lemma (in muliple_pmetric) mgauge_4thCond: 
+  assumes "IsHalfable(L,A,r)" "B\<^sub>1\<in>\<BB>" shows "\<exists>B\<^sub>2\<in>\<BB>. B\<^sub>2 O B\<^sub>2 \<subseteq> B\<^sub>1"
+proof -
+  from assms(2) obtain M f\<^sub>1 where "M\<in>FinPow(\<M>)" "M\<noteq>\<emptyset>" "f\<^sub>1:M\<rightarrow>L\<^sub>+" and
+    I: "B\<^sub>1 = (\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f\<^sub>1`(d)}))"
+    using mgauge_def_alt by auto
+  from assms(1) \<open>f\<^sub>1:M\<rightarrow>L\<^sub>+\<close> have "\<forall>d\<in>M. \<exists>b\<^sub>2\<in>L\<^sub>+. b\<^sub>2\<ra>b\<^sub>2 \<lsq> f\<^sub>1`(d)"
+    using apply_funtype unfolding IsHalfable_def by simp
+  with \<open>M\<in>FinPow(\<M>)\<close> have "\<exists>f\<^sub>2\<in>M\<rightarrow>L\<^sub>+. \<forall>d\<in>M. f\<^sub>2`(d) \<ra> f\<^sub>2`(d) \<lsq> f\<^sub>1`(d)"
+    unfolding FinPow_def using finite_choice_fun by auto
+  then obtain f\<^sub>2 where "f\<^sub>2\<in>M\<rightarrow>L\<^sub>+" and II: "\<forall>d\<in>M. f\<^sub>2`(d) \<ra> f\<^sub>2`(d) \<lsq> f\<^sub>1`(d)"
+    by auto
+  let ?B\<^sub>2 = "\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f\<^sub>2`(d)})" 
+  { fix d assume "d\<in>M"
+    let ?A\<^sub>2 = "d-``({c\<in>L\<^sup>+. c\<lsq>f\<^sub>2`(d)})"
+    from \<open>d\<in>M\<close> \<open>M\<in>FinPow(\<M>)\<close> have "pmetric_space(L,A,r,d,X)"
+      unfolding FinPow_def using pmetric_space_valid_in_mpm by auto 
+    with \<open>f\<^sub>2\<in>M\<rightarrow>L\<^sub>+\<close> \<open>d\<in>M\<close> II have "?A\<^sub>2 O ?A\<^sub>2 \<subseteq> d-``({c\<in>L\<^sup>+. c\<lsq>f\<^sub>1`(d)})"
+      using apply_funtype pmetric_space.half_vimage_square by simp
+  } 
+  with \<open>M\<noteq>\<emptyset>\<close> I have "?B\<^sub>2 O ?B\<^sub>2 \<subseteq> B\<^sub>1" using square_incl_product by simp
+  with \<open>M\<in>FinPow(\<M>)\<close> \<open>M\<noteq>\<emptyset>\<close> \<open>f\<^sub>2\<in>M\<rightarrow>L\<^sub>+\<close> show ?thesis
+    using mgauge_finset_fun by auto
+qed
+     
 end
