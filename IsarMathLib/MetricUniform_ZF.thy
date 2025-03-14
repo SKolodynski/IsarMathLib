@@ -34,13 +34,17 @@ theory MetricUniform_ZF imports FinOrd_ZF_1 MetricSpace_ZF
 
 begin
 
-text\<open>In the \<open>MetricSpace_ZF\<close> we show how a single (ordered loop valued) pseudometric
+text\<open>Note: this theory is a work in progress. The approach take is probably not the
+  right one. The right approach is through the notion of least upper bound of a collection
+  of uniformities.
+
+  In the \<open>MetricSpace_ZF\<close> we show how a single (ordered loop valued) pseudometric
   defines a uniformity. In this theory we extend this to the situation where we have
   an arbitrary collection of pseudometrics, all defined on the the same set $X$ and valued
-  in an ordered loop $L$. Since real numbers form an ordered loop all the results proven in
+  in an ordered loop $L$. Since real numbers form an ordered loop all results proven in
   this theory are true for the standard real-valued pseudometrics. \<close>
 
-subsection\<open>Definitions and notation\<close>
+subsection\<open>From collection of pseudometrics to fundamental system of entourages\<close>
 
 text\<open>Suppose $\mathcal{M}$ is a collection of (an ordered loop valued) pseudometrics on $X$,
   i.e. $d:X\times X\rightarrow L^+$ is a pseudometric for every $d\in \mathcal{M}$.
@@ -53,7 +57,7 @@ text\<open>The next two definitions describe the way a common fundamental system
   the value $f(d)$ is a positive element of $L$ and 
   $\{d^{-1}(\{c\in L^+: c\leq f(d)\}): d\in M\}$ is a finite collection of 
   subsets of $X\times X$. Then we take intersections of such finite
-  collections as $M$ varies over $\mathcal{M}$ and $f$ varies over all possible function mapping
+  collections as $M$ varies over $\mathcal{M}$ and $f$ varies over all possible functions mapping
   $M$ to $L_+$. To simplify notation for this construction we split it into two steps. 
   In the first step we define a collection of finite intersections resulting from 
   choosing a finite set of pseudometrics $M$, $f:M\rightarrow L_+$ and varying 
@@ -268,5 +272,117 @@ proof -
   with \<open>M\<in>FinPow(\<M>)\<close> \<open>M\<noteq>\<emptyset>\<close> \<open>f\<^sub>2\<in>M\<rightarrow>L\<^sub>+\<close> show ?thesis
     using mgauge_finset_fun by auto
 qed
-     
+
+text\<open>If $\mathcal{M}$ is a nonempty collection of pseudometrics on a nonempty set $X$
+   valued in loop $L$ partially ordered by relation $r$ such that the set of positive elements 
+   $L_+$ is nonempty, $r$ down directs $L_+$ and $r$ is halfable on $L$,then
+   $\mathfrak{B}$ is a fundamental system of entourages in $X$ hence its supersets 
+  form a uniformity on $X$ and hence those supersets define a topology on $X$ \<close>
+
+lemma (in muliple_pmetric) mmetric_gauge_base:
+  assumes "X\<noteq>\<emptyset>" "\<M>\<noteq>\<emptyset>" "L\<^sub>+\<noteq>\<emptyset>" "r {down-directs} L\<^sub>+" "IsHalfable(L,A,r)" 
+  shows
+    "\<BB> {is a uniform base on} X"
+    "Supersets(X\<times>X,\<BB>) {is a uniformity on} X"
+    "UniformTopology(Supersets(X\<times>X,\<BB>),X) {is a topology}"
+    "\<Union>UniformTopology(Supersets(X\<times>X,\<BB>),X) = X"
+  using assms mgauge_1st_cond mgauge_2nd_and_3rd_cond mgauge_4thCond 
+    mgauge_5thCond mgauge_6thCond uniformity_base_is_base uniform_top_is_top
+  unfolding IsUniformityBaseOn_def by simp_all
+
+subsection\<open>An alternative approach\<close>
+
+text\<open>The formula for defining the fundamental system of entourages from a collection
+  of pseudometrics given in lemma \<open>mgauge_def_alt\<close> is a bit different than the standard one
+  found in the literature on real-valued pseudometrics. In this section we explore another
+  alternative to defining fundamental system of entourages common to a collection of pseudometrics.\<close>
+
+text\<open>Any pseudometrics $d:X\times X\rightarrow L^+$ defines a fundamental system of entourages
+  on $X$ by the formula $\mathcal{B}(d) = \{ d^{-1}(\{c\in L^+: c\leq b\}): b \in L_+ \}$
+  (see theorem \<open>metric_gauge_base\<close> in \<open>Metric_Space_ZF\<close> theory. \<close>
+
+definition (in muliple_pmetric) gauge ("\<B>") where 
+  "\<B>(d) \<equiv> {d-``({c\<in>L\<^sup>+. c\<lsq>b}). b\<in>L\<^sub>+}"
+
+text\<open>Every subset $M$ of $\mathcal{M}$ defines a collection of fundamental systems
+  of entourages $\mathfrak{M}(M) = \{\mathcal{B}(d): d\in M\}$. \<close>
+
+definition (in muliple_pmetric) gauge_set ("\<MM>") where
+  "\<MM>(M) = {\<B>(d). d\<in>M}" 
+
+text\<open> To get a fundamental system of entourages common to all pseudometrics
+  $d\in \mathcal{M}$ we take intersections of sets selected from finite nonempty 
+  subcollections of the collection of all fundamental systems of entourages defined by pseudometrics 
+  $d\in \mathcal{M}$. To distinguish it from the common fundamental system of entourages
+  defined in the previous section we denote that $\mathfrak{B}_1$. \<close>
+
+definition (in muliple_pmetric) mgauge_alt ("\<BB>\<^sub>1") where
+  "\<BB>\<^sub>1 \<equiv> \<Union>M\<in>FinPow(\<M>)\<setminus>{\<emptyset>}. {(\<Inter>B\<in>\<MM>(M). g`(B)). g\<in>ChoiceFunctions(\<MM>(M))}"
+
+text\<open>If $M$ is a nonempty finite subset of $mathcal{M}$ then we have
+  inclusion $\{\bigcap_{B\in \mathfrak{M}(M)} g(B) : g \in \mathcal(C)(\mathfrak{M}(M)\} \subseteq
+  \{\bigcap_{d\in M} d^{-1}(\{c\in L^+: c\leq f(d)\}:\  f:M\rightarrow L_+\})$.
+  where $\mathcal{C}(\mathcal{A})$ is the set of choice functions for a collection $\mathcal{A}$
+  (see theory \<open>Cardinal_ZF\<close> for definition of choice function for a collection. \<close>
+
+lemma (in muliple_pmetric) mgauge_alt_mgauge1:
+  assumes "M\<in>FinPow(\<M>)" "M\<noteq>\<emptyset>"
+  defines "\<C> \<equiv> ChoiceFunctions(\<MM>(M))"
+  shows "{(\<Inter>B\<in>\<MM>(M). g`(B)). g\<in>\<C>} \<subseteq> {(\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})). f\<in>M\<rightarrow>L\<^sub>+}"
+proof -
+  let ?L = "{(\<Inter>B\<in>\<MM>(M). g`(B)). g\<in>\<C>}" 
+  let ?R = "{(\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})). f\<in>M\<rightarrow>L\<^sub>+}"
+  from assms(1,2) have "Finite(\<MM>(M))" and "\<MM>(M)\<noteq>\<emptyset>" 
+    unfolding gauge_set_def FinPow_def using fin_rep_fin by simp_all
+  { fix U assume "U \<in> ?L"
+    then obtain g where "g\<in>\<C>" and "U=(\<Inter>B\<in>\<MM>(M). g`(B))" by auto
+    from assms(3) \<open>g\<in>\<C>\<close> have "g:(\<MM>(M))\<rightarrow>(\<Union>\<MM>(M))" and I: "\<forall>B\<in>\<MM>(M). g`(B) \<in> B"
+      unfolding ChoiceFunctions_def by auto
+    { fix d assume "d\<in>M"
+      then have "\<B>(d) \<in> \<MM>(M)" and II: "\<B>(d) = {d-``({c\<in>L\<^sup>+. c\<lsq>b}). b\<in>L\<^sub>+}"
+        unfolding gauge_set_def gauge_def by auto
+      from I \<open>\<B>(d) \<in> \<MM>(M)\<close> have "g`(\<B>(d)) \<in> \<B>(d)" by simp
+      with II obtain b where 
+        "b\<in>L\<^sub>+" and "g`(\<B>(d)) = d-``({c\<in>L\<^sup>+. c\<lsq>b})"
+        by auto
+      hence "\<exists>b\<in>L\<^sub>+. g`(\<B>(d)) = d-``({c\<in>L\<^sup>+. c\<lsq>b})" by auto
+    } hence "\<forall>d\<in>M. \<exists>b\<in>L\<^sub>+. g`(\<B>(d)) = d-``({c\<in>L\<^sup>+. c\<lsq>b})"
+        by auto
+    with assms(1) have 
+      "\<exists>f\<in>M\<rightarrow>L\<^sub>+. \<forall>d\<in>M. g`(\<B>(d)) = d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})"
+      unfolding FinPow_def using finite_choice_fun by auto
+    then obtain f where 
+      "f:M\<rightarrow>L\<^sub>+" and II: "\<forall>d\<in>M. g`(\<B>(d)) = d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})"
+      by auto
+    have "U = (\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)}))"
+    proof 
+      { fix p assume "p\<in>U"
+        with \<open>U=(\<Inter>B\<in>\<MM>(M). g`(B))\<close> have "\<forall>B\<in>\<MM>(M). p\<in>g`(B)" by auto
+        { fix d assume "d\<in>M"
+          then have "\<B>(d) \<in> \<MM>(M)" unfolding gauge_set_def by auto
+          with \<open>\<forall>B\<in>\<MM>(M). p\<in>g`(B)\<close> have "p\<in>g`(\<B>(d))" by simp
+          with II \<open>d\<in>M\<close> have "p \<in> d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})"
+            by simp
+        } hence "\<forall>d\<in>M. p \<in> d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})" by simp
+        with assms(2) have "p\<in>(\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)}))" 
+            by auto
+      } thus "U \<subseteq> (\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)}))" by auto
+      { fix p assume "p \<in> (\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)}))"
+        hence III: "\<forall>d\<in>M. p \<in> d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})" by auto
+        { fix B assume "B\<in>\<MM>(M)"
+          then have "B \<in> {\<B>(d). d\<in>M}" unfolding gauge_set_def 
+            by simp
+          then obtain d where "d\<in>M" and "B=\<B>(d)"
+            unfolding gauge_def by auto
+          from \<open>d\<in>M\<close> II have "g`(\<B>(d)) = d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})"
+            by simp
+          with III \<open>d\<in>M\<close> have "p \<in> g`(\<B>(d))" by simp
+          with \<open>B=\<B>(d)\<close> have "p\<in>g`(B)" by simp 
+        } hence "\<forall>B\<in>\<MM>(M). p\<in>g`(B)" by simp
+        with \<open>\<MM>(M)\<noteq>\<emptyset>\<close> \<open>U=(\<Inter>B\<in>\<MM>(M). g`(B))\<close> have "p\<in>U" by auto
+      } thus "(\<Inter>d\<in>M. d-``({c\<in>L\<^sup>+. c\<lsq>f`(d)})) \<subseteq> U" by auto
+    qed
+    with \<open>f:M\<rightarrow>L\<^sub>+\<close> have "U\<in>?R" by auto
+  } thus "?L\<subseteq>?R" by auto      
+qed  
 end

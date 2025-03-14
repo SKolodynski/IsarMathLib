@@ -139,6 +139,7 @@ namespace iml
                  ("\\<D>", "\\mathcal{D} ")
                  ("\\<H>", "\\mathcal{H} ")
                  ("\\<M>", "\\mathcal{M} ")
+                 ("\\<MM>", "\\mathfrak{M} ")
                  ("\\<N>", "\\mathcal{N}")
                  ("\\<P>", "\\mathcal{P}")                 
                  ("\\<S>", "\\mathcal{S} ")
