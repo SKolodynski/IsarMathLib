@@ -819,8 +819,8 @@ lemma image_of_Inter: assumes  A1: "f:X\<rightarrow>Y" and
   shows "f``(\<Inter>i\<in>I. P(i)) \<subseteq> ( \<Inter>i\<in>I. f``(P(i)) )"
 proof
   fix y assume A4: "y \<in> f``(\<Inter>i\<in>I. P(i))"
-  from A1 A2 A3 have "f``(\<Inter>i\<in>I. P(i)) = {f`(x). x \<in> ( \<Inter>i\<in>I. P(i) )}"
-    using ZF1_1_L7 func_imagedef by simp
+  from A1 A3 have "f``(\<Inter>i\<in>I. P(i)) = {f`(x). x \<in> ( \<Inter>i\<in>I. P(i) )}"
+    using inter_subsets_subset func_imagedef by simp
   with A4 obtain x where "x \<in> ( \<Inter>i\<in>I. P(i) )" and "y = f`(x)"
     by auto
   with A1 A2 A3 show "y \<in> ( \<Inter>i\<in>I. f``(P(i)) )" using func_imagedef
@@ -1487,8 +1487,8 @@ lemma inj_image_of_Inter: assumes A1: "f \<in> inj(A,B)" and
 proof
   from A1 A2 A3 show "f``(\<Inter>i\<in>I. P(i)) \<subseteq> ( \<Inter>i\<in>I. f``(P(i)) )"
     using inj_is_fun image_of_Inter by auto
-  from A1 A2 A3 have "f:A\<rightarrow>B"  and "( \<Inter>i\<in>I. P(i) ) \<subseteq> A"
-    using inj_is_fun ZF1_1_L7 by auto
+  from A1 A3 have "f:A\<rightarrow>B"  and "( \<Inter>i\<in>I. P(i) ) \<subseteq> A"
+    using inj_is_fun inter_subsets_subset by auto
   then have I: "f``(\<Inter>i\<in>I. P(i)) = { f`(x). x \<in> ( \<Inter>i\<in>I. P(i) ) }"
     using func_imagedef by simp
   { fix y assume A4: "y \<in> ( \<Inter>i\<in>I. f``(P(i)) )"

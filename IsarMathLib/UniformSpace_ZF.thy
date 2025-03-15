@@ -348,7 +348,7 @@ theorem uniform_top_is_top:
 
 text\<open>If we have a uniformity $\Phi$ we can create a neighborhood system from it in two ways.
   We can create a a neighborhood system directly from $\Phi$ using the formula 
-  $X \ni x \mapsto \{V\{x\} | x\in X\}$ (see theorem \<open>neigh_from_uniformity\<close>).
+  $X \ni x \mapsto \{V\{x\} | V\in \Phi\}$ (see theorem \<open>neigh_from_uniformity\<close>).
   Alternatively we can construct a topology from $\Phi$ as in theorem 
   \<open>uniform_top_is_top\<close> and then create a neighborhood system from this topology
   as in theorem \<open>neigh_from_topology\<close>. The next theorem states that these two ways give the same 
@@ -467,7 +467,9 @@ proof
 qed
 
 text\<open>Uniform spaces are regular. Note that is not the same as $T_3$, see \<open>Topology_ZF_1\<close> 
-  for separation axioms definitions.\<close>
+  for separation axioms definitions. In some sources the definitions of "regular" and $T_3$
+  are swapped. In IsarMathLib we adopt the terminology as on the "Separation axiom" 
+  page on Wikipedia.\<close>
 
 theorem utopreg: 
   assumes "\<Phi> {is a uniformity on} X"

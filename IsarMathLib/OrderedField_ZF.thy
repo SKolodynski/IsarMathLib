@@ -169,7 +169,7 @@ lemma (in field1) OrdField_ZF_1_L6: assumes "a\<in>R"  "a\<noteq>\<zero>"
   using assms OrdField_ZF_1_L1B field0.field_has_no_zero_divs
     OrdRing_ZF_3_L15 by simp
 
-text\<open>The next lemma restates the fact \<open>Field_ZF\<close> that out notation
+text\<open>The next lemma restates the fact from \<open>Field_ZF\<close> that out notation
   for the field inverse means what it is supposed to mean.\<close>
 
 lemma (in field1) OrdField_ZF_1_L7: assumes "a\<in>R"  "a\<noteq>\<zero>"
@@ -223,8 +223,8 @@ lemma (in field1) OrdField_ZF_1_L9: assumes "a\<ls>b"
   by simp
 
 text\<open>In ordered fields if at least one of $a,b$ is not zero, then
-  $a^2+b^2 > 0$, in particular $a^2+b^2\neq 0$ and exists the 
-  (multiplicative) inverse of $a^2+b^2$.\<close>
+  $a^2+b^2 > 0$, in particular $a^2+b^2\neq 0$ and the 
+  (multiplicative) inverse of $a^2+b^2$ exists.\<close>
 
 lemma (in field1) OrdField_ZF_1_L10: 
   assumes A1: "a\<in>R"  "b\<in>R" and A2: "a \<noteq> \<zero> \<or> b \<noteq> \<zero>"

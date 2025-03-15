@@ -161,7 +161,7 @@ proof -
   then show  "a\<lsq>c" by simp
 qed
 
-text\<open>Transitivity for the strict order: if $a<b$ and $b\leq c$, then $a<c$. 
+text\<open>Transitivity for the strict order: if $a < b$ and $b\leq c$, then $a < c$. 
   Property of ordered groups.\<close>
 
 lemma (in ring1) ring_strict_ord_trans:  
@@ -391,7 +391,7 @@ lemma (in ring1) OrdRing_ZF_1_L13: assumes "a\<lsq>b"
   using assms OrdRing_ZF_1_L4 group3.OrderedGroup_ZF_1_L9D
   by simp
 
-text\<open>If $a<b$, then $0 < b-a$.\<close>
+text\<open>If $a < b$, then $0 < b-a$.\<close>
 
 lemma (in ring1) OrdRing_ZF_1_L14: assumes "a\<lsq>b"  "a\<noteq>b"
   shows 

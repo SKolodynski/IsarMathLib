@@ -401,8 +401,8 @@ definition
   AxiomCardinalChoice ("{the axiom of}_{choice holds for subsets}_") where
   "{the axiom of} Q {choice holds for subsets}K \<equiv> Card(Q) \<and> (\<forall> M N. (M \<lesssim>Q \<and>  (\<forall>t\<in>M. N`t\<noteq>0 \<and> N`t\<subseteq>K)) \<longrightarrow> (\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t)))"
 
-text\<open>Next we define a general form of $Q$ choice where we don't require a collection of files
-  to be included in a file.\<close>
+text\<open>Next we define a general form of $Q$ choice where we don't require a collection of sets
+  to be included in a set.\<close>
 
 definition
   AxiomCardinalChoiceGen ("{the axiom of}_{choice holds}") where

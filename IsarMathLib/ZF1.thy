@@ -212,26 +212,17 @@ lemma ZF1_1_L6: shows "\<Union> ProductCollection(S,T) = \<Union>S \<times> \<Un
 
 text\<open>An intersection of subsets is a subset.\<close>
 
-lemma ZF1_1_L7: assumes A1: "I\<noteq>\<emptyset>" and A2: "\<forall>i\<in>I. P(i) \<subseteq> X"
-  shows "( \<Inter>i\<in>I. P(i) ) \<subseteq> X"
-proof -
-  from A1 obtain i\<^sub>0 where "i\<^sub>0 \<in> I" by auto
-  with A2 have "( \<Inter>i\<in>I. P(i) ) \<subseteq> P(i\<^sub>0)" and "P(i\<^sub>0) \<subseteq> X"
-    by auto
-  thus "( \<Inter>i\<in>I. P(i) ) \<subseteq> X" by auto
-qed
-
-text\<open>A stronger version of \<open>ZF1_1_L7\<close> without the assumption
-  that the collection of subsets is nonempty.\<close>
-
 lemma inter_subsets_subset: assumes "\<forall>i\<in>I. P(i) \<subseteq> X"
   shows "(\<Inter>i\<in>I. P(i)) \<subseteq> X"
 proof -
   { assume "I=\<emptyset>" 
-    hence "(\<Inter>i\<in>I. P(i)) = \<emptyset>" by auto
     hence ?thesis by simp
   }
-  with assms show ?thesis using ZF1_1_L7 by blast
+  moreover 
+  { assume "I\<noteq>\<emptyset>"
+    with assms have ?thesis by force
+  }
+  ultimately show ?thesis by blast
 qed
 
 text\<open>Intersection of a smaller (but nonempty) collection of sets is larger.

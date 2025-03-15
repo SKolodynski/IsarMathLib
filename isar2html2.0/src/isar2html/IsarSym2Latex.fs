@@ -157,6 +157,7 @@ namespace iml
                  ("\\<or>", "\\vee ")
                  ("Orders", "\\text{ orders }")
                  ("\\<partial>", "\\partial ")
+                 ("\\<mu>", "\\mu ")
                  ("\\<phi>", "\\phi ")
                  ("\\<Phi>", "\\Phi ")
                  ("\\<Theta>", "\\Theta ")

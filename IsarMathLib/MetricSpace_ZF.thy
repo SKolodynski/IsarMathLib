@@ -354,7 +354,7 @@ lemma (in pmetric_space) zero_dist_same_open:
 text\<open>A pseudometric that induces a $T_0$ topology is a metric.\<close>
 
 theorem (in pmetric_space) pmetric_t0_metric:
-  assumes "r {down-directs} L\<^sub>+" "\<tau> {is T\<^sub>0}"
+  assumes "r {down-directs} L\<^sub>+" and "\<tau> {is T\<^sub>0}"
   shows "IsAmetric(d,X,L,A,r)"
 proof -
   { fix x y
@@ -455,7 +455,8 @@ text\<open>In the following definition $X$ is the underlying space, $L$ is the l
   $A$ is the loop operation, $r$ is an order relation compatible with $A$,
   and $d$ is a pseudometric on $X$, valued in the ordered loop $L$.
   With this we define the uniform gauge as the collection of inverse images
-  of the closed intervals $[0,c]$ as $c$ varies of the set of positive elements of $L$.\<close>
+  of the closed intervals $[0,c]$ as $c$ varies of the set of positive elements of $L$.
+  See \<open>uniform_gauge_def_alt\<close> for this definition in a more readable notation.\<close>
 
 definition
   "UniformGauge(X,L,A,r,d) \<equiv> {d-``({c\<in>Nonnegative(L,A,r). \<langle>c,b\<rangle> \<in> r}). b\<in>PositiveSet(L,A,r)}"

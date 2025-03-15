@@ -8,11 +8,11 @@ session "IsarMathLib" = "ZF" +
     Order_ZF
     Order_ZF_1
     Order_ZF_1a
-    Lattice_ZF
     NatOrder_ZF
     func1
     func_ZF
     func_ZF_1
+    Lattice_ZF
     Finite_ZF
     Finite1
     Finite_ZF_1

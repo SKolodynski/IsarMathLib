@@ -697,7 +697,7 @@ proof -
     moreover
     from A2 have "\<forall>a\<in>C. r``{a} \<subseteq> A" 
       by auto
-    with \<open>C\<noteq>0\<close> have "( \<Inter>a\<in>C. r``{a} ) \<subseteq> A" using ZF1_1_L7 
+    then have "( \<Inter>a\<in>C. r``{a} ) \<subseteq> A" using inter_subsets_subset 
       by simp
     moreover note A1 A2 
     ultimately have "HasAminimum(r, \<Inter>a\<in>C. r``{a} )"
