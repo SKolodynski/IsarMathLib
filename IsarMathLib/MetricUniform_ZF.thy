@@ -34,7 +34,7 @@ theory MetricUniform_ZF imports FinOrd_ZF_1 MetricSpace_ZF
 
 begin
 
-text\<open>Note: this theory is a work in progress. The approach take is probably not the
+text\<open>Note: this theory is a work in progress. The approach taken is probably not the
   right one. The right approach is through the notion of least upper bound of a collection
   of uniformities.
 
@@ -184,8 +184,8 @@ proof -
   II: "B\<^sub>1 = (\<Inter>d\<in>M\<^sub>1. d-``({c\<in>L\<^sup>+. c\<lsq>f\<^sub>1`(d)}))" "B\<^sub>2 = (\<Inter>d\<in>M\<^sub>2. d-``({c\<in>L\<^sup>+. c\<lsq>f\<^sub>2`(d)}))"
     using mgauge_def_alt by auto
   let ?M\<^sub>3 = "M\<^sub>1\<union>M\<^sub>2"  
-  from assms(1) have "IsDownDirectedSet(L\<^sub>+,r)" using down_directs_directed 
-    by simp
+  from assms(1) have "IsDownDirectedSet(L\<^sub>+,r)" 
+    using down_directs_directed by simp
   with I have 
     "\<exists>f\<^sub>3\<in>?M\<^sub>3\<rightarrow>L\<^sub>+. (\<forall>d\<in>M\<^sub>1. \<langle>f\<^sub>3`(d),f\<^sub>1`(d)\<rangle>\<in>r) \<and> (\<forall>d\<in>M\<^sub>2. \<langle>f\<^sub>3`(d),f\<^sub>2`(d)\<rangle>\<in>r)"
     using two_fun_low_bound by simp
@@ -336,7 +336,8 @@ proof -
     unfolding gauge_set_def FinPow_def using fin_rep_fin by simp_all
   { fix U assume "U \<in> ?L"
     then obtain g where "g\<in>\<C>" and "U=(\<Inter>B\<in>\<MM>(M). g`(B))" by auto
-    from assms(3) \<open>g\<in>\<C>\<close> have "g:(\<MM>(M))\<rightarrow>(\<Union>\<MM>(M))" and I: "\<forall>B\<in>\<MM>(M). g`(B) \<in> B"
+    from assms(3) \<open>g\<in>\<C>\<close> have "g:(\<MM>(M))\<rightarrow>(\<Union>\<MM>(M))" and 
+      I: "\<forall>B\<in>\<MM>(M). g`(B) \<in> B"
       unfolding ChoiceFunctions_def by auto
     { fix d assume "d\<in>M"
       then have "\<B>(d) \<in> \<MM>(M)" and II: "\<B>(d) = {d-``({c\<in>L\<^sup>+. c\<lsq>b}). b\<in>L\<^sub>+}"

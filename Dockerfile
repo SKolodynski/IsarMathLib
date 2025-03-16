@@ -1,6 +1,6 @@
 ## Dockerfile for IsarMathLib
 
-FROM slawekkol/isarmathlib:isabelle-zf-2024
+FROM slawekkol/isarmathlib:isabelle-zf-2025
 
 COPY IsarMathLib /home/isabelle/IsarMathLib
 
