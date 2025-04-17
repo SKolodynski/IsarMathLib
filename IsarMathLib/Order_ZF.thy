@@ -190,7 +190,6 @@ text\<open> The notion of "having an infimum" is the same as the set of lower bo
 definition
   "HasAnInfimum(r,A) \<equiv> HasAmaximum(r,\<Inter>a\<in>A. r-``{a})"
 
-
 text\<open>Infimum is defined analogously.\<close>
 
 definition
@@ -203,6 +202,19 @@ definition
   IsComplete ("_ {is complete}") where
   "r {is complete} \<equiv> 
   \<forall>A. IsBoundedAbove(A,r) \<and> A\<noteq>0 \<longrightarrow> HasAminimum(r,\<Inter>a\<in>A. r``{a})"
+
+text\<open>Normally the "$\subseteq$" does not represent a relation, but it does
+  if we restrict it to subsets of some set $X$. We will call such relation the
+  \<open>InclusionOnSubsets(X)\<close>. \<close>
+
+definition 
+  "InclusionOnSubsets(X) \<equiv> {p\<in>Pow(X)\<times>Pow(X). fst(p) \<subseteq> snd(p)}"
+
+text\<open>Inclusion relation is a partial order on the powerset of $X$.\<close>
+
+lemma incl_is_partorder: shows "IsPartOrder(Pow(X),InclusionOnSubsets(X))"
+  unfolding InclusionOnSubsets_def IsPartOrder_def refl_def antisym_def trans_def
+  by auto
 
 text\<open>If a relation down-directs a set, then a larger one does as well.\<close>
 

@@ -62,6 +62,12 @@ lemma uniformity_non_empty: assumes "\<Phi> {is a uniformity on} X"
     shows "\<Phi>\<noteq>\<emptyset>"
   using assms unfolding IsUniformity_def IsFilter_def by auto
 
+text\<open>If $X$ is not empty then the singleton $\{ X\times X\}$ is a (trivial) 
+  example of a uniformity on $X$. \<close>
+
+lemma trivial_uniformity: assumes "X\<noteq>\<emptyset>" shows "{X\<times>X} {is a uniformity on} X"
+  using assms unfolding IsFilter_def IsUniformity_def by auto
+
 text\<open> If $\Phi$ is a uniformity on $X$, then the every element $V$ of $\Phi$ 
   is a certain relation on $X$ (a subset of $X\times X$) and is called 
   an ''entourage''. For an $x\in X$ we call $V\{ x\}$ a neighborhood of $x$. 
@@ -820,5 +826,24 @@ proof -
       using supersets_in_empty unif_filter unfolding IsFilter_def by auto
   } thus ?thesis by auto
 qed
+
+subsection\<open>Least upper bound of a set of uniformities\<close>
+
+text\<open>Uniformities on a set $X$ are naturally ordered by the inclusion relation.
+  Specifically, for two uniformities $\mathcal{U}_1$ and $\mathcal{U}_2$​ on a set $X$ 
+  if $\mathcal{U}_1 \subseteq \mathcal{U}_2$ we say that $\mathcal{U}_2$ is finer than 
+  $\mathcal{U}_1$ or that $\mathcal{U}_1$ is coarser than $\mathcal{U}_2$. 
+  Turns out this order is complete in a way: every nonempty set of uniformities has
+  a least upper bound, i.e. a supremum. \<close>
+
+text\<open>We define \<open>UniformitiesOn(X)\<close> as the set of all uniformities on $X$. \<close>
+
+definition 
+  "Uniformities(X) \<equiv> {\<Phi> \<in> Pow(Pow(X\<times>X)). \<Phi> {is a uniformity on} X}"
+
+text\<open>For nonempty sets the set of uniformities is not empty as well.\<close>
+
+lemma unifomities_exist: assumes "X\<noteq>\<emptyset>" shows "Uniformities(X)\<noteq>\<emptyset>"
+  unfolding Uniformities_def using assms trivial_uniformity by auto
     
 end

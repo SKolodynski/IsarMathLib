@@ -200,14 +200,14 @@ text\<open>The topological tools to deal with convergence are what is called fil
 
 definition
   IsFilter ("_ {is a filter on} _" 90)
-  where "\<FF> {is a filter on} X \<equiv> (0\<notin>\<FF>) \<and> (X\<in>\<FF>) \<and> \<FF>\<subseteq>Pow(X) \<and> 
+  where "\<FF> {is a filter on} X \<equiv> (\<emptyset>\<notin>\<FF>) \<and> (X\<in>\<FF>) \<and> \<FF>\<subseteq>Pow(X) \<and> 
   (\<forall>A\<in>\<FF>. \<forall>B\<in>\<FF>. A\<inter>B\<in>\<FF>) \<and> (\<forall>B\<in>\<FF>. \<forall>C\<in>Pow(X). B\<subseteq>C \<longrightarrow> C\<in>\<FF>)"
 
 text\<open>The next lemma splits the the definition of a filter into four conditions
  to make it easier to reference each one separately in proofs.\<close>
 
 lemma is_filter_def_split: assumes "\<FF> {is a filter on} X"
-  shows "0\<notin>\<FF>" "X\<in>\<FF>" "\<FF>\<subseteq>Pow(X)" 
+  shows "\<emptyset>\<notin>\<FF>" "X\<in>\<FF>" "\<FF>\<subseteq>Pow(X)" 
     "\<forall>A\<in>\<FF>. \<forall>B\<in>\<FF>. A\<inter>B\<in>\<FF>" and "\<forall>B\<in>\<FF>. \<forall>C\<in>Pow(X). B\<subseteq>C \<longrightarrow> C\<in>\<FF>"
   using assms unfolding IsFilter_def by auto
 
