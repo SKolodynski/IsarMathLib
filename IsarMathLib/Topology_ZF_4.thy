@@ -400,11 +400,21 @@ proof
   ultimately have baseCond:"{F\<inter>A. F\<in>\<FF>}{satisfies the filter base condition}"
     unfolding SatisfiesFilterBase_def by blast
   let ?F = "{AA\<in>Pow(X). (\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>AA)}"
+  have "\<And>C. C \<subseteq> Pow(X) \<Longrightarrow> C \<noteq> \<emptyset> \<Longrightarrow>
+    C {is a base filter} {AA\<in>Pow(X). (\<exists>D\<in>C. D\<subseteq>AA)}" 
+    using base_unique_filter_set1(1) by auto
+  then have rule:"{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X) \<Longrightarrow> {F\<inter>A. F\<in>\<FF>} \<noteq> \<emptyset> \<Longrightarrow>
+    {F\<inter>A. F\<in>\<FF>} {is a base filter} {AA\<in>Pow(X). (\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>AA)}" by blast
   have p:"{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X)" using assms(2) unfolding IsFilter_def by auto
   with ne have base:"{F\<inter>A. F\<in>\<FF>} {is a base filter} ?F"
-    using base_unique_filter_set1(1)[of "{F \<inter> A . F \<in> \<FF>}"]
-    by auto
-  have "\<Union>?F =X" using base_unique_filter_set3(2)[OF p] baseCond by auto
+    using rule by auto
+  have "\<And>C. C \<subseteq> Pow(X) \<Longrightarrow>
+        C {satisfies the filter base condition} \<Longrightarrow>
+        \<Union>{A \<in> Pow(X) . \<exists>D\<in>C. D \<subseteq> A} = X" using base_unique_filter_set3(2)
+        by auto
+  then have "{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X) \<Longrightarrow> {F\<inter>A. F\<in>\<FF>} {satisfies the filter base condition}
+    \<Longrightarrow> \<Union>?F = X" by blast 
+  then have "\<Union>?F =X" using p baseCond by auto
   with base baseCond have "?F{is a filter on}X" using basic_filter by auto moreover
   {
     have "X\<in>\<FF>" using assms(2) unfolding IsFilter_def by auto
