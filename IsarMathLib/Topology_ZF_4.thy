@@ -399,7 +399,7 @@ proof
   then have "\<forall>Aa\<in>{F \<inter> A . F \<in> \<FF>}. \<forall>B\<in>{F \<inter> A . F \<in> \<FF>}. \<exists>D\<in>{F \<inter> A . F \<in> \<FF>}. D \<subseteq> Aa \<inter> B" by auto
   ultimately have baseCond:"{F\<inter>A. F\<in>\<FF>}{satisfies the filter base condition}"
     unfolding SatisfiesFilterBase_def by blast
-  let ?F="{AA\<in>Pow(X). (\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>AA)}"
+  let ?F = "{AA\<in>Pow(X). (\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>AA)}"
   have p:"{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X)" using assms(2) unfolding IsFilter_def by auto
   with ne have base:"{F\<inter>A. F\<in>\<FF>} {is a base filter} ?F" using base_unique_filter_set1(1)[of "{F\<inter>A. F\<in>\<FF>}" X]
     by auto
