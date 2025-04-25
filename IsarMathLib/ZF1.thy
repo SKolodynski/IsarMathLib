@@ -225,6 +225,22 @@ proof -
   ultimately show ?thesis by blast
 qed
 
+text\<open>Intersection of a collection of subsets of $X$ is a subset of $X$.
+  Similar to \<open>inter_subsets_subset\<close> but for non-indexed collections.\<close>
+
+lemma inter_subsets_subset1: assumes "M\<subseteq>Pow(X)" shows "\<Inter>M \<subseteq> X"
+proof -
+  { assume "M\<noteq>\<emptyset>"
+    with assms have "\<Inter>M \<subseteq> X" by blast
+  }
+  moreover
+  { assume "M=\<emptyset>"
+    hence "\<Inter>M \<subseteq> X" by simp
+  }
+  ultimately show ?thesis by blast
+qed
+
+
 text\<open>Intersection of a smaller (but nonempty) collection of sets is larger.
   Note the assumption that the smaller collection is nonepty in necessary here.\<close>
 
@@ -404,6 +420,35 @@ text\<open>Domain and range of the relation of the form $\bigcup \{U\times U : U
 lemma domain_range_sym: shows "domain(\<Union>{U\<times>U. U\<in>P}) = \<Union>P" and "range(\<Union>{U\<times>U. U\<in>P}) = \<Union>P" 
   by auto
 
+text\<open>The product of converses is equal to in converse of a product\<close>
+
+lemma prod_converse: assumes "M \<subseteq> Pow(X\<times>X)"
+  shows "\<Inter>{converse(A). A\<in>M} = converse(\<Inter>M)"
+proof -
+  { assume "M\<noteq>\<emptyset>"
+    from assms(1) have "converse(\<Inter>M) \<subseteq> X\<times>X"
+    using inter_subsets_subset1 by auto
+    let ?N = "\<Inter>{converse(A). A\<in>M}"
+    from assms(1) have "\<forall>A\<in>M. converse(A) \<subseteq> X\<times>X" by auto
+    then have "?N \<subseteq> X\<times>X" using inter_subsets_subset by simp
+    { fix p assume "p\<in>?N"
+      with \<open>?N \<subseteq> X\<times>X\<close> obtain x y where "p=\<langle>x,y\<rangle>" by blast
+      with \<open>M\<noteq>\<emptyset>\<close> \<open>p\<in>?N\<close> have "p \<in> converse(\<Inter>M)" by auto  
+    } hence "?N \<subseteq> converse(\<Inter>M)" by auto
+    moreover 
+    { fix p assume "p\<in>converse(\<Inter>M)"
+      with \<open>converse(\<Inter>M) \<subseteq> X\<times>X\<close> obtain x y where "p=\<langle>x,y\<rangle>" by blast
+      with \<open>M\<noteq>\<emptyset>\<close> \<open>p\<in>converse(\<Inter>M)\<close> have "p\<in>?N" by auto
+    } hence "converse(\<Inter>M) \<subseteq> ?N" by auto
+    ultimately have ?thesis by auto
+  }
+  moreover
+  { assume "M=\<emptyset>" 
+    then have ?thesis by simp
+  }
+  ultimately show ?thesis by blast
+qed
+    
 text\<open>An identity for the square (in the sense of composition) of a symmetric relation.\<close>
 
 lemma symm_sq_prod_image: assumes "converse(r) = r" 

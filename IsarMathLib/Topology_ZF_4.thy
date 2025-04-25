@@ -211,8 +211,23 @@ lemma is_filter_def_split: assumes "\<FF> {is a filter on} X"
     "\<forall>A\<in>\<FF>. \<forall>B\<in>\<FF>. A\<inter>B\<in>\<FF>" and "\<forall>B\<in>\<FF>. \<forall>C\<in>Pow(X). B\<subseteq>C \<longrightarrow> C\<in>\<FF>"
   using assms unfolding IsFilter_def by auto
 
+text\<open>Filters are closed with respect to taking finite intersections.\<close>
+
+lemma filter_fin_inter_closed: 
+  assumes "\<FF> {is a filter on} X" "M\<in>FinPow(\<FF>)\<setminus>{\<emptyset>}"
+  shows "\<Inter>M \<in> \<FF>"
+  using assms is_filter_def_split(4) inter_two_inter_fin by simp
+
+text\<open>Filters are closed with respect to taking supersets.\<close>
+
+lemma filter_superset_closed: 
+  assumes "\<FF> {is a filter on} X" "\<A>\<subseteq>\<FF>"
+  shows "Supersets(X,\<A>) \<subseteq> \<FF>"
+  using assms is_filter_def_split(5) unfolding Supersets_def
+  by auto
+ 
 text\<open>Not all the sets of a filter are needed to be consider at all times; as it happens
-with a topology we can consider bases.\<close>
+  with a topology we can consider bases.\<close>
 
 definition
   IsBaseFilter ("_ {is a base filter} _" 90)

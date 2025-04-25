@@ -396,7 +396,7 @@ text\<open>If a family of sets is closed with respect to taking intersections
 lemma inter_two_inter_fin: 
   assumes A1: "\<forall>V\<in>T. \<forall>W\<in>T. V \<inter> W \<in> T" and
   A2: "N \<noteq> 0" and A3: "N \<in> FinPow(T)"
-  shows "(\<Inter>N \<in> T)"
+  shows "\<Inter>N \<in> T"
 proof -
   have "0 = 0 \<or> (\<Inter>0 \<in> T)" by simp
   moreover have "\<forall>M \<in> FinPow(T). (M = 0 \<or> \<Inter>M \<in> T) \<longrightarrow> 
@@ -527,8 +527,24 @@ proof -
     by (rule FinPow_induct)
 qed
 
+text\<open>A variant of \<open>fin_image_fin\<close> with a bit weaker first assumption:\<close>
+
+lemma fin_image_fin1: assumes "\<forall>V\<in>N. K(V)\<in>C" and "N \<in> FinPow(B)"
+  shows "{K(V). V\<in>N} \<in> FinPow(C)"
+proof -
+  from assms(2) have "N \<in> FinPow(N)"
+    using fin_finpow_self by simp
+  with assms(1) show ?thesis by (rule fin_image_fin)
+qed
+
+text\<open>An image of a nonempty finite set is a nonempty finite set.\<close>
+
+lemma fin_image_fin0: assumes "N \<in> FinPow(B)\<setminus>{\<emptyset>}" and "\<forall>V\<in>N. K(V)\<in>C" 
+  shows  "{K(V). V\<in>N} \<in> FinPow(C)\<setminus>{\<emptyset>}"
+  using assms fin_image_fin1 by auto
+
 text\<open>If a set $X$ is finite then the set $\{ K(x). x\in X\}$ is also finite.
-  Its basically standard Isalelle/ZF \<open>Finite_RepFun\<close> in nicer notation.\<close>
+  It's basically standard Isalelle/ZF \<open>Finite_RepFun\<close> in nicer notation.\<close>
 
 lemma fin_rep_fin: assumes "Finite(X)" shows "Finite({K(x). x\<in>X})"
   using assms Finite_RepFun by simp

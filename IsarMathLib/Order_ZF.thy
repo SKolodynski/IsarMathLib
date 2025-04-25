@@ -111,12 +111,12 @@ text\<open>A set is bounded above if there is that is an upper
   In addition, the empty set is defined as bounded.\<close>
 
 definition
-  "IsBoundedAbove(A,r) \<equiv> ( A=0 \<or> (\<exists>u. \<forall>x\<in>A. \<langle> x,u\<rangle> \<in> r))"
+  "IsBoundedAbove(A,r) \<equiv> ( A=0 \<or> (\<exists>u. \<forall>x\<in>A. \<langle>x,u\<rangle> \<in> r))"
 
 text\<open>We define sets bounded below analogously.\<close>
 
 definition
-  "IsBoundedBelow(A,r) \<equiv> (A=0 \<or> (\<exists>l. \<forall>x\<in>A. \<langle> l,x\<rangle> \<in> r))"
+  "IsBoundedBelow(A,r) \<equiv> (A=0 \<or> (\<exists>l. \<forall>x\<in>A. \<langle>l,x\<rangle> \<in> r))"
 
 text\<open>A set is bounded if it is bounded below and above.\<close>
 
@@ -204,16 +204,16 @@ definition
   \<forall>A. IsBoundedAbove(A,r) \<and> A\<noteq>0 \<longrightarrow> HasAminimum(r,\<Inter>a\<in>A. r``{a})"
 
 text\<open>Normally the "$\subseteq$" does not represent a relation, but it does
-  if we restrict it to subsets of some set $X$. We will call such relation the
-  \<open>InclusionOnSubsets(X)\<close>. \<close>
+  if we restrict it to some colection of sets $X$. We will call such relation the
+  \<open>InclusionOn(X)\<close>. \<close>
 
 definition 
-  "InclusionOnSubsets(X) \<equiv> {p\<in>Pow(X)\<times>Pow(X). fst(p) \<subseteq> snd(p)}"
+  "InclusionOn(X) \<equiv> {p\<in>X\<times>X. fst(p) \<subseteq> snd(p)}"
 
 text\<open>Inclusion relation is a partial order on the powerset of $X$.\<close>
 
-lemma incl_is_partorder: shows "IsPartOrder(Pow(X),InclusionOnSubsets(X))"
-  unfolding InclusionOnSubsets_def IsPartOrder_def refl_def antisym_def trans_def
+lemma incl_is_partorder: shows "IsPartOrder(X,InclusionOn(X))"
+  unfolding InclusionOn_def IsPartOrder_def refl_def antisym_def trans_def
   by auto
 
 text\<open>If a relation down-directs a set, then a larger one does as well.\<close>

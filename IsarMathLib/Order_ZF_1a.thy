@@ -34,7 +34,7 @@ theory Order_ZF_1a imports Order_ZF
 begin
 
 text\<open>This theory is a continuation of \<open>Order_ZF\<close> and talks
-  about maximuma and minimum of a set, supremum and infimum
+  about maximum and minimum of a set, supremum and infimum
   and strict (not reflexive) versions of order relations.\<close>
 
 subsection\<open>Maximum and minimum of a set\<close>
@@ -189,6 +189,26 @@ lemma Order_ZF_4_L8A:
   assumes "HasAminimum(r,A)"
   shows "IsBoundedBelow(A,r)"
   using assms HasAminimum_def IsBoundedBelow_def by auto
+
+text\<open>A subset of a set that has a maximum is bounded above.\<close>
+
+lemma max_subset_bounded: assumes "HasAmaximum(r,A)" and "B\<subseteq>A"
+  shows "IsBoundedAbove(B,r)"
+proof -
+  from assms(1) obtain M where "\<forall>x\<in>A. \<langle>x,M\<rangle> \<in> r"
+    unfolding HasAmaximum_def by auto
+  with assms(2) show ?thesis unfolding IsBoundedAbove_def by blast
+qed
+  
+text\<open>A subset of a set that has a minimum is bounded below.\<close>
+
+lemma min_subset_bounded: assumes "HasAminimum(r,A)" and "B\<subseteq>A"
+  shows "IsBoundedBelow(B,r)"
+proof -
+  from assms(1) obtain m where "\<forall>x\<in>A. \<langle>m,x\<rangle> \<in> r"
+    unfolding HasAminimum_def by auto
+  with assms(2) show ?thesis unfolding IsBoundedBelow_def by blast
+qed
 
 text\<open>For reflexive relations singletons have a minimum and maximum.\<close>
 
