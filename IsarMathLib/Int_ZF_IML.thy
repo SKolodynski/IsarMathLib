@@ -1039,20 +1039,11 @@ qed
 
 text\<open>The next lemma shows what happens when one integers is not
   greater or equal than another.\<close>
-(* trying to use OrderedGroup_ZF_1_L8  results in a longer proof, 
-  simp and auto loop here*) 
+
 lemma (in int0) Int_ZF_2_L19: 
   assumes A1: "m\<in>\<int>"  "n\<in>\<int>" and A2: "\<not>(n\<lsq>m)"
-  shows "m\<lsq>n"  "(\<rm>n) \<lsq> (\<rm>m)"  "m\<noteq>n"
-proof -
-  from A1 A2 show "m\<lsq>n" using Int_ZF_2_T1 IsTotal_def 
-    by auto
-  then show "(\<rm>n) \<lsq> (\<rm>m)" using Int_ZF_2_L10 
-    by simp
-  from A1 have "n \<lsq> n" using int_ord_is_refl refl_def 
-    by simp
-  with A2 show "m\<noteq>n" by auto
-qed
+  shows "m\<lsq>n"  "(\<rm>n) \<lsq> (\<rm>m)"  "m\<noteq>n" "m\<ls>n"
+  using OrderedGroup_ZF_1_L8 Int_ZF_2_T1 assms by auto
 
 text\<open>If one integer is greater or equal and not equal to another,
   then it is not smaller or equal.\<close>
@@ -1764,6 +1755,86 @@ proof -
     "zmagnitude(z\<^sub>1\<ra>z\<^sub>2) = zmagnitude(z\<^sub>1) #- zmagnitude(z\<^sub>2)"
     "z\<^sub>1\<ra>z\<^sub>2 = $-($#(zmagnitude(z\<^sub>1) #- zmagnitude(z\<^sub>2)))"
     using add_nonneg_neg2 by simp_all
+qed
+
+text\<open>\<open>zmagnitud\<close> respects multiplication\<close>
+
+lemma (in int0) zmagnitud_mult:
+  assumes "x\<in>\<int>" "y\<in>\<int>"
+  shows "zmagnitude(x\<cdot>y) = zmagnitude(x) #* zmagnitude(y)"
+proof-
+  from assms(1) int_cases obtain n where n:"n\<in>nat" "x=$#n \<or> x=$- $# succ(n)" unfolding ints_def by blast
+  from assms(2) int_cases obtain m where m:"m\<in>nat" "y=$#m \<or> y=$- $# succ(m)" unfolding ints_def by blast
+  {
+    fix q t assume as:"q\<in>nat" "t\<in>nat"
+    have "($# q) $* ($# t) = (intrel``{<q,0>}) $* (intrel``{<t,0>})"
+      unfolding int_of_def using as by auto
+    then have "($# q) $* ($# t) = (intrel``{<(q #* t) #+ (0 #* 0),(q #* 0) #+ (0 #* t)>})"
+      using zmult as(1) nat_0I as(2) nat_0I by auto
+    then have "($# q) $* ($# t) = intrel``{<(q #*t),0>}" using mult_0 mult_0_right
+      add_0_right by auto
+    then have "($# q) $* ($# t) = $#(q #* t)" unfolding int_of_def by auto
+  }
+  then have R:"\<And>q t. q\<in>nat \<Longrightarrow> t\<in>nat \<Longrightarrow> ($# q) $* ($# t) = $#(q #* t)" by auto
+  {
+    assume as:"x=$#n" "y=$#m"
+    from R n(1) m(1) have "($# n) $* ($# m) = $# (n #* m)" by auto
+    then have "zmagnitude(($# n) $* ($# m)) = zmagnitude($#(n #* m))" by auto
+    then have "zmagnitude(x $* y) = n #* m" using zmagnitude_int_of as by auto
+    then have "zmagnitude(x $* y) = zmagnitude(x) #* zmagnitude(y)"
+      using as n(1) m(1) by auto
+    then have "zmagnitude(x\<cdot>y) = zmagnitude(x) #* zmagnitude(y)"
+      using Int_ZF_1_L2(2) assms by auto
+  } moreover
+  {
+    assume as:"x=$#n" "y=$- $#succ(m)"
+    have A:"($# n) $* ($- $#succ(m)) = $- ($# n $* $#succ(m))"
+      using zmult_zminus_right by auto
+    moreover have "succ(m)\<in>nat" using nat_succI m(1) by auto
+    ultimately have "$# n $* $#succ(m) = $#(n #* succ(m))"
+      using R n(1) by auto
+    with A have "zmagnitude(($# n) $* ($- $#succ(m))) = zmagnitude($- $#(n #* succ(m)))"
+      by auto
+    with as have "zmagnitude(x $* y) = n #* succ(m)"
+      using zmagnitude_zminus_int_of  by auto
+    then have "zmagnitude(x $* y) = zmagnitude(x) #* zmagnitude(y)"
+      using as n(1) m(1) by auto
+    then have "zmagnitude(x\<cdot>y) = zmagnitude(x) #* zmagnitude(y)"
+      using Int_ZF_1_L2(2) assms by auto
+  } moreover
+  {
+    assume as:"x=$- $#succ(n)" "y=$#m"
+    have A:"($- $#succ(n)) $* ($#m) = $- ($# succ(n) $* $#m)"
+      using zmult_zminus by auto
+    moreover have "succ(n)\<in>nat" using nat_succI n(1) by auto
+    ultimately have "$# succ(n) $* $#m = $#(succ(n) #* m)"
+      using R m(1) by auto
+    with A have "zmagnitude(($- $# succ(n)) $* $#m) = zmagnitude($- $#(succ(n) #* m))"
+      by auto
+    with as have "zmagnitude(x $* y) = succ(n) #* m"
+      using zmagnitude_zminus_int_of by auto
+    then have "zmagnitude(x $* y) = zmagnitude(x) #* zmagnitude(y)"
+      using as n(1) m(1) by auto
+    then have "zmagnitude(x\<cdot>y) = zmagnitude(x) #* zmagnitude(y)"
+      using Int_ZF_1_L2(2) assms by auto
+  }moreover
+  {
+    assume as:"x=$- $#succ(n)" "y=$- $#succ(m)"
+    have A:"($- $#succ(n)) $* ($- $#succ(m)) = ($# succ(n) $* $#succ(m))"
+      using zmult_zminus by auto
+    moreover have "succ(n)\<in>nat" "succ(m)\<in>nat" using nat_succI n(1) m(1) by auto
+    ultimately have "$# succ(n) $* $#succ(m) = $#(succ(n) #* succ(m))"
+      using R by auto
+    with A have "zmagnitude(($- $# succ(n)) $* $- $#succ(m)) = zmagnitude($#(succ(n) #*succ(m)))"
+      by auto
+    with as have "zmagnitude(x $* y) = succ(n) #* succ(m)"
+      using zmagnitude_zminus_int_of by auto
+    then have "zmagnitude(x $* y) = zmagnitude(x) #* zmagnitude(y)"
+      using as n(1) m(1) by auto
+    then have "zmagnitude(x\<cdot>y) = zmagnitude(x) #* zmagnitude(y)"
+      using Int_ZF_1_L2(2) assms by auto
+  } ultimately
+  show ?thesis using n(2) m(2) by auto
 qed
 
 end

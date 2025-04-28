@@ -46,41 +46,35 @@ text\<open>The integer power is defined in terms of natural powers of an element
   In this section we study properties of expressions $(x^n)\cdot(x^{-1})^k$, where $x$ is a group
   element and $n,k$ are natural numbers. \<close>
 
-text\<open>The natural power of $x$ multiplied by the same power of $x^{-1}$ cancel out to give
-  the neutral element of the group.\<close>
+text\<open>The natural power of an element's inverse is the inverse of the power of the element.\<close>
 
-lemma (in group0) nat_pow_inv_cancel: assumes "n\<in>nat" "x\<in>G"
-  shows "pow(n,x)\<cdot>pow(n,x\<inverse>) = \<one>"
+lemma (in group0) nat_pow_inverse: assumes "n\<in>nat" "x\<in>G"
+  shows "pow(n,x\<inverse>) = pow(n,x)\<inverse>"
 proof -
-  from assms(1) have "n\<in>nat" and "pow(0,x)\<cdot>pow(0,x\<inverse>) = \<one>"
-    using monoid.nat_mult_zero group0_2_L2 by simp_all
-  moreover have "\<forall>k\<in>nat. pow(k,x)\<cdot>pow(k,x\<inverse>) = \<one> \<longrightarrow> pow(k #+ 1,x)\<cdot>pow(k #+ 1,x\<inverse>) = \<one>"
-  proof -
-    { fix k assume "k\<in>nat" and "pow(k,x)\<cdot>pow(k,x\<inverse>) = \<one>"
-      from assms(2) \<open>k\<in>nat\<close> have 
-        "pow(k #+ 1,x)\<cdot>pow(k #+ 1,x\<inverse>) = pow(k,x)\<cdot>x\<cdot>(x\<inverse>\<cdot>pow(k,x\<inverse>))"
-      using inverse_in_group nat_pow_add_one by simp
-      with assms(2) \<open>k\<in>nat\<close> \<open>pow(k,x)\<cdot>pow(k,x\<inverse>) = \<one>\<close> have
-        "pow(k #+ 1,x)\<cdot>pow(k #+ 1,x\<inverse>) = \<one>"
-        using monoid.nat_mult_type inverse_in_group monoid.rearr4elem_monoid
-          group0_2_L6(1) group0_2_L2 by simp        
-    } thus ?thesis by simp
-  qed
+  from assms(1) have "n\<in>nat" and "pow(0,x\<inverse>) = pow(0,x)\<inverse>"
+    using monoid.nat_mult_zero group_inv_of_one by auto
+  moreover
+  {
+    fix k assume hyp:"k\<in>nat" "pow(k,x\<inverse>) = pow(k,x)\<inverse>"
+    have "pow(k#+1,x\<inverse>) = pow(k,x\<inverse>)\<cdot>x\<inverse>" using nat_pow_add_one(1) hyp(1)
+      inverse_in_group assms(2) by auto
+    then have "pow(k#+1,x\<inverse>) = pow(k,x)\<inverse>\<cdot>x\<inverse>" using hyp(2) by auto
+    then have "pow(k#+1,x\<inverse>) = (x\<cdot>pow(k,x))\<inverse>" using group_inv_of_two
+      assms(2) monoid.nat_mult_type hyp(1) by auto
+    then have "pow(k#+1,x\<inverse>) = pow(k#+1,x)\<inverse>" using nat_pow_add_one(2)
+      hyp(1) assms(2) by auto
+  }
+  then have "\<forall>k\<in>nat. pow(k,x\<inverse>) = pow(k,x)\<inverse> \<longrightarrow> pow(k#+1,x\<inverse>) = pow(k#+1,x)\<inverse>" by auto
   ultimately show ?thesis by (rule ind_on_nat1)
 qed
 
-text\<open>The natural power of $x^{-1}$ multiplied by the same power of $x$ cancel out to give
-  the neutral element of the group. Same as \<open>nat_pow_inv_cancel\<close> written with $x^{-1}$
-  instead of $x$. \<close>
+text\<open>The natural power of $x$ multiplied by the same power of $x^{-1}$ cancel out to give
+  the neutral element of the group.\<close>
 
-lemma (in group0) nat_pow_inv_cancel1: assumes "n\<in>nat" "x\<in>G"
-  shows "pow(n,x\<inverse>)\<cdot>pow(n,x) = \<one>"
-proof -
-  from assms have "pow(n,x\<inverse>)\<cdot>pow(n,(x\<inverse>)\<inverse>) = \<one>"
-    using inverse_in_group nat_pow_inv_cancel by simp
-  with assms(2) show "pow(n,x\<inverse>)\<cdot>pow(n,x) = \<one>"
-    using group_inv_of_inv by simp
-qed
+corollary (in group0) nat_pow_inv_cancel: assumes "n\<in>nat" "x\<in>G"
+  shows "pow(n,x)\<cdot>pow(n,x\<inverse>) = \<one>" "pow(n,x\<inverse>)\<cdot>pow(n,x) = \<one>"
+  using nat_pow_inverse assms group0_2_L6 monoid.nat_mult_type assms by auto
+
 
 text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, then
   $x^n\cdot (x^{-1})^k = x^(k-n)$. \<close>
@@ -99,7 +93,7 @@ proof -
     have "pow(n,x)\<cdot>pow(k,x\<inverse>) = pow(n #- k,x)\<cdot>(pow(k,x)\<cdot>pow(k,x\<inverse>))"
       using add_diff_inverse2 group_oper_assoc by simp
   with assms(3) \<open>k\<in>nat\<close> \<open>pow((n #- k),x) \<in> G\<close> show ?thesis
-    using nat_pow_inv_cancel group0_2_L2 by simp 
+    using nat_pow_inv_cancel(1) group0_2_L2 by simp 
 qed
 
 text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, then
@@ -130,7 +124,7 @@ proof -
   have "pow(k,x\<inverse>)\<cdot>pow(n,x) = (pow(k,x\<inverse>)\<cdot>pow(k,x))\<cdot>pow(n #- k,x)"
     using add_diff_inverse group_oper_assoc by simp
   with assms(3) \<open>k\<in>nat\<close> \<open>pow((n #- k),x) \<in> G\<close> show ?thesis
-    using nat_pow_inv_cancel1 group0_2_L2 by simp  
+    using nat_pow_inv_cancel(2) group0_2_L2 by simp  
 qed
 
 text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, then
@@ -142,6 +136,51 @@ proof -
   from assms have "pow(k,(x\<inverse>)\<inverse>)\<cdot>pow(n,x\<inverse>) = pow(n #- k,x\<inverse>)"
     using inverse_in_group nat_pow_cancel_more by simp
   with assms(3) show ?thesis using group_inv_of_inv by simp
+qed
+
+text\<open>The power to a product is the power of the power.\<close>
+
+lemma (in group0) nat_pow_mult:
+  assumes "z1\<in>nat" "z2\<in>nat" "g\<in>G"
+  shows "pow(z1#*z2,g) = pow(z2,pow(z1,g))"
+proof -
+  have "z1#*0 = 0" by auto
+  then have "pow(z1 #* 0,g) = pow(0,g)" by auto
+  then have B:"pow(z1 #* 0,g) = pow(0,pow(z1,g))" by auto
+  {
+    fix x assume x:"x\<in>nat" "pow(z1 #* x,g) = pow(x,pow(z1,g))"
+    have "z1 #* succ(x) = z1#+ (z1#*x)" using mult_succ_right by auto
+    then have "pow(z1 #* succ(x),g) = pow(z1#+ (z1#*x),g)" by auto
+    then have "pow(z1 #* succ(x),g) = pow(z1,g)\<cdot>pow(z1#*x,g)"
+      using monoid.nat_mult_add assms(1) assms(3) by auto
+    with x(2) have "pow(z1 #* succ(x),g) = pow(z1,g)\<cdot>pow(x,pow(z1,g))"
+      by auto
+    moreover have "domain(x \<times> {pow(z1,g)}) = x" by auto
+    then have "Append(x \<times> {pow(z1,g)}, pow(z1,g)) = succ(x) \<times> {pow(z1,g)}"
+      unfolding Append_def by auto
+    then have "Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = Fold(P,\<one>,succ(x) \<times> {pow(z1,g)})"
+      by auto moreover
+    have "pow(succ(x),pow(z1,g)) = Fold(P,\<one>,succ(x) \<times> {pow(z1,g)})" using
+      group_nat_pow_def_alt(2) by blast
+    ultimately have A:"Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = pow(succ(x),pow(z1,g))"
+        by auto
+    have zg:"pow(z1,g)\<in>G" using assms(1,3) monoid.nat_mult_type by auto 
+    then have f:"x\<times>{pow(z1,g)}:x\<rightarrow>G" unfolding Pi_def function_def by auto
+    from fold_append(2) x(1) group_oper_fun f zg
+    have "Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = 
+      pow(x,pow(z1,g))\<cdot>pow(z1,g)" using group0_2_L2 group_nat_pow_def_alt(2) groper_def by simp
+    with A have "pow(succ(x),pow(z1,g)) = pow(x,pow(z1,g))\<cdot>pow(z1,g)" by auto
+    with x(2) have "pow(succ(x),pow(z1,g)) = pow(z1 #* x,g)\<cdot>pow(z1,g)" by auto
+    then have "pow(succ(x),pow(z1,g)) = pow((z1 #* x) #+ z1,g)"
+      using monoid.nat_mult_add assms(1,3) by auto
+    then have "pow(succ(x),pow(z1,g)) = pow(z1 #+(z1 #* x),g)" 
+      using add_commute by auto
+    then have "pow(z1#* succ(x), g) = pow(succ(x),pow(z1,g))"
+      using mult_succ_right by auto
+  }
+  then have "\<And>x. x\<in>nat \<Longrightarrow> pow(z1 #* x, g) = pow(x,pow(z1,g)) \<Longrightarrow> pow(z1 #* succ(x), g) = pow(succ(x),pow(z1,g))"
+    by auto
+  with assms(2) B show ?thesis by (rule nat_induct)
 qed
 
 subsection\<open>Integer powers\<close>
@@ -167,22 +206,55 @@ locale group_int0 = group0 +
 
   fixes isub (infixl "\<rs>" 69)
   defines isub_def [simp]: "a\<rs>b \<equiv> a\<ra> (\<rm> b)"
+  
+  fixes imul (infixl "\<cdot>\<^sub>Z" 69)
+  defines imul_def [simp]: "a\<cdot>\<^sub>Zb \<equiv> IntegerMultiplication`\<langle>a,b\<rangle>"
+
+  fixes setneg ("\<sm> _" 72)
+  defines setneg_def [simp]: "\<sm>A \<equiv> GroupInv(\<int>,IntegerAddition)``(A)"
 
   fixes izero ("\<zero>")
   defines izero_def [simp]: "\<zero> \<equiv> TheNeutralElement(\<int>,IntegerAddition)"
 
   fixes ione ("\<one>\<^sub>Z")
   defines ione_def [simp]: "\<one>\<^sub>Z \<equiv> TheNeutralElement(\<int>,IntegerMultiplication)"
-
+  
+  fixes itwo ("\<two>")
+  defines itwo_def [simp]: "\<two> \<equiv> \<one>\<^sub>Z\<ra>\<one>\<^sub>Z"
+ 
+  fixes ithree ("\<three>")
+  defines ithree_def [simp]: "\<three> \<equiv> \<two>\<ra>\<one>\<^sub>Z"
+  
   fixes nonnegative ("\<int>\<^sup>+")
   defines nonnegative_def [simp]: 
-    "\<int>\<^sup>+ \<equiv> Nonnegative(\<int>,IntegerAddition,IntegerOrder)"
+  "\<int>\<^sup>+ \<equiv> Nonnegative(\<int>,IntegerAddition,IntegerOrder)"
+
+  fixes positive ("\<int>\<^sub>+")
+  defines positive_def [simp]: 
+  "\<int>\<^sub>+ \<equiv> PositiveSet(\<int>,IntegerAddition,IntegerOrder)"
+
+  fixes abs 
+  defines abs_def [simp]: 
+  "abs(m) \<equiv> AbsoluteValue(\<int>,IntegerAddition,IntegerOrder)`(m)"
 
   fixes lesseq (infix "\<lsq>" 60)
   defines lesseq_def [simp]: "m \<lsq> n \<equiv> \<langle>m,n\<rangle> \<in> IntegerOrder"
 
   fixes sless (infix "\<ls>" 68)
   defines sless_def [simp]: "a \<ls> b \<equiv> a\<lsq>b \<and> a\<noteq>b"
+
+  fixes interval (infix ".." 70)
+  defines interval_def [simp]: "m..n \<equiv> Interval(IntegerOrder,m,n)"
+
+  fixes maxf
+  defines maxf_def [simp]: "maxf(f,A) \<equiv> Maximum(IntegerOrder,f``(A))"
+
+  fixes minf
+  defines minf_def [simp]: "minf(f,A) \<equiv> Minimum(IntegerOrder,f``(A))"
+
+  fixes oddext ("_ \<degree>")
+  defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(\<int>,IntegerAddition,IntegerOrder,f)"
+
 
 text\<open>Next define notation for the integer power \<open>powz(z,x)\<close>. 
   The difficulty here is that in ZF set theory nonnegative integers and natural numbers are 
@@ -195,6 +267,12 @@ text\<open>Next define notation for the integer power \<open>powz(z,x)\<close>.
 definition (in group_int0) powz where
   "powz(z,x) \<equiv> pow(zmagnitude(z),if \<zero>\<lsq>z then x else x\<inverse>)"
 
+text\<open>We bring in all the results about integers in \<open>int0\<close> with the notation included in \<open>group_int0\<close>.\<close>
+
+sublocale group_int0 < ints:int0 "\<int>" ia iminus isub imul setneg izero ione itwo 
+  ithree nonnegative positive abs lesseq sless interval maxf minf oddext
+by auto
+
 text\<open>An integer power of a group element is in the group.\<close>
 
 lemma (in group_int0) powz_type: assumes "z\<in>\<int>" "x\<in>G" shows "powz(z,x) \<in> G"
@@ -206,8 +284,15 @@ text\<open>A group element raised to (integer) zero'th power is equal to the gro
 
 lemma (in group_int0) int_power_zero_one: assumes "x\<in>G"
   shows "powz(\<zero>,x) = \<one>" and "powz(\<one>\<^sub>Z,x) = x"
-  using assms int0.Int_ZF_1_L8A(1) int0.int_ord_is_refl1 int0.zmag_zero_one 
-    monoid.nat_mult_zero int0.Int_ZF_2_L16A(1) monoid.nat_mult_one 
+  using assms ints.Int_ZF_1_L8A(1) ints.int_ord_is_refl1 ints.zmag_zero_one 
+    monoid.nat_mult_zero ints.Int_ZF_2_L16A(1) monoid.nat_mult_one 
+    unfolding powz_def by auto
+
+text\<open>The neutral raised to any (integer) power is equal to the group's neutral element.\<close>
+
+lemma (in group_int0) int_power_neutral: assumes "z\<in>\<int>"
+  shows "powz(z,\<one>) = \<one>"
+  using monoid.nat_mult_neutral group_inv_of_one zmagnitude_type
     unfolding powz_def by auto
 
 text\<open>If $x$ is an element of the group and $z_1,z_2$ are nonnegative integers then
@@ -215,7 +300,7 @@ text\<open>If $x$ is an element of the group and $z_1,z_2$ are nonnegative integ
 
 lemma (in group_int0) powz_hom_nneg_nneg: assumes "\<zero>\<lsq>z\<^sub>1" "\<zero>\<lsq>z\<^sub>2" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
-  using assms int0.add_nonneg_ints(1,2) monoid.nat_mult_add 
+  using assms ints.add_nonneg_ints(1,2) monoid.nat_mult_add 
   unfolding powz_def by simp
 
 text\<open>If $x$ is an element of the group and $z_1,z_2$ are negative integers then
@@ -224,7 +309,7 @@ text\<open>If $x$ is an element of the group and $z_1,z_2$ are negative integers
 lemma (in group_int0) powz_hom_neg_neg: 
   assumes "z\<^sub>1\<ls>\<zero>" "z\<^sub>2\<ls>\<zero>" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
-  using assms int0.neg_not_nonneg int0.add_neg_ints(1,2) 
+  using assms ints.neg_not_nonneg ints.add_neg_ints(1,2) 
     inverse_in_group monoid.nat_mult_add 
   unfolding powz_def by simp
 
@@ -242,13 +327,13 @@ proof -
   let ?m\<^sub>1 = "zmagnitude(z\<^sub>1)" 
   let ?m\<^sub>2 = "zmagnitude(z\<^sub>2)"
   from assms(1,2,3) have "powz(z\<^sub>1\<ra>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>1\<ra>z\<^sub>2),x)"
-    using int0.add_nonneg_neg1(1) unfolding powz_def by simp
+    using ints.add_nonneg_neg1(1) unfolding powz_def by simp
   also from assms(1,2,3) have "... =  pow(?m\<^sub>1 #- ?m\<^sub>2,x)" 
-    using int0.add_nonneg_neg1(2) by simp
+    using ints.add_nonneg_neg1(2) by simp
   also from assms(3,4) have "... = pow(?m\<^sub>1,x)\<cdot>pow(?m\<^sub>2,x\<inverse>)"
     using nat_pow_cancel_less by simp
   also from assms(1,2) have "... = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)" 
-    using int0.neg_not_nonneg unfolding powz_def by simp
+    using ints.neg_not_nonneg unfolding powz_def by simp
   finally show ?thesis by simp
 qed
 
@@ -258,7 +343,7 @@ text\<open>If $x$ is an element of the group and $z_1$ is nonnegative,
 lemma (in group_int0) powz_hom_nneg_neg2:
   assumes "\<zero>\<lsq>z\<^sub>1"  "z\<^sub>2\<ls>\<zero>"  "zmagnitude(z\<^sub>1) < zmagnitude(z\<^sub>2)" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
-  using assms int0.add_nonneg_neg2 int0.neg_not_nonneg leI nat_pow_cancel_more1
+  using assms ints.add_nonneg_neg2 ints.neg_not_nonneg leI nat_pow_cancel_more1
   unfolding powz_def by simp
 
 text\<open>If $x$ is an element of the group and $z_1$ is negative, 
@@ -267,7 +352,7 @@ text\<open>If $x$ is an element of the group and $z_1$ is negative,
 lemma (in group_int0) powz_hom_neg_nneg1:
   assumes "z\<^sub>1\<ls>\<zero>" "\<zero>\<lsq>z\<^sub>2" "zmagnitude(z\<^sub>1) \<le> zmagnitude(z\<^sub>2)" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
-  using assms int0.add_neg_nonneg1 nat_pow_cancel_more int0.neg_not_nonneg
+  using assms ints.add_neg_nonneg1 nat_pow_cancel_more ints.neg_not_nonneg
   unfolding powz_def by simp
 
 text\<open>If $x$ is an element of the group and $z_1$ is negative, 
@@ -276,7 +361,7 @@ text\<open>If $x$ is an element of the group and $z_1$ is negative,
 lemma (in group_int0) powz_hom_neg_nneg2:
   assumes "z\<^sub>1\<ls>\<zero>" "\<zero>\<lsq>z\<^sub>2" "zmagnitude(z\<^sub>2) < zmagnitude(z\<^sub>1)" "x\<in>G"
   shows "powz(z\<^sub>1\<ra>z\<^sub>2,x) = powz(z\<^sub>1,x)\<cdot>powz(z\<^sub>2,x)"
-  using assms int0.add_neg_nonneg2 int0.neg_not_nonneg leI nat_pow_cancel_less1
+  using assms ints.add_neg_nonneg2 ints.neg_not_nonneg leI nat_pow_cancel_less1
   unfolding powz_def by simp
 
 text\<open>The next theorem collects the results from the above lemmas to show
@@ -292,7 +377,7 @@ proof -
     (\<zero>\<lsq>z\<^sub>1 \<and> z\<^sub>2\<ls>\<zero> \<and> zmagnitude(z\<^sub>1) < zmagnitude(z\<^sub>2)) \<or>
     (z\<^sub>1\<ls>\<zero> \<and> \<zero>\<lsq>z\<^sub>2 \<and> zmagnitude(z\<^sub>1) \<le> zmagnitude(z\<^sub>2)) \<or>
     (z\<^sub>1\<ls>\<zero> \<and> \<zero>\<lsq>z\<^sub>2 \<and> zmagnitude(z\<^sub>2) < zmagnitude(z\<^sub>1))"
-    using int0.int_pair_6cases by simp
+    using ints.int_pair_6cases by simp
   with assms(3) show ?thesis 
     using powz_hom_nneg_nneg powz_hom_neg_neg 
     powz_hom_nneg_neg1 powz_hom_nneg_neg2 
@@ -300,19 +385,138 @@ proof -
     by blast
 qed
 
+text\<open>If $x$ is an element of the group and $z_1,z_2$ are nonnegative integers then
+  $x^{z_1z_2}=(x^{z_2})^{z_2}$.\<close>
+
+lemma (in group_int0) powz_mult: assumes "z\<^sub>1\<in>\<int>" "z\<^sub>2\<in>\<int>" "x\<in>G"
+  shows "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
+proof-
+  have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>)"
+    unfolding powz_def by auto moreover
+  have "zmagnitude(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = zmagnitude(z\<^sub>1)#*zmagnitude(z\<^sub>2)"
+    using ints.zmagnitud_mult assms(1,2) by auto
+  ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>1)#*zmagnitude(z\<^sub>2),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>)"
+    by auto
+  then have A:"powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>))"
+    using nat_pow_mult assms(3) zmagnitude_type inverse_in_group by auto
+  {
+    assume C:"\<zero>\<lsq>z\<^sub>1"
+    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" using ints.Int_ZF_1_3_L2
+      assms(1,2) by auto
+    {
+      assume P:"\<not>(\<zero>\<lsq>z\<^sub>2)"
+      then have Q:"z\<^sub>2\<ls>\<zero>" using ints.Int_ZF_2_L19(4) assms(2) 
+        ints.int_zero_one_are_int(1) by auto
+      then have "z\<^sub>2\<lsq>\<zero>" using sless_def by auto
+      with C have "(z\<^sub>2\<cdot>\<^sub>Zz\<^sub>1)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12 assms(1,2) by auto
+      then have U:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_1_L5(5) assms(1,2) by auto
+      {
+        assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
+        then have "z\<^sub>1 = \<zero> \<or> z\<^sub>2 = \<zero>" using ints.int_has_no_zero_divs assms(1,2)
+          unfolding HasNoZeroDivs_def ints_def by auto
+        with Q have Z:"z\<^sub>1 = \<zero>" using sless_def by auto
+        from D have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
+        moreover from Z have "powz(z\<^sub>1,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
+        then have "powz(z\<^sub>2,powz(z\<^sub>1,x)) = \<one>" using int_power_neutral assms(2) by auto
+        ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
+      } moreover
+      {
+        assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) \<noteq> \<zero>"
+        with U have "(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<ls>\<zero>" using sless_def by auto
+        then have "\<not>(\<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2))" using ints.neg_not_nonneg by auto
+        with A have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x\<inverse>))"
+          by auto
+        then have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x)\<inverse>)"
+          using nat_pow_inverse zmagnitude_type assms(3) by auto
+        then have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),if \<zero>\<lsq>z\<^sub>2 then pow(zmagnitude(z\<^sub>1),x) else pow(zmagnitude(z\<^sub>1),x)\<inverse>)"
+          using P by auto
+        then have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,pow(zmagnitude(z\<^sub>1),x))"
+          unfolding powz_def by auto
+        with C have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
+          unfolding powz_def by auto
+      }
+      ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by blast
+    } moreover
+    {
+      assume P:"\<zero>\<lsq>z\<^sub>2"
+      with L have "\<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" by auto
+      with A have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x))" by auto
+      with P C have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
+        unfolding powz_def by auto
+    } ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
+  } moreover
+  {
+    assume C:"\<not>(\<zero>\<lsq>z\<^sub>1)"
+    then have Q:"z\<^sub>1\<ls>\<zero>" using ints.Int_ZF_2_L19(4) ints.int_zero_one_are_int(1)
+      assms(1) by auto
+    then have "z\<^sub>1\<lsq>\<zero>" unfolding sless_def by auto
+    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> (z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12
+      by auto
+    {
+      assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
+      then have "z\<^sub>1 = \<zero> \<or> z\<^sub>2 = \<zero>" using ints.int_has_no_zero_divs assms(1,2)
+        unfolding HasNoZeroDivs_def ints_def by auto
+      with Q have Z:"z\<^sub>2 = \<zero>" using sless_def by auto
+      from D have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
+      moreover from Z have "powz(z\<^sub>2,powz(z\<^sub>1,x)) = \<one>" using int_power_zero_one(1) assms(1,3)
+        powz_type by auto
+      ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
+    } moreover
+    {
+      assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) \<noteq> \<zero>"
+      with L have "\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> (z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<ls>\<zero>" by auto
+      then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> \<not>(\<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2))" using ints.ls_not_leq by auto
+      from Q have "\<not>(\<zero>\<lsq>z\<^sub>1)" using ints.ls_not_leq by auto
+      then have S:"powz(z\<^sub>1,x) = pow(zmagnitude(z\<^sub>1),x\<inverse>)" unfolding powz_def by auto
+      {
+        assume E:"\<zero>\<lsq>z\<^sub>2"
+        with L have A:"powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x\<inverse>))"
+          using A by auto
+        with S have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),powz(z\<^sub>1,x))" by auto
+        then have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" using E powz_def by auto
+      } moreover
+      {
+        assume E:"\<not>(\<zero>\<lsq>z\<^sub>2)"
+        then have "z\<^sub>2\<ls>\<zero>" using ints.Int_ZF_2_L19(4) assms(2) ints.int_zero_one_are_int(1) by auto
+        from E have "powz(z\<^sub>2, powz(z\<^sub>1,x)) = pow(zmagnitude(z\<^sub>2), powz(z\<^sub>1,x)\<inverse>)"
+          using powz_def by auto
+        with S have "powz(z\<^sub>2, powz(z\<^sub>1,x)) = pow(zmagnitude(z\<^sub>2), pow(zmagnitude(z\<^sub>1),x\<inverse>)\<inverse>)"
+          by auto
+        then have "powz(z\<^sub>2, powz(z\<^sub>1,x)) = pow(zmagnitude(z\<^sub>2), pow(zmagnitude(z\<^sub>1),x)\<inverse>\<inverse>)"
+          using nat_pow_inverse zmagnitude_type assms(3) by auto
+        then have B:"powz(z\<^sub>2, powz(z\<^sub>1,x)) = pow(zmagnitude(z\<^sub>2), pow(zmagnitude(z\<^sub>1),x))"
+          using group_inv_of_inv assms zmagnitude_type monoid.nat_mult_type assms(3)
+          by auto
+        from E have "\<zero>\<lsq>\<rm>z\<^sub>2" using ints.Int_ZF_2_L19A(2) assms(2) by auto
+        moreover from C have "\<zero>\<lsq>\<rm>z\<^sub>1" using ints.Int_ZF_2_L19A(2) assms(1) by auto
+        ultimately have "\<zero>\<lsq>((\<rm>z\<^sub>1)\<cdot>\<^sub>Z(\<rm>z\<^sub>2))"
+          using ints.Int_ZF_1_3_L2 ints.Int_ZF_1_1_L4(7) assms(1,2) by auto
+        then have "\<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" using ints.Int_ZF_1_1_L5(11)
+          assms(1,2) by auto
+        with A have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2), pow(zmagnitude(z\<^sub>1),x))" by auto
+        with B have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
+      }
+      ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
+    }
+    ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by blast
+  } ultimately
+  show "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
+qed
+
+
 text\<open>A group element raised to power $-1$ is the inverse of that group element.\<close>
 
 lemma (in group_int0) inpt_power_neg_one: assumes "x\<in>G"
   shows "powz(\<rm>\<one>\<^sub>Z,x) = x\<inverse>"
-  using assms int0.neg_not_nonneg int0.neg_one_less_zero int0.zmag_opposite_same(2) 
-    int0.Int_ZF_1_L8A(2) int0.zmag_zero_one(2) inverse_in_group monoid.nat_mult_one 
+  using assms ints.neg_not_nonneg ints.neg_one_less_zero ints.zmag_opposite_same(2) 
+    ints.Int_ZF_1_L8A(2) ints.zmag_zero_one(2) inverse_in_group monoid.nat_mult_one 
   unfolding powz_def by simp
 
 text\<open>Increasing the (integer) power by one is the same as multiplying by the group element.\<close>
 
 lemma (in group_int0) int_power_add_one: assumes "z\<in>\<int>" "x\<in>G"
   shows "powz(z\<ra>\<one>\<^sub>Z,x) = powz(z,x)\<cdot>x"
-  using assms int0.Int_ZF_1_L8A(2) powz_hom_prop int_power_zero_one(2)
+  using assms ints.Int_ZF_1_L8A(2) powz_hom_prop int_power_zero_one(2)
   by simp
 
 text\<open>For integer power taking a negative of the exponent is the same as taking inverse of the 
@@ -322,15 +526,15 @@ lemma (in group_int0) minus_exp_inv_base: assumes "z\<in>\<int>" "x\<in>G"
   shows "powz(\<rm>z,x) = powz(z,x\<inverse>)"
 proof -
   from assms(1) have "\<zero>\<ls>z \<or> z=\<zero> \<or> z\<ls>\<zero>"
-    using int0.int_neg_zero_pos by simp
+    using ints.int_neg_zero_pos by simp
   moreover from assms(1) have "\<zero>\<ls>z \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
-    using int0.neg_pos_int_neg int0.neg_not_nonneg int0.zmag_opposite_same(2) 
+    using ints.neg_pos_int_neg ints.neg_not_nonneg ints.zmag_opposite_same(2) 
     unfolding powz_def by simp
   moreover from assms(2) have "z=\<zero> \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
-    using int0.Int_ZF_1_L11 int_power_zero_one(1) inverse_in_group by simp
+    using ints.Int_ZF_1_L11 int_power_zero_one(1) inverse_in_group by simp
   moreover from assms have "z\<ls>\<zero> \<longrightarrow> powz(\<rm>z,x) = powz(z,x\<inverse>)"
-    using int0.neg_not_nonneg int0.neg_neg_int_pos group_inv_of_inv 
-    int0.zmag_opposite_same(2) unfolding powz_def by simp
+    using ints.neg_not_nonneg ints.neg_neg_int_pos group_inv_of_inv 
+    ints.zmag_opposite_same(2) unfolding powz_def by simp
   ultimately show "powz(\<rm>z,x) = powz(z,x\<inverse>)" by auto
 qed
 
@@ -340,8 +544,8 @@ text\<open>Integer power of a group element is the same as the inverse of the el
 lemma (in group_int0) minus_exp_inv_base1: assumes "z\<in>\<int>" "x\<in>G"
   shows "powz(z,x) = powz(\<rm>z,x\<inverse>)"
 proof -
-  from assms(1) have "(\<rm>z)\<in>\<int>" using int0.int_neg_type by simp
-  with assms show ?thesis using minus_exp_inv_base int0.neg_neg_noop
+  from assms(1) have "(\<rm>z)\<in>\<int>" using ints.int_neg_type by simp
+  with assms show ?thesis using minus_exp_inv_base ints.neg_neg_noop
     by force
 qed
 
@@ -366,7 +570,7 @@ proof -
   moreover
   { fix m assume "\<zero>\<lsq>m" and I: "powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y)"
     from assms(2,3) \<open>\<zero>\<lsq>m\<close> have  "m\<in>\<int>" and "x\<cdot>y \<in> G"  
-      using int0.Int_ZF_2_L1A(3) group_op_closed by simp_all
+      using ints.Int_ZF_2_L1A(3) group_op_closed by simp_all
     with isAbelian assms(2,3) I have "powz(m\<ra>\<one>\<^sub>Z,x\<cdot>y) = powz(m\<ra>\<one>\<^sub>Z,x)\<cdot>powz(m\<ra>\<one>\<^sub>Z,y)"
       using int_power_add_one group0_4_L8(3) powz_type by simp
   } hence "\<forall>m. \<zero>\<lsq>m \<and> powz(m,x\<cdot>y) = powz(m,x)\<cdot>powz(m,y) \<longrightarrow>
@@ -386,11 +590,11 @@ lemma (in abgroup_int0) powz_groupop_commute1: assumes "k\<lsq>\<zero>" "x\<in>G
   shows "powz(k,x\<cdot>y) = powz(k,x)\<cdot>powz(k,y)"
 proof -
   from isAbelian assms have "powz(k,x\<cdot>y) = powz(\<rm>k,x\<inverse>\<cdot>y\<inverse>)"
-    using int0.Int_ZF_2_L1A(2) group_op_closed minus_exp_inv_base1 group_inv_of_two
+    using ints.Int_ZF_2_L1A(2) group_op_closed minus_exp_inv_base1 group_inv_of_two
     unfolding IsCommutative_def by simp
   with assms show ?thesis
-    using int0.Int_ZF_2_L10A inverse_in_group powz_groupop_commute0 
-      int0.Int_ZF_2_L1A(2) minus_exp_inv_base1 by simp
+    using ints.Int_ZF_2_L10A inverse_in_group powz_groupop_commute0 
+      ints.Int_ZF_2_L1A(2) minus_exp_inv_base1 by simp
 qed
 
 text\<open>In abelian groups taking an integer power commutes with the group operation.\<close>
@@ -398,7 +602,7 @@ text\<open>In abelian groups taking an integer power commutes with the group ope
 theorem (in abgroup_int0) powz_groupop_commute: assumes "z\<in>\<int>" "x\<in>G" "y\<in>G"
   shows "powz(z,x\<cdot>y) = powz(z,x)\<cdot>powz(z,y)"
 proof -
-  from assms(1) have "\<zero>\<lsq>z \<or> z\<lsq>\<zero>" using int0.int_nonneg_or_nonpos
+  from assms(1) have "\<zero>\<lsq>z \<or> z\<lsq>\<zero>" using ints.int_nonneg_or_nonpos
     by auto
   with assms(2,3) show ?thesis using powz_groupop_commute0 powz_groupop_commute1
     by blast
