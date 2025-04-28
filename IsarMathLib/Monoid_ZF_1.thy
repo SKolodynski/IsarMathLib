@@ -291,4 +291,15 @@ proof -
   ultimately show ?thesis by (rule ind_on_nat1)
 qed
 
+text\<open>The neutral element is fixed by this operation.\<close>
+
+lemma (in monoid1) nat_mult_neutral: assumes "n\<in>nat" shows "n\<cdot>\<zero> = \<zero>"
+proof -
+  from assms have "n\<in>nat" and "0\<cdot>\<zero> = \<zero>" using nat_mult_zero by auto
+  moreover have
+    "\<forall>k\<in>nat. k\<cdot>\<zero> = \<zero> \<longrightarrow> (k #+ 1)\<cdot>\<zero> = \<zero>"
+    using nat_mult_add_one nat_mult_one unit_is_neutral by auto
+  ultimately show ?thesis by (rule ind_on_nat1)
+qed
+
 end

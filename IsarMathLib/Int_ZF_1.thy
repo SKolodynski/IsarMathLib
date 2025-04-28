@@ -1971,7 +1971,7 @@ qed
 
 text\<open>A lemma about splitting (not really, there is some overlap) 
   the \<open>\<int>\<times>\<int>\<close> into six subsets (cases). The subsets are as follows:
-  first and third qaudrant, and second and fourth quadrant farther split
+  first and third quadrant, and second and fourth quadrant farther split
   by the $b =-a$ line.\<close>
 
 lemma (in int0) int_plane_split_in6: assumes "a\<in>\<int>"  "b\<in>\<int>"
