@@ -412,8 +412,8 @@ proof-
       then have U:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_1_L5(5) assms(1,2) by auto
       {
         assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
-        then have "z\<^sub>1 = \<zero> \<or> z\<^sub>2 = \<zero>" using ints.int_has_no_zero_divs
-          unfolding HasNoZeroDivs_def using assms(1,2) unfolding ints_def by auto
+        then have "z\<^sub>1 = \<zero> \<or> z\<^sub>2 = \<zero>" using ints.int_has_no_zero_divs assms(1,2)
+          unfolding HasNoZeroDivs_def ints_def by auto
         with Q have Z:"z\<^sub>1 = \<zero>" using sless_def by auto
         from D have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
         moreover from Z have "powz(z\<^sub>1,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
@@ -454,8 +454,8 @@ proof-
       by auto
     {
       assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
-      then have "z\<^sub>1 = \<zero> \<or> z\<^sub>2 = \<zero>" using ints.int_has_no_zero_divs
-        unfolding HasNoZeroDivs_def using assms(1,2) unfolding ints_def by auto
+      then have "z\<^sub>1 = \<zero> \<or> z\<^sub>2 = \<zero>" using ints.int_has_no_zero_divs assms(1,2)
+        unfolding HasNoZeroDivs_def ints_def by auto
       with Q have Z:"z\<^sub>2 = \<zero>" using sless_def by auto
       from D have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
       moreover from Z have "powz(z\<^sub>2,powz(z\<^sub>1,x)) = \<one>" using int_power_zero_one(1) assms(1,3)
