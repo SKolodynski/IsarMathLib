@@ -158,13 +158,17 @@ proof -
     moreover have "domain(x \<times> {pow(z1,g)}) = x" by auto
     then have "Append(x \<times> {pow(z1,g)}, pow(z1,g)) = succ(x) \<times> {pow(z1,g)}"
       unfolding Append_def by auto
-    then have A:"Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = pow(succ(x),pow(z1,g))"
-        using group_nat_pow_def_alt(2) by (simp only:refl)
+    then have "Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = Fold(P,\<one>,succ(x) \<times> {pow(z1,g)})"
+      by auto moreover
+    have "pow(succ(x),pow(z1,g)) = Fold(P,\<one>,succ(x) \<times> {pow(z1,g)})" using
+      group_nat_pow_def_alt(2) by blast
+    ultimately have A:"Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = pow(succ(x),pow(z1,g))"
+        by auto
     have zg:"pow(z1,g)\<in>G" using assms(1,3) monoid.nat_mult_type by auto 
     then have f:"x\<times>{pow(z1,g)}:x\<rightarrow>G" unfolding Pi_def function_def by auto
     from fold_append(2) x(1) group_oper_fun f zg
     have "Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = 
-      pow(x,pow(z1,g))\<cdot>pow(z1,g)" using group0_2_L2 group_nat_pow_def_alt(2) by (simp only:groper_def)
+      pow(x,pow(z1,g))\<cdot>pow(z1,g)" using group0_2_L2 group_nat_pow_def_alt(2) groper_def by simp
     with A have "pow(succ(x),pow(z1,g)) = pow(x,pow(z1,g))\<cdot>pow(z1,g)" by auto
     with x(2) have "pow(succ(x),pow(z1,g)) = pow(z1 #* x,g)\<cdot>pow(z1,g)" by auto
     then have "pow(succ(x),pow(z1,g)) = pow((z1 #* x) #+ z1,g)"
