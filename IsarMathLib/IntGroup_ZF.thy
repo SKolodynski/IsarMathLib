@@ -140,7 +140,7 @@ qed
 
 text\<open>The power to a product is the power of the power.\<close>
 
-lemma(in group0) nat_pow_mult:
+lemma (in group0) nat_pow_mult:
   assumes "z1\<in>nat" "z2\<in>nat" "g\<in>G"
   shows "pow(z1#*z2,g) = pow(z2,pow(z1,g))"
 proof(rule nat_induct[of z2 "\<lambda>t. pow(z1#*t,g) = pow(t,pow(z1,g))"])
@@ -202,8 +202,8 @@ locale group_int0 = group0 +
   fixes isub (infixl "\<rs>" 69)
   defines isub_def [simp]: "a\<rs>b \<equiv> a\<ra> (\<rm> b)"
   
-  fixes imul (infixl "\<rmul>" 69)
-  defines imul_def [simp]: "a\<rmul>b \<equiv> IntegerMultiplication`\<langle>a,b\<rangle>"
+  fixes imul (infixl "\<cdot>\<^sub>Z" 69)
+  defines imul_def [simp]: "a\<cdot>\<^sub>Zb \<equiv> IntegerMultiplication`\<langle>a,b\<rangle>"
 
   fixes setneg ("\<sm> _" 72)
   defines setneg_def [simp]: "\<sm>A \<equiv> GroupInv(\<int>,IntegerAddition)``(A)"
@@ -384,91 +384,91 @@ text\<open>If $x$ is an element of the group and $z_1,z_2$ are nonnegative integ
   $x^{z_1z_2}=(x^{z_2})^{z_2}$.\<close>
 
 lemma (in group_int0) powz_mult: assumes "z\<^sub>1\<in>\<int>" "z\<^sub>2\<in>\<int>" "x\<in>G"
-  shows "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
+  shows "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
 proof-
-  have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>1\<rmul>z\<^sub>2),if \<zero>\<lsq>(z\<^sub>1\<rmul>z\<^sub>2) then x else x\<inverse>)"
+  have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>)"
     unfolding powz_def by auto moreover
-  have "zmagnitude(z\<^sub>1\<rmul>z\<^sub>2) = zmagnitude(z\<^sub>1)#*zmagnitude(z\<^sub>2)"
+  have "zmagnitude(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = zmagnitude(z\<^sub>1)#*zmagnitude(z\<^sub>2)"
     using ints.zmagnitud_mult[of z\<^sub>1 z\<^sub>2] assms(1,2) by auto
-  ultimately have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>1)#*zmagnitude(z\<^sub>2),if \<zero>\<lsq>(z\<^sub>1\<rmul>z\<^sub>2) then x else x\<inverse>)"
+  ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>1)#*zmagnitude(z\<^sub>2),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>)"
     by auto
-  then have A:"powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),if \<zero>\<lsq>(z\<^sub>1\<rmul>z\<^sub>2) then x else x\<inverse>))"
+  then have A:"powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>))"
     using nat_pow_mult assms(3) zmagnitude_type inverse_in_group by auto
   {
     assume C:"\<zero>\<lsq>z\<^sub>1"
-    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> \<zero>\<lsq>(z\<^sub>1\<rmul>z\<^sub>2)" using ints.Int_ZF_1_3_L2[of z\<^sub>1 z\<^sub>2]
+    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" using ints.Int_ZF_1_3_L2[of z\<^sub>1 z\<^sub>2]
       assms(1,2) by auto
     {
       assume P:"\<not>(\<zero>\<lsq>z\<^sub>2)"
       then have Q:"z\<^sub>2\<ls>\<zero>" using ints.Int_ZF_2_L19(4) assms(2) 
         ints.int_zero_one_are_int(1) by auto
       then have "z\<^sub>2\<lsq>\<zero>" using sless_def by auto
-      with C have "(z\<^sub>2\<rmul>z\<^sub>1)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12[of z\<^sub>2 z\<^sub>1] assms(1,2) by auto
-      then have U:"(z\<^sub>1\<rmul>z\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_1_L5(5) assms(1,2) by auto
+      with C have "(z\<^sub>2\<cdot>\<^sub>Zz\<^sub>1)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12[of z\<^sub>2 z\<^sub>1] assms(1,2) by auto
+      then have U:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_1_L5(5) assms(1,2) by auto
       {
-        assume D:"(z\<^sub>1\<rmul>z\<^sub>2) = \<zero>"
+        assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
         then have "z\<^sub>1 = \<zero> \<or> z\<^sub>2 = \<zero>" using ints.int_has_no_zero_divs
           unfolding HasNoZeroDivs_def using assms(1,2) unfolding ints_def by auto
         with Q have Z:"z\<^sub>1 = \<zero>" using sless_def by auto
-        from D have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
+        from D have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
         moreover from Z have "powz(z\<^sub>1,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
         then have "powz(z\<^sub>2,powz(z\<^sub>1,x)) = \<one>" using int_power_neutral assms(2) by auto
-        ultimately have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
+        ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
       } moreover
       {
-        assume D:"(z\<^sub>1\<rmul>z\<^sub>2) \<noteq> \<zero>"
-        with U have "(z\<^sub>1\<rmul>z\<^sub>2)\<ls>\<zero>" using sless_def by auto
-        then have "\<not>(\<zero>\<lsq>(z\<^sub>1\<rmul>z\<^sub>2))" using ints.neg_not_nonneg by auto
-        with A have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x\<inverse>))"
+        assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) \<noteq> \<zero>"
+        with U have "(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<ls>\<zero>" using sless_def by auto
+        then have "\<not>(\<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2))" using ints.neg_not_nonneg by auto
+        with A have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x\<inverse>))"
           by auto
-        then have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x)\<inverse>)"
+        then have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x)\<inverse>)"
           using nat_pow_inverse zmagnitude_type assms(3) by auto
-        then have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),if \<zero>\<lsq>z\<^sub>2 then pow(zmagnitude(z\<^sub>1),x) else pow(zmagnitude(z\<^sub>1),x)\<inverse>)"
+        then have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),if \<zero>\<lsq>z\<^sub>2 then pow(zmagnitude(z\<^sub>1),x) else pow(zmagnitude(z\<^sub>1),x)\<inverse>)"
           using P by auto
-        then have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,pow(zmagnitude(z\<^sub>1),x))"
+        then have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,pow(zmagnitude(z\<^sub>1),x))"
           unfolding powz_def by auto
-        with C have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
+        with C have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
           unfolding powz_def by auto
       }
-      ultimately have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by blast
+      ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by blast
     } moreover
     {
       assume P:"\<zero>\<lsq>z\<^sub>2"
-      with L have "\<zero>\<lsq>(z\<^sub>1\<rmul>z\<^sub>2)" by auto
-      with A have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x))" by auto
-      with P C have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
+      with L have "\<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" by auto
+      with A have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x))" by auto
+      with P C have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
         unfolding powz_def by auto
-    } ultimately have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
+    } ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
   } moreover
   {
     assume C:"\<not>(\<zero>\<lsq>z\<^sub>1)"
     then have Q:"z\<^sub>1\<ls>\<zero>" using ints.Int_ZF_2_L19(4) ints.int_zero_one_are_int(1)
       assms(1) by auto
     then have "z\<^sub>1\<lsq>\<zero>" unfolding sless_def by auto
-    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> (z\<^sub>1\<rmul>z\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12[of z\<^sub>1 z\<^sub>2]
+    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> (z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12[of z\<^sub>1 z\<^sub>2]
       by auto
     {
-      assume D:"(z\<^sub>1\<rmul>z\<^sub>2) = \<zero>"
+      assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
       then have "z\<^sub>1 = \<zero> \<or> z\<^sub>2 = \<zero>" using ints.int_has_no_zero_divs
         unfolding HasNoZeroDivs_def using assms(1,2) unfolding ints_def by auto
       with Q have Z:"z\<^sub>2 = \<zero>" using sless_def by auto
-      from D have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
+      from D have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = \<one>" using int_power_zero_one(1) assms(3) by auto
       moreover from Z have "powz(z\<^sub>2,powz(z\<^sub>1,x)) = \<one>" using int_power_zero_one(1) assms(1,3)
         powz_type by auto
-      ultimately have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
+      ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
     } moreover
     {
-      assume D:"(z\<^sub>1\<rmul>z\<^sub>2) \<noteq> \<zero>"
-      with L have "\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> (z\<^sub>1\<rmul>z\<^sub>2)\<ls>\<zero>" by auto
-      then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> \<not>(\<zero>\<lsq>(z\<^sub>1\<rmul>z\<^sub>2))" using ints.ls_not_leq by auto
+      assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) \<noteq> \<zero>"
+      with L have "\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> (z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<ls>\<zero>" by auto
+      then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> \<not>(\<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2))" using ints.ls_not_leq by auto
       from Q have "\<not>(\<zero>\<lsq>z\<^sub>1)" using ints.ls_not_leq by auto
       then have S:"powz(z\<^sub>1,x) = pow(zmagnitude(z\<^sub>1),x\<inverse>)" unfolding powz_def by auto
       {
         assume E:"\<zero>\<lsq>z\<^sub>2"
-        with L have A:"powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x\<inverse>))"
+        with L have A:"powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),x\<inverse>))"
           using A by auto
-        with S have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),powz(z\<^sub>1,x))" by auto
-        then have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" using E powz_def by auto
+        with S have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),powz(z\<^sub>1,x))" by auto
+        then have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" using E powz_def by auto
       } moreover
       {
         assume E:"\<not>(\<zero>\<lsq>z\<^sub>2)"
@@ -484,18 +484,18 @@ proof-
           by auto
         from E have "\<zero>\<lsq>\<rm>z\<^sub>2" using ints.Int_ZF_2_L19A(2) assms(2) by auto
         moreover from C have "\<zero>\<lsq>\<rm>z\<^sub>1" using ints.Int_ZF_2_L19A(2) assms(1) by auto
-        ultimately have "\<zero>\<lsq>((\<rm>z\<^sub>1)\<rmul>(\<rm>z\<^sub>2))"
+        ultimately have "\<zero>\<lsq>((\<rm>z\<^sub>1)\<cdot>\<^sub>Z(\<rm>z\<^sub>2))"
           using ints.Int_ZF_1_3_L2 ints.Int_ZF_1_1_L4(7) assms(1,2) by auto
-        then have "\<zero>\<lsq>(z\<^sub>1\<rmul>z\<^sub>2)" using ints.Int_ZF_1_1_L5(11)
+        then have "\<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" using ints.Int_ZF_1_1_L5(11)
           assms(1,2) by auto
-        with A have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = pow(zmagnitude(z\<^sub>2), pow(zmagnitude(z\<^sub>1),x))" by auto
-        with B have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
+        with A have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2), pow(zmagnitude(z\<^sub>1),x))" by auto
+        with B have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
       }
-      ultimately have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
+      ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
     }
-    ultimately have "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by blast
+    ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by blast
   } ultimately
-  show "powz(z\<^sub>1\<rmul>z\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
+  show "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2, powz(z\<^sub>1,x))" by auto
 qed
 
 
