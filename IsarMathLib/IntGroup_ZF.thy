@@ -144,7 +144,6 @@ lemma (in group0) nat_pow_mult:
   assumes "z1\<in>nat" "z2\<in>nat" "g\<in>G"
   shows "pow(z1#*z2,g) = pow(z2,pow(z1,g))"
 proof -
-  from assms(2) have A:"z2\<in>nat".
   have "z1#*0 = 0" by auto
   then have "pow(z1 #* 0,g) = pow(0,g)" by auto
   then have B:"pow(z1 #* 0,g) = pow(0,pow(z1,g))" by auto
@@ -178,7 +177,7 @@ proof -
   }
   then have "\<And>x. x\<in>nat \<Longrightarrow> pow(z1 #* x, g) = pow(x,pow(z1,g)) \<Longrightarrow> pow(z1 #* succ(x), g) = pow(succ(x),pow(z1,g))"
     by auto
-  with A B show ?thesis by (rule nat_induct)
+  with assms(2) B show ?thesis by (rule nat_induct)
 qed
 
 subsection\<open>Integer powers\<close>
