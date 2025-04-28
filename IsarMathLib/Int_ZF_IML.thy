@@ -1769,11 +1769,11 @@ proof-
     fix q t assume as:"q\<in>nat" "t\<in>nat"
     have "($# q) $* ($# t) = (intrel``{<q,0>}) $* (intrel``{<t,0>})"
       unfolding int_of_def using as by auto
-    hence "($# q) $* ($# t) = (intrel``{<(q #* t) #+ (0 #* 0),(q #* 0) #+ (0 #* t)>})"
+    then have "($# q) $* ($# t) = (intrel``{<(q #* t) #+ (0 #* 0),(q #* 0) #+ (0 #* t)>})"
       using zmult as(1) nat_0I as(2) nat_0I by auto
-    hence "($# q) $* ($# t) = intrel``{<(q #*t),0>}" using mult_0 mult_0_right
+    then have "($# q) $* ($# t) = intrel``{<(q #*t),0>}" using mult_0 mult_0_right
       add_0_right by auto
-    hence "($# q) $* ($# t) = $#(q #* t)" unfolding int_of_def by auto
+    then have "($# q) $* ($# t) = $#(q #* t)" unfolding int_of_def by auto
   }
   then have R:"\<And>q t. q\<in>nat \<Longrightarrow> t\<in>nat \<Longrightarrow> ($# q) $* ($# t) = $#(q #* t)" by auto
   {
