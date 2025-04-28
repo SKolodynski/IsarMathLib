@@ -172,7 +172,7 @@ proof -
     with A have "pow(succ(x),pow(z1,g)) = pow(x,pow(z1,g))\<cdot>pow(z1,g)" by auto
     with x(2) have "pow(succ(x),pow(z1,g)) = pow(z1 #* x,g)\<cdot>pow(z1,g)" by auto
     then have "pow(succ(x),pow(z1,g)) = pow((z1 #* x) #+ z1,g)"
-      using monoid.nat_mult_add[OF _ assms(1,3)] by auto
+      using monoid.nat_mult_add assms(1,3) by auto
     then have "pow(succ(x),pow(z1,g)) = pow(z1 #+(z1 #* x),g)" 
       using add_commute by auto
     then have "pow(z1#* succ(x), g) = pow(succ(x),pow(z1,g))"
