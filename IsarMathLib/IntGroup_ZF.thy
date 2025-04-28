@@ -269,7 +269,7 @@ definition (in group_int0) powz where
 
 text\<open>We bring in all the results about integers in \<open>int0\<close> with the notation included in \<open>group_int0\<close>.\<close>
 
-sublocale group_int0 < ints:int0 \<int> ia iminus isub imul setneg izero ione itwo 
+sublocale group_int0 < ints:int0 "\<int>" ia iminus isub imul setneg izero ione itwo 
   ithree nonnegative positive abs lesseq sless interval maxf minf oddext
 by auto
 
