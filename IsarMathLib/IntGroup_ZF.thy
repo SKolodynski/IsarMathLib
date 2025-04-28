@@ -158,8 +158,7 @@ proof -
     moreover have "domain(x \<times> {pow(z1,g)}) = x" by auto
     then have "Append(x \<times> {pow(z1,g)}, pow(z1,g)) = succ(x) \<times> {pow(z1,g)}"
       unfolding Append_def by auto
-    from subst[OF this, of "\<lambda>q. Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = Fold(P,\<one>,q)" ] 
-      have A:"Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = pow(succ(x),pow(z1,g))"
+    then have A:"Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = pow(succ(x),pow(z1,g))"
         using group_nat_pow_def_alt(2) by (simp only:refl)
     have zg:"pow(z1,g)\<in>G" using assms(1,3) monoid.nat_mult_type by auto 
     then have f:"x\<times>{pow(z1,g)}:x\<rightarrow>G" unfolding Pi_def function_def by auto
