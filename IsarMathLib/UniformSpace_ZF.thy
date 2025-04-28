@@ -56,7 +56,7 @@ definition
     "\<Phi> {is a uniformity on} X \<equiv>(\<Phi> {is a filter on} (X\<times>X))
     \<and> (\<forall>U\<in>\<Phi>. id(X) \<subseteq> U \<and> (\<exists>V\<in>\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> \<Phi>)"
 
-text\<open>Since the whole $XUniformities\times X$ is in a uniformity, a uniformity is never empty.\<close>
+text\<open>Since the whole $X\times X$ is in a uniformity, a uniformity is never empty.\<close>
 
 lemma uniformity_non_empty: assumes "\<Phi> {is a uniformity on} X"
     shows "\<Phi>\<noteq>\<emptyset>"
@@ -843,7 +843,7 @@ text\<open>Uniformities on a set $X$ are naturally ordered by the inclusion rela
   Turns out this order is complete: every nonempty set of uniformities has
   a least upper bound, i.e. a supremum. \<close>
 
-text\<open>We define \<open>UniformitiesOn(X)\<close> as the set of all uniformities on $X$. \<close>
+text\<open>We define \<open>Uniformities(X)\<close> as the set of all uniformities on $X$. \<close>
 
 definition 
   "Uniformities(X) \<equiv> {\<Phi> \<in> Pow(Pow(X\<times>X)). \<Phi> {is a uniformity on} X}"
