@@ -143,11 +143,11 @@ text\<open>The power to a product is the power of the power.\<close>
 lemma (in group0) nat_pow_mult:
   assumes "z1\<in>nat" "z2\<in>nat" "g\<in>G"
   shows "pow(z1#*z2,g) = pow(z2,pow(z1,g))"
-proof(rule nat_induct[of z2 "\<lambda>t. pow(z1#*t,g) = pow(t,pow(z1,g))"])
-  from assms(2) show "z2\<in>nat".
+proof -
+  from assms(2) have A:"z2\<in>nat".
   have "z1#*0 = 0" by auto
   then have "pow(z1 #* 0,g) = pow(0,g)" by auto
-  then show "pow(z1 #* 0,g) = pow(0,pow(z1,g))" by auto
+  then have B:"pow(z1 #* 0,g) = pow(0,pow(z1,g))" by auto
   {
     fix x assume x:"x\<in>nat" "pow(z1 #* x,g) = pow(x,pow(z1,g))"
     have "z1 #* succ(x) = z1#+ (z1#*x)" using mult_succ_right by auto
@@ -173,9 +173,12 @@ proof(rule nat_induct[of z2 "\<lambda>t. pow(z1#*t,g) = pow(t,pow(z1,g))"])
       using monoid.nat_mult_add[OF _ assms(1,3)] by auto
     then have "pow(succ(x),pow(z1,g)) = pow(z1 #+(z1 #* x),g)" 
       using add_commute by auto
-    then show "pow(z1#* succ(x), g) = pow(succ(x),pow(z1,g))"
+    then have "pow(z1#* succ(x), g) = pow(succ(x),pow(z1,g))"
       using mult_succ_right by auto
   }
+  then have "\<And>x. x\<in>nat \<Longrightarrow> pow(z1 #* x, g) = pow(x,pow(z1,g)) \<Longrightarrow> pow(z1 #* succ(x), g) = pow(succ(x),pow(z1,g))"
+    by auto
+  with A B show ?thesis by (rule nat_induct)
 qed
 
 subsection\<open>Integer powers\<close>
