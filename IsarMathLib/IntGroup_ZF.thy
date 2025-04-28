@@ -394,21 +394,21 @@ proof-
   have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>)"
     unfolding powz_def by auto moreover
   have "zmagnitude(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = zmagnitude(z\<^sub>1)#*zmagnitude(z\<^sub>2)"
-    using ints.zmagnitud_mult[of z\<^sub>1 z\<^sub>2] assms(1,2) by auto
+    using ints.zmagnitud_mult assms(1,2) by auto
   ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>1)#*zmagnitude(z\<^sub>2),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>)"
     by auto
   then have A:"powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = pow(zmagnitude(z\<^sub>2),pow(zmagnitude(z\<^sub>1),if \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) then x else x\<inverse>))"
     using nat_pow_mult assms(3) zmagnitude_type inverse_in_group by auto
   {
     assume C:"\<zero>\<lsq>z\<^sub>1"
-    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" using ints.Int_ZF_1_3_L2[of z\<^sub>1 z\<^sub>2]
+    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" using ints.Int_ZF_1_3_L2
       assms(1,2) by auto
     {
       assume P:"\<not>(\<zero>\<lsq>z\<^sub>2)"
       then have Q:"z\<^sub>2\<ls>\<zero>" using ints.Int_ZF_2_L19(4) assms(2) 
         ints.int_zero_one_are_int(1) by auto
       then have "z\<^sub>2\<lsq>\<zero>" using sless_def by auto
-      with C have "(z\<^sub>2\<cdot>\<^sub>Zz\<^sub>1)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12[of z\<^sub>2 z\<^sub>1] assms(1,2) by auto
+      with C have "(z\<^sub>2\<cdot>\<^sub>Zz\<^sub>1)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12 assms(1,2) by auto
       then have U:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_1_L5(5) assms(1,2) by auto
       {
         assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
@@ -450,7 +450,7 @@ proof-
     then have Q:"z\<^sub>1\<ls>\<zero>" using ints.Int_ZF_2_L19(4) ints.int_zero_one_are_int(1)
       assms(1) by auto
     then have "z\<^sub>1\<lsq>\<zero>" unfolding sless_def by auto
-    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> (z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12[of z\<^sub>1 z\<^sub>2]
+    then have L:"\<zero>\<lsq>z\<^sub>2 \<Longrightarrow> (z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>" using ints.Int_ZF_1_3_L12
       by auto
     {
       assume D:"(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
