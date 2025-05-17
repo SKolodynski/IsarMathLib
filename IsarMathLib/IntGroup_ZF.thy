@@ -352,7 +352,7 @@ proof -
     by blast
 qed
 
-text\<open>If $x$ is an element of the group and $z_1,z_2$ are nonnegative integers then
+text\<open>If $x$ is an element of the group and $z_1,z_2$ are integers then
   $x^{z_1 z_2}=(x^{z_2})^{z_2}$.\<close>
 
 lemma (in group_int0) powz_mult: assumes "z\<^sub>1\<in>\<int>" "z\<^sub>2\<in>\<int>" "x\<in>G"
@@ -366,8 +366,8 @@ proof -
     with assms(1,2) have L: "\<zero>\<lsq>z\<^sub>2 \<longrightarrow> \<zero>\<lsq>(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)" using ints.Int_ZF_1_3_L2
       by auto
     { assume P: "\<not>(\<zero>\<lsq>z\<^sub>2)"  
-      with assms(2) have Q: "z\<^sub>2\<ls>\<zero>" using ints.Int_ZF_2_L19(4) ints.int_zero_one_are_int(1) 
-        by auto
+      with assms(2) have Q: "z\<^sub>2\<ls>\<zero>" 
+        using ints.Int_ZF_2_L19(4) ints.int_zero_one_are_int(1) by auto
       with assms(1,2) C have U: "(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2)\<lsq>\<zero>"
         using ints.Int_ZF_1_3_L12 ints.Int_ZF_1_1_L5(5) by force
       { assume D: "(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2) = \<zero>"
@@ -376,15 +376,15 @@ proof -
         with assms D have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
           using int_power_zero_one(1) int_power_neutral by simp
       } moreover
-      { assume D: "z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2 \<noteq> \<zero>"
+      { assume "z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2 \<noteq> \<zero>"
         with assms(3) A C P U have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
           unfolding powz_def using ints.neg_not_nonneg nat_pow_inverse zmagnitude_type 
           by auto
       }
       ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by blast
     } moreover
-    { assume P: "\<zero>\<lsq>z\<^sub>2"
-      with A C L P have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
+    { assume "\<zero>\<lsq>z\<^sub>2"
+      with A C L have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))"
         unfolding powz_def by auto
     } ultimately have "powz(z\<^sub>1\<cdot>\<^sub>Zz\<^sub>2,x) = powz(z\<^sub>2,powz(z\<^sub>1,x))" by auto
   } moreover

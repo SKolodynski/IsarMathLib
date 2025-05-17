@@ -332,7 +332,7 @@ proof-
 qed
 
 text\<open>A base filter for a collection satisfies the filter base condition iff that collection
-is in fact a filter.\<close>
+  is in fact a filter.\<close>
 
 theorem basic_filter:
   assumes "C {is a base filter} \<FF>"
@@ -342,8 +342,8 @@ using assms basic_filter_1 basic_filter_2 by auto
 text\<open>A base for a filter determines a filter up to the underlying set.\<close>
 
 theorem base_unique_filter:
-  assumes "C {is a base filter} \<FF>1"and "C {is a base filter} \<FF>2"
-  shows "\<FF>1=\<FF>2 \<longleftrightarrow> \<Union>\<FF>1=\<Union>\<FF>2"
+  assumes "C {is a base filter} \<FF>\<^sub>1"and "C {is a base filter} \<FF>\<^sub>2"
+  shows "\<FF>\<^sub>1=\<FF>\<^sub>2 \<longleftrightarrow> \<Union>\<FF>\<^sub>1=\<Union>\<FF>\<^sub>2"
 using assms unfolding IsBaseFilter_def by auto
 
 text\<open>Suppose that we take any nonempty collection $C$ of subsets of some set $X$. 
@@ -389,66 +389,45 @@ qed
 text\<open>Every filter can be expanded by a set\<close>
 
 lemma extend_filter:
-  assumes "A\<in>Pow(X)" "\<FF>{is a filter on}X" "A\<noteq>0" "A\<notin>\<FF>" "X-A\<notin>\<FF>"
-  shows "\<exists>\<GG>. (\<GG>{is a filter on}X) \<and> A \<in> \<GG> \<and> \<FF> \<subseteq> \<GG>"
+  assumes "A\<in>Pow(X)" "\<FF> {is a filter on} X" "A\<noteq>0" "A\<notin>\<FF>" "X\<setminus>A\<notin>\<FF>"
+  shows "\<exists>\<GG>. (\<GG> {is a filter on} X) \<and> A\<in>\<GG> \<and> \<FF>\<subseteq>\<GG>"
 proof
-  have ne:"{F\<inter>A. F\<in>\<FF>}\<noteq>0" using assms(2,3) unfolding IsFilter_def by auto moreover
-  {
-    assume as:"0:{F\<inter>A. F\<in>\<FF>}"
-    then obtain F where F:"F\<in>\<FF>" "F\<inter>A = 0" by auto
-    then have f:"F \<subseteq> X-A" using assms(2) unfolding IsFilter_def by auto
-    have "\<forall>B\<in>\<FF>. \<forall>C\<in>Pow(X). B \<subseteq> C \<longrightarrow> C \<in> \<FF>" using assms(2) unfolding IsFilter_def by auto
-    with F(1) have "\<forall>C\<in>Pow(X). F \<subseteq> C \<longrightarrow> C \<in> \<FF>" by auto
-    with f have "X-A\<in>\<FF>" by auto
-    with assms(5) have False by auto
-  }
-  then have "0\<notin>{F\<inter>A. F\<in>\<FF>}" by auto moreover
-  {
-    fix x y assume as:"x\<in>{F\<inter>A. F\<in>\<FF>}" "y\<in>{F\<inter>A. F\<in>\<FF>}"
-    then obtain fx fy where ff:"x=fx\<inter>A" "y=fy\<inter>A" "fx:\<FF>" "fy:\<FF>" by auto
-    then have "x\<inter>y = fx\<inter>fy \<inter>A" by auto
-    moreover from ff(3,4) have "fx\<inter>fy:\<FF>" using assms(2) unfolding IsFilter_def by auto
-    ultimately have "x\<inter>y\<in>{F\<inter>A. F\<in>\<FF>}" using ff(1,2) by auto
-    then have "\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>x\<inter>y" by blast
-  }
-  then have "\<forall>Aa\<in>{F \<inter> A . F \<in> \<FF>}. \<forall>B\<in>{F \<inter> A . F \<in> \<FF>}. \<exists>D\<in>{F \<inter> A . F \<in> \<FF>}. D \<subseteq> Aa \<inter> B" by auto
-  ultimately have baseCond:"{F\<inter>A. F\<in>\<FF>}{satisfies the filter base condition}"
+  from assms(2,3) have ne: "{F\<inter>A. F\<in>\<FF>}\<noteq>\<emptyset>" unfolding IsFilter_def 
+    by auto 
+  moreover
+  { assume "\<emptyset> \<in> {F\<inter>A. F\<in>\<FF>}"
+    then obtain F where F: "F\<in>\<FF>" "F\<inter>A = \<emptyset>" by auto
+    with assms(2) have f: "F \<subseteq> X\<setminus>A" unfolding IsFilter_def by auto
+    from assms(2) F(1) have "\<forall>C\<in>Pow(X). F \<subseteq> C \<longrightarrow> C \<in> \<FF>"
+      unfolding IsFilter_def by auto
+    with assms(5) \<open>F \<subseteq> X\<setminus>A\<close> have False by auto
+  } hence "\<emptyset> \<notin> {F\<inter>A. F\<in>\<FF>}" by auto 
+  moreover
+  { fix x y assume as: "x \<in> {F\<inter>A. F\<in>\<FF>}" "y \<in> {F\<inter>A. F\<in>\<FF>}"
+    then obtain f\<^sub>x f\<^sub>y where ff: "x=f\<^sub>x\<inter>A" "y=f\<^sub>y\<inter>A" "f\<^sub>x\<in>\<FF>" "f\<^sub>y\<in>\<FF>" 
+      by auto
+    hence "x\<inter>y = f\<^sub>x\<inter>f\<^sub>y\<inter>A" by auto
+    with assms(2) ff have "\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>x\<inter>y" 
+      unfolding IsFilter_def by blast
+  } hence "\<forall>A\<^sub>a\<in>{F\<inter>A. F\<in>\<FF>}. \<forall>B\<in>{F\<inter>A. F\<in>\<FF>}. \<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>A\<^sub>a\<inter>B" 
+    by auto
+  ultimately have 
+    baseCond: "{F\<inter>A. F\<in>\<FF>} {satisfies the filter base condition}"
     unfolding SatisfiesFilterBase_def by blast
-  let ?F = "{AA\<in>Pow(X). (\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>AA)}"
-  have "\<And>C. C \<subseteq> Pow(X) \<Longrightarrow> C \<noteq> \<emptyset> \<Longrightarrow>
-    C {is a base filter} {AA\<in>Pow(X). (\<exists>D\<in>C. D\<subseteq>AA)}" 
-    using base_unique_filter_set1(1) by auto
-  then have rule:"{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X) \<Longrightarrow> {F\<inter>A. F\<in>\<FF>} \<noteq> \<emptyset> \<Longrightarrow>
-    {F\<inter>A. F\<in>\<FF>} {is a base filter} {AA\<in>Pow(X). (\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>AA)}" by blast
-  have p:"{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X)" using assms(2) unfolding IsFilter_def by auto
-  with ne have base:"{F\<inter>A. F\<in>\<FF>} {is a base filter} ?F"
-    using rule by auto
-  have "\<And>C. C \<subseteq> Pow(X) \<Longrightarrow>
-        C {satisfies the filter base condition} \<Longrightarrow>
-        \<Union>{A \<in> Pow(X) . \<exists>D\<in>C. D \<subseteq> A} = X" using base_unique_filter_set3(2)
-        by auto
-  then have "{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X) \<Longrightarrow> {F\<inter>A. F\<in>\<FF>} {satisfies the filter base condition}
-    \<Longrightarrow> \<Union>?F = X" by blast 
-  then have "\<Union>?F =X" using p baseCond by auto
-  with base baseCond have "?F{is a filter on}X" using basic_filter by auto moreover
-  {
-    have "X\<in>\<FF>" using assms(2) unfolding IsFilter_def by auto
-    then have "X\<inter>A: {F\<inter>A. F\<in>\<FF>}" by auto moreover
-    have "A = X\<inter>A" using assms(1) by auto
-    then have "X\<inter>A \<subseteq> A" by auto ultimately
-    have "\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D \<subseteq> A" by auto
-    with assms(1) have "A\<in>?F" by auto
-  }
-  then have "A\<in>?F" by auto moreover
-  {
-    fix f assume f:"f:\<FF>"
-    then have "f\<inter>A\<in>{F\<inter>A. F\<in>\<FF>}" by auto moreover
-    have "f\<inter>A \<subseteq> f" by auto 
-    ultimately have "\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D \<subseteq> f" by blast
-    with f assms(2) have "f\<in>?F" unfolding IsFilter_def by auto
-  }
-  then have "\<FF> \<subseteq> ?F" by auto
-  ultimately show "(?F{is a filter on}X) \<and> A \<in> ?F \<and> \<FF> \<subseteq> ?F" by auto
+  let ?F = "{A\<^sub>A\<in>Pow(X). (\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>A\<^sub>A)}"
+  have rule: "{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X) \<and>  {F\<inter>A. F\<in>\<FF>} \<noteq> \<emptyset> \<longrightarrow>
+    ({F\<inter>A. F\<in>\<FF>} {is a base filter} {A\<^sub>A\<in>Pow(X). (\<exists>D\<in>{F\<inter>A. F\<in>\<FF>}. D\<subseteq>A\<^sub>A)})"
+    using base_unique_filter_set1(1) by blast
+  from assms(2) have p: "{F\<inter>A. F\<in>\<FF>} \<subseteq> Pow(X)" unfolding IsFilter_def 
+    by auto
+  with ne rule have base: "{F\<inter>A. F\<in>\<FF>} {is a base filter} ?F" by auto
+  have "{F\<inter>A. F\<in>\<FF>}\<subseteq>Pow(X) \<and> ({F\<inter>A. F\<in>\<FF>} {satisfies the filter base condition})
+      \<longrightarrow> \<Union>?F = X"
+    using base_unique_filter_set3(2) by blast
+  with p base baseCond have "?F {is a filter on} X" using basic_filter by auto
+  moreover from assms(1,2) have "A\<in>?F" and "\<FF>\<subseteq>?F" unfolding IsFilter_def 
+    by auto
+  ultimately show "(?F {is a filter on} X) \<and> A \<in> ?F \<and> \<FF> \<subseteq> ?F" by auto
 qed
 
 text\<open>The convergence for filters is much easier concept to write. Given a topology
