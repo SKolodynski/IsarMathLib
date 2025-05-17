@@ -73,14 +73,14 @@ text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, the
 lemma (in group0) nat_pow_cancel_less: assumes "n\<in>nat" "k\<le>n" "x\<in>G"
   shows "pow(n,x)\<cdot>pow(k,x\<inverse>) = pow(n #- k,x)"
 proof -
-  from assms have 
-    "k\<in>nat" "n #- k \<in> nat" "pow((n #- k),x) \<in> G" "pow(k,x) \<in> G" "pow(k,x\<inverse>) \<in> G"
-    using leq_nat_is_nat diff_type monoid.nat_mult_type inverse_in_group 
-    by simp_all
+  from assms have "k\<in>nat" "n #- k \<in> nat" and 
+    "pow((n #- k),x)\<in>G" "pow(k,x)\<in>G" "pow(k,x\<inverse>)\<in>G"
+    using leq_nat_is_nat diff_type monoid.nat_mult_type 
+      inverse_in_group by simp_all
   from assms(3) \<open>k\<in>nat\<close> \<open>n #- k \<in> nat\<close> have 
     "pow((n #- k) #+ k,x) = pow((n #- k),x)\<cdot>pow(k,x)"
     using monoid.nat_mult_add by simp
-  with assms(1,2) \<open>pow((n #- k),x) \<in> G\<close> \<open>pow(k,x) \<in> G\<close> \<open>pow(k,x\<inverse>) \<in> G\<close> 
+  with assms(1,2) \<open>pow((n #- k),x)\<in>G\<close> \<open>pow(k,x)\<in>G\<close> \<open>pow(k,x\<inverse>)\<in>G\<close> 
     have "pow(n,x)\<cdot>pow(k,x\<inverse>) = pow(n #- k,x)\<cdot>(pow(k,x)\<cdot>pow(k,x\<inverse>))"
       using add_diff_inverse2 group_oper_assoc by simp
   with assms(3) \<open>k\<in>nat\<close> \<open>pow((n #- k),x) \<in> G\<close> show ?thesis
@@ -104,14 +104,14 @@ text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, the
 lemma (in group0) nat_pow_cancel_more: assumes "n\<in>nat" "k\<le>n" "x\<in>G"
   shows "pow(k,x\<inverse>)\<cdot>pow(n,x) = pow(n #- k,x)"
 proof -
-  from assms have
-    "k\<in>nat" "n #- k \<in> nat" "pow((n #- k),x) \<in> G" "pow(k,x) \<in> G" "pow(k,x\<inverse>) \<in> G"
+  from assms have "k\<in>nat" "n #- k \<in> nat" and 
+    "pow((n #- k),x) \<in> G" "pow(k,x) \<in> G" "pow(k,x\<inverse>) \<in> G"
     using leq_nat_is_nat diff_type monoid.nat_mult_type inverse_in_group 
       by simp_all
   from assms(3) \<open>k\<in>nat\<close> \<open>n #- k \<in> nat\<close> have 
     "pow(k #+ (n #- k),x) = pow(k,x)\<cdot>pow((n #- k),x)"
     using monoid.nat_mult_add by simp
-  with assms(1,2) \<open>pow((n #- k),x) \<in> G\<close> \<open>pow(k,x) \<in> G\<close> \<open>pow(k,x\<inverse>) \<in> G\<close> 
+  with assms(1,2) \<open>pow((n #- k),x)\<in>G\<close> \<open>pow(k,x)\<in>G\<close> \<open>pow(k,x\<inverse>)\<in>G\<close> 
   have "pow(k,x\<inverse>)\<cdot>pow(n,x) = (pow(k,x\<inverse>)\<cdot>pow(k,x))\<cdot>pow(n #- k,x)"
     using add_diff_inverse group_oper_assoc by simp
   with assms(3) \<open>k\<in>nat\<close> \<open>pow((n #- k),x) \<in> G\<close> show ?thesis
@@ -141,9 +141,9 @@ proof -
       by (rule add_mult_distrib_left)
     then have "pow(z\<^sub>1 #* (k #+ 1),g) = pow((z\<^sub>1 #* k) #+ (z\<^sub>1 #* 1),g)"
       by (rule same_constr)
-    with assms(1,3) \<open>k\<in>nat\<close> I have "pow(z\<^sub>1 #* (k #+ 1),g) = pow(k #+ 1,pow(z\<^sub>1,g))"
-      using mult_1_right mult_type nat_pow_sum_exps nat_pow_type nat_pow_add_one 
-      by simp 
+    with assms(1,3) \<open>k\<in>nat\<close> I have "pow(z\<^sub>1 #* (k #+ 1),g)=pow(k #+ 1,pow(z\<^sub>1,g))"
+      using mult_1_right mult_type nat_pow_sum_exps 
+        nat_pow_type nat_pow_add_one by simp 
   } hence "\<forall>k\<in>nat. pow(z\<^sub>1 #* k,g) = pow(k,pow(z\<^sub>1,g)) \<longrightarrow> 
             pow(z\<^sub>1 #* (k #+ 1),g) = pow(k #+ 1,pow(z\<^sub>1,g))"
     by simp
@@ -433,8 +433,9 @@ text\<open>A group element raised to power $-1$ is the inverse of that group ele
 
 lemma (in group_int0) inpt_power_neg_one: assumes "x\<in>G"
   shows "powz(\<rm>\<one>\<^sub>Z,x) = x\<inverse>"
-  using assms ints.neg_not_nonneg ints.neg_one_less_zero ints.zmag_opposite_same(2) 
-    ints.Int_ZF_1_L8A(2) ints.zmag_zero_one(2) inverse_in_group monoid.nat_mult_one 
+  using assms ints.neg_not_nonneg ints.neg_one_less_zero 
+    ints.zmag_opposite_same(2) ints.Int_ZF_1_L8A(2) ints.zmag_zero_one(2) 
+    inverse_in_group monoid.nat_mult_one 
   unfolding powz_def by simp
 
 text\<open>Increasing the (integer) power by one is the same as multiplying by the group element.\<close>
@@ -538,7 +539,7 @@ text\<open>For any integer $n$ the mapping $x\mapsto x^n$ maps $G$ into $G$ and 
 
 theorem (in abgroup_int0) powz_end: assumes "n\<in>\<int>"
   defines "h \<equiv> {\<langle>x,powz(n,x)\<rangle>. x\<in>G}"
-  shows "h:G\<rightarrow>G" "Homomor(h,G,P,G,P)" "h \<in> End(G,P)"
+  shows "h:G\<rightarrow>G"  "Homomor(h,G,P,G,P)"  "h \<in> End(G,P)"
 proof -
   from assms show "h:G\<rightarrow>G" using powz_type ZF_fun_from_total by simp 
   with assms have "IsMorphism(G,P,P,h)"

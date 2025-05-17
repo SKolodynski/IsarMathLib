@@ -309,8 +309,8 @@ proof -
                 by simp
               moreover from assms \<open>y\<in>X\<close> \<open>V\<in>\<Phi>\<close> have "V``{y} \<in> ?\<M>`(y)" 
                 using neigh_filt_fun by auto      
-              moreover from \<open>?\<M>:X\<rightarrow>Pow(Pow(X))\<close> \<open>x\<in>X\<close> \<open>N \<in> ?\<M>`(x)\<close> have "N \<in> Pow(X)" 
-                using apply_funtype by blast 
+              moreover from \<open>?\<M>:X\<rightarrow>Pow(Pow(X))\<close> \<open>x\<in>X\<close> \<open>N \<in> ?\<M>`(x)\<close> 
+                have "N \<in> Pow(X)" using apply_funtype by blast 
               moreover from \<open>V O V \<subseteq> U\<close> \<open>y\<in>?W\<close> have 
                 "V``{y} \<subseteq> (V O V)``{x}" and "(V O V)``{x} \<subseteq> U``{x}"
                 by auto 
@@ -796,7 +796,7 @@ proof -
     ultimately show "?\<Phi> {is a filter on} (X\<times>X)"
       unfolding IsFilter_def by simp
   qed
-  moreover have "\<forall>U\<in>?\<Phi>. id(X) \<subseteq> U \<and> (\<exists>V\<in>?\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> ?\<Phi>"
+  moreover have "\<forall>U\<in>?\<Phi>. id(X)\<subseteq>U \<and> (\<exists>V\<in>?\<Phi>. V O V \<subseteq> U) \<and> converse(U)\<in>?\<Phi>"
   proof -
     { fix U assume "U\<in>?\<Phi>"
       then obtain B where "B\<in>\<BB>" and "B\<subseteq>U"
@@ -809,11 +809,11 @@ proof -
       with \<open>\<BB>\<subseteq>Pow(X\<times>X)\<close> have "V\<in>?\<Phi>" using superset_gen by auto
       with \<open>V O V \<subseteq> B\<close> \<open>B\<subseteq>U\<close> have "\<exists>V\<in>?\<Phi>. V O V \<subseteq> U" by blast
       moreover 
-      from assms(2) \<open>B\<in>\<BB>\<close> \<open>B\<subseteq>U\<close> obtain W where "W\<in>\<BB>" and "W \<subseteq> converse(U)"
+      from assms(2) \<open>B\<in>\<BB>\<close> \<open>B\<subseteq>U\<close> obtain W where "W\<in>\<BB>" and "W\<subseteq>converse(U)"
         using uniformity_base_props(3) by blast
       with \<open>U\<in>?\<Phi>\<close> have "converse(U) \<in> ?\<Phi>" unfolding Supersets_def 
         by auto
-      ultimately have "id(X) \<subseteq> U \<and> (\<exists>V\<in>?\<Phi>. V O V \<subseteq> U) \<and> converse(U) \<in> ?\<Phi>"
+      ultimately have "id(X)\<subseteq>U \<and> (\<exists>V\<in>?\<Phi>. V O V \<subseteq> U) \<and> converse(U)\<in>?\<Phi>"
         by simp
     } thus ?thesis by simp
   qed
@@ -904,14 +904,16 @@ proof -
       unfolding IsFilter_def OrderOnUniformities_def InclusionOn_def
       by simp
   } with  \<open>{X\<times>X} \<in> ?\<UU>\<close> show "HasAminimum(?r,?\<UU>)" and "Minimum(?r,?\<UU>) = {X\<times>X}"
-    unfolding HasAminimum_def using Order_ZF_4_L15 ord_unif_antisymm by auto
+    unfolding HasAminimum_def using Order_ZF_4_L15 ord_unif_antisymm 
+    by auto
   { fix \<Phi> assume "\<Phi> \<in> ?\<UU>"
     then have "\<Phi> \<subseteq> ?M" unfolding IsUniformity_def Uniformities_def 
       by auto
     with \<open>?M\<in>?\<UU>\<close> \<open>\<Phi>\<in>?\<UU>\<close>  have "\<langle>\<Phi>,?M\<rangle> \<in> ?r"
       unfolding OrderOnUniformities_def InclusionOn_def by simp
   } with  \<open>?M\<in>?\<UU>\<close> show "HasAmaximum(?r,?\<UU>)" and "Maximum(?r,?\<UU>) = ?M"
-    unfolding HasAmaximum_def using Order_ZF_4_L14 ord_unif_antisymm by auto
+    unfolding HasAmaximum_def using Order_ZF_4_L14 ord_unif_antisymm 
+    by auto
 qed
 
 text\<open>Given a set of uniformities $\mathcal{U}$ on $X$ we define a collection of subsets of $X$ 
@@ -927,7 +929,7 @@ definition "LUB_UnifBase(\<U>) = {\<Inter>M. M \<in> FinPow(\<Union>\<U>)\<setmi
 text\<open>For any two sets in the least upper bound base there is a third one contained in both.\<close>
 
 lemma lub_unif_base_1st_cond: 
-  assumes "\<U>\<subseteq>Uniformities(X)" "U\<^sub>1 \<in> LUB_UnifBase(\<U>)" "U\<^sub>2 \<in> LUB_UnifBase(\<U>)"
+  assumes "\<U>\<subseteq>Uniformities(X)"  "U\<^sub>1 \<in> LUB_UnifBase(\<U>)"  "U\<^sub>2 \<in> LUB_UnifBase(\<U>)"
   shows "\<exists>U\<^sub>3\<in>LUB_UnifBase(\<U>). U\<^sub>3\<subseteq>U\<^sub>1\<inter>U\<^sub>2"
 proof -
   let ?\<F> = "FinPow(\<Union>\<U>)\<setminus>{\<emptyset>}"
@@ -1061,7 +1063,8 @@ proof -
   from assms have "?\<Psi> \<in> Uniformities(X)"
     unfolding LUB_Unif_def using lub_unif_base_base(2) unif_in_unifs
     by blast
-  from assms(2,3) have "\<Phi> \<in> Uniformities(X)" and "\<Phi> {is a uniformity on} X"
+  from assms(2,3) have 
+    "\<Phi> \<in> Uniformities(X)" and "\<Phi> {is a uniformity on} X"
     unfolding Uniformities_def by auto
   { fix E assume "E\<in>\<Phi>"
     with assms(3) have "E \<in> LUB_UnifBase(\<U>)"
@@ -1075,13 +1078,14 @@ proof -
     unfolding OrderOnUniformities_def InclusionOn_def by simp
 qed
 
-text\<open>An upper bound (in the order defined by inclusion relation) of a nonempty collection of 
+text\<open>Any upper bound (in the order defined by inclusion relation) of a nonempty collection of 
   uniformities $\mathcal{U}$ on a nonempty set $X$ is greater or equal (in that order) 
   than \<open>LUB_Unif(X,\<U>)\<close>. Together with \<open>lub_unif_upper_bound\<close> it means that \<open>LUB_Unif(X,\<U>)\<close>
   is indeed the least upper bound of $\mathcal{U}$.\<close>
 
 lemma lub_unif_lub: 
-  assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"  "\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,\<Psi>\<rangle> \<in> OrderOnUniformities(X)"
+  assumes "X\<noteq>\<emptyset>"  "\<U>\<subseteq>Uniformities(X)"  "\<U>\<noteq>\<emptyset>"  and 
+    "\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,\<Psi>\<rangle> \<in> OrderOnUniformities(X)"
   shows "\<langle>LUB_Unif(X,\<U>),\<Psi>\<rangle> \<in> OrderOnUniformities(X)"
 proof -
   from assms(3,4) have "\<Psi> \<in> Uniformities(X)" 
@@ -1089,7 +1093,8 @@ proof -
   then have "\<Psi> {is a filter on} (X\<times>X)" 
     unfolding Uniformities_def IsUniformity_def by simp
   from assms(4) have "FinPow(\<Union>\<U>)\<setminus>{\<emptyset>} \<subseteq> FinPow(\<Psi>)\<setminus>{\<emptyset>}"
-    unfolding OrderOnUniformities_def InclusionOn_def FinPow_def by auto 
+    unfolding OrderOnUniformities_def InclusionOn_def FinPow_def 
+    by auto 
   with \<open>\<Psi> {is a filter on} (X\<times>X)\<close> have "LUB_UnifBase(\<U>) \<subseteq> \<Psi>"
     using filter_fin_inter_closed unfolding LUB_UnifBase_def by auto
   with \<open>\<Psi> {is a filter on} (X\<times>X)\<close> have "LUB_Unif(X,\<U>) \<subseteq> \<Psi>"
@@ -1113,9 +1118,9 @@ proof -
     using ord_unif_antisymm lub_unif_upper_bound by simp_all
   from assms have I: "\<forall>\<Psi>. (\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,\<Psi>\<rangle> \<in> ?r) \<longrightarrow> \<langle>?S,\<Psi>\<rangle> \<in> ?r"
     using lub_unif_lub by simp
-  with assms(3) \<open>antisym(?r)\<close>  \<open>\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,?S\<rangle> \<in> ?r\<close> show "HasAsupremum(?r,\<U>)" 
+  with assms(3) \<open>antisym(?r)\<close> \<open>\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,?S\<rangle> \<in> ?r\<close> show "HasAsupremum(?r,\<U>)" 
     unfolding HasAsupremum_def using Order_ZF_5_L5(1) by blast
-  from assms(3) \<open>antisym(?r)\<close>  \<open>\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,?S\<rangle> \<in> ?r\<close> I
+  from assms(3) \<open>antisym(?r)\<close> \<open>\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,?S\<rangle> \<in> ?r\<close> I
   show "?S = Supremum(?r,\<U>)" using Order_ZF_5_L5(2) by blast
 qed
 
