@@ -442,7 +442,7 @@ lemma nat_not0_succ: assumes "n\<in>nat" "n\<noteq>0"
   using assms Nat_ZF_1_L3 succ_add_one(1) by simp
   
 text\<open>A version of induction on natural numbers that uses the $n+1$ notation
-  instead of $\<open>succ(n)\<close>$.\<close>
+  instead of \<open>succ(n)\<close>.\<close>
 
 lemma ind_on_nat1: 
   assumes "n\<in>nat" and "P(0)" and "\<forall>k\<in>nat. P(k)\<longrightarrow>P(k #+ 1)"

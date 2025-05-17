@@ -1260,12 +1260,27 @@ lemma (in group0) group_nat_pow_def_alt:
   shows "pow(n,x) = \<Prod>n\<times>{x}" and "pow(n,x) =  Fold(P,\<one>,n\<times>{x})"
   using monoid.monoid_nat_mult_def_alt by simp_all
 
-text\<open> $x$ raised to a power $n+1$ can be written as $x\cdot x^n$ or $(x^n)\cdot x$.
+text\<open>A natural power of an element of the group is an element of the group.
+  This is really lemma \<open>nat_mult_type\<close> from \<open>Monoid_ZF_1\<close> theory written in multiplicative 
+  notation.\<close>
+
+lemma (in group0) nat_pow_type: assumes "n\<in>nat" "x\<in>G"
+  shows "pow(n,x) \<in> G" using assms monoid.nat_mult_type by simp
+
+text\<open> $x$ raised to the power $n+1$ can be written as $x\cdot x^n$ or $(x^n)\cdot x$.
   This is just lemma \<open>nat_mult_add_one\<close> from \<open>Monoid_ZF_1\<close> theory written in multiplicative 
   notation. \<close>
 
 lemma (in group0) nat_pow_add_one: assumes "n\<in>nat" "x\<in>G"
   shows "pow(n #+ 1,x) = pow(n,x)\<cdot>x" and "pow(n #+ 1,x) = x\<cdot>pow(n,x)"
   using assms monoid.nat_mult_add_one by simp_all
+
+text\<open> $x$ raised to the power $n+m$ is the product of powers $x^n$ and $x^m$.
+  This is really lemma \<open>nat_mult_add\<close> from \<open>Monoid_ZF_1\<close> theory written in multiplicative 
+  notation.\<close>
+
+lemma (in group0) nat_pow_sum_exps: assumes "n\<in>nat" "m\<in>nat" "x\<in>G"
+  shows "pow(n #+ m,x) = pow(n,x)\<cdot>pow(m,x)"
+  using assms monoid.nat_mult_add by simp
 
 end

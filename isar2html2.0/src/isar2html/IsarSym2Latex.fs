@@ -65,6 +65,7 @@ namespace iml
                  (" O ", "\\circ ")
                  ("\\<ad>", " + ")
                  ("\\<and>", "\\wedge ")
+                 ("\\<And>", "\\bigwedge ")
                  ("\\<approx>", "\\approx ")
                  ("\\<bar>","\\vert ")
                  ("\\<bullet>", "\\bullet ")

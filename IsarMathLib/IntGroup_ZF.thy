@@ -49,22 +49,14 @@ text\<open>The integer power is defined in terms of natural powers of an element
 text\<open>The natural power of an element's inverse is the inverse of the power of the element.\<close>
 
 lemma (in group0) nat_pow_inverse: assumes "n\<in>nat" "x\<in>G"
-  shows "pow(n,x\<inverse>) = pow(n,x)\<inverse>"
+  shows "pow(n,x\<inverse>) = (pow(n,x))\<inverse>"
 proof -
-  from assms(1) have "n\<in>nat" and "pow(0,x\<inverse>) = pow(0,x)\<inverse>"
+  from assms(1) have "n\<in>nat" and "pow(0,x\<inverse>) = (pow(0,x))\<inverse>"
     using monoid.nat_mult_zero group_inv_of_one by auto
-  moreover
-  {
-    fix k assume hyp:"k\<in>nat" "pow(k,x\<inverse>) = pow(k,x)\<inverse>"
-    have "pow(k#+1,x\<inverse>) = pow(k,x\<inverse>)\<cdot>x\<inverse>" using nat_pow_add_one(1) hyp(1)
-      inverse_in_group assms(2) by auto
-    then have "pow(k#+1,x\<inverse>) = pow(k,x)\<inverse>\<cdot>x\<inverse>" using hyp(2) by auto
-    then have "pow(k#+1,x\<inverse>) = (x\<cdot>pow(k,x))\<inverse>" using group_inv_of_two
-      assms(2) monoid.nat_mult_type hyp(1) by auto
-    then have "pow(k#+1,x\<inverse>) = pow(k#+1,x)\<inverse>" using nat_pow_add_one(2)
-      hyp(1) assms(2) by auto
-  }
-  then have "\<forall>k\<in>nat. pow(k,x\<inverse>) = pow(k,x)\<inverse> \<longrightarrow> pow(k#+1,x\<inverse>) = pow(k#+1,x)\<inverse>" by auto
+  moreover from assms(2) have 
+    "\<forall>k\<in>nat. pow(k,x\<inverse>) = (pow(k,x))\<inverse> \<longrightarrow> pow(k #+ 1,x\<inverse>) = (pow(k #+ 1,x))\<inverse>"
+    using nat_pow_add_one inverse_in_group group_inv_of_two monoid.nat_mult_type
+      by simp
   ultimately show ?thesis by (rule ind_on_nat1)
 qed
 
@@ -74,7 +66,6 @@ text\<open>The natural power of $x$ multiplied by the same power of $x^{-1}$ can
 corollary (in group0) nat_pow_inv_cancel: assumes "n\<in>nat" "x\<in>G"
   shows "pow(n,x)\<cdot>pow(n,x\<inverse>) = \<one>" "pow(n,x\<inverse>)\<cdot>pow(n,x) = \<one>"
   using nat_pow_inverse assms group0_2_L6 monoid.nat_mult_type assms by auto
-
 
 text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, then
   $x^n\cdot (x^{-1})^k = x^(k-n)$. \<close>
@@ -141,46 +132,22 @@ qed
 text\<open>The power to a product is the power of the power.\<close>
 
 lemma (in group0) nat_pow_mult:
-  assumes "z1\<in>nat" "z2\<in>nat" "g\<in>G"
-  shows "pow(z1#*z2,g) = pow(z2,pow(z1,g))"
+  assumes "z\<^sub>1\<in>nat" "z\<^sub>2\<in>nat" "g\<in>G"
+  shows "pow(z\<^sub>1 #* z\<^sub>2,g) = pow(z\<^sub>2,pow(z\<^sub>1,g))"
 proof -
-  have "z1#*0 = 0" by auto
-  then have "pow(z1 #* 0,g) = pow(0,g)" by auto
-  then have B:"pow(z1 #* 0,g) = pow(0,pow(z1,g))" by auto
-  {
-    fix x assume x:"x\<in>nat" "pow(z1 #* x,g) = pow(x,pow(z1,g))"
-    have "z1 #* succ(x) = z1#+ (z1#*x)" using mult_succ_right by auto
-    then have "pow(z1 #* succ(x),g) = pow(z1#+ (z1#*x),g)" by auto
-    then have "pow(z1 #* succ(x),g) = pow(z1,g)\<cdot>pow(z1#*x,g)"
-      using monoid.nat_mult_add assms(1) assms(3) by auto
-    with x(2) have "pow(z1 #* succ(x),g) = pow(z1,g)\<cdot>pow(x,pow(z1,g))"
-      by auto
-    moreover have "domain(x \<times> {pow(z1,g)}) = x" by auto
-    then have "Append(x \<times> {pow(z1,g)}, pow(z1,g)) = succ(x) \<times> {pow(z1,g)}"
-      unfolding Append_def by auto
-    then have "Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = Fold(P,\<one>,succ(x) \<times> {pow(z1,g)})"
-      by auto moreover
-    have "pow(succ(x),pow(z1,g)) = Fold(P,\<one>,succ(x) \<times> {pow(z1,g)})" using
-      group_nat_pow_def_alt(2) by blast
-    ultimately have A:"Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = pow(succ(x),pow(z1,g))"
-        by auto
-    have zg:"pow(z1,g)\<in>G" using assms(1,3) monoid.nat_mult_type by auto 
-    then have f:"x\<times>{pow(z1,g)}:x\<rightarrow>G" unfolding Pi_def function_def by auto
-    from fold_append(2) x(1) group_oper_fun f zg
-    have "Fold(P,\<one>,Append(x \<times> {pow(z1,g)}, pow(z1,g))) = 
-      pow(x,pow(z1,g))\<cdot>pow(z1,g)" using group0_2_L2 group_nat_pow_def_alt(2) groper_def by simp
-    with A have "pow(succ(x),pow(z1,g)) = pow(x,pow(z1,g))\<cdot>pow(z1,g)" by auto
-    with x(2) have "pow(succ(x),pow(z1,g)) = pow(z1 #* x,g)\<cdot>pow(z1,g)" by auto
-    then have "pow(succ(x),pow(z1,g)) = pow((z1 #* x) #+ z1,g)"
-      using monoid.nat_mult_add assms(1,3) by auto
-    then have "pow(succ(x),pow(z1,g)) = pow(z1 #+(z1 #* x),g)" 
-      using add_commute by auto
-    then have "pow(z1#* succ(x), g) = pow(succ(x),pow(z1,g))"
-      using mult_succ_right by auto
-  }
-  then have "\<And>x. x\<in>nat \<Longrightarrow> pow(z1 #* x, g) = pow(x,pow(z1,g)) \<Longrightarrow> pow(z1 #* succ(x), g) = pow(succ(x),pow(z1,g))"
-    by auto
-  with assms(2) B show ?thesis by (rule nat_induct)
+  have B: "pow(z\<^sub>1 #* 0,g) = pow(0,pow(z\<^sub>1,g))" by simp
+  { fix k assume "k\<in>nat" and I: "pow(z\<^sub>1 #* k,g) = pow(k,pow(z\<^sub>1,g))" 
+    have "z\<^sub>1 #* (k #+ 1) = (z\<^sub>1 #* k) #+ (z\<^sub>1 #* 1)"
+      by (rule add_mult_distrib_left)
+    then have "pow(z\<^sub>1 #* (k #+ 1),g) = pow((z\<^sub>1 #* k) #+ (z\<^sub>1 #* 1),g)"
+      by (rule apply_fun_eq)
+    with assms(1,3) \<open>k\<in>nat\<close> I have "pow(z\<^sub>1 #* (k #+ 1),g) = pow(k #+ 1,pow(z\<^sub>1,g))"
+      using mult_1_right mult_type nat_pow_sum_exps nat_pow_type nat_pow_add_one 
+      by simp 
+  } hence "\<forall>k\<in>nat. pow(z\<^sub>1 #* k,g) = pow(k,pow(z\<^sub>1,g)) \<longrightarrow> 
+            pow(z\<^sub>1 #* (k #+ 1),g) = pow(k #+ 1,pow(z\<^sub>1,g))"
+    by simp
+  with assms(2) B show ?thesis by (rule ind_on_nat1)
 qed
 
 subsection\<open>Integer powers\<close>

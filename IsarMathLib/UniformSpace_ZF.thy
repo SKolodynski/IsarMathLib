@@ -848,7 +848,7 @@ text\<open>We define \<open>Uniformities(X)\<close> as the set of all uniformiti
 definition 
   "Uniformities(X) \<equiv> {\<Phi> \<in> Pow(Pow(X\<times>X)). \<Phi> {is a uniformity on} X}"
 
-text\<open>If $Phi$ is a uniformity on $X$, then $Phi$ is a collection of subsets of $X\times X$,
+text\<open>If $\Phi$ is a uniformity on $X$, then $\Phi$ is a collection of subsets of $X\times X$,
   hence it's a member of \<open>Uniformities(X)\<close>.\<close>
 
 lemma unif_in_unifs: assumes "\<Phi> {is a uniformity on} X"

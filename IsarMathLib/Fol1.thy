@@ -195,6 +195,11 @@ proof -
   with A2 show "\<langle>y,x\<rangle> \<in> r" by blast
 qed
 
+text\<open>Applying a transformation to equal values yields equal results.\<close>
+
+lemma apply_fun_eq: assumes "x=y" shows "\<phi>(x) = \<phi>(y)"
+  using assms by simp
+
 (* In Isabelle/ZF conjunction associates to the right!.
 lemma test: assumes A1: "P" "Q\<and>R"
   shows "P\<and>Q\<and>R"
