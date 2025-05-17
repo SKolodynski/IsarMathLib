@@ -26,7 +26,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
-section \<open>Hyper natural numbers\<close>
+section \<open>Hypernatural numbers\<close>
 
 theory HyperNatural_ZF imports UltraConstruction_ZF ZF.Cardinal Finite1
 begin
@@ -175,7 +175,7 @@ definition lessEq_star (infix "*\<le>" 80) where
 definition less_star (infix "*<" 80) where
 "x*<y \<equiv> \<langle>x,y\<rangle>\<in>(*Lt*)"
 
-text\<open>Two hyper naturals are ordered iff where their representative sequences are ordered
+text\<open>Two hypernaturals are ordered iff where their representative sequences are ordered
 is a set in the filter\<close>
 
 lemma star_rel_seq:
@@ -291,7 +291,7 @@ corollary less_imp_less_eq:
     apply (rule star_rel_imp_seq[OF assms]) using leI unfolding Lt_def Le_def by auto 
 
 
-text\<open>There is a hyper natural bigger than all natural numbers\<close>
+text\<open>There is a hypernatural bigger than all natural numbers\<close>
 
 lemma omega_bigger_naturals:
   assumes "x:nat"
@@ -395,7 +395,7 @@ proof-
   then show ?thesis unfolding omega_def incl_def[OF assms] by auto
 qed
 
-text\<open>Every function on the natural numbers can be extended to a function on the hyper naturals\<close>
+text\<open>Every function on the natural numbers can be extended to a function on the hypernaturals\<close>
 
 definition hyper_fun ("\<^sup>*_\<^sub>*") where
 "f:nat\<rightarrow>nat \<Longrightarrow> \<^sup>*f\<^sub>* \<equiv> internal_fun(ConstantFunction(nat,f))"
@@ -610,7 +610,7 @@ proof-
 qed
 
 
-text\<open>Every hyper natural that is not zero, is a successor\<close>
+text\<open>Every hypernatural that is not zero, is a successor\<close>
 
 theorem succ_hyper_nat:
   assumes "n\<in>*\<nat>" "n\<noteq>*0"
@@ -1458,5 +1458,4 @@ proof-
   then show ?thesis unfolding isHyperFinite_def[OF sub].
 qed
 
-end
 end
