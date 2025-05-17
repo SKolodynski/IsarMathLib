@@ -140,7 +140,7 @@ proof -
     have "z\<^sub>1 #* (k #+ 1) = (z\<^sub>1 #* k) #+ (z\<^sub>1 #* 1)"
       by (rule add_mult_distrib_left)
     then have "pow(z\<^sub>1 #* (k #+ 1),g) = pow((z\<^sub>1 #* k) #+ (z\<^sub>1 #* 1),g)"
-      by (rule apply_fun_eq)
+      by (rule same_constr)
     with assms(1,3) \<open>k\<in>nat\<close> I have "pow(z\<^sub>1 #* (k #+ 1),g) = pow(k #+ 1,pow(z\<^sub>1,g))"
       using mult_1_right mult_type nat_pow_sum_exps nat_pow_type nat_pow_add_one 
       by simp 

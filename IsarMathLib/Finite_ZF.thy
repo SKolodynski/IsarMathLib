@@ -161,11 +161,6 @@ text\<open>A set is finite iff it is in its finite powerset.\<close>
 lemma fin_finpow_iff: shows "Finite(A) \<longleftrightarrow> A \<in> FinPow(A)"
   unfolding FinPow_def by simp
 
-text\<open>If we remove an element and put it back we get the set back.\<close>
-
-lemma rem_add_eq: assumes "a\<in>A" shows "(A-{a}) \<union> {a} = A"
-  using assms by auto
-
 text\<open>Induction for finite powerset. This is smilar to the
   standard Isabelle's \<open>Fin_induct\<close>.\<close>
 

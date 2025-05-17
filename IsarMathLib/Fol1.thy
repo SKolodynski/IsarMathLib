@@ -178,12 +178,6 @@ text\<open>The "exclusive or" is the same as negation of equivalence.\<close>
 lemma Fol1_L9: shows "p Xor q \<longleftrightarrow> \<not>(p\<longleftrightarrow>q)"
   using Xor_def by auto
 
-text\<open>Constructions from the same sets are the same.
-  It is suprising but we do have to use this as a rule in rare cases.\<close>
-
-lemma same_constr: assumes "x=y" shows "P(x) = P(y)"
-  using assms by simp
-
 text\<open>Equivalence relations are symmetric.\<close>
 
 lemma equiv_is_sym: assumes A1: "equiv(X,r)" and A2: "\<langle>x,y\<rangle> \<in> r"
@@ -194,11 +188,6 @@ proof -
     unfolding sym_def by fast
   with A2 show "\<langle>y,x\<rangle> \<in> r" by blast
 qed
-
-text\<open>Applying a transformation to equal values yields equal results.\<close>
-
-lemma apply_fun_eq: assumes "x=y" shows "\<phi>(x) = \<phi>(y)"
-  using assms by simp
 
 (* In Isabelle/ZF conjunction associates to the right!.
 lemma test: assumes A1: "P" "Q\<and>R"

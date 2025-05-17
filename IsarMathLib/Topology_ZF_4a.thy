@@ -290,7 +290,7 @@ proof -
   with \<open>U\<subseteq>N\<close> show "N\<inter>A \<noteq> 0" by blast
 qed
 
-subsection\<open> Neighborhood systems are 1:1 with topologies \<close>
+subsection\<open>Neighborhood systems are 1:1 with topologies\<close>
 
 text\<open>We can create a topology from a neighborhood system and neighborhood system from topology.
   The question is then if we start from a neighborhood system, create a topology from it 
@@ -393,7 +393,7 @@ definition
 
 text\<open>Given a set neighborhood system we can recover the (standard)
   neighborhood system by taking the values of the set neighborhood system
-  at singletons ${x}$ where $x\in X=\bigcup T$.\<close>
+  at singletons $\{ x\}$ where $x\in X=\bigcup T$.\<close>
 
 lemma neigh_from_nei: assumes "x\<in>\<Union>T"
   shows "({neighborhood system of} T)`(x) = ({set neighborhood system of} T)`{x}"

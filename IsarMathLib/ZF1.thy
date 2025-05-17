@@ -56,6 +56,17 @@ text\<open>A set cannot be a member of itself. This is exactly lemma \<open>mem_
 
 lemma mem_self: shows "x\<notin>x" by (rule mem_not_refl)
 
+text\<open>If we remove an element and put it back we get the set back.\<close>
+
+lemma rem_add_eq: assumes "a\<in>A" shows "(A\<setminus>{a}) \<union> {a} = A"
+  using assms by auto
+
+text\<open>Applying a transformation to equal values yields equal results..
+  It is surprising but we do have to use this as a rule in rare cases.\<close>
+
+lemma same_constr: assumes "x=y" shows "P(x) = P(y)"
+  using assms by simp
+
 text\<open>If one collection is contained in another, then we can say the same
   about their unions.\<close>
 
@@ -533,7 +544,8 @@ text\<open>Given some family $\mathcal{A}$ of subsets of $X$ we can define the f
 definition
   "Supersets(X,\<A>) \<equiv> {B\<in>Pow(X). \<exists>A\<in>\<A>. A\<subseteq>B}"
 
-text\<open>The family itself is in its supersets. \<close>
+text\<open>If $A$ is a member of a collection of sets $\mathcal{A}$ then it is one of
+  supersets of $\mathcal{A}$.\<close>
 
 lemma superset_gen: assumes "A\<subseteq>X" "A\<in>\<A>" shows "A \<in> Supersets(X,\<A>)"
   using assms unfolding Supersets_def by auto 

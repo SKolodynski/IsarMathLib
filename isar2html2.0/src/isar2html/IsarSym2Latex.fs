@@ -239,6 +239,7 @@ namespace iml
                  ("range(","\\text{range}(")
                  ("LUB\\_UnifBase(","\\text{LUB_UnifBase}(")
                  ("LUB\\_Unif(","\\text{LUB_Unif}(")
+                 ("NatInterval(","\\text{NatInterval}(")
                  ("restrict(","\\text{restrict}(")
                  ("roelckeUniformity","\\text{roelckeUniformity}")
                  ("Pi(","\\text{Pi}(")

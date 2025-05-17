@@ -63,8 +63,7 @@ text\<open>We first define the shift that moves the second sequence
   to the domain $\{n,..,n+k-1\}$, where $n,k$ are the lengths of the first 
   and the second sequence, resp.  
   To understand the notation in the definitions below recall that in Isabelle/ZF 
-  \<open>pred(n)\<close> is the previous natural number and  
-   denotes the difference between natural numbers $n$ and $k$.\<close>
+  \<open>pred(n)\<close> (predecessor of $n$ is the previous natural number.\<close>
 
 definition
   "ShiftedSeq(b,n) \<equiv> {\<langle>j, b`(j #- n)\<rangle>. j \<in> NatInterval(n,domain(b))}"
