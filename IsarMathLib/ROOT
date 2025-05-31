@@ -103,6 +103,7 @@ session "IsarMathLib" = "ZF" +
     TopologicalGroup_Uniformity_ZF
     TopologicalGroup_ZF_2
     TopologicalGroup_ZF_3
+    Tarski_ZF
     MMI_prelude
     MMI_examples
   theories [document = false]
