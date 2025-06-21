@@ -86,7 +86,7 @@ sublocale rpmetric_space < pmetric_space
   "\<real>" Add ROrd "\<zero>" realadd lesseq sless nonnegative positiveset
   "\<lambda>x y. LeftDiv(\<real>,Add)`\<langle>x,y\<rangle>"
   "\<lambda>x y. RightDiv(\<real>,Add)`\<langle>y,x\<rangle>"
-  "\<d>" X ball
+  listsum nat_mult "\<d>" X ball
   using pmetric_space_rpmetric_space_valid by simp_all
 
 text\<open>The \<open>rmetric_space\<close> locale (context) specializes the the \<open>rpmetric_space\<close> context
@@ -112,7 +112,7 @@ sublocale rmetric_space < metric_space
    "\<real>" Add ROrd "\<zero>" realadd lesseq sless nonnegative positiveset
   "\<lambda>x y. LeftDiv(\<real>,Add)`\<langle>x,y\<rangle>"
   "\<lambda>x y. RightDiv(\<real>,Add)`\<langle>y,x\<rangle>"
-  "\<d>" X ball
+  listsum nat_mult "\<d>" X ball
 proof
   from ident_indisc show "\<forall>x\<in>X. \<forall>y\<in>X. \<d> ` \<langle>x, y\<rangle> = TheNeutralElement(\<real>, Add) \<longrightarrow> x = y"
     by simp

@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open> Ordered loops \<close>
 
-theory OrderedLoop_ZF imports Loop_ZF Order_ZF
+theory OrderedLoop_ZF imports Loop_ZF Fold_ZF
 
 begin
 
@@ -38,7 +38,7 @@ text\<open> This theory file is about properties of loops (the algebraic structu
   a way compatible with the loop's binary operation. The oldest reference I have found on the subject is
   \cite{Zelinski1948}. \<close>
 
-subsection\<open>Definition and notation\<close>
+subsection\<open>Definition, notation and basic properties\<close>
 
 text\<open> An ordered loop $(G,A)$ is a loop with a partial order relation r that is 
   "translation invariant" with respect to the loop operation $A$.\<close>
@@ -62,7 +62,9 @@ text\<open>We define the set of nonnegative elements  in the obvious way as $L^+
 definition
   "Nonnegative(L,A,r) \<equiv> {x\<in>L. \<langle> TheNeutralElement(L,A),x\<rangle> \<in> r}"
 
-text\<open>The \<open>PositiveSet(L,A,r)\<close> is a set similar to  \<open>Nonnegative(L,A,r)\<close>, but without the neutral element.\<close>
+text\<open>The \<open>PositiveSet(L,A,r)\<close> is a set similar to  \<open>Nonnegative(L,A,r)\<close>, but without the 
+  neutral element. What we call the positive set here is sometimes called "the positive cone"
+  of an ordered loop. \<close>
 
 definition
   "PositiveSet(L,A,r) \<equiv> 
@@ -98,10 +100,16 @@ locale loop1 =
   
   fixes rightdiv (infixl "\<rs>" 69)
   defines rightdiv_def[simp]:"x\<rs>y \<equiv> RightDiv(L,A)`\<langle>y,x\<rangle>"
-    
+
+  fixes listsum ("\<Sum> _" 70)
+  defines listsum_def[simp]: "\<Sum>s \<equiv> Fold(A,\<zero>,s)"
+
+  fixes nat_mult (infix "\<cdot>" 95)
+  defines nat_mult_def [simp]: "n\<cdot>x \<equiv> \<Sum>{\<langle>k,x\<rangle>. k\<in>n}"
+
 text\<open>Theorems proven in the \<open>loop0\<close> locale are valid in the \<open>loop1\<close> locale\<close>
 
-sublocale loop1 < loop0 L A looper  
+sublocale loop1 < loop0 L A looper leftdiv rightdiv neut listsum nat_mult
   using ordLoopAssum loop_loop0_valid unfolding IsAnOrdLoop_def by auto
 
 text\<open>The notation $-x+y$ and $x-y$ denotes left and right division, resp. 
@@ -174,7 +182,8 @@ qed
 
 text\<open>We can cancel an element from both sides of a strict inequality on the right side. \<close>
 
-lemma (in loop1) strict_ineq_cancel_right: assumes "x\<in>L" "y\<in>L" "z\<in>L" and "x\<ra>z \<ls> y\<ra>z" 
+lemma (in loop1) strict_ineq_cancel_right: 
+  assumes "x\<in>L" "y\<in>L" "z\<in>L" and "x\<ra>z \<ls> y\<ra>z" 
   shows  "x\<ls>y"
   using assms ineq_cancel_right by auto
 
@@ -194,6 +203,65 @@ lemma (in loop1) strict_ineq_cancel_left:
   assumes "x\<in>L" "y\<in>L" "z\<in>L" and "z\<ra>x \<ls> z\<ra>y" 
   shows  "x\<ls>y"
   using assms ineq_cancel_left by auto
+
+text\<open>We can subtract a loop element from both sides of inequality
+  both on the left side and right.\<close>
+
+lemma (in loop1) ineq_subtr_from_sides: assumes "x\<lsq>y" "z\<in>L"
+  shows "x\<rs>z \<lsq> y\<rs>z" and "(\<rm>z\<ad>x) \<lsq> \<rm>z\<ad>y"
+proof -
+  from assms have 
+    T: "x\<rs>z\<in>L" "y\<rs>z\<in>L" "(\<rm>z\<ad>x)\<in>L" "(\<rm>z\<ad>y)\<in>L" and
+    "x = (x\<rs>z)\<ra>z" "y = (y\<rs>z)\<ra>z" and
+    "x = z\<ra>(\<rm>z\<ad>x)" "y = z\<ra>(\<rm>z\<ad>y)"
+      using lsq_members lrdiv_props(2,3,5,6) by simp_all
+  with assms(1) have
+    "(x\<rs>z)\<ra>z \<lsq> (y\<rs>z)\<ra>z" and
+    "z\<ra>(\<rm>z\<ad>x) \<lsq> z\<ra>(\<rm>z\<ad>y)"
+    by simp_all
+  with assms(2) T show
+    "x\<rs>z \<lsq> y\<rs>z" and "(\<rm>z\<ad>x) \<lsq> \<rm>z\<ad>y"
+    using ineq_cancel_left ineq_cancel_right by simp_all
+qed
+
+text\<open>We can subtract a loop element from both sides of of a strict inequality
+  both on the left side and right.\<close>
+
+lemma (in loop1) strict_ineq_subtr: assumes "x\<ls>y" "z\<in>L"
+  shows "x\<rs>z \<ls> y\<rs>z" and "(\<rm>z\<ad>x) \<ls> \<rm>z\<ad>y"
+proof -
+  from assms have 
+    T: "x\<rs>z\<in>L" "y\<rs>z\<in>L" "(\<rm>z\<ad>x)\<in>L" "(\<rm>z\<ad>y)\<in>L" and
+    "x = (x\<rs>z)\<ra>z" "y = (y\<rs>z)\<ra>z" and
+    "x = z\<ra>(\<rm>z\<ad>x)" "y = z\<ra>(\<rm>z\<ad>y)"
+    using less_members lrdiv_props(2,3,5,6) by auto
+  with assms(1) have
+    "(x\<rs>z)\<ra>z \<ls> (y\<rs>z)\<ra>z" and
+    "z\<ra>(\<rm>z\<ad>x) \<ls> z\<ra>(\<rm>z\<ad>y)"
+    by simp_all
+  with assms(2) T show
+    "x\<rs>z \<ls> y\<rs>z" and "(\<rm>z\<ad>x) \<ls> \<rm>z\<ad>y"
+    using strict_ineq_cancel_left strict_ineq_cancel_right
+    by auto
+qed
+
+text\<open>We can move an element to the other side of a strict inequality with three
+  loop elements - right side variant.\<close>
+
+lemma (in loop1) strict_ineq_move_side_right: assumes "x\<in>L" "y\<in>L" "x\<ra>y\<ls>z"
+  shows "x\<ls>z\<rs>y"
+proof -
+  from assms(2,3) have "(x\<ra>y)\<rs>y \<ls> z\<rs>y"
+    using strict_ineq_subtr by simp
+  with assms(1,2) show "x\<ls>z\<rs>y" using lrdiv_ident(1) by simp
+qed
+
+text\<open>We can move an element to the other side of an inequality with three
+  loop elements - right side variant.\<close>
+
+lemma (in loop1) ineq_move_side_right: assumes "x\<in>L" "y\<in>L" "x\<ra>y\<lsq>z"
+  shows "x\<lsq>z\<rs>y"
+  using assms ineq_subtr_from_sides lrdiv_ident(1) by force
 
 text\<open>The definition of the nonnegative set in the notation used in the \<open>loop1\<close> locale: \<close>
 
@@ -306,7 +374,7 @@ proof -
   then show "(y\<rs>x) \<in> L\<^sup>+" using  nonneg_definition by simp
 qed
 
-text\<open> We can move an element to the other side of a strict inequality. \<close>
+text\<open>We can move an element to the other side of a strict inequality.\<close>
 
 lemma (in loop1) ls_other_side: assumes "x\<ls>y" 
   shows "\<zero> \<ls> \<rm>x\<ad>y"  "(\<rm>x\<ad>y) \<in> L\<^sub>+" "\<zero> \<ls> y\<rs>x" "(y\<rs>x) \<in> L\<^sub>+"
@@ -394,7 +462,7 @@ proof -
     using neut_props_loop(2) by simp_all
 qed
 
-text\<open>In ordered loop if the order relation down-directs the set of positive elements $L_+$
+text\<open>In an ordered loop if the order relation down-directs the set of positive elements $L_+$
   then $L_+$ is a down-directed set (see \<open>Order_ZF\<close> for definitions of those related but different
   notions).\<close>
 
@@ -402,5 +470,106 @@ lemma (in loop1) down_directs_directed: assumes "r {down-directs} L\<^sub>+"
   shows "IsDownDirectedSet(L\<^sub>+,r)"
   using ordLoopAssum assms positive_subset down_directs_subset
   unfolding IsAnOrdLoop_def by auto
+
+subsection\<open>Completness vs Archimedean property\<close>
+
+text\<open>For ordered fields the completeness of the order implies the Archimedean property:
+  for every two positive elements there is a natural number $n$ such that $y < n x$.
+  In 1891 Otto Stolz "succeeded in proving that the positive cone of a Dedekind complete ordered 
+  abelian group is Archimedean". In this section we consider the relation between the 
+  completeness of the order and the Archimedean property of the positive set of an ordered loop
+  (not necessarily abelian).\<close>
+
+text\<open>Multiples of a positive element are positive.\<close>
+
+lemma (in loop1) mults_pos_pos: assumes "\<zero>\<ls>x" "n\<in>nat\<setminus>{0}"
+  shows "\<zero>\<ls>n\<cdot>x"
+proof -
+  from assms(1) have "x\<in>L" using less_members(2) by simp
+  { fix m assume "m\<in>nat"
+    from \<open>x\<in>L\<close> have "(0 #+ 1)\<cdot>x = 0\<cdot>x\<ra>x" using loop_pow_mult_one 
+      by blast
+    with assms(1) \<open>x\<in>L\<close> have "\<zero>\<ls>(0 #+ 1)\<cdot>x"
+      using loop_zero_pow neut_props_loop(2) by simp
+    { fix j assume "j\<in>nat" and "\<zero>\<ls>(j #+ 1)\<cdot>x"
+      from \<open>x\<in>L\<close> have I: "(j #+ 1 #+ 1)\<cdot>x = (j #+ 1)\<cdot>x \<ra> x"
+        using loop_pow_mult_one by blast
+      from assms(1) \<open>x\<in>L\<close> \<open>j\<in>nat\<close> have "(j #+ 1)\<cdot>x \<ls> (j #+ 1)\<cdot>x \<ra> x"
+        using loop_prod_type add_subtract_pos(3) by blast
+      with I have "(j #+ 1)\<cdot>x \<ls> (j #+ 1 #+ 1)\<cdot>x" by simp
+      with \<open>\<zero>\<ls>(j #+ 1)\<cdot>x\<close> have "\<zero> \<ls> (j #+ 1 #+ 1)\<cdot>x"
+        using loop_strict_ord_trans2 by blast
+    } hence "\<forall>j\<in>nat. \<zero>\<ls>(j #+ 1)\<cdot>x \<longrightarrow> \<zero> \<ls> (j #+ 1 #+ 1)\<cdot>x"
+      by simp
+    with \<open>m\<in>nat\<close> \<open>\<zero>\<ls>(0 #+ 1)\<cdot>x\<close> have "\<zero> \<ls> (m #+ 1)\<cdot>x"
+      by (rule ind_on_nat1)
+  } hence "\<forall>m\<in>nat. \<zero> \<ls> (m #+ 1)\<cdot>x" by simp
+  with assms(2) show "\<zero>\<ls>n\<cdot>x" using nat_not0_succ by blast
+qed
+
+text\<open>If the order is complete and $x$ is a positive element of a n ordered loop, then
+  the set $\{n\cdot x: n\in \mathbb{N}, n\neq 0\}$ is not bounded above.\<close>
+
+lemma (in loop1) nat_mult_not_bounded: assumes "r {is complete}" and "\<zero>\<ls>x"
+  shows "\<not>IsBoundedAbove({n\<cdot>x. n\<in>nat\<setminus>{0}},r)"
+proof -
+  let ?M = "{n\<cdot>x. n\<in>nat\<setminus>{0}}"
+  { assume C: "IsBoundedAbove(?M,r)"
+    let ?S = "Supremum(r,?M)"
+    from ordLoopAssum assms(1) have 
+      I: "r\<subseteq>L\<times>L" "antisym(r)" "r {is complete}" "?M\<noteq>\<emptyset>"
+    using loop_not_empty unfolding IsAnOrdLoop_def IsPartOrder_def 
+    by auto
+    from I C have "?S\<in>L" using compl_bounded_sup_props(1) by simp
+    from I C have "\<forall>y\<in>?M. \<langle>y,?S\<rangle> \<in> r" by (rule compl_bounded_sup_props)
+    hence II: "\<forall>n\<in>nat\<setminus>{0}. n\<cdot>x\<lsq>?S" by simp
+    { fix n assume "n\<in>nat\<setminus>{0}"
+      then have "n #+ 1 \<in> nat\<setminus>{0}" by simp
+      with assms(2) II \<open>n\<in>nat\<setminus>{0}\<close> have "n\<cdot>x\<lsq>?S\<rs>x"
+        using less_members(2) loop_pow_mult_one loop_prod_type ineq_move_side_right 
+        by auto
+    } hence "\<forall>y\<in>?M. \<langle>y,?S\<rs>x\<rangle> \<in> r" by auto
+    with \<open>antisym(r)\<close> assms(1) \<open>?M\<noteq>\<emptyset>\<close> have "\<langle>?S,?S\<rs>x\<rangle> \<in> r"
+      by (rule compl_sup_leq_up_bnd)
+    hence "?S\<lsq>?S\<rs>x" by simp
+    from assms(2) \<open>?S\<in>L\<close> have "?S\<rs>x \<ls> ?S"
+      using add_subtract_pos(1) by simp
+    with \<open>?S\<lsq>?S\<rs>x\<close> have False using loop_strict_ord_trans
+      by auto
+  } thus ?thesis by auto
+qed
+
+text\<open>We say that a nonempty subset $A$ of a ordered loop is Archimedean if 
+  for any two elements $x,y$ of $A$ there is a non-zero natural number $n$ such that 
+  $n\cdot x$ exceeds $y$. \<close>
+
+definition (in loop1) 
+  IsArchimedean ("_ {is Archimedean}" [90] 91) where
+    "B {is Archimedean} \<equiv> B\<noteq>\<emptyset> \<and> (\<forall>x\<in>B. \<forall>y\<in>B. \<exists>n\<in>nat\<setminus>{0}. y\<ls>n\<cdot>x)"
+
+text\<open>If the order of the loop is complete and total on the positive set, then the positive set
+  is Archimedean.\<close>
+
+theorem (in loop1) loop_pos_set_archimedean: 
+  assumes "L\<^sub>+\<noteq>\<emptyset>" "r {is complete}" and "r {is total on} L\<^sub>+"
+  shows "L\<^sub>+ {is Archimedean}"
+proof -
+  { fix x y
+    assume "x\<in>L\<^sub>+" "y\<in>L\<^sub>+"
+    then have "\<zero>\<ls>x" and "y\<in>L" using posset_definition1 positive_subset
+      by auto
+    let ?M = "{n\<cdot>x. n\<in>nat\<setminus>{0}}"
+    from assms(1,2) \<open>\<zero>\<ls>x\<close> have "\<not>(\<exists>u.\<forall>z\<in>?M. z\<lsq>u)"
+      using nat_mult_not_bounded IsBoundedAbove_def by simp
+    then obtain z where "z\<in>?M" and "\<not>(z\<lsq>y)" by auto
+    from \<open>z\<in>?M\<close> obtain n where "n\<in>nat\<setminus>{0}" and "z=n\<cdot>x" by auto
+    from \<open>z=n\<cdot>x\<close> \<open>\<not>(z\<lsq>y)\<close> have "\<not>(n\<cdot>x\<lsq>y)" by simp
+    from \<open>\<zero>\<ls>x\<close> \<open>n\<in>nat\<setminus>{0}\<close> have "n\<cdot>x \<in> L\<^sub>+"
+      using mults_pos_pos posset_definition by force
+    with assms(3) \<open>y\<in>L\<^sub>+\<close> \<open>\<not>(n\<cdot>x\<lsq>y)\<close> \<open>n\<in>nat\<setminus>{0}\<close>
+    have "\<exists>n\<in>nat\<setminus>{0}. y\<ls>n\<cdot>x" unfolding IsTotal_def by auto 
+  } with assms(1) show "L\<^sub>+ {is Archimedean}"
+    unfolding IsArchimedean_def by simp
+qed
 
 end

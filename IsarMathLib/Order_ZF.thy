@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Order relations - introduction\<close>
 
-theory Order_ZF imports Fol1
+theory Order_ZF imports Fol1 ZF1
 
 begin
 
@@ -111,12 +111,12 @@ text\<open>A set is bounded above if there is that is an upper
   In addition, the empty set is defined as bounded.\<close>
 
 definition
-  "IsBoundedAbove(A,r) \<equiv> ( A=0 \<or> (\<exists>u. \<forall>x\<in>A. \<langle>x,u\<rangle> \<in> r))"
+  "IsBoundedAbove(A,r) \<equiv> ( A=\<emptyset> \<or> (\<exists>u. \<forall>x\<in>A. \<langle>x,u\<rangle> \<in> r))"
 
 text\<open>We define sets bounded below analogously.\<close>
 
 definition
-  "IsBoundedBelow(A,r) \<equiv> (A=0 \<or> (\<exists>l. \<forall>x\<in>A. \<langle>l,x\<rangle> \<in> r))"
+  "IsBoundedBelow(A,r) \<equiv> (A=\<emptyset> \<or> (\<exists>l. \<forall>x\<in>A. \<langle>l,x\<rangle> \<in> r))"
 
 text\<open>A set is bounded if it is bounded below and above.\<close>
 
@@ -209,6 +209,22 @@ text\<open>Normally the "$\subseteq$" does not represent a relation, but it does
 
 definition 
   "InclusionOn(X) \<equiv> {p\<in>X\<times>X. fst(p) \<subseteq> snd(p)}"
+
+text\<open>The most common way of applying the boundedness: if $r$ as a relation on $X$ 
+  and a set $A$ is not empty and bounded above then there exist $u\in X$ which is
+  an upper bound of $A$.\<close>
+
+lemma bounded_above: assumes "r\<subseteq>X\<times>X" "A\<noteq>\<emptyset>" "IsBoundedAbove(A,r)"
+  shows "\<exists>u\<in>X. \<forall>x\<in>A. \<langle>x,u\<rangle> \<in> r"
+  using assms unfolding IsBoundedAbove_def by blast
+
+text\<open>A dual for \<open>bounded_above\<close>:  if $r$ as a relation on $X$ 
+  and a set $A$ is not empty and bounded below then there exist $u\in X$ which is
+  an lower bound of $A$. \<close>
+
+lemma bounded_below: assumes "r\<subseteq>X\<times>X" "A\<noteq>\<emptyset>" "IsBoundedBelow(A,r)"
+  shows "\<exists>u\<in>X. \<forall>x\<in>A. \<langle>u,x\<rangle> \<in> r"
+  using assms unfolding IsBoundedBelow_def by blast
 
 text\<open>Inclusion relation is a partial order on the powerset of $X$.\<close>
 

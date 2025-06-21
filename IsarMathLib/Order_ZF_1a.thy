@@ -496,6 +496,19 @@ proof -
     unfolding HasAsupremum_def Supremum_def using Order_ZF_4_L4 by simp
 qed
 
+text\<open>If the relation is antisymmetric and complete then the supremum of
+  a nonempty set $A$ with an upper bound $u$ is less or equal $u$. \<close>
+
+lemma compl_sup_leq_up_bnd: 
+  assumes "antisym(r)" "r {is complete}" "A\<noteq>\<emptyset>" "\<forall>a\<in>A. \<langle>a,u\<rangle> \<in> r"
+  shows "\<langle>Supremum(r,A),u\<rangle> \<in> r"
+proof -
+  from assms(2,3,4) have "HasAsupremum(r,A)"
+    unfolding IsBoundedAbove_def IsComplete_def HasAsupremum_def by blast
+  with assms(1,4) show "\<langle>Supremum(r,A),u\<rangle> \<in> r"
+    using sup_leq_up_bnd by simp
+qed
+
 text\<open>Infimum is greater or equal than any lower bound. 
   This lemma is obsolete and will be removed. Use \<open>inf_geq_lo_bnd\<close> instead.\<close>
 
@@ -670,7 +683,7 @@ proof -
     using Order_ZF_4_L3 by blast
 qed
 
-text\<open>Properties of supremum of a set for complete relations.\<close>
+text\<open>Properties of supremum of a bounded set for complete relations.\<close>
 
 lemma Order_ZF_5_L7: 
   assumes A1: "r \<subseteq> X\<times>X" and A2: "antisym(r)" and 
@@ -682,7 +695,22 @@ proof -
     unfolding IsBoundedAbove_def IsComplete_def by blast
   with A1 A2 show "Supremum(r,A) \<in> X" and "\<forall>x\<in>A. \<langle>x,Supremum(r,A)\<rangle> \<in> r"
     using sup_in_space by auto
-qed 
+qed
+
+text\<open>Similar to \<open>Order_ZF_5_L7\<close> with less explicit boundedness condition:
+  if the relation on $X$ is antisymmetric and complete then the supremum
+  of a nonempty bounded set $A$ is an element of $X$ and is an upper bound of $A$.\<close>
+
+lemma compl_bounded_sup_props: 
+  assumes "r \<subseteq> X\<times>X" "antisym(r)" "r {is complete}" and 
+    "A\<noteq>0" "IsBoundedAbove(A,r)"
+  shows "Supremum(r,A) \<in> X" and "\<forall>x\<in>A. \<langle>x,Supremum(r,A)\<rangle> \<in> r"
+proof -
+  from assms(1,4,5) have "\<exists>x\<in>X. \<forall>y\<in>A. \<langle>y,x\<rangle> \<in> r"
+    using bounded_above by blast
+  with assms(1,2,3,4) show "Supremum(r,A) \<in> X" and "\<forall>x\<in>A. \<langle>x,Supremum(r,A)\<rangle> \<in> r"
+    using Order_ZF_5_L7 by simp_all
+qed
 
 text\<open> Infimum of the set of infima of a collection of sets is infimum of the union. \<close>
 
