@@ -71,6 +71,15 @@ text\<open>Uniformities on a set $X$ are naturally ordered by inclusion, we call
 definition
   "OrderOnUniformities(X) \<equiv> InclusionOn(Uniformities(X))"
 
+text\<open>For the order on uniformities two uniformities are in relation iff
+  one is contained in the other.\<close>
+
+lemma order_unif_iff: 
+  assumes "\<Phi> \<in> Uniformities(X)" "\<Psi> \<in> Uniformities(X)"
+  shows "\<langle>\<Phi>,\<Psi>\<rangle> \<in> OrderOnUniformities(X) \<longleftrightarrow> \<Phi>\<subseteq>\<Psi>"
+  using assms unfolding OrderOnUniformities_def InclusionOn_def
+    by simp
+
 text\<open>The order defined by inclusion on uniformities is a partial order.\<close>
 
 lemma ord_unif_partial_ord: 
@@ -102,11 +111,9 @@ proof -
     unfolding Uniformities_def using min_uniformity max_uniformity 
     by auto
   { fix \<Phi> assume "\<Phi> \<in> ?\<UU>"
-    then have "\<Phi> {is a filter on} (X\<times>X)"
-      unfolding Uniformities_def using unif_filter by simp
-    with \<open>{X\<times>X}\<in>?\<UU>\<close> \<open>\<Phi>\<in>?\<UU>\<close> have "\<langle>{X\<times>X},\<Phi>\<rangle> \<in> ?r"
-      unfolding IsFilter_def OrderOnUniformities_def InclusionOn_def
-      by simp
+    with \<open>{X\<times>X}\<in>?\<UU>\<close> have "\<langle>{X\<times>X},\<Phi>\<rangle> \<in> ?r"
+      unfolding Uniformities_def OrderOnUniformities_def InclusionOn_def
+      using min_uniformity1 by simp
   } with  \<open>{X\<times>X} \<in> ?\<UU>\<close> show "HasAminimum(?r,?\<UU>)" and "Minimum(?r,?\<UU>) = {X\<times>X}"
     unfolding HasAminimum_def using Order_ZF_4_L15 ord_unif_antisymm 
     by auto
@@ -262,6 +269,16 @@ text\<open>At this point we know that supersets with respect to $X\times X$
 definition
   "LUB_Unif(X,\<U>) \<equiv> Supersets(X\<times>X,LUB_UnifBase(\<U>))"
 
+text\<open>With this definition we can rewrite some asssertions of theorem \<open>lub_unif_base_base\<close> 
+  in bit shorter form: \<close>
+
+corollary lub_unif_base_base1: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
+  shows 
+    "LUB_Unif(X,\<U>) {is a uniformity on} X"
+    "UniformTopology(LUB_Unif(X,\<U>),X) {is a topology}"
+    "\<Union>UniformTopology(LUB_Unif(X,\<U>),X) = X"
+  using assms lub_unif_base_base unfolding LUB_Unif_def by simp_all
+  
 text\<open>For any collection of uniformities $\mathcal{U}$ on a nonempty set $X$ 
   the \<open>LUB_Unif(X,\<U>)\<close> collection defined above is indeed an upper bound of $\mathcal{U}$
   in the order defined by the inclusion relation.\<close>
@@ -317,11 +334,13 @@ proof -
 qed
 
 text\<open>A nonempty collection $\mathcal{U}$  of uniformities on $X$ has a supremum 
-  (i.e. the least upper bound).\<close>
+  (i.e. the least upper bound) which is a uniformity.\<close>
 
-lemma lub_unif_sup: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
-  shows "HasAsupremum(OrderOnUniformities(X),\<U>)" and
+theorem lub_unif_sup: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
+  shows 
+    "HasAsupremum(OrderOnUniformities(X),\<U>)"
     "LUB_Unif(X,\<U>) = Supremum(OrderOnUniformities(X),\<U>)"
+    "Supremum(OrderOnUniformities(X),\<U>) {is a uniformity on} X"
 proof -
   let ?r = "OrderOnUniformities(X)"
   let ?S = "LUB_Unif(X,\<U>)"
@@ -333,6 +352,10 @@ proof -
     unfolding HasAsupremum_def using Order_ZF_5_L5(1) by blast
   from assms(3) \<open>antisym(?r)\<close> \<open>\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,?S\<rangle> \<in> ?r\<close> I
   show "?S = Supremum(?r,\<U>)" using Order_ZF_5_L5(2) by blast
+  from assms have "?S {is a uniformity on} X"
+    using lub_unif_base_base1(1) by simp
+  with \<open>?S = Supremum(?r,\<U>)\<close> show "Supremum(?r,\<U>) {is a uniformity on} X"
+    by simp
 qed
 
 text\<open>The order on uniformities derived from inclusion is complete.\<close>
@@ -351,6 +374,110 @@ proof -
   } 
   then show "?r {is complete}" unfolding HasAsupremum_def IsComplete_def
     by simp
+qed
+
+subsection\<open>Greatest lower bound of a set of uniformities\<close>
+
+text\<open>In this this section we show that every set of uniformities on fixed set $X$
+  has an greatest lower bound, i.e. an infimum.
+  The approach taken in the previous section to show the existence of the lowest upper bound 
+  of a collection of uniformities does not work for the greatest lower bound. 
+  The collection defined as the set of all products of nonempty finite subsets 
+  of $\bigcap\mathcal{U}$ in general is not a fundamental system of entourages. Even though the 
+  first three conditions hold for such collection, the fourth one does not. 
+  The approach that works is to show the the supremum of the collection of lower bounds
+  is actually a lower bound, hence the maximum of the set of lower bounds. \<close>
+
+text\<open>To shorten the proofs we introduce the concept of the supremum of the the collection
+  of lower bounds of some collection of uniformities $\mathcal{U}$. 
+  We know from the previous section that such supremum exists. 
+  Later in this section we show that this supremum is itself a lower bound of $\mathcal{U}$, 
+  so it's the greatest lower bound i.e. infimum of $\mathcal{U}$. \<close>
+
+definition
+  "SLB_Unif(X,\<U>) \<equiv> Supremum(OrderOnUniformities(X),{\<Psi>\<in>Uniformities(X). \<Psi>\<subseteq>\<Inter>\<U>})"
+
+text\<open>The set of lower bounds of a nonempty set of uniformities is nonempty. \<close>
+
+lemma lb_nempty_nempty: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
+  shows "{\<Psi>\<in>Uniformities(X). \<Psi>\<subseteq>\<Inter>\<U>} \<noteq> \<emptyset>"
+proof -
+  from assms have "{X\<times>X} \<in> Uniformities(X)" and "(X\<times>X) \<in> \<Inter>\<U>"
+    using min_uniformity min_uniformity1 unfolding Uniformities_def 
+      by auto
+  thus ?thesis by auto
+qed
+
+text\<open>The supremum of the set of lower bounds of a collection of uniformities 
+  is a lower bound of that collection.\<close>
+
+lemma unif_slb_is_lb: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
+  shows "SLB_Unif(X,\<U>) \<subseteq> \<Inter>\<U>"
+proof
+  fix E assume "E\<in>SLB_Unif(X,\<U>)"
+  let ?\<L> = "{\<Psi>\<in>Uniformities(X). \<Psi>\<subseteq>\<Inter>\<U>}"
+  let ?\<Xi> = "LUB_Unif(X,?\<L>)"
+  let ?\<BB> = "LUB_UnifBase(?\<L>)" 
+  have "?\<L> \<subseteq> Uniformities(X)" by auto
+  from assms \<open>?\<L> \<subseteq> Uniformities(X)\<close> \<open>E\<in>SLB_Unif(X,\<U>)\<close> have 
+    "?\<Xi> {is a uniformity on} X" and "E\<in>?\<Xi>" 
+    using lub_unif_sup lub_unif_base_base(2) lb_nempty_nempty
+    unfolding LUB_Unif_def SLB_Unif_def by simp_all
+  with assms(1) \<open>?\<L> \<subseteq> Uniformities(X)\<close> \<open>E\<in>SLB_Unif(X,\<U>)\<close> have 
+    "?\<Xi> {is a uniformity on} X" and "E\<in>?\<Xi>" 
+    using lub_unif_sup lub_unif_base_base(2) 
+    unfolding LUB_Unif_def SLB_Unif_def by simp_all
+  then have "E\<subseteq>X\<times>X" using entourage_props(1) by simp
+  from \<open>E\<in>?\<Xi>\<close> obtain B where "B\<subseteq>X\<times>X" "B\<in>?\<BB>" "B\<subseteq>E"
+    unfolding LUB_Unif_def Supersets_def by auto
+  from \<open>B\<in>?\<BB>\<close> obtain M where "M\<in>FinPow(\<Union>?\<L>)" "M\<noteq>\<emptyset>" and "B=\<Inter>M"
+    unfolding LUB_UnifBase_def by auto
+  from \<open>M\<in>FinPow(\<Union>?\<L>)\<close> have  "M \<subseteq> \<Inter>\<U>"
+    unfolding FinPow_def by force
+  { fix \<Phi> assume "\<Phi>\<in>\<U>"
+    with \<open>M \<subseteq> \<Inter>\<U>\<close> \<open>\<Phi>\<in>\<U>\<close> \<open>M\<in>FinPow(\<Union>?\<L>)\<close> have "M\<in>FinPow(\<Phi>)"
+      unfolding FinPow_def by auto
+    from assms(2) \<open>\<Phi>\<in>\<U>\<close> have "\<Phi> {is a filter on} (X\<times>X)"
+      unfolding Uniformities_def using unif_filter by auto
+    with \<open>M\<in>FinPow(\<Phi>)\<close> \<open>M\<noteq>\<emptyset>\<close> \<open>B=\<Inter>M\<close> have "B\<in>\<Phi>"
+      using filter_fin_inter_closed by simp
+    with \<open>E\<subseteq>X\<times>X\<close> \<open>B\<subseteq>E\<close> \<open>\<Phi> {is a filter on} (X\<times>X)\<close> have "E\<in>\<Phi>"
+      unfolding IsFilter_def by simp
+  } with assms(3) show "E\<in>\<Inter>\<U>" by auto
+qed
+
+text\<open>Let $\mathfrak{U}$ denote the collection of all uniformities on a nonempty set $X$, ordered
+  by inclusion. Then every collection of uniformities $\mathcal{U}\subseteq \mathfrak{U}$ 
+  has an infimum (the greatest lower bound) which is equal to the supremum
+  of the collection of lower bounds. \<close>
+
+theorem unif_inf: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
+  shows "HasAnInfimum(OrderOnUniformities(X),\<U>)" and
+  "Infimum(OrderOnUniformities(X),\<U>) = SLB_Unif(X,\<U>)" 
+proof -
+  let ?r = "OrderOnUniformities(X)"
+  let ?\<L> = "{\<Psi>\<in>Uniformities(X). \<Psi>\<subseteq>\<Inter>\<U>}"
+  from assms have "?\<L>\<subseteq>Uniformities(X)" and "?\<L>\<noteq>\<emptyset>" using lb_nempty_nempty 
+    by auto
+  with assms have "HasAmaximum(?r,?\<L>)" and "Maximum(?r,?\<L>) = Supremum(?r,?\<L>)"
+    using lub_unif_sup lub_unif_sup(3) unif_in_unifs 
+      unif_slb_is_lb ord_unif_antisymm sup_is_max 
+    unfolding SLB_Unif_def by simp_all
+  have "(\<Inter>\<Phi>\<in>\<U>. ?r-``{\<Phi>}) = ?\<L>"
+  proof -
+    have "?r \<subseteq> Uniformities(X)\<times>Uniformities(X)"
+      unfolding OrderOnUniformities_def InclusionOn_def by auto
+    with assms(3) have 
+      "(\<Inter>\<Phi>\<in>\<U>. ?r-``{\<Phi>}) = {\<Psi>\<in>Uniformities(X). \<forall>\<Phi>\<in>\<U>. \<langle>\<Psi>,\<Phi>\<rangle> \<in> ?r}"
+      using lower_bounds by simp
+    also from assms(2,3) have "... = ?\<L>" using order_unif_iff by blast
+    finally show ?thesis by simp
+  qed
+  with \<open>HasAmaximum(?r,?\<L>)\<close> show "HasAnInfimum(OrderOnUniformities(X),\<U>)"
+    unfolding HasAnInfimum_def by simp
+  from \<open>(\<Inter>\<Phi>\<in>\<U>. ?r-``{\<Phi>}) = ?\<L>\<close> \<open>Maximum(?r,?\<L>) = Supremum(?r,?\<L>)\<close>
+  show "Infimum(?r,\<U>) = SLB_Unif(X,\<U>)" 
+    unfolding Infimum_def SLB_Unif_def by simp
 qed
 
 end

@@ -88,6 +88,12 @@ text\<open>If $X$ is not empty then the singleton $\{ X\times X\}$ is a (trivial
 lemma min_uniformity: assumes "X\<noteq>\<emptyset>" shows "{X\<times>X} {is a uniformity on} X"
   using assms unfolding IsFilter_def IsUniformity_def by auto
 
+text\<open>$X\times X$ is an entourage of every uniformity on $X$.\<close>
+
+lemma min_uniformity1: 
+  assumes "\<Phi> {is a uniformity on} X" shows "(X\<times>X) \<in> \<Phi>"
+  using assms unif_filter unfolding IsFilter_def by simp
+
 text\<open>On the other side of the spectrum is the collection of sets containing the
   diagonal, that is also a uniformity.\<close>
 
