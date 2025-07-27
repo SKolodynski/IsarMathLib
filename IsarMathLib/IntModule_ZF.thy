@@ -34,7 +34,7 @@ text\<open>In this section we show that the integers, as a ring, have only one m
 subsection\<open>Integer powers as the only integer actions on abelian groups\<close>
 
 text\<open>As we show in theorem \<open>powz_maps_int_End\<close> in the \<open>IntGroup\<close> theory
-  the mapping $\mathbb{Z}\ni n\mapsto\(G\ni x\mapsto x^n)$ maps integers to 
+  the mapping $\mathbb{Z}\ni n\mapsto (G\ni x\mapsto x^n)$ maps integers to 
   endomorphisms of the abelian group $G$. We will show here that this mapping is the unique 
   action of integers on that group.\<close>
 
@@ -156,15 +156,6 @@ proof -
   ultimately show "S\<^sub>1 = S\<^sub>2" using func_eq by simp
 qed
 
-text\<open>The action is a group homomorphism between $(\mathbb{Z},+)$ and $(G,P)$\<close>
-
-lemma (in abgroup_int0) group_action_int_add_morphism:
-  assumes "r\<in>\<int>" "s\<in>\<int>" "g\<in>G"
-  defines "S \<equiv> {\<langle>z,{\<langle>x,powz(z,x)\<rangle>. x\<in>G}\<rangle>. z\<in>\<int>}"
-  shows "(S`(r\<ra>s))`(g) = ((S`(r))`(g))\<cdot>((S`(s))`(g))"
-  using assms ints.int_sum_type ZF_fun_from_tot_val1 powz_hom_prop
-  by simp
-
 text\<open>We can use theorems proven in the \<open>abelian_group\<close> locale in the \<open>abgroup_int0\<close>
   locale.\<close>
 
@@ -172,67 +163,80 @@ sublocale abgroup_int0 < abgroup: abelian_group
 proof
   from isAbelian show "P {is commutative on} G" by simp
 qed
+
+text\<open>The rest of the propositions in this section concern the mapping
+  $\mathbb{Z}\ni n\mapsto (G\ni x\mapsto x^n)$. To simplify the statements and 
+  proofs we will denote this mapping as $\mathcal{S}$.\<close>
+
+locale abgroup_int1 = abgroup_int0 +
+  fixes \<S>
+  defines \<S>_def[simp]: "\<S> \<equiv> {\<langle>z,{\<langle>x,powz(z,x)\<rangle>. x\<in>G}\<rangle>. z\<in>\<int>}"
+
+text\<open>The action is a group homomorphism between $(\mathbb{Z},+)$ and $(G,P)$\<close>
+
+lemma (in abgroup_int1) group_action_int_add_morphism:
+  assumes "r\<in>\<int>" "s\<in>\<int>" "g\<in>G"
+  shows "(\<S>`(r\<ra>s))`(g) = ((\<S>`(r))`(g))\<cdot>((\<S>`(s))`(g))"
+  using assms ints.int_sum_type ZF_fun_from_tot_val1 powz_hom_prop
+  by simp
  
 text\<open>Same as in lemma \<open>group_action_int_add_morphism\<close> above, but not pointwise:\<close>
 
-lemma (in abgroup_int0) group_action_int_add_morphism_fun:
+lemma (in abgroup_int1) group_action_int_add_morphism_fun:
   assumes "r\<in>\<int>" "s\<in>\<int>"
-  defines "S \<equiv> {\<langle>z,{\<langle>x,powz(z,x)\<rangle>. x\<in>G}\<rangle>. z\<in>\<int>}"
-  shows "S`(r\<ra>s) = EndAdd(G,P)`\<langle>S`(r),S`(s)\<rangle>"
+  shows "\<S>`(r\<ra>s) = EndAdd(G,P)`\<langle>\<S>`(r),\<S>`(s)\<rangle>"
 proof -
-  let ?F = "EndAdd(G,P)`\<langle>S`(r),S`(s)\<rangle>"
+  let ?F = "EndAdd(G,P)`\<langle>\<S>`(r),\<S>`(s)\<rangle>"
   from assms have 
-    "S`(r) \<in> End(G,P)" "S`(s) \<in> End(G,P)" "S`(r\<ra>s) \<in> End(G,P)"
+    "\<S>`(r) \<in> End(G,P)" "\<S>`(s) \<in> End(G,P)" "\<S>`(r\<ra>s) \<in> End(G,P)"
     using powz_maps_int_End ints.int_sum_type apply_funtype 
     by simp_all
   have "EndAdd(G,P):End(G,P)\<times>End(G,P)\<rightarrow>End(G,P)"
     using abgroup.end_addition_group 
     unfolding EndAdd_def IsAgroup_def IsAmonoid_def IsAssociative_def
     by blast
-  with \<open>S`(r) \<in> End(G,P)\<close> \<open>S`(s) \<in> End(G,P)\<close> have "?F:G\<rightarrow>G"
+  with \<open>\<S>`(r) \<in> End(G,P)\<close> \<open>\<S>`(s) \<in> End(G,P)\<close> have "?F:G\<rightarrow>G"
     using apply_funtype unfolding End_def by blast
-  moreover from \<open>S`(r\<ra>s) \<in> End(G,P)\<close> have "S`(r\<ra>s):G\<rightarrow>G"
+  moreover from \<open>\<S>`(r\<ra>s) \<in> End(G,P)\<close> have "\<S>`(r\<ra>s):G\<rightarrow>G"
     unfolding End_def by simp
-  moreover from assms \<open>S`(r) \<in> End(G,P)\<close> \<open>S`(s) \<in> End(G,P)\<close> 
-  have "\<forall>g\<in>G. (S`(r\<ra>s))`(g) = ?F`(g)"
+  moreover from assms \<open>\<S>`(r) \<in> End(G,P)\<close> \<open>\<S>`(s) \<in> End(G,P)\<close> 
+  have "\<forall>g\<in>G. (\<S>`(r\<ra>s))`(g) = ?F`(g)"
     using group_action_int_add_morphism abgroup.end_pointwise_add_val
       unfolding EndAdd_def by simp
-  ultimately show "S`(r\<ra>s) = ?F" using func_eq by simp
+  ultimately show "\<S>`(r\<ra>s) = ?F" using func_eq by simp
 qed
 
 text\<open>The action is a homomorphism between $(\mathbb{Z},\cdot)$ and $(G\to G, \circ)$\<close>
 
-lemma (in abgroup_int0) group_action_int_mult_morphism:
+lemma (in abgroup_int1) group_action_int_mult_morphism:
   assumes "r\<in>\<int>" "s\<in>\<int>"
-  defines "S \<equiv> {\<langle>z,{\<langle>x,powz(z,x)\<rangle>. x\<in>G}\<rangle>. z\<in>\<int>}"
-  shows "S`(r\<cdot>\<^sub>Zs) = EndMult(G,P)`\<langle>S`(r),S`(s)\<rangle>"
+  shows "\<S>`(r\<cdot>\<^sub>Zs) = EndMult(G,P)`\<langle>\<S>`(r),\<S>`(s)\<rangle>"
 proof -  
   from assms have 
-    "S`(r) \<in> End(G,P)" "S`(s) \<in> End(G,P)" "S`(r\<cdot>\<^sub>Zs) \<in> End(G,P)"
+    "\<S>`(r) \<in> End(G,P)" "\<S>`(s) \<in> End(G,P)" "\<S>`(r\<cdot>\<^sub>Zs) \<in> End(G,P)"
     using powz_maps_int_End ints.int_prod_type apply_funtype 
     by simp_all
   from assms have 
-    I: "S`(r\<cdot>\<^sub>Zs) = {\<langle>x,powz(s\<cdot>\<^sub>Zr,x)\<rangle>. x\<in>G}" 
-    "S`(r) = {\<langle>x,powz(r,x)\<rangle>. x\<in>G}" "S`(s) = {\<langle>x,powz(s,x)\<rangle>. x\<in>G}"
+    I: "\<S>`(r\<cdot>\<^sub>Zs) = {\<langle>x,powz(s\<cdot>\<^sub>Zr,x)\<rangle>. x\<in>G}" 
+    "\<S>`(r) = {\<langle>x,powz(r,x)\<rangle>. x\<in>G}" "\<S>`(s) = {\<langle>x,powz(s,x)\<rangle>. x\<in>G}"
     using ints.int_prod_type ZF_fun_from_tot_val1 ints.Int_ZF_1_L4(2) 
     by simp_all
   from assms(1,2) have "{\<langle>x,powz(s\<cdot>\<^sub>Zr,x)\<rangle>. x\<in>G} = {\<langle>x,powz(r,powz(s,x))\<rangle>. x\<in>G}" 
     using powz_mult by simp
-  with assms(1,2) I have "S`(r\<cdot>\<^sub>Zs) = S`(r) O S`(s)"
+  with assms(1,2) I have "\<S>`(r\<cdot>\<^sub>Zs) = \<S>`(r) O \<S>`(s)"
     using powz_type comp_fun_expr by force
-  with \<open>S`(r) \<in> End(G,P)\<close> \<open>S`(s) \<in> End(G,P)\<close> show ?thesis
+  with \<open>\<S>`(r) \<in> End(G,P)\<close> \<open>\<S>`(s) \<in> End(G,P)\<close> show ?thesis
     unfolding EndMult_def using inend_composition_val by simp
 qed
 
 text\<open>The unit is the identity\<close>
 
-lemma (in abgroup_int0) group_action_int_unit:
-  defines "S \<equiv> {\<langle>z,{\<langle>x,powz(z,x)\<rangle>. x\<in>G}\<rangle>. z\<in>\<int>}"
-  shows "S`(\<one>\<^sub>Z) = TheNeutralElement(End(G,P),EndMult(G,P))"
+lemma (in abgroup_int1) group_action_int_unit:
+  shows "\<S>`(\<one>\<^sub>Z) = TheNeutralElement(End(G,P),EndMult(G,P))"
 proof -
   have "TheNeutralElement(End(G,P),EndMult(G,P)) = id(G)"
     using end_comp_monoid(2) unfolding EndMult_def by blast
-  with assms show ?thesis
+  then show ?thesis
     using ints.Int_ZF_1_L8A(2) ZF_fun_from_tot_val1 int_power_zero_one(2) id_diagonal
       by simp
   qed
@@ -240,10 +244,9 @@ proof -
 text\<open>The function from integers to endomorphisms of $G$  defined by $z\mapsto (x\mapsto x^z)$ 
   is a module.\<close>
 
-theorem (in abgroup_int0) group_action_int0:
-  defines "S \<equiv> {\<langle>z,{\<langle>x,powz(z,x)\<rangle>. x\<in>G}\<rangle>. z\<in>\<int>}"
-  shows "IsLeftModule(\<int>,IntegerAddition,IntegerMultiplication,G,P,S)"
-  using groupAssum isAbelian assms ints.Int_ZF_1_1_L2 powz_maps_int_End
+theorem (in abgroup_int1) group_action_int:
+  shows "IsLeftModule(\<int>,IntegerAddition,IntegerMultiplication,G,P,\<S>)"
+  using groupAssum isAbelian ints.Int_ZF_1_1_L2 powz_maps_int_End
     group_action_int_add_morphism_fun group_action_int_mult_morphism
     group_action_int_unit
   unfolding IsMorphism_def ringHomomor_def IsAction_def IsLeftModule_def
@@ -252,9 +255,9 @@ theorem (in abgroup_int0) group_action_int0:
 text\<open>If there is a $\mathbb{Z}$-module on an abelian group,
   it is the one found in the previous result.\<close>
 
-theorem (in abgroup_int0) group_action_int_rev0:
+theorem (in abgroup_int1) group_action_int_rev0:
   assumes "IsLeftModule(\<int>,IntegerAddition,IntegerMultiplication,G,P,S)"
-  shows "S={\<langle>z,{\<langle>x,powz(z,x)\<rangle>. x\<in>G}\<rangle>. z\<in>\<int>}"
-  using assms group_action_int0 int0.action_unique by simp
+  shows "S=\<S>"
+  using assms group_action_int int0.action_unique by simp
 
 end
