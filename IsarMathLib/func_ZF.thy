@@ -490,8 +490,12 @@ subsection\<open>Identity function\<close>
 
 text\<open>In this section we show some additional facts about the identity 
   function defined in the standard Isabelle's \<open>Perm\<close> theory.
-  Note there is also \<open>image_id_same\<close> lemma in \<open>func1\<close> theory.
-  \<close>
+  Note there are some lemmas about the identity function in \<open>func1\<close> theory as well.\<close>
+
+text\<open>The identity function on a set is the same as the diagonal of that set.\<close>
+
+lemma id_diagonal: shows "id(X) = {\<langle>x,x\<rangle>. x\<in>X}"
+  unfolding id_def using lambda_fun_alt by simp
 
 text\<open>A function that maps every point to itself is the identity on its domain.\<close>
 

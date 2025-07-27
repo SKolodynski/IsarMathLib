@@ -853,6 +853,14 @@ text\<open>We will use some binary operations that are naturally defined on the 
 abbreviation InEnd("_ {in End} [_,_]")
   where "InEnd(F,G,P) \<equiv> restrict(F,End(G,P)\<times>End(G,P))"
 
+text\<open>The value of the composition operation restricted to endomorphisms
+  on a pair of endomorphisms is indeed the composition of the elements of the pair.\<close>
+
+lemma (in group0) inend_composition_val: 
+  assumes "f\<in>End(G,P)" "g\<in>End(G,P)" 
+  shows "InEnd(Composition(G),G,P)`\<langle>f,g\<rangle> = (f O g)"
+  using assms func_ZF_5_L2 unfolding End_def by simp  
+
 text\<open>Endomoprhisms of a group form a monoid with composition as the binary operation,
   and the identity map as the neutral element.\<close>
 

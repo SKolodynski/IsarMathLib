@@ -491,7 +491,8 @@ qed
 
 text\<open>Square of a reflexive relation contains the relation.
   Recall that in ZF the identity function on $X$ is the same as the diagonal
-  of $X\times X$, i.e. $id(X) = \{\langle x,x\rangle : x\in X\}$. \<close>
+  of $X\times X$, i.e. $id(X) = \{\langle x,x\rangle : x\in X\}$ 
+  (see also lemma \<open>id_diagonal\<close> in \<open>func_ZF\<close> theory). \<close>
 
 lemma refl_square_greater: assumes "r \<subseteq> X\<times>X" "id(X) \<subseteq> r"
   shows "r \<subseteq> r O r" using assms by auto

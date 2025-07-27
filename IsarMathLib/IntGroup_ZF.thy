@@ -222,7 +222,6 @@ locale group_int0 = group0 +
   fixes oddext ("_ \<degree>")
   defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(\<int>,IntegerAddition,IntegerOrder,f)"
 
-
 text\<open>Next define notation for the integer power \<open>powz(z,x)\<close>. 
   The difficulty here is that in ZF set theory nonnegative integers and natural numbers are 
   different things. So, we use the notion of \<open>zmagnitude\<close> defined in the standard Isabelle/ZF 

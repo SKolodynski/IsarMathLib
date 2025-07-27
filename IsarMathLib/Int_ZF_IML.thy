@@ -329,6 +329,18 @@ theorem Int_ZF_1_T2: shows
   using int0.Int_ZF_1_T1 int0.Int_ZF_1_L9 IsAgroup_def
   group0_def int0.Int_ZF_1_L4 IsCommutative_def by auto
 
+text\<open>Sum of integers is an integer.\<close>
+
+lemma (in int0) int_sum_type: assumes "m\<in>\<int>" "n\<in>\<int>"
+  shows "m\<ra>n \<in> \<int>"
+  using assms Int_ZF_1_T2(3) group0.group_op_closed by simp
+
+text\<open>Product of integers is an integer.\<close>
+
+lemma (in int0) int_prod_type: assumes "m\<in>\<int>" "n\<in>\<int>"
+  shows "m\<cdot>n \<in> \<int>"
+  using assms Int_ZF_1_L1(2) apply_funtype by simp
+
 text\<open>Negative of an integer is an integer.\<close>
 
 lemma (in int0) int_neg_type: assumes "m\<in>\<int>" shows "(\<rm>m) \<in> \<int>"
@@ -378,7 +390,7 @@ lemma (in int0) Int_ZF_1_L13: assumes "m\<in>\<int>"
   using assms Int_ZF_1_L8A Int_ZF_1_L2 Int_ZF_1_L8 Int_ZF_1_L12
   by simp
 
-text\<open>Adding or subtracing one changes integers, but subtracting zero does not. .\<close>
+text\<open>Adding or subtracing one changes integers, but subtracting zero does not.\<close>
 
 lemma (in int0) Int_ZF_1_L14: assumes A1: "m\<in>\<int>" 
   shows 

@@ -223,7 +223,7 @@ lemma func1_1_L5B:
   assumes  A1: "f:X\<rightarrow>Y" shows "range(f) \<subseteq> Y"
 proof
   fix y assume "y \<in> range(f)"
-  then obtain x where "\<langle> x,y\<rangle> \<in> f"
+  then obtain x where "\<langle>x,y\<rangle> \<in> f"
     using range_def converse_def domain_def by auto
   with A1 show "y\<in>Y" using func1_1_L5 by blast
 qed
@@ -1148,6 +1148,49 @@ proof -
     by simp
   ultimately show "g O f = restrict(g,B) O f"
     by (rule func_eq)
+qed
+
+text\<open>A version of lemma \<open>comp_fun_apply\<close> from the standard Isabelle/ZF \<open>Perm\<close> theory
+  but for functions defined as a set of pairs using an expression.\<close>
+
+lemma comp_fun_expr_apply: assumes "\<forall>x\<in>X. a(x)\<in>Y" "x\<in>X"
+  shows "(g O {\<langle>x,a(x)\<rangle>. x\<in>X})`(x) = g`(a(x))"
+proof -
+  from assms(1) have "{\<langle>x,a(x)\<rangle>. x\<in>X}:X\<rightarrow>Y" using ZF_fun_from_total by simp
+  with assms(2) show ?thesis using comp_fun_apply ZF_fun_from_tot_val1
+    by simp
+qed
+
+text\<open>Value of a composition of functions defined by expressions is given by 
+  composition of the expressions.\<close>
+
+lemma comp_fun_expr_val: 
+  assumes "\<forall>x\<in>X. a(x) \<in> Y" "x\<in>X"
+  shows "({\<langle>y,b(y)\<rangle>. y\<in>Y} O {\<langle>x,a(x)\<rangle>. x\<in>X})`(x) = b(a(x))"
+proof -
+  let ?f = "{\<langle>x,a(x)\<rangle>. x\<in>X}"
+  let ?g = "{\<langle>y,b(y)\<rangle>. y\<in>Y}"
+  from assms have "(?g O ?f)`(x) = ?g`(a(x))"
+    by (rule comp_fun_expr_apply)
+  with assms show ?thesis using ZF_fun_from_tot_val2 by simp
+qed
+
+text\<open>Composition of function defined by expressions is a function defined by
+  composition of the expressions.\<close>
+
+lemma comp_fun_expr: assumes "\<forall>x\<in>X. a(x)\<in>Y" "\<forall>y\<in>Y. b(y)\<in>Z"
+  shows "{\<langle>y,b(y)\<rangle>. y\<in>Y} O {\<langle>x,a(x)\<rangle>. x\<in>X} = {\<langle>x,b(a(x))\<rangle>. x\<in>X}"
+proof -
+  let ?f = "{\<langle>x,a(x)\<rangle>. x\<in>X}"
+  let ?g = "{\<langle>y,b(y)\<rangle>. y\<in>Y}"
+  let ?h = "{\<langle>x,b(a(x))\<rangle>. x\<in>X}"
+  from assms have "?f:X\<rightarrow>Y" and "?g:Y\<rightarrow>Z"
+    using ZF_fun_from_total by simp_all
+  then have "?g O ?f:X\<rightarrow>Z" using comp_fun_subset by simp
+  moreover from assms have "?h:X\<rightarrow>Z" using ZF_fun_from_total by simp
+  moreover from assms(1) have "\<forall>x\<in>X. (?g O ?f)`(x) = ?h`(x)"
+    using comp_fun_expr_val ZF_fun_from_tot_val1 by simp
+  ultimately show "?g O ?f = ?h" by (rule func_eq)
 qed
 
 text\<open>A way to look at restriction. Contributed by Victor Porton.\<close>
