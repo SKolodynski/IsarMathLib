@@ -172,7 +172,7 @@ locale abgroup_int1 = abgroup_int0 +
   fixes \<S>
   defines \<S>_def[simp]: "\<S> \<equiv> {\<langle>z,{\<langle>x,powz(z,x)\<rangle>. x\<in>G}\<rangle>. z\<in>\<int>}"
 
-text\<open>The action is a group homomorphism between $(\mathbb{Z},+)$ and $(G,P)$\<close>
+text\<open>The mapping $\mathcal{S}$ is a group homomorphism between $(\mathbb{Z},+)$ and $(G,P)$\<close>
 
 lemma (in abgroup_int1) group_action_int_add_morphism:
   assumes "r\<in>\<int>" "s\<in>\<int>" "g\<in>G"
@@ -206,7 +206,7 @@ proof -
   ultimately show "\<S>`(r\<ra>s) = ?F" using func_eq by simp
 qed
 
-text\<open>The action is a homomorphism between $(\mathbb{Z},\cdot)$ and $(G\to G, \circ)$\<close>
+text\<open>The mapping $\mathcal{S}$ is a homomorphism between $(\mathbb{Z},\cdot)$ and $(G\to G, \circ)$\<close>
 
 lemma (in abgroup_int1) group_action_int_mult_morphism:
   assumes "r\<in>\<int>" "s\<in>\<int>"
@@ -229,7 +229,9 @@ proof -
     unfolding EndMult_def using inend_composition_val by simp
 qed
 
-text\<open>The unit is the identity\<close>
+text\<open>The action maps the integer $1$ to the identity, i.e. the neutral element of the
+  composition of endomorphisms (which is the multiplication operation of the ring of 
+  endomorphisms of the group).\<close>
 
 lemma (in abgroup_int1) group_action_int_unit:
   shows "\<S>`(\<one>\<^sub>Z) = TheNeutralElement(End(G,P),EndMult(G,P))"
@@ -241,7 +243,7 @@ proof -
       by simp
   qed
 
-text\<open>The function from integers to endomorphisms of $G$  defined by $z\mapsto (x\mapsto x^z)$ 
+text\<open>The function from integers to endomorphisms of $G$ defined by $z\mapsto (x\mapsto x^z)$ 
   is a module.\<close>
 
 theorem (in abgroup_int1) group_action_int:
