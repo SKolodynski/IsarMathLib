@@ -27,9 +27,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *)
 
-section \<open>Semilattices and Lattices \<close>
+section \<open>Semilattices and Lattices\<close>
 
-theory Lattice_ZF imports Order_ZF_1a func1
+theory Lattice_ZF imports Order_ZF_1a func1 Finite_ZF
 
 begin
 
@@ -57,13 +57,6 @@ definition
   "IsMeetSemilattice(L,r) \<equiv> 
     r\<subseteq>L\<times>L \<and> IsPartOrder(L,r) \<and> (\<forall>x\<in>L. \<forall>y\<in>L. HasAnInfimum(r,{x,y}))"
 
-text\<open> A partially ordered $(L,r)$ set is a lattice if it is both join and meet-semilattice, i.e. if 
-  every two element set has a supremum (least upper bound) and infimum (greatest lower bound). \<close>
-
-definition
-  IsAlattice (infixl "{is a lattice on}" 90) where
-  "r {is a lattice on} L \<equiv> IsJoinSemilattice(L,r) \<and> IsMeetSemilattice(L,r)"
-
 text\<open> Join is a binary operation whose value on a pair $\langle x,y\rangle$
   is defined as the supremum of the set $\{ x,y\}$. \<close>
 
@@ -77,19 +70,6 @@ text\<open> Meet is a binary operation whose value on a pair $\langle x,y\rangle
 definition
   "Meet(L,r) \<equiv> {\<langle>p,Infimum(r,{fst(p),snd(p)})\<rangle> . p \<in> L\<times>L}"
 
-text\<open>Linear order is a lattice.\<close>
-
-lemma lin_is_latt: assumes "r\<subseteq>L\<times>L" and "IsLinOrder(L,r)"
-  shows "r {is a lattice on} L"
-proof -
-  from assms(2) have "IsPartOrder(L,r)" using Order_ZF_1_L2 by simp
-  with assms have "IsMeetSemilattice(L,r)" unfolding IsLinOrder_def IsMeetSemilattice_def
-    using inf_sup_two_el(1) by auto
-  moreover from assms \<open>IsPartOrder(L,r)\<close> have "IsJoinSemilattice(L,r)"
-    unfolding IsLinOrder_def IsJoinSemilattice_def using inf_sup_two_el(3) by auto
-  ultimately show ?thesis unfolding IsAlattice_def by simp
-qed
-
 text\<open> In a join-semilattice join is indeed a binary operation. \<close>
 
 lemma join_is_binop: assumes "IsJoinSemilattice(L,r)" 
@@ -101,8 +81,8 @@ proof -
   then show ?thesis unfolding Join_def using ZF_fun_from_total by simp
 qed
 
-text\<open> The value of \<open>Join(L,r)\<close> on a pair $\langle x,y\rangle$ is the supremum
-  of the set $\{ x,y\}$, hence its is greater or equal than both. \<close>
+text\<open>The value of \<open>Join(L,r)\<close> on a pair $\langle x,y\rangle$ is the supremum
+  of the set $\{ x,y\}$, hence its is greater or equal than both.\<close>
 
 lemma join_val: 
   assumes "IsJoinSemilattice(L,r)" "x\<in>L" "y\<in>L"
@@ -117,6 +97,18 @@ proof -
     unfolding IsJoinSemilattice_def IsPartOrder_def HasAsupremum_def by auto
   with \<open>j = Supremum(r,{x,y})\<close> show "\<langle>x,j\<rangle> \<in> r" and "\<langle>y,j\<rangle> \<in> r"
     using sup_in_space(2) by auto
+qed
+
+text\<open>Join of $x,y$ is less or equal than any upper bound for $\{ x,y\}$. \<close>
+
+lemma join_least_upbound: 
+  assumes "IsJoinSemilattice(L,r)" "\<langle>x,z\<rangle> \<in> r" "\<langle>y,z\<rangle> \<in> r"
+  shows "\<langle>Join(L,r)`\<langle>x,y\<rangle>,z\<rangle> \<in> r"
+proof -
+  from assms have "x\<in>L" "y\<in>L"
+    unfolding IsJoinSemilattice_def by auto
+  with assms show ?thesis using join_val sup_leq_up_bnd 
+    unfolding IsJoinSemilattice_def IsPartOrder_def by simp
 qed
 
 text\<open> In a meet-semilattice meet is indeed a binary operation. \<close>
@@ -146,6 +138,94 @@ proof -
     unfolding IsMeetSemilattice_def IsPartOrder_def HasAnInfimum_def by auto
   with \<open>m = Infimum(r,{x,y})\<close> show "\<langle>m,x\<rangle> \<in> r" and "\<langle>m,y\<rangle> \<in> r"
     using inf_in_space(2) by auto
+qed
+
+text\<open>In a join semilattice a union of two sets that have suprema has a supremum.\<close>
+
+lemma join_semilat_sup_two: assumes "IsJoinSemilattice(L,r)"
+  "HasAsupremum(r,A)" "HasAsupremum(r,B)"
+shows "HasAsupremum(r,A\<union>B)" and 
+  "Supremum(r,A\<union>B) = Join(L,r)`\<langle>Supremum(r,A),Supremum(r,B)\<rangle>"
+proof -
+  let ?S\<^sub>A = "Supremum(r,A)"
+  let ?S\<^sub>B = "Supremum(r,B)"
+  from assms have "?S\<^sub>A\<in>L" "?S\<^sub>B\<in>L"
+    unfolding IsJoinSemilattice_def IsPartOrder_def HasAsupremum_def
+    using sup_in_space by auto
+  with assms have
+    I: "Join(L,r)`\<langle>?S\<^sub>A,?S\<^sub>B\<rangle> = Supremum(r,{?S\<^sub>A,?S\<^sub>B})" and
+    II: "r\<subseteq>L\<times>L" "antisym(r)" "trans(r)" "\<forall>T\<in>{A,B}. HasAsupremum(r,T)"
+      "HasAsupremum(r,{Supremum(r,T). T\<in>{A,B}})"
+    using join_val(2) unfolding IsJoinSemilattice_def IsPartOrder_def 
+    by simp_all
+  from II have "HasAsupremum(r,\<Union>{A,B})" by (rule sup_sup)
+  from II have
+    "Supremum(r,{Supremum(r,T). T\<in>{A,B}}) = Supremum(r,\<Union>{A,B})"
+    by (rule sup_sup)
+  with \<open>HasAsupremum(r,\<Union>{A,B})\<close> I show 
+    "HasAsupremum(r,A\<union>B)" and "Supremum(r,A\<union>B) = Join(L,r)`\<langle>?S\<^sub>A,?S\<^sub>B\<rangle>"
+    by simp_all
+qed
+
+text\<open>In a meet semilattice a union of two sets that have infima has an infimum.\<close>
+
+lemma meet_semilat_inf_two: assumes "IsMeetSemilattice(L,r)"
+  "HasAnInfimum(r,A)" "HasAnInfimum(r,B)"
+shows "HasAnInfimum(r,A\<union>B)" and 
+  "Infimum(r,A\<union>B) = Meet(L,r)`\<langle>Infimum(r,A),Infimum(r,B)\<rangle>"
+proof -
+  let ?I\<^sub>A = "Infimum(r,A)"
+  let ?I\<^sub>B = "Infimum(r,B)"
+  from assms have "?I\<^sub>A\<in>L" "?I\<^sub>B\<in>L"
+    unfolding IsMeetSemilattice_def IsPartOrder_def HasAnInfimum_def
+    using inf_in_space by auto
+  with assms have
+    I: "Meet(L,r)`\<langle>?I\<^sub>A,?I\<^sub>B\<rangle> = Infimum(r,{?I\<^sub>A,?I\<^sub>B})" and
+    II: "r\<subseteq>L\<times>L" "antisym(r)" "trans(r)" "\<forall>T\<in>{A,B}. HasAnInfimum(r,T)"
+      "HasAnInfimum(r,{Infimum(r,T). T\<in>{A,B}})"
+    using meet_val(2) unfolding IsMeetSemilattice_def IsPartOrder_def 
+    by simp_all
+  from II have "HasAnInfimum(r,\<Union>{A,B})" by (rule inf_inf)
+  from II have
+    "Infimum(r,{Infimum(r,T). T\<in>{A,B}}) = Infimum(r,\<Union>{A,B})"
+    by (rule inf_inf)
+  with \<open>HasAnInfimum(r,\<Union>{A,B})\<close> I show 
+    "HasAnInfimum(r,A\<union>B)" and "Infimum(r,A\<union>B) = Meet(L,r)`\<langle>?I\<^sub>A,?I\<^sub>B\<rangle>"
+    by simp_all
+qed
+
+text\<open>In a join semilattice every nonempty finite set has a supremum.\<close>
+
+lemma join_semilat_fin_sup: 
+  assumes "IsJoinSemilattice(L,r)" "N\<in>FinPow(L)" "N\<noteq>\<emptyset>"
+  shows "HasAsupremum(r,N)"
+proof -
+  let ?C = "{B\<in>Pow(L). HasAsupremum(r,B)}"
+  from assms(1,2) have "\<forall>x\<in>N. {x}\<in>?C" 
+    unfolding IsJoinSemilattice_def IsPartOrder_def FinPow_def 
+    using sup_inf_singl(1) by auto
+  from assms(1) have "\<forall>A\<in>?C. \<forall>B\<in>?C. A\<union>B \<in> ?C"
+    using join_semilat_sup_two by auto
+  with assms(2,3) \<open>\<forall>x\<in>N. {x}\<in>?C\<close> have "N\<in>?C"  
+    by (rule union_two_union_fin_nempty)
+  thus "HasAsupremum(r,N)" by simp
+qed
+
+text\<open>In a meet semilattice every nonempty finite set has a infimum.\<close>
+
+lemma meet_semilat_fin_inf: 
+  assumes "IsMeetSemilattice(L,r)" "N\<in>FinPow(L)" "N\<noteq>\<emptyset>"
+  shows "HasAnInfimum(r,N)"
+proof -
+  let ?C = "{B\<in>Pow(L). HasAnInfimum(r,B)}"
+  from assms(1,2) have "\<forall>x\<in>N. {x}\<in>?C" 
+    unfolding IsMeetSemilattice_def IsPartOrder_def FinPow_def 
+    using sup_inf_singl(3) by auto
+  from assms(1) have "\<forall>A\<in>?C. \<forall>B\<in>?C. A\<union>B \<in> ?C"
+    using meet_semilat_inf_two by auto
+  with assms(2,3) \<open>\<forall>x\<in>N. {x}\<in>?C\<close> have "N\<in>?C"  
+    by (rule union_two_union_fin_nempty)
+  thus "HasAnInfimum(r,N)" by simp
 qed
 
 text\<open>In a (nonempty) meet semi-lattice the relation down-directs the set. \<close>
@@ -201,7 +281,7 @@ proof -
   thus "x\<squnion>y = sup {x,y}" by simp
 qed
 
-text\<open> Join is associative. \<close>
+text\<open>Join is associative.\<close>
 
 lemma (in join_semilatt) join_assoc: assumes "x\<in>L" "y\<in>L" "z\<in>L"
   shows "x\<squnion>(y\<squnion>z) = x\<squnion>y\<squnion>z"
@@ -327,10 +407,68 @@ proof -
   finally show "x\<sqinter>(y\<sqinter>z) = x\<sqinter>y\<sqinter>z" by simp
 qed
 
-text\<open> Meet is idempotent. \<close>
+text\<open>Meet is idempotent.\<close>
 
 lemma (in meet_semilatt) meet_idempotent: assumes "x\<in>L" shows "x\<sqinter>x = x" 
   using meetLatt assms meet_val IsMeetSemilattice_def IsPartOrder_def sup_inf_singl(4)
   by auto
+
+subsection\<open>Lattices\<close>
+
+text\<open>Here we study lattices, i.e. structures where both meet and join are defined.\<close>
+
+text\<open> A partially ordered $(L,r)$ set is a lattice if it is both join and meet-semilattice, i.e. if 
+  every two element set has a supremum (least upper bound) and infimum (greatest lower bound). \<close>
+
+definition
+  IsAlattice (infixl "{is a lattice on}" 90) where
+  "r {is a lattice on} L \<equiv> IsJoinSemilattice(L,r) \<and> IsMeetSemilattice(L,r)"
+
+text\<open>Linear order is a lattice.\<close>
+
+lemma lin_is_latt: assumes "r\<subseteq>L\<times>L" and "IsLinOrder(L,r)"
+  shows "r {is a lattice on} L"
+proof -
+  from assms(2) have "IsPartOrder(L,r)" using Order_ZF_1_L2 by simp
+  with assms have "IsMeetSemilattice(L,r)" unfolding IsLinOrder_def IsMeetSemilattice_def
+    using inf_sup_two_el(1) by auto
+  moreover from assms \<open>IsPartOrder(L,r)\<close> have "IsJoinSemilattice(L,r)"
+    unfolding IsLinOrder_def IsJoinSemilattice_def using inf_sup_two_el(3) by auto
+  ultimately show ?thesis unfolding IsAlattice_def by simp
+qed
+
+subsection\<open>Complete lattices\<close>
+
+text\<open>The definition of a lattice requires that every two-element set has a supremum and infimum.
+  As we show in \<open>join_semilat_fin_sup\<close> and \<open>meet_semilat_fin_inf\<close> this implies
+  that every finite subset of the lattice has supremum and infimum.
+  In this section we study structures in which every nonempty subset (not necessarily finite) 
+  has both supremum and infimum.\<close>
+
+text\<open>Wikipedia defines a complete lattice as a partially ordered set in which every subset has
+  both supremum and infimum. The way we define supremum and infimum only nonempty sets can have 
+  infima or suprema so to avoid inconsistency we define a complete lattice as the one in 
+  which all nonempty subsets have both infima and suprema. We also add the assumption that
+  the carrier is nonempty so that we don't have to repeat that assumption in every proposition
+  about complete lattices.\<close>
+
+definition
+  "IsCompleteLattice(L,r) \<equiv> L\<noteq>\<emptyset> \<and> r\<subseteq>L\<times>L \<and> IsPartOrder(L,r) \<and> 
+  (\<forall>A\<in>Pow(L)\<setminus>{\<emptyset>}. (HasAsupremum(r,A) \<and> HasAnInfimum(r,A)))"
+
+text\<open>Complete lattices are bounded and have both maximum and minimum.\<close>
+
+lemma compl_lat_bounded: assumes "IsCompleteLattice(L,r)"
+  shows "HasAmaximum(r,L)" "HasAminimum(r,L)" "IsBounded(L,r)"
+proof -
+  from assms have "Supremum(r,L)\<in>L" and "Infimum(r,L)\<in>L"
+    using sup_in_space(1) inf_in_space(1)
+    unfolding IsCompleteLattice_def IsPartOrder_def 
+      HasAsupremum_def HasAnInfimum_def by simp_all
+  with assms show "HasAmaximum(r,L)" "HasAminimum(r,L)" "IsBounded(L,r)"
+    using sup_is_max(1) inf_is_min(1) Order_ZF_4_L7 Order_ZF_4_L8A
+    unfolding IsCompleteLattice_def IsPartOrder_def IsBounded_def 
+      by simp_all
+qed
 
 end

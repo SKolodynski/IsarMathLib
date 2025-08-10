@@ -283,11 +283,11 @@ proof -
   ultimately show "Maximum(r,A) = M" by auto
 qed
 
-text\<open>If an element belongs to a set and is less or equal
+text\<open>If $r$ is antisymmeric, an element belongs to a set and is less or equal
   than all elements of that set, then it is the minimum of that set.\<close>
 
 lemma Order_ZF_4_L15: 
-  assumes A1: "antisym(r)" and A2: "m \<in> A" and 
+  assumes A1: "antisym(r)" and A2: "m\<in>A" and 
   A3: "\<forall>a\<in>A. \<langle>m,a\<rangle> \<in> r"
   shows "Minimum(r,A) = m"
 proof -
@@ -302,6 +302,33 @@ proof -
   ultimately show "Minimum(r,A) = m" by auto
 qed
 
+text\<open>If $r$ is an antisymmetric relation on nonempty set $X$ and $X$ is bounded below in that
+  relation, then $X$ has a minimum.\<close>
+
+lemma bouded_below_min: 
+  assumes "X\<noteq>\<emptyset>" "r\<subseteq>X\<times>X" "antisym(r)" "IsBoundedBelow(X,r)"
+  shows "HasAminimum(r,X)"
+proof -
+  from assms(1,4) obtain m where "\<forall>x\<in>X. \<langle>m,x\<rangle> \<in> r"
+    unfolding IsBoundedBelow_def by auto
+  from assms(1) obtain x\<^sub>0 where "x\<^sub>0\<in>X" by auto
+  with assms(2) \<open>\<forall>x\<in>X. \<langle>m,x\<rangle> \<in> r\<close> show "HasAminimum(r,X)" 
+    unfolding HasAminimum_def by auto
+qed
+
+text\<open>If $r$ is an antisymmetric relation on nonempty set $X$ and $X$ is bounded above in that
+  relation, then $X$ has a maximum.\<close>
+
+lemma bouded_above_max: 
+  assumes "X\<noteq>\<emptyset>" "r\<subseteq>X\<times>X" "antisym(r)" "IsBoundedAbove(X,r)"
+  shows "HasAmaximum(r,X)"
+proof -
+  from assms(1,4) obtain m where "\<forall>x\<in>X. \<langle>x,m\<rangle> \<in> r"
+    unfolding IsBoundedAbove_def by auto
+  from assms(1) obtain x\<^sub>0 where "x\<^sub>0\<in>X" by auto
+  with assms(2) \<open>\<forall>x\<in>X. \<langle>x,m\<rangle> \<in> r\<close> show "HasAmaximum(r,X)" 
+    unfolding HasAmaximum_def by auto
+qed
 
 text\<open>For total and transitive relations if we add an element to a set 
   that has a minimum, the set still has a minimum.\<close>
@@ -740,13 +767,39 @@ text\<open>In the definition of the \<open>HasAnInfimum\<close> predicate (see t
   we use a somewhat unconventional way of describing the set of lower bounds of a set $A$
   as $\bigcap_{a\in A} r^{-1}(\{ a\})$. The next lemma shows that for relations defined on
   $X$ and non-empty sets $A$ this is the same as the more standard 
-  $\{ x\in X: \forall_{a\in A} \langle x,a\rangle \in r\}$.\<close>
+  $\{ x\in X: \forall_{a\in A} \langle x,a\rangle \in r\}$. Under the same assumption
+  a similar identity holds between $\bigcap_{a\in A} r(\{ a\})$ and 
+  $\{ x\in X: \forall_{a\in A} \langle a,x\rangle \in r\}$, i.e. 
+  for the set of upper bounds. This implies we can 
+  formulate the definitions of the \<open>HasAsupremum\<close> and \<open>HasAnInfimum\<close> predicates
+  in terms of this more standard notation. \<close>
 
-lemma lower_bounds: 
-  assumes "r\<subseteq>X\<times>X" "A\<noteq>\<emptyset>" shows "(\<Inter>a\<in>A. r-``{a}) = {x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r}" 
-proof
-  from assms show "(\<Inter>a\<in>A. r-``{a}) \<subseteq> {x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r}" by auto
-  from assms show "{x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r} \<subseteq> (\<Inter>a\<in>A. r-``{a})" by auto
+lemma lower_upper_bounds_alt: 
+  assumes "r\<subseteq>X\<times>X" "A\<noteq>\<emptyset>" shows 
+    "(\<Inter>a\<in>A. r-``{a}) = {x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r}"
+    "(\<Inter>a\<in>A. r``{a}) = {x\<in>X. \<forall>a\<in>A. \<langle>a,x\<rangle> \<in> r}"
+    "HasAsupremum(r,A) \<longleftrightarrow> HasAminimum(r,{x\<in>X. \<forall>a\<in>A. \<langle>a,x\<rangle> \<in> r})"
+    "HasAnInfimum(r,A) \<longleftrightarrow> HasAmaximum(r,{x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r})"
+    "Supremum(r,A) = Minimum(r,{x\<in>X. \<forall>a\<in>A. \<langle>a,x\<rangle> \<in> r})"
+    "Infimum(r,A) = Maximum(r,{x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r})"
+proof -
+  from assms have  
+    "(\<Inter>a\<in>A. r-``{a}) \<subseteq> {x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r}" and 
+    "(\<Inter>a\<in>A. r``{a}) \<subseteq> {x\<in>X. \<forall>a\<in>A. \<langle>a,x\<rangle> \<in> r}"
+    by auto
+  moreover from assms(2) have  
+    "{x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r} \<subseteq> (\<Inter>a\<in>A. r-``{a})" and 
+    "{x\<in>X. \<forall>a\<in>A. \<langle>a,x\<rangle> \<in> r} \<subseteq> (\<Inter>a\<in>A. r``{a})" by auto
+  ultimately show "(\<Inter>a\<in>A. r-``{a}) = {x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r}" and
+    "(\<Inter>a\<in>A. r``{a}) = {x\<in>X. \<forall>a\<in>A. \<langle>a,x\<rangle> \<in> r}"
+    by auto  
+  then show 
+    "HasAsupremum(r,A) \<longleftrightarrow> HasAminimum(r,{x\<in>X. \<forall>a\<in>A. \<langle>a,x\<rangle> \<in> r})"
+    "HasAnInfimum(r,A) \<longleftrightarrow> HasAmaximum(r,{x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r})"
+    "Supremum(r,A) = Minimum(r,{x\<in>X. \<forall>a\<in>A. \<langle>a,x\<rangle> \<in> r})"
+    "Infimum(r,A) = Maximum(r,{x\<in>X. \<forall>a\<in>A. \<langle>x,a\<rangle> \<in> r})"
+    unfolding HasAsupremum_def HasAnInfimum_def 
+      Supremum_def Infimum_def  by simp_all
 qed
 
 text\<open>Properties of supremum of a bounded set for complete relations.\<close>
@@ -776,6 +829,31 @@ proof -
     using bounded_above by blast
   with assms(1,2,3,4) show "Supremum(r,A) \<in> X" and "\<forall>x\<in>A. \<langle>x,Supremum(r,A)\<rangle> \<in> r"
     using Order_ZF_5_L7 by simp_all
+qed
+
+text\<open>If $r$ is a antisymmeric relation on a set $X$ which has a minimum, 
+  and every nonempty subset of $X$ has a supremum then every nonempty subset of $X$ 
+  has an infimum. Note that in view of lemma \<open>bouded_below_min\<close> we could assume
+  that $X$ is bounded below instead of assuming that it has a minimum.\<close>
+
+lemma bounded_below_sups_infs: 
+  assumes "r\<subseteq>X\<times>X" "antisym(r)" "HasAminimum(r,X)" and 
+    "\<forall>A\<in>Pow(X)\<setminus>{\<emptyset>}. HasAsupremum(r,A)" "A\<subseteq>X" "A\<noteq>\<emptyset>" 
+  shows "HasAnInfimum(r,A)" and
+    "Infimum(r,A) = Maximum(r,{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r})"
+    "Infimum(r,A) = Supremum(r,{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r})" 
+proof -
+  let ?B = "{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r}"
+  from assms(2,3,5) have "?B\<noteq>\<emptyset>" using min_subset_lower_bound by simp
+  with assms(4) have "HasAsupremum(r,?B)" by auto
+  let ?z = "Supremum(r,?B)"
+  from assms(1,2) \<open>HasAsupremum(r,?B)\<close> have
+    "HasAmaximum(r,?B)" and "Maximum(r,?B) = ?z"
+    using sup_in_space sup_leq_up_bnd sup_is_max 
+    unfolding HasAsupremum_def by simp_all
+  with assms(1,6) \<open>?B\<noteq>\<emptyset>\<close> \<open>HasAmaximum(r,?B)\<close> show 
+    "HasAnInfimum(r,A)" "Infimum(r,A) = Maximum(r,?B)" "Infimum(r,A) = ?z"
+    using lower_upper_bounds_alt(4,6) by simp_all
 qed
 
 text\<open> Infimum of the set of infima of a collection of sets is infimum of the union. \<close>

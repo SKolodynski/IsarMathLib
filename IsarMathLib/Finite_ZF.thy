@@ -428,11 +428,11 @@ text\<open>If a family of sets contains the empty set and
   of any finite collection.\<close>
 
 lemma union_two_union_fin:
-  assumes A1: "0 \<in> C" and A2: "\<forall>A\<in>C. \<forall>B\<in>C. A\<union>B \<in> C" and 
+  assumes A1: "\<emptyset>\<in>C" and A2: "\<forall>A\<in>C. \<forall>B\<in>C. A\<union>B \<in> C" and 
   A3: "N \<in> FinPow(C)"
   shows "\<Union>N \<in> C"
 proof -
-  from \<open>0 \<in> C\<close> have "\<Union>0 \<in> C" by simp
+  from \<open>\<emptyset>\<in>C\<close> have "\<Union>0 \<in> C" by simp
   moreover have "\<forall>M \<in> FinPow(C). \<Union>M \<in> C \<longrightarrow> (\<forall>A\<in>C. \<Union>(M \<union> {A}) \<in> C)"
   proof -
     { fix M assume "M \<in> FinPow(C)"
@@ -466,7 +466,12 @@ text\<open>Union of two finite subsets is a finite subset.\<close>
 
 lemma union_finpow: assumes "A \<in> FinPow(X)" and "B \<in> FinPow(X)"
   shows "A \<union> B \<in> FinPow(X)"
-  using assms FinPow_def by auto
+  using assms unfolding FinPow_def by auto
+
+text\<open>The finite power set of a larger set is larger.\<close>
+
+lemma finpow_mono: assumes "A\<subseteq>B" shows "FinPow(A) \<subseteq> FinPow(B)"
+  using assms unfolding FinPow_def by auto
 
 text\<open>Union of finite number of finite sets is finite.\<close>
 
@@ -475,11 +480,6 @@ lemma fin_union_finpow: assumes "M \<in> FinPow(FinPow(X))"
   using assms empty_in_finpow union_finpow union_two_union_fin
   by simp
 
-(*text{*A subset of a finites subset is a finite subset.*}
-
-lemma subset_finpow: assumes "A \<in> FinPow(X)" and "B \<subseteq> A"
-  shows "B \<in> FinPow(X)"
-  using assms FinPow_def subset_Finite by auto;*)
 text\<open>If a set is finite after removing one element, then it is finite.\<close>
 
 lemma rem_point_fin_fin: 
@@ -537,6 +537,24 @@ text\<open>An image of a nonempty finite set is a nonempty finite set.\<close>
 lemma fin_image_fin0: assumes "N \<in> FinPow(B)\<setminus>{\<emptyset>}" and "\<forall>V\<in>N. K(V)\<in>C" 
   shows  "{K(V). V\<in>N} \<in> FinPow(C)\<setminus>{\<emptyset>}"
   using assms fin_image_fin1 by auto
+
+text\<open>A version of \<open>union_two_union_fin\<close> for nonempty finite subsets of some set $X$: 
+  if a family of sets contains all singletons from a finite subset $N$ of $X$ 
+  and is closed with respect to taking unions of two sets then it contains $N$.\<close>
+
+lemma union_two_union_fin_nempty: 
+  assumes "N\<in>FinPow(X)" "N\<noteq>\<emptyset>" "\<forall>x\<in>N. {x} \<in> C" "\<forall>A\<in>C. \<forall>B\<in>C. A\<union>B \<in> C" 
+  shows "N\<in>C"
+proof -
+  let ?C\<^sub>0 = "{\<emptyset>} \<union> C"
+  let ?N\<^sub>0 = "{{x}. x \<in> N}"
+  have "\<Union>?N\<^sub>0 = N" by auto
+  from assms(1,3,4) have 
+    "\<emptyset>\<in>?C\<^sub>0" "\<forall>A\<in>?C\<^sub>0. \<forall>B\<in>?C\<^sub>0. A\<union>B \<in> ?C\<^sub>0" "?N\<^sub>0\<in>FinPow(?C\<^sub>0)"
+    using fin_image_fin1 finpow_mono by auto
+  then have "\<Union>?N\<^sub>0 \<in> ?C\<^sub>0" by (rule union_two_union_fin)
+  with assms(2) \<open>\<Union>?N\<^sub>0 = N\<close> show "N\<in>C" by simp
+qed
 
 text\<open>If a set $X$ is finite then the set $\{ K(x). x\in X\}$ is also finite.
   It's basically standard Isalelle/ZF \<open>Finite_RepFun\<close> in nicer notation.\<close>

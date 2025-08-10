@@ -386,9 +386,10 @@ text\<open>In this this section we show that every set of uniformities on fixed 
   of $\bigcap\mathcal{U}$ in general is not a fundamental system of entourages. Even though the 
   first three conditions hold for such collection, the fourth one does not. 
   The approach that works is to show the the supremum of the collection of lower bounds
-  is actually a lower bound, hence the maximum of the set of lower bounds. \<close>
+  is actually a lower bound, hence the maximum of the set of lower bounds.\<close>
 
-text\<open>To shorten the proofs we introduce the concept of the supremum of the the collection
+
+text\<open>To shorten the proofs we introduce the concept of the supremum of the set
   of lower bounds of some collection of uniformities $\mathcal{U}$. 
   We know from the previous section that such supremum exists. 
   Later in this section we show that this supremum is itself a lower bound of $\mathcal{U}$, 
@@ -469,7 +470,7 @@ proof -
       unfolding OrderOnUniformities_def InclusionOn_def by auto
     with assms(3) have 
       "(\<Inter>\<Phi>\<in>\<U>. ?r-``{\<Phi>}) = {\<Psi>\<in>Uniformities(X). \<forall>\<Phi>\<in>\<U>. \<langle>\<Psi>,\<Phi>\<rangle> \<in> ?r}"
-      using lower_bounds by simp
+      using lower_upper_bounds_alt(1) by simp
     also from assms(2,3) have "... = ?\<L>" using order_unif_iff by blast
     finally show ?thesis by simp
   qed
