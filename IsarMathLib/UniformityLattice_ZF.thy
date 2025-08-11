@@ -28,7 +28,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Set of uniformities as a complete lattice \<close>
 
-theory UniformityLattice_ZF imports Cardinal_ZF Order_ZF_1a UniformSpace_ZF
+theory UniformityLattice_ZF imports Cardinal_ZF UniformSpace_ZF Lattice_ZF
 
 begin
 
@@ -90,7 +90,7 @@ text\<open>In particular, the order defined by inclusion on uniformities is anti
   Having this as a separate fact is handy as we reference some lemmas 
   proven for antisymmetric (not necessarily partial order) relations.\<close>
 
-lemma ord_unif_antisymm: shows "antisym(OrderOnUniformities(X))"
+corollary ord_unif_antisymm: shows "antisym(OrderOnUniformities(X))"
   using ord_unif_partial_ord unfolding IsPartOrder_def by simp
 
 text\<open>If $X$ is not empty then the singleton $\{ X\times X\}$ is the minimal
@@ -386,8 +386,11 @@ text\<open>In this this section we show that every set of uniformities on fixed 
   of $\bigcap\mathcal{U}$ in general is not a fundamental system of entourages. Even though the 
   first three conditions hold for such collection, the fourth one does not. 
   The approach that works is to show the the supremum of the collection of lower bounds
-  is actually a lower bound, hence the maximum of the set of lower bounds.\<close>
-
+  is actually a lower bound, hence the maximum of the set of lower bounds. 
+  We present this approach below in theorem \<open>unif_inf_alt\<close>. The simplest approach though is
+  to use the general property of partially ordered sets shown in lemma \<open>bounded_below_sups_infs\<close> 
+  in the \<open>Order_ZF_1a\<close> theory: if all nonempty subsets of such set have suprema and the whole set
+  has a minimum then all nonempty subsets have infima.\<close>
 
 text\<open>To shorten the proofs we introduce the concept of the supremum of the set
   of lower bounds of some collection of uniformities $\mathcal{U}$. 
@@ -398,7 +401,46 @@ text\<open>To shorten the proofs we introduce the concept of the supremum of the
 definition
   "SLB_Unif(X,\<U>) \<equiv> Supremum(OrderOnUniformities(X),{\<Psi>\<in>Uniformities(X). \<Psi>\<subseteq>\<Inter>\<U>})"
 
-text\<open>The set of lower bounds of a nonempty set of uniformities is nonempty. \<close>
+text\<open>Let $\mathfrak{U}$ denote the collection of all uniformities on a nonempty set $X$, ordered
+  by inclusion. Then every collection of uniformities $\mathcal{U}\subseteq \mathfrak{U}$ 
+  has an infimum (the greatest lower bound) which is equal to the supremum
+  of the collection of lower bounds.\<close>
+
+theorem unif_inf: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
+  shows "HasAnInfimum(OrderOnUniformities(X),\<U>)" and
+  "Infimum(OrderOnUniformities(X),\<U>) = SLB_Unif(X,\<U>)"
+proof -
+  let ?L = "Uniformities(X)"
+  let ?r = "OrderOnUniformities(X)"
+  from assms have
+    I: "\<U>\<subseteq>?L" "\<U>\<noteq>\<emptyset>" "?r \<subseteq> ?L\<times>?L" "antisym(?r)" "HasAminimum(?r,?L)"
+    "\<forall>A\<in>Pow(?L)\<setminus>{0}. HasAsupremum(?r,A)"
+    using uniformities_min_max(1) ord_unif_antisymm lub_unif_sup
+    unfolding OrderOnUniformities_def InclusionOn_def by auto
+  then show "HasAnInfimum(?r,\<U>)" by (rule bounded_below_sups_infs)
+  from I have 
+    II: "Infimum(?r,\<U>) = Supremum(?r,{\<Psi>\<in>?L. \<forall>\<Phi>\<in>\<U>. \<langle>\<Psi>,\<Phi>\<rangle> \<in> ?r})"
+    by (rule bounded_below_sups_infs)
+  from assms(2,3) have "{\<Psi>\<in>?L. \<forall>\<Phi>\<in>\<U>. \<langle>\<Psi>,\<Phi>\<rangle> \<in> ?r} = {\<Psi>\<in>?L. \<Psi>\<subseteq>\<Inter>\<U>}"
+    unfolding OrderOnUniformities_def InclusionOn_def by auto
+  with II show "Infimum(?r,\<U>) = SLB_Unif(X,\<U>)"
+    unfolding SLB_Unif_def by simp
+qed
+
+text\<open>Uniformities on a nonempty set, ordered by inclusion form a complete lattice. \<close>
+
+theorem uniformities_compl_latt: assumes "X\<noteq>\<emptyset>" 
+  shows "IsCompleteLattice(Uniformities(X),OrderOnUniformities(X))"
+  using assms unifomities_exist ord_unif_partial_ord lub_unif_sup unif_inf
+  unfolding OrderOnUniformities_def InclusionOn_def IsCompleteLattice_def
+  by auto
+
+text\<open>The rest of the propositions in this section presents an alternative, more explicit approach 
+  to proving the existence of infimum of a set of uniformities that does not use 
+  theorem \<open>bounded_below_sups_infs\<close> from the \<open>Order_ZF_1a\<close> theory. 
+  It's here mostly as a curiosity, since I have formalised this approach first and I did not 
+  want to remove it as it may be of some interest to somebody. 
+  The next lemma shows that the set of lower bounds of a nonempty set of uniformities is nonempty.\<close>
 
 lemma lb_nempty_nempty: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
   shows "{\<Psi>\<in>Uniformities(X). \<Psi>\<subseteq>\<Inter>\<U>} \<noteq> \<emptyset>"
@@ -447,12 +489,10 @@ proof
   } with assms(3) show "E\<in>\<Inter>\<U>" by auto
 qed
 
-text\<open>Let $\mathfrak{U}$ denote the collection of all uniformities on a nonempty set $X$, ordered
-  by inclusion. Then every collection of uniformities $\mathcal{U}\subseteq \mathfrak{U}$ 
-  has an infimum (the greatest lower bound) which is equal to the supremum
-  of the collection of lower bounds. \<close>
+text\<open>The next theorem states the same assertion as \<open>unif_inf\<close> with a different proof
+  that does not rely on the \<open>bounded_below_sups_infs\<close> lemma from the \<open>Order_ZF_1a\<close> theory.\<close>
 
-theorem unif_inf: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
+theorem unif_inf_alt: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
   shows "HasAnInfimum(OrderOnUniformities(X),\<U>)" and
   "Infimum(OrderOnUniformities(X),\<U>) = SLB_Unif(X,\<U>)" 
 proof -

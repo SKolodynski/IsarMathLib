@@ -464,7 +464,6 @@ proof -
     by auto
 qed
 
-
 text\<open>If a set does not have a maximum, then for any its element we can
   find one that is (strictly) greater.\<close>
 
@@ -772,7 +771,8 @@ text\<open>In the definition of the \<open>HasAnInfimum\<close> predicate (see t
   $\{ x\in X: \forall_{a\in A} \langle a,x\rangle \in r\}$, i.e. 
   for the set of upper bounds. This implies we can 
   formulate the definitions of the \<open>HasAsupremum\<close> and \<open>HasAnInfimum\<close> predicates
-  in terms of this more standard notation. \<close>
+  and the expressions for the values of supremum and infimum in terms of 
+  this more standard notation.\<close>
 
 lemma lower_upper_bounds_alt: 
   assumes "r\<subseteq>X\<times>X" "A\<noteq>\<emptyset>" shows 
@@ -831,29 +831,55 @@ proof -
     using Order_ZF_5_L7 by simp_all
 qed
 
-text\<open>If $r$ is a antisymmeric relation on a set $X$ which has a minimum, 
+text\<open>If $r$ is an antisymmeric relation on a set $X$ which has a minimum, 
   and every nonempty subset of $X$ has a supremum then every nonempty subset of $X$ 
   has an infimum. Note that in view of lemma \<open>bouded_below_min\<close> we could assume
   that $X$ is bounded below instead of assuming that it has a minimum.\<close>
 
 lemma bounded_below_sups_infs: 
-  assumes "r\<subseteq>X\<times>X" "antisym(r)" "HasAminimum(r,X)" and 
-    "\<forall>A\<in>Pow(X)\<setminus>{\<emptyset>}. HasAsupremum(r,A)" "A\<subseteq>X" "A\<noteq>\<emptyset>" 
+  assumes "A\<subseteq>X" "A\<noteq>\<emptyset>" "r\<subseteq>X\<times>X" "antisym(r)" "HasAminimum(r,X)" and 
+    "\<forall>B\<in>Pow(X)\<setminus>{\<emptyset>}. HasAsupremum(r,B)"  
   shows "HasAnInfimum(r,A)" and
     "Infimum(r,A) = Maximum(r,{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r})"
     "Infimum(r,A) = Supremum(r,{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r})" 
 proof -
   let ?B = "{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r}"
-  from assms(2,3,5) have "?B\<noteq>\<emptyset>" using min_subset_lower_bound by simp
-  with assms(4) have "HasAsupremum(r,?B)" by auto
+  from assms(1,4,5) have "?B\<noteq>\<emptyset>" 
+    using min_subset_lower_bound by simp
+  with assms(6) have "HasAsupremum(r,?B)" by auto
   let ?z = "Supremum(r,?B)"
-  from assms(1,2) \<open>HasAsupremum(r,?B)\<close> have
+  from assms(3,4) \<open>HasAsupremum(r,?B)\<close> have
     "HasAmaximum(r,?B)" and "Maximum(r,?B) = ?z"
-    using sup_in_space sup_leq_up_bnd sup_is_max 
+    using sup_in_space(1) sup_leq_up_bnd sup_is_max 
     unfolding HasAsupremum_def by simp_all
-  with assms(1,6) \<open>?B\<noteq>\<emptyset>\<close> \<open>HasAmaximum(r,?B)\<close> show 
-    "HasAnInfimum(r,A)" "Infimum(r,A) = Maximum(r,?B)" "Infimum(r,A) = ?z"
-    using lower_upper_bounds_alt(4,6) by simp_all
+  with assms(2,3) \<open>?B\<noteq>\<emptyset>\<close> show "HasAnInfimum(r,A)" and
+    "Infimum(r,A) = Maximum(r,?B)" "Infimum(r,A) = ?z"
+      using lower_upper_bounds_alt(4,6) by simp_all
+qed
+
+text\<open>A theorem dual to \<open>bounded_above_infs_sups\<close>: if a relation is antisymmetric,
+  the whole space has a maximum and every nonempty subset has an infimum, then
+  every nonempty subset has a supremum. \<close>
+
+lemma bounded_above_infs_sups: 
+  assumes "A\<subseteq>X" "A\<noteq>\<emptyset>" "r\<subseteq>X\<times>X" "antisym(r)" "HasAmaximum(r,X)" and
+    "\<forall>B\<in>Pow(X)\<setminus>{\<emptyset>}. HasAnInfimum(r,B)"
+  shows "HasAsupremum(r,A)" and
+    "Supremum(r,A) = Minimum(r,{y\<in>X. \<forall>x\<in>A. \<langle>x,y\<rangle> \<in> r})"
+    "Supremum(r,A) = Infimum(r,{y\<in>X. \<forall>x\<in>A. \<langle>x,y\<rangle> \<in> r})"
+proof -
+  let ?B = "{y\<in>X. \<forall>x\<in>A. \<langle>x,y\<rangle> \<in> r}"
+  from assms(1,4,5) have "?B\<noteq>\<emptyset>"
+    using max_subset_upper_bound by simp
+  with assms(6) have "HasAnInfimum(r,?B)" by auto
+  let ?z = "Infimum(r,?B)"
+  from assms(3,4) \<open>HasAnInfimum(r,?B)\<close> have
+    "HasAminimum(r,?B)" and "Minimum(r,?B) = ?z"
+    using inf_in_space(1) inf_geq_lo_bnd inf_is_min
+    unfolding HasAnInfimum_def by simp_all
+  with assms(2,3) \<open>?B\<noteq>\<emptyset>\<close> show "HasAsupremum(r,A)" and
+    "Supremum(r,A) = Minimum(r,?B)" "Supremum(r,A) = ?z"
+    using lower_upper_bounds_alt(3,5) by simp_all
 qed
 
 text\<open> Infimum of the set of infima of a collection of sets is infimum of the union. \<close>
