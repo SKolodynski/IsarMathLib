@@ -164,33 +164,32 @@ definition
 
 text\<open>The supremum of a set $A$ is defined as the minimum of the set of
   upper bounds, i.e. the set 
-  $\{u.\forall_{a\in A} \langle a,u\rangle \in r\}=\bigcap_{a\in A} r\{a\}$. 
-   Recall that in Isabelle/ZF
-  \<open>r-``(A)\<close> denotes the inverse image of the set $A$ by relation $r$
-  (i.e. \<open>r-``(A)\<close>=$\{ x: \langle x,y\rangle\in r$ for some $y\in A\}$).\<close>
+  $\{u.\forall_{a\in A} \langle a,u\rangle \in r\}=\bigcap_{a\in A} r\{a\}$.\<close>
 
 definition
   "Supremum(r,A) \<equiv> Minimum(r,\<Inter>a\<in>A. r``{a})"
 
-text\<open> The notion of "having a supremum" is the same as the set of upper bounds having a
+text\<open>The notion of "having a supremum" is the same as the set of upper bounds having a
   minimum, but having it a a separate notion does simplify notation in some cases.
   The definition is written in terms of 
   images of singletons $\{ x\}$ under relation. To understand this formulation note
   that the set of upper bounds of a set $A\subseteq X$ is 
   $\bigcap_{x\in A}\{ y\in X | \langle x,y\rangle \in r \}$, which is the same
   as $\bigcap_{x\in A} r(\{ x \})$, where $r(\{ x \})$ is the image of the singleton $\{ x\}$ under
-  relation $r$. \<close>
+  relation $r$.\<close>
 
 definition
   "HasAsupremum(r,A) \<equiv> HasAminimum(r,\<Inter>a\<in>A. r``{a})"
 
-text\<open> The notion of "having an infimum" is the same as the set of lower bounds having a
-  maximum. \<close>
+text\<open>The notion of "having an infimum" is the same as the set of lower bounds having a
+  maximum.\<close>
 
 definition
   "HasAnInfimum(r,A) \<equiv> HasAmaximum(r,\<Inter>a\<in>A. r-``{a})"
 
-text\<open>Infimum is defined analogously.\<close>
+text\<open>Infimum is defined analogously. Recall that in Isabelle/ZF
+  \<open>r-``(A)\<close> denotes the inverse image of the set $A$ by relation $r$
+  (i.e. \<open>r-``(A)\<close>=$\{ x: \langle x,y\rangle\in r$ for some $y\in A\}$)\<close>
 
 definition
   "Infimum(r,A) \<equiv> Maximum(r,\<Inter>a\<in>A. r-``{a})"

@@ -828,8 +828,7 @@ lemma (in group0) eq_endomor:
   shows "f \<in> End(G,P)"
   using assms  unfolding End_def Homomor_def IsMorphism_def by simp
 
-text\<open>The set of endomorphisms forms a submonoid of the monoid of function
-from a set to that set under composition.\<close>
+text\<open>The value of the composition function on a pair of endomorphisms is an endomorphism.\<close>
 
 lemma (in group0) end_composition:
   assumes "f\<^sub>1\<in>End(G,P)" "f\<^sub>2\<in>End(G,P)"

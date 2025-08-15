@@ -462,13 +462,9 @@ proof
   let ?\<Xi> = "LUB_Unif(X,?\<L>)"
   let ?\<BB> = "LUB_UnifBase(?\<L>)" 
   have "?\<L> \<subseteq> Uniformities(X)" by auto
-  from assms \<open>?\<L> \<subseteq> Uniformities(X)\<close> \<open>E\<in>SLB_Unif(X,\<U>)\<close> have 
+  with assms \<open>E\<in>SLB_Unif(X,\<U>)\<close> have 
     "?\<Xi> {is a uniformity on} X" and "E\<in>?\<Xi>" 
     using lub_unif_sup lub_unif_base_base(2) lb_nempty_nempty
-    unfolding LUB_Unif_def SLB_Unif_def by simp_all
-  with assms(1) \<open>?\<L> \<subseteq> Uniformities(X)\<close> \<open>E\<in>SLB_Unif(X,\<U>)\<close> have 
-    "?\<Xi> {is a uniformity on} X" and "E\<in>?\<Xi>" 
-    using lub_unif_sup lub_unif_base_base(2) 
     unfolding LUB_Unif_def SLB_Unif_def by simp_all
   then have "E\<subseteq>X\<times>X" using entourage_props(1) by simp
   from \<open>E\<in>?\<Xi>\<close> obtain B where "B\<subseteq>X\<times>X" "B\<in>?\<BB>" "B\<subseteq>E"

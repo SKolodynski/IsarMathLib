@@ -507,7 +507,7 @@ proof -
   with assms(2) show "\<zero>\<ls>n\<cdot>x" using nat_not0_succ by blast
 qed
 
-text\<open>If the order is complete and $x$ is a positive element of a n ordered loop, then
+text\<open>If the order is complete and $x$ is a positive element of an ordered loop, then
   the set $\{n\cdot x: n\in \mathbb{N}, n\neq 0\}$ is not bounded above.\<close>
 
 lemma (in loop1) nat_mult_not_bounded: assumes "r {is complete}" and "\<zero>\<ls>x"
