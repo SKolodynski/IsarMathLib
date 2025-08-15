@@ -119,11 +119,10 @@ proof -
   from A1 A2 A3 have "B=0 \<or> HasAminimum(r,B)" "B=0 \<or> HasAmaximum(r,B)"
     using Finite_ZF_1_1_T1A Finite_ZF_1_1_T1B by auto
   then have 
-    "B = 0 \<or> IsBoundedBelow(B,r)" "B = 0 \<or> IsBoundedAbove(B,r)"
-    using Order_ZF_4_L7 Order_ZF_4_L8A by auto
-  then show "IsBounded(B,r)" using 
-    IsBounded_def IsBoundedBelow_def IsBoundedAbove_def
-    by simp
+    "IsBoundedBelow(B,r)" and "IsBoundedAbove(B,r)"
+    using Order_ZF_4_L7 Order_ZF_4_L8A empty_bounded_above_below 
+    by auto
+  then show "IsBounded(B,r)" unfolding IsBounded_def by simp
 qed
 
 text\<open>For linearly ordered finite sets maximum and minimum have desired 

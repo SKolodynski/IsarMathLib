@@ -651,7 +651,7 @@ proof -
     by (rule Order_ZF_5_L5)
 qed
 
-text\<open>Another version of \<open>Order_ZF_5_L6\<close> that: if a sat has a maximum then it has a supremum and 
+text\<open>Another version of \<open>Order_ZF_5_L6\<close> that: if a set has a maximum then it has a supremum and 
   the maximum is the supremum. \<close>
 
 lemma max_is_sup: assumes "antisym(r)" "HasAmaximum(r,A)"

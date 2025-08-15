@@ -111,12 +111,12 @@ text\<open>A set is bounded above if there is that is an upper
   In addition, the empty set is defined as bounded.\<close>
 
 definition
-  "IsBoundedAbove(A,r) \<equiv> ( A=\<emptyset> \<or> (\<exists>u. \<forall>x\<in>A. \<langle>x,u\<rangle> \<in> r))"
+  "IsBoundedAbove(A,r) \<equiv> \<exists>u. \<forall>x\<in>A. \<langle>x,u\<rangle> \<in> r"
 
 text\<open>We define sets bounded below analogously.\<close>
 
 definition
-  "IsBoundedBelow(A,r) \<equiv> (A=\<emptyset> \<or> (\<exists>l. \<forall>x\<in>A. \<langle>l,x\<rangle> \<in> r))"
+  "IsBoundedBelow(A,r) \<equiv> \<exists>l. \<forall>x\<in>A. \<langle>l,x\<rangle> \<in> r"
 
 text\<open>A set is bounded if it is bounded below and above.\<close>
 
@@ -209,6 +209,13 @@ text\<open>Normally the "$\subseteq$" does not represent a relation, but it does
 
 definition 
   "InclusionOn(X) \<equiv> {p\<in>X\<times>X. fst(p) \<subseteq> snd(p)}"
+
+text\<open>The way we define \<open>IsBoundedAbove\<close> and \<open>IsBoundedBelow\<close> predicates
+   the empty set is bounded above and below.\<close>
+
+lemma empty_bounded_above_below: 
+  shows "IsBoundedAbove(\<emptyset>,r)" "IsBoundedBelow(\<emptyset>,r)"
+  unfolding IsBoundedAbove_def IsBoundedBelow_def by simp_all
 
 text\<open>The most common way of applying the boundedness: if $r$ as a relation on $X$ 
   and a set $A$ is not empty and bounded above then there exist $u\in X$ which is

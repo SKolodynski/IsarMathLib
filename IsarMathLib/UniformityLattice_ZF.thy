@@ -430,7 +430,7 @@ qed
 text\<open>Uniformities on a nonempty set, ordered by inclusion form a complete lattice. \<close>
 
 theorem uniformities_compl_latt: assumes "X\<noteq>\<emptyset>" 
-  shows "IsCompleteLattice(Uniformities(X),OrderOnUniformities(X))"
+  shows "IsCompleteLattice(OrderOnUniformities(X),Uniformities(X))"
   using assms unifomities_exist ord_unif_partial_ord lub_unif_sup unif_inf
   unfolding OrderOnUniformities_def InclusionOn_def IsCompleteLattice_def
   by auto

@@ -453,12 +453,12 @@ text\<open>Wikipedia defines a complete lattice as a partially ordered set in wh
   about complete lattices.\<close>
 
 definition
-  "IsCompleteLattice(L,r) \<equiv> L\<noteq>\<emptyset> \<and> r\<subseteq>L\<times>L \<and> IsPartOrder(L,r) \<and> 
+  "IsCompleteLattice(r,L) \<equiv> L\<noteq>\<emptyset> \<and> r\<subseteq>L\<times>L \<and> IsPartOrder(L,r) \<and> 
   (\<forall>A\<in>Pow(L)\<setminus>{\<emptyset>}. (HasAsupremum(r,A) \<and> HasAnInfimum(r,A)))"
 
 text\<open>Complete lattices are bounded and have both maximum and minimum.\<close>
 
-lemma compl_lat_bounded: assumes "IsCompleteLattice(L,r)"
+lemma compl_lat_bounded: assumes "IsCompleteLattice(r,L)"
   shows "HasAmaximum(r,L)" "HasAminimum(r,L)" "IsBounded(L,r)"
 proof -
   from assms have "Supremum(r,L)\<in>L" and "Infimum(r,L)\<in>L"

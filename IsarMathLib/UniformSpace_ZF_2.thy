@@ -31,10 +31,9 @@ section \<open> Alternative definitions of uniformity \<close>
 theory UniformSpace_ZF_2 imports UniformSpace_ZF
 begin
 
-text\<open> The \<open>UniformSpace_ZF\<close> theory defines uniform spaces based on entourages (also called surroundings 
-  sometimes). In this theory we consider alternative definitions based of the 
-  notion of uniform covers and pseudometrics.
-  \<close>
+text\<open> The \<open>UniformSpace_ZF\<close> theory defines uniform spaces based on entourages 
+  (also called surroundings sometimes). 
+  In this theory we consider an alternative definition based on the notion of uniform covers.\<close>
 
 subsection\<open> Uniform covers \<close>
 
@@ -167,9 +166,9 @@ text\<open>The notion of a filter defined in \<open>Topology_ZF_4\<close> is not
   collection $\Theta$ of covers of $X$ is a family of uniform covers if  
   
   a) if $\mathcal{R} \in \Theta$ and $\mathcal{C}$ is any cover of $X$ such that $\mathcal{R}$ is 
-  a star refinement of $\mathcal{C}$, then $\mathcal{C} \in \Theta$.
+  a star refinement of $\mathcal{C}$, then $\mathcal{C} \in \Theta$
   
-  b) For any $\mathcal{C},\mathcal{D} \in \Theta$ there is some $\mathcal{R}\in\Theta$ 
+  b) for any $\mathcal{C},\mathcal{D} \in \Theta$ there is some $\mathcal{R}\in\Theta$ 
   such that $\mathcal{R}$ is a star refinement of both $\mathcal{C}$ and $\mathcal{R}$.
 
   This departs slightly from the definition in Wikipedia that requires that $\Theta$ contains the
