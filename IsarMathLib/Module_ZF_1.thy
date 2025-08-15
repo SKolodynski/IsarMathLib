@@ -924,7 +924,7 @@ text\<open>A submodule is a module with the restricted action.\<close>
 corollary(in module0) submodule: 
   assumes "IsAsubmodule(\<N>)"
   shows "IsLeftModule(R,A,M,\<N>,restrict(A\<^sub>M,\<N>\<times>\<N>),{\<langle>r,restrict(H`r,\<N>)\<rangle>. r\<in>R})"
-  unfolding IsLeftModule_def IsAction_def ringHomomor_def IsMorphism_def
+  unfolding IsLeftModule_def IsAction_def IsRingHomomor_def IsMorphism_def
 proof(safe)
   show "IsAring(R, A, M)" using ringAssum by auto
   show g:"IsAgroup(\<N>, restrict(A\<^sub>M,\<N>\<times>\<N>))" using sumodule_is_subgroup assms unfolding IsAsubgroup_def

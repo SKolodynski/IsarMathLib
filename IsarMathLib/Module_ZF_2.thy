@@ -156,7 +156,7 @@ qed
 text\<open>The previous map is an action\<close>
 
 theorem(in ring0) action_regular:
-  shows "IsAction(R,A,M,R,A,{\<langle>r,{\<langle>s,r\<cdot>s\<rangle>. s\<in>R}\<rangle>. r\<in>R})" unfolding IsAction_def ringHomomor_def
+  shows "IsAction(R,A,M,R,A,{\<langle>r,{\<langle>s,r\<cdot>s\<rangle>. s\<in>R}\<rangle>. r\<in>R})" unfolding IsAction_def IsRingHomomor_def
   IsMorphism_def apply auto using action_regular_map apply simp prefer 3
   using group0.end_comp_monoid(2)[OF Ring_ZF_1_L1(2)] action_regular_neut unfolding EndMult_def apply simp
 proof-

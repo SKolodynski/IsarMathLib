@@ -251,7 +251,7 @@ theorem (in abgroup_int1) group_action_int:
   using groupAssum isAbelian ints.Int_ZF_1_1_L2 powz_maps_int_End
     group_action_int_add_morphism_fun group_action_int_mult_morphism
     group_action_int_unit
-  unfolding IsMorphism_def ringHomomor_def IsAction_def IsLeftModule_def
+  unfolding IsMorphism_def IsRingHomomor_def IsAction_def IsLeftModule_def
     by simp
 
 text\<open>If there is a $\mathbb{Z}$-module on an abelian group,

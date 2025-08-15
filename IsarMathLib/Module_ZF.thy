@@ -82,7 +82,7 @@ text\<open>We define an \<open>action\<close> as a homomorphism into a space of 
   it's just convenient to split it off to shorten the main definitions. \<close>
 
 definition 
-  "IsAction(S,A,M,\<M>,A\<^sub>M,H) \<equiv> ringHomomor(H,S,A,M,End(\<M>,A\<^sub>M),EndAdd(\<M>,A\<^sub>M),EndMult(\<M>,A\<^sub>M))"
+  "IsAction(S,A,M,\<M>,A\<^sub>M,H) \<equiv> IsRingHomomor(H,S,A,M,End(\<M>,A\<^sub>M),EndAdd(\<M>,A\<^sub>M),EndMult(\<M>,A\<^sub>M))"
 
 text\<open>A module is a ring action on an abelian group.\<close>
 
@@ -95,9 +95,9 @@ text\<open>If $H$ defines a module then it is a ring action, hence a ring homomo
 lemma module_action_type: assumes "IsLeftModule(S,A,M,\<M>,A\<^sub>M,H)"
   shows 
     "IsAction(S,A,M,\<M>,A\<^sub>M,H)"
-    "ringHomomor(H,S,A,M,End(\<M>,A\<^sub>M),EndAdd(\<M>,A\<^sub>M),EndMult(\<M>,A\<^sub>M))"
+    "IsRingHomomor(H,S,A,M,End(\<M>,A\<^sub>M),EndAdd(\<M>,A\<^sub>M),EndMult(\<M>,A\<^sub>M))"
     "H:S\<rightarrow>End(\<M>,A\<^sub>M)"
-  using assms unfolding IsLeftModule_def IsAction_def ringHomomor_def by auto
+  using assms unfolding IsLeftModule_def IsAction_def IsRingHomomor_def by auto
 
 text\<open>The next locale defines context (i.e. common assumptions and notation) when considering 
   modules. We reuse notation from the \<open>ring0\<close> locale and add notation specific to
@@ -207,7 +207,7 @@ text\<open>The value of the homomorphism defining the module is an endomorphism
 
 lemma (in module0) H_val_type: assumes "r\<in>R" shows 
   "H`(r) \<in> End(\<M>,A\<^sub>M)" and "H`(r):\<M>\<rightarrow>\<M>"
-  using mAction assms apply_funtype unfolding IsAction_def ringHomomor_def End_def
+  using mAction assms apply_funtype unfolding IsAction_def IsRingHomomor_def End_def
   by auto
 
 text\<open> In the \<open>module0\<close> context the neutral element of addition of module elements 
@@ -281,7 +281,7 @@ lemma (in module0) module_ax4: assumes "x\<in>\<M>" shows "\<one>\<cdot>\<^sub>S
 proof -
   let ?n = "TheNeutralElement(End(\<M>,A\<^sub>M),EndMult(\<M>,A\<^sub>M))"
   from mAction have "H`(TheNeutralElement(R,M)) = ?n"
-    unfolding IsAction_def ringHomomor_def by blast
+    unfolding IsAction_def IsRingHomomor_def by blast
   moreover have "TheNeutralElement(R,M) = \<one>" by simp
   ultimately have "H`(\<one>) = ?n" by blast
   also have "?n = id(\<M>)" by (rule add_mult_neut_elems)
