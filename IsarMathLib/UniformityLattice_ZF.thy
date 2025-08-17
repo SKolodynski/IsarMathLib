@@ -378,15 +378,15 @@ qed
 
 subsection\<open>Greatest lower bound of a set of uniformities\<close>
 
-text\<open>In this this section we show that every set of uniformities on fixed set $X$
-  has an greatest lower bound, i.e. an infimum.
-  The approach taken in the previous section to show the existence of the lowest upper bound 
+text\<open>In this this section we show that every set of uniformities on a fixed set $X$
+  has a greatest lower bound, i.e. an infimum.
+  The approach taken in the previous section to show the existence of the least upper bound 
   of a collection of uniformities does not work for the greatest lower bound. 
   The collection defined as the set of all products of nonempty finite subsets 
   of $\bigcap\mathcal{U}$ in general is not a fundamental system of entourages. Even though the 
   first three conditions hold for such collection, the fourth one does not. 
   The approach that works is to show the the supremum of the collection of lower bounds
-  is actually a lower bound, hence the maximum of the set of lower bounds. 
+  is a lower bound, hence the maximum of the set of lower bounds. 
   We present this approach below in theorem \<open>unif_inf_alt\<close>. The simplest approach though is
   to use the general property of partially ordered sets shown in lemma \<open>bounded_below_sups_infs\<close> 
   in the \<open>Order_ZF_1a\<close> theory: if all nonempty subsets of such set have suprema and the whole set
@@ -402,7 +402,7 @@ definition
   "SLB_Unif(X,\<U>) \<equiv> Supremum(OrderOnUniformities(X),{\<Psi>\<in>Uniformities(X). \<Psi>\<subseteq>\<Inter>\<U>})"
 
 text\<open>Let $\mathfrak{U}$ denote the collection of all uniformities on a nonempty set $X$, ordered
-  by inclusion. Then every collection of uniformities $\mathcal{U}\subseteq \mathfrak{U}$ 
+  by inclusion. Then every collection nonempty of uniformities $\mathcal{U}\subseteq \mathfrak{U}$ 
   has an infimum (the greatest lower bound) which is equal to the supremum
   of the collection of lower bounds.\<close>
 
@@ -494,8 +494,8 @@ theorem unif_inf_alt: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformitie
 proof -
   let ?r = "OrderOnUniformities(X)"
   let ?\<L> = "{\<Psi>\<in>Uniformities(X). \<Psi>\<subseteq>\<Inter>\<U>}"
-  from assms have "?\<L>\<subseteq>Uniformities(X)" and "?\<L>\<noteq>\<emptyset>" using lb_nempty_nempty 
-    by auto
+  from assms have "?\<L>\<subseteq>Uniformities(X)" and "?\<L>\<noteq>\<emptyset>" 
+    using lb_nempty_nempty by auto
   with assms have "HasAmaximum(?r,?\<L>)" and "Maximum(?r,?\<L>) = Supremum(?r,?\<L>)"
     using lub_unif_sup lub_unif_sup(3) unif_in_unifs 
       unif_slb_is_lb ord_unif_antisymm sup_is_max 
