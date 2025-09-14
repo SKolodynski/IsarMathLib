@@ -1571,6 +1571,16 @@ proof -
     by auto
   with assms show ?thesis using inj_inj_range bij_def by simp
 qed
+
+text\<open>An injection is a bijection between the domain and its image.\<close>
+
+lemma inj_bij_image: assumes "f \<in> inj(A,B)"
+  shows "f \<in> bij(A,f``(A))"
+proof -
+  from assms have "f:A\<rightarrow>B" unfolding inj_def by simp
+  with assms show ?thesis using inj_bij_range range_image_domain 
+    by simp
+qed
   
 text\<open>A lemma about extending a surjection by one point.\<close>
 

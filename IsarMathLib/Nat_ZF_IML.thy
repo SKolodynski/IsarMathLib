@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2023  Slawomir Kolodynski
+    Copyright (C) 2005 - 2025  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -209,6 +209,16 @@ proof -
   ultimately show "i \<subseteq> j \<or> j \<subseteq> i" by auto
 qed
 
+text\<open>If two natural numbers are different then one of them is less than the other.\<close>
+
+lemma nat_mem_total: assumes "i \<in> nat"  "j \<in> nat" "i\<noteq>j"
+  shows "i < j \<or> j < i"
+proof -
+  from assms(1,2) have "Ord(i)" "Ord(j)" "i \<subseteq> j \<or> j \<subseteq> i"
+    using nat_into_Ord nat_incl_total by simp_all
+  with assms(3) show ?thesis using subset_imp_le le_iff by blast
+qed
+
 text\<open>The set of natural numbers is the union of all successors of natural
   numbers.\<close>
 
@@ -270,6 +280,12 @@ lemma leq_nat_is_nat: assumes "n\<in>nat" "k\<le>n" shows "k\<in>nat"
 text\<open>The term $k \leq n$ is the same as $k < \textrm{succ}(n)$.  \<close>
 
 lemma leq_mem_succ: shows "k\<le>n \<longleftrightarrow> k < succ(n)" by simp
+
+text\<open>A natural number $n$ is smaller than $n+1$.\<close>
+
+lemma nat_less_add_one: assumes "n\<in>nat" shows "n < n #+ 1"
+  using assms nat_into_Ord le_refl_iff leq_mem_succ succ_add_one(1)
+  by simp
 
 text\<open>If the successor of a natural number $k$ is an element of the successor
   of $n$ then a similar relations holds for the numbers themselves.\<close>

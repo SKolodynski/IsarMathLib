@@ -643,4 +643,36 @@ proof -
   with \<open>f\<in>Pi(X,?\<N>)\<close> I II show ?thesis using func1_1_L1A by auto
 qed
 
-end
+subsection\<open>Pigeonhole principle\<close>
+
+text\<open>In this section we present various versions of the pigeonhole principle. 
+  Simplifying somewhat the pigeonhole principle states that if you have more items than containers, 
+  at least one container must hold more than one item. This obvious observation is a surprisingly 
+  effective proof technique.\<close>
+
+text\<open>If a function maps a set with larger cardinality to a set with smaller cardinality
+  then we can find two different elements of the domain that map to the same value.\<close>
+
+lemma pigeonhole: assumes "f:X\<rightarrow>Y" "Y\<prec>X"
+  shows "\<exists>x\<^sub>1\<in>X. \<exists>x\<^sub>2\<in>X. x\<^sub>1\<noteq>x\<^sub>2 \<and> f`(x\<^sub>1)=f`(x\<^sub>2)"
+proof -
+  { assume "\<forall>x\<^sub>1\<in>X. \<forall>x\<^sub>2\<in>X. f`(x\<^sub>1)=f`(x\<^sub>2) \<longrightarrow> x\<^sub>1=x\<^sub>2"
+    with assms have False using eqpollI 
+      unfolding inj_def lepoll_def lesspoll_def by blast
+  } thus ?thesis by auto
+qed
+
+text\<open>In a list that is longer than its codomain we can find indices $i < j$ where the 
+  the list elements repeat.\<close>
+
+lemma pigeonhole_list: assumes "n\<in>nat" "X\<prec>n" "b:n\<rightarrow>X"
+  shows "\<exists>i\<in>n. \<exists>j\<in>n. i < j \<and> b`(i) = b`(j)"
+proof -
+  from assms(2,3) obtain i j where "i\<in>n" "j\<in>n" "i\<noteq>j" "b`(i) = b`(j)"
+    using pigeonhole by blast
+  from assms(1) \<open>i\<in>n\<close> \<open>j\<in>n\<close> \<open>i\<noteq>j\<close> have "i < j \<or> j < i"
+    using elem_nat_is_nat(2) nat_mem_total by simp
+  with \<open>i\<in>n\<close> \<open>j\<in>n\<close> \<open>b`(i) = b`(j)\<close> show ?thesis by force
+qed
+  
+end 

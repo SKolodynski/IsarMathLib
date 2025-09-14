@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Integer powers of group elements\<close>
 
-theory IntGroup_ZF imports Group_ZF_2 Int_ZF_1
+theory IntGroup_ZF imports Group_ZF_2 Int_ZF_1 Cardinal_ZF
 
 begin
 
@@ -148,6 +148,38 @@ proof -
             pow(z\<^sub>1 #* (k #+ 1),g) = pow(k #+ 1,pow(z\<^sub>1,g))"
     by simp
   with assms(2) B show ?thesis by (rule ind_on_nat1)
+qed
+
+text\<open>An application of pigeonhole principle to finite groups: if a group is finite
+  then every element has a non-zero power that is equal to the neutral element.\<close>
+
+lemma (in group0) finite_fin_order: assumes "Finite(G)" "x\<in>G"
+  shows "\<exists>n\<in>nat\<setminus>{0}. pow(n,x) = \<one>"
+proof -
+  from assms(1) obtain k where "k\<in>nat" and "G\<approx>k"
+    unfolding Finite_def by auto
+  let ?m = "k #+ 1"
+  let ?b = "{\<langle>i,pow(i,x)\<rangle>. i\<in>?m}"
+  from \<open>k\<in>nat\<close> \<open>G\<approx>k\<close> have "?m\<in>nat" and "G\<prec>?m"
+    using nat_less_add_one nat_into_Card lt_Card_imp_lesspoll 
+      eq_lesspoll_trans by simp_all
+  from assms(2) \<open>?m\<in>nat\<close> have "\<forall>i\<in>?m. pow(i,x)\<in>G"
+    using elem_nat_is_nat(2) nat_pow_type by blast
+  then have "?b:?m\<rightarrow>G" by (rule ZF_fun_from_total)
+  with \<open>?m\<in>nat\<close> \<open>G\<prec>?m\<close> obtain i j where 
+    "i\<in>?m" "j\<in>?m" "i < j" "?b`(i) = ?b`(j)"
+    using pigeonhole_list by blast
+  from \<open>?m\<in>nat\<close> \<open>i\<in>?m\<close> \<open>j\<in>?m\<close> \<open>i < j\<close> have "i\<in>nat" "j\<in>nat" "i\<le>j"
+    using elem_nat_is_nat(2) nat_into_Ord le_iff by auto
+  from \<open>i\<in>?m\<close> have "?b`(i) = pow(i,x)" by (rule ZF_fun_from_tot_val1)
+  from \<open>j\<in>?m\<close> have "?b`(j) = pow(j,x)" by (rule ZF_fun_from_tot_val1)
+  with \<open>?b`(i) = ?b`(j)\<close> \<open>?b`(i) = pow(i,x)\<close> have "pow(j,x)\<cdot>pow(i,x\<inverse>) = pow(i,x)\<cdot>pow(i,x\<inverse>)" 
+    by simp
+  with assms(2) \<open>i\<in>nat\<close> \<open>j\<in>nat\<close> \<open>i\<le>j\<close> have "pow(j #- i,x) = \<one>"
+    using nat_pow_cancel_less nat_pow_inv_cancel by simp
+  from \<open>i\<in>nat\<close> \<open>j\<in>nat\<close> \<open>i < j\<close> have "j #- i \<in> nat" and "0 < j #- i"
+    using zero_less_diff by simp_all
+  with \<open>pow(j #- i,x) = \<one>\<close> show ?thesis using lt_not_refl by auto
 qed
 
 subsection\<open>Integer powers\<close>
