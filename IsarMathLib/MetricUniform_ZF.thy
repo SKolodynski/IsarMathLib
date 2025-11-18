@@ -358,7 +358,7 @@ text\<open>If $\mathcal{M}$ and $L_+$ are nonempty then $\mathfrak{B}$ is also n
 
 lemma (in muliple_pmetric) mgauge_6thCond: shows "\<BB>\<noteq>\<emptyset>" 
 proof -
-  from nemptyLp nemptyM  obtain M y where "M\<in>FinPow(\<M>)" "M\<noteq>\<emptyset>" and "y\<in>L\<^sub>+"
+  from nemptyLp nemptyM obtain M y where "M\<in>FinPow(\<M>)" "M\<noteq>\<emptyset>" and "y\<in>L\<^sub>+"
     using finpow_nempty_nempty by blast
   from \<open>y\<in>L\<^sub>+\<close> have "ConstantFunction(M,y):M\<rightarrow>L\<^sub>+" using func1_3_L1 by simp
   with \<open>M\<in>FinPow(\<M>)\<close> \<open>M\<noteq>\<emptyset>\<close> show "\<BB>\<noteq>\<emptyset>" using mgauge_finset_fun by auto
@@ -407,5 +407,260 @@ lemma (in muliple_pmetric) mmetric_gauge_base:
   using nemptyX mgauge_1st_cond mgauge_2nd_and_3rd_cond mgauge_4thCond 
     mgauge_5thCond mgauge_6thCond uniformity_base_is_base uniform_top_is_top
   unfolding IsUniformityBaseOn_def by simp_all
+
+subsection\<open>Halving sequences of entourages\<close>
+
+text\<open>The notion of uniformity can be defined in several ways. Our primary definition
+  in the \<open>UniformSpace_ZF\<close> theory is based on the concept of entourages. 
+  In \<open>UniformSpace_ZF_2\<close> we consider the an alternative definition based on uniform covers.
+  The third possible definition is based on families of pseudometrics.
+ "The significance of defining a uniformity by means of a family 
+  of pseudometrics lies in the fact that all unifomities can be so obtained." 
+  (from Bourbaki: General Topology Chapter IX par. 1.4).
+  In this section we formalize a part of the material that is needed to prove 
+  this statement that can be done without the Axiom of Choice and in the general setting 
+  of ordered-loop valued pseudometrics.\<close>
+
+text\<open>The definition of a uniformity requires that for each entourage $U$ 
+  there is another one $V$ such that $V\circ V\subseteq U$. Furthermore, 
+  lemma \<open>half_size_symm\<close> shows that we can assume $V$ is symmetric.
+  In some propositions in this section we will assume that we are given a function say $h$ 
+  that provides those half-size entourages, i.e. maps a uniformity $\Phi$ into itself and 
+  for each entourage $U\in\Phi$ we have $h(U)\circ h(U)\subseteq V$. 
+
+  The existence of such function follows from the Axiom of Choice, but we don't want to use AC
+  in this theory.
+
+  The next definition lists the desired properties of such halving function for shorter
+  references in theorem assumptions.\<close>
+
+definition
+  IsHalvingFunction ("_ {is a halving function for} _") where
+    "h {is a halving function for} \<Phi> \<equiv> 
+      h:\<Phi>\<rightarrow>\<Phi> \<and> (\<forall>U\<in>\<Phi>. h`(U) = converse(h`(U)) \<and> h`(U) O h`(U) \<subseteq> U)"
+
+text\<open>Let $\Phi$ be a uniformity on $X$ and assume $U\in\Phi$ and $h$ is a halving function for
+  $\Phi$. This function then defines inductively a sequence $\{ H\}_n$ of entourages 
+  such that $H_0 = U$ and $H_{n+1}\circ H_{n+1}\subseteq H_n$. The next lemma shows
+  that $H$ is a $\Phi$-valued sequence which starts at $U$. \<close>
+
+lemma halving_seq_start: 
+  assumes "U\<in>\<Phi>" "h {is a halving function for} \<Phi>"
+  defines "H \<equiv> InductiveSequence(U,h)"
+  shows "H:nat\<rightarrow>\<Phi>" and "H`(0) = U"
+  using assms indseq_seq indseq_valat0 unfolding IsHalvingFunction_def by auto
+
+text\<open>For the inductively defined sequence of halving entourages $H$ starting from $U$
+   and a natural number $n$ we indeed have $H_{n+1} \circ H_{n+1} \subseteq H_n$. \<close>
+
+lemma halving_seq_halves: assumes "U\<in>\<Phi>" "h {is a halving function for} \<Phi>" "n\<in>nat"
+  defines "H \<equiv> InductiveSequence(U,h)"
+  shows "H`(n #+ 1) = converse(H`(n #+ 1))" and "H`(n #+ 1) O H`(n #+ 1) \<subseteq> H`(n)"
+proof -
+  from assms have "H`(n #+ 1) =  h`(H`(n))"
+    unfolding IsHalvingFunction_def using indseq_vals succ_add_one(1) by auto
+  from assms have "H`(n)\<in>\<Phi>" using halving_seq_start(1) apply_funtype by force
+  with assms(2) \<open>H`(n #+ 1) =  h`(H`(n))\<close> show
+    "H`(n #+ 1) = converse(H`(n #+ 1))" and "H`(n #+ 1) O H`(n #+ 1) \<subseteq> H`(n)"
+    unfolding IsHalvingFunction_def by simp_all
+qed
+
+text\<open>A halving sequence in $\Phi$ is decreasing in the inclusion order on $\Phi$,
+  hence the inclusion order on $\Phi$ is total on the sequence's image 
+  of the natural numbers, hence total on the sequence's image of positive
+  natural numbers. We need that fact about positive natural numbers
+  because we plan to prove that the image of the sequence on the positive
+  natural numbers forms a fundamental system of symmetric entourages.
+  and the first element of the sequence (at index $0$) does not have to be symmetric.\<close>
+
+lemma halving_seq_decr: 
+  assumes "\<Phi> {is a uniformity on} X" "U\<in>\<Phi>" "h {is a halving function for} \<Phi>"
+  defines "H \<equiv> InductiveSequence(U,h)"
+  shows 
+    "IsDecreasingSeq(\<Phi>,InclusionOn(\<Phi>),H)"
+    "InclusionOn(\<Phi>) {is total on} (H``(nat))"
+    "InclusionOn(\<Phi>) {is total on} (H``(nat\<setminus>{0}))"
+proof -
+  from assms(2,3,4) have "H:nat\<rightarrow>\<Phi>" using halving_seq_start(1) by simp
+  let ?r = "InclusionOn(\<Phi>)"
+  { fix n assume "n\<in>nat"
+    with \<open>H:nat\<rightarrow>\<Phi>\<close> have "H`(n) \<in> \<Phi>" and "H`(n #+ 1) \<in> \<Phi>" 
+      using apply_funtype by simp_all
+    with assms(1) have "H`(n) \<subseteq> X\<times>X" "H`(n #+ 1) \<subseteq> X\<times>X" and "id(X) \<subseteq> H`(n #+ 1)"
+      using uni_domain(1) unfolding IsUniformity_def by simp_all
+    then have "H`(n #+ 1) \<subseteq> H`(n #+ 1) O H`(n #+ 1)"
+      using refl_square_greater by simp
+    with assms(2,3,4) \<open>n\<in>nat\<close> \<open>H`(n #+ 1) \<in> \<Phi>\<close> \<open>H`(n) \<in> \<Phi>\<close>
+    have "\<langle>H`(n #+ 1),H`(n)\<rangle> \<in> ?r"
+      using halving_seq_halves(2) unfolding InclusionOn_def by force
+  } hence "\<forall>n\<in>nat. \<langle>H`(n #+ 1),H`(n)\<rangle> \<in> ?r" by simp
+  with \<open>H:nat\<rightarrow>\<Phi>\<close> show "IsDecreasingSeq(\<Phi>,InclusionOn(\<Phi>),H)" 
+    unfolding IsDecreasingSeq_def by simp
+  then show "?r {is total on} H``(nat)"
+    using incl_is_partorder decr_seq_total unfolding IsPartOrder_def IsPreorder_def
+    by blast
+  then show "InclusionOn(\<Phi>) {is total on} (H``(nat\<setminus>{0}))"
+    unfolding IsTotal_def by auto
+qed
+
+text\<open>We aim at showing that the a halving sequence image is a uniform base.
+  The next lemma shows the first condition in the uniform base definition:
+  for two sets in a halving sequence image there is a third one that is contained in both. \<close>
+
+lemma halving_seq_base_1st_cond: 
+  assumes "\<Phi> {is a uniformity on} X" "U\<in>\<Phi>" "h {is a halving function for} \<Phi>"
+  defines "H \<equiv> InductiveSequence(U,h)" 
+  assumes "B\<^sub>1\<in>H``(nat\<setminus>{0})" "B\<^sub>2\<in>H``(nat\<setminus>{0})"
+  shows "\<exists>B\<in>H``(nat\<setminus>{0}). B\<subseteq>B\<^sub>1\<inter>B\<^sub>2"
+proof -
+  let ?r = "InclusionOn(\<Phi>)"
+  from assms have "\<langle>B\<^sub>1,B\<^sub>2\<rangle> \<in> ?r \<or> \<langle>B\<^sub>2,B\<^sub>1\<rangle> \<in> ?r"
+    using halving_seq_decr(3) unfolding IsTotal_def by simp
+  with assms(5,6) show ?thesis unfolding InclusionOn_def 
+    by auto
+qed
+
+text\<open>Sets in the halving sequence image of positive naturals contain the diagonal, 
+  are symmetric and for every such set $B$ there is another one contained in the converse of the
+  first one and another one $B_2$ such that $B_2\circ B_2\subseteq B_1$. 
+  Note the symmetry of the sets is not required in the definition of a fundamental
+  system of entourages, but it's good to have as we plan to construct a pseudometric
+  that generates that halving sequence image of positive naturals.\<close>
+
+lemma halving_seq_base_2_3_4_conds: 
+  assumes "\<Phi> {is a uniformity on} X" "U\<in>\<Phi>" "h {is a halving function for} \<Phi>"
+  defines "H \<equiv> InductiveSequence(U,h)" 
+  assumes "B\<in>H``(nat\<setminus>{0})"
+  shows 
+    "id(X)\<subseteq>B" "B = converse(B)" 
+    "\<exists>B\<^sub>1\<in>H``(nat\<setminus>{0}). B\<^sub>1 \<subseteq> converse(B)" 
+    "\<exists>B\<^sub>2\<in>H``(nat\<setminus>{0}). B\<^sub>2 O B\<^sub>2 \<subseteq> B"
+proof -
+  from assms(2,3,4) have "H:nat\<rightarrow>\<Phi>" using halving_seq_start(1) by simp
+  with assms(1,5) show "id(X)\<subseteq>B" using entourage_props(2) func1_1_L6(2)
+    by blast
+  have "nat\<setminus>{0}\<subseteq>nat" by auto
+  with assms(5) \<open>H:nat\<rightarrow>\<Phi>\<close> obtain n where "n\<in>nat" "n\<noteq>0" and "B=H`(n)"
+    using func_imagedef by auto
+  from \<open>n\<in>nat\<close> \<open>n\<noteq>0\<close> obtain k where "k\<in>nat" "n = k #+ 1"
+    using nat_not0_succ by auto
+  from assms(2,3,4) \<open>k\<in>nat\<close> have "H`(k #+ 1) = converse(H`(k #+ 1))" 
+    using halving_seq_halves(1) by simp
+  with assms(5) \<open>n = k #+ 1\<close> \<open>B=H`(n)\<close> show 
+    "B = converse(B)" and "\<exists>B\<^sub>1\<in>H``(nat\<setminus>{0}). B\<^sub>1 \<subseteq> converse(B)"
+    by auto
+  from \<open>n\<in>nat\<close> \<open>H:nat\<rightarrow>\<Phi>\<close> \<open>nat\<setminus>{0}\<subseteq>nat\<close> have "H`(n #+ 1) \<in> H``(nat\<setminus>{0})"
+    using func_imagedef by auto
+  from assms(2,3,4) \<open>n\<in>nat\<close> have "H`(n #+ 1) O H`(n #+ 1) \<subseteq> H`(n)"
+    using halving_seq_halves(2) by simp
+  with \<open>B=H`(n)\<close> \<open>H`(n #+ 1) \<in> H``(nat\<setminus>{0})\<close> 
+  show "\<exists>B\<^sub>2\<in>H``(nat\<setminus>{0}). B\<^sub>2 O B\<^sub>2 \<subseteq> B" by auto
+qed
+
+text\<open>The halving sequence image of positive naturals is contained 
+  in the powerset of $X\times X$ and is not empty.\<close>
+
+lemma halving_seq_base_5_and_6th_cond: 
+  assumes "\<Phi> {is a uniformity on} X" "U\<in>\<Phi>" "h {is a halving function for} \<Phi>"
+  defines "H \<equiv> InductiveSequence(U,h)" 
+  shows "H``(nat\<setminus>{0}) \<subseteq> Pow(X\<times>X)" and "H``(nat\<setminus>{0}) \<noteq> \<emptyset>" 
+proof -
+  from assms(2,3,4) have "H:nat\<rightarrow>\<Phi>" using halving_seq_start(1) by simp 
+  then have "H``(nat\<setminus>{0}) \<subseteq> \<Phi>" using func1_1_L6(2) by simp
+  with assms(1) show "H``(nat\<setminus>{0}) \<subseteq> Pow(X\<times>X)"
+    using unif_filter unfolding IsFilter_def by blast
+  have "nat\<setminus>{0} \<subseteq> nat" by auto
+  with \<open>H:nat\<rightarrow>\<Phi>\<close> show "H``(nat\<setminus>{0}) \<noteq> \<emptyset>" using func_imagedef by auto
+qed
+
+text\<open>If $\Phi$ is a uniformity, $h$ is a halving function for it and $U\in \Phi$ 
+  then the image of the halving sequence defined inductively as $H_0=U, H_{n+1} = h(H(n))$ 
+  on the positive naturals is a fundamental system of entourages.\<close>
+
+theorem halving_seq_base: 
+  assumes "\<Phi> {is a uniformity on} X" "U\<in>\<Phi>" "h {is a halving function for} \<Phi>"
+  defines "H \<equiv> InductiveSequence(U,h)"
+  shows "(H``(nat\<setminus>{0})) {is a uniform base on} X"
+  using assms halving_seq_base_1st_cond halving_seq_base_2_3_4_conds 
+    halving_seq_base_5_and_6th_cond
+  unfolding IsUniformityBaseOn_def by simp
+
+text\<open>Theorem \<open>halving_seq_base\<close> shows that given a halving function $h$
+  for a uniformity $\Phi$ each entourage $U\in\Phi$ defines a  uniformity that 
+  has a countable base consisting of symmetric entourages and (as we show later) 
+  contains that entourage.
+  The next definition summarizes the construction of this coarser uniformity.\<close>
+
+definition 
+  "CountBaseUnif(X,h,U) \<equiv> Supersets(X\<times>X,InductiveSequence(U,h)``(nat\<setminus>{0}))"
+
+text\<open>If $\Phi$ is a uniformity, $h$ is a halving function for it and $U\in\Phi$ 
+  then \<open>UnifCountBase(X,h,U)\<close> is a uniformity on $X$ that contains $U$ (as a member) and
+  is contained in $\Phi$.\<close>
+
+lemma unif_count_base_unif: 
+  assumes "X\<noteq>\<emptyset>" "\<Phi> {is a uniformity on} X" "U\<in>\<Phi>" "h {is a halving function for} \<Phi>"
+  shows "CountBaseUnif(X,h,U) {is a uniformity on} X" and 
+    "U\<in>CountBaseUnif(X,h,U)" "CountBaseUnif(X,h,U) \<subseteq> \<Phi>"
+proof -
+  let ?H = "InductiveSequence(U,h)"
+  let ?\<Psi>\<^sub>U = "CountBaseUnif(X,h,U)"
+  from assms show "?\<Psi>\<^sub>U {is a uniformity on} X"
+    using halving_seq_base uniformity_base_is_base
+    unfolding CountBaseUnif_def by simp
+  from assms(2,3) have "U\<subseteq>X\<times>X" using entourage_props(1) by simp
+  from assms(2,3,4) have "?H:nat\<rightarrow>\<Phi>" using halving_seq_start(1) 
+    by simp
+  with assms(2) have "?H`(1) \<subseteq> X\<times>X" 
+    using apply_funtype entourage_props(1) by simp
+  from assms(2,3,4) have "?H`(1) \<subseteq> U"
+    using halving_seq_decr(1) halving_seq_start(2)
+    unfolding IsDecreasingSeq_def InclusionOn_def by force
+  have "1\<in>nat\<setminus>{0}" "nat\<setminus>{0} \<subseteq> nat" by auto
+  with \<open>?H:nat\<rightarrow>\<Phi>\<close> have "?H`(1) \<in> ?H``(nat\<setminus>{0})" using func_imagedef 
+    by auto
+  with \<open>?H`(1) \<subseteq> X\<times>X\<close> have "?H`(1) \<in> ?\<Psi>\<^sub>U" 
+    using superset_gen unfolding CountBaseUnif_def by simp
+  with \<open>?\<Psi>\<^sub>U {is a uniformity on} X\<close>  \<open>U\<subseteq>X\<times>X\<close> \<open>?H`(1) \<subseteq> U\<close>  
+  show "U\<in>?\<Psi>\<^sub>U" using unif_filter unfolding IsFilter_def by simp
+  { fix V assume "V\<in>?\<Psi>\<^sub>U"
+    then obtain W where "W\<subseteq>X\<times>X" "W \<in> ?H``(nat\<setminus>{0})" and "W\<subseteq>V"
+      unfolding CountBaseUnif_def Supersets_def by auto
+    from \<open>?\<Psi>\<^sub>U {is a uniformity on} X\<close> \<open>V\<in>?\<Psi>\<^sub>U\<close> have "V\<subseteq>X\<times>X"
+      using entourage_props(1) by simp
+    from \<open>?H:nat\<rightarrow>\<Phi>\<close> \<open>W\<in>?H``(nat\<setminus>{0})\<close> have "W\<in>\<Phi>"
+      using func1_1_L6(2) by blast
+    with assms(2) \<open>V\<subseteq>X\<times>X\<close> \<open>W\<subseteq>V\<close> have "V\<in>\<Phi>"
+      using unif_filter unfolding IsFilter_def by simp
+  } thus "?\<Psi>\<^sub>U \<subseteq> \<Phi>" by auto
+qed
+
+text\<open>If $\Phi$ is a uniformity on a nonempty set $X$ and admits a halving function $h$
+  then $\Phi$ is the supremum of the collection of uniformities $\{\Psi_U: U\in\Phi\}$
+  in the inclusion order relation, where $\Psi_U = $\<open>CountBaseUnif(X,h,U)\<close>.
+  Since $\Psi_U$ has a countable base this shows that every uniformity 
+  (that admits a halving function) is a union and a supremum of some collection of uniformities 
+  each of which has a countable base.\<close>
+
+theorem sup_count_base_unifs: 
+  assumes "X\<noteq>\<emptyset>" "\<Phi> {is a uniformity on} X" "h {is a halving function for} \<Phi>"
+  shows 
+    "\<Phi> = \<Union>{CountBaseUnif(X,h,U). U\<in>\<Phi>}"
+    "\<Phi> = Supremum(OrderOnUniformities(X),{CountBaseUnif(X,h,U). U\<in>\<Phi>})"
+proof - 
+  let ?\<U> = "{CountBaseUnif(X,h,U). U\<in>\<Phi>}"
+  show "\<Phi> = \<Union>?\<U>"
+  proof
+    from assms show "\<Union>?\<U> \<subseteq> \<Phi>"
+      using unif_count_base_unif(3) by blast
+    from assms show "\<Phi> \<subseteq> \<Union>?\<U>"
+      using unif_count_base_unif(2) by auto
+  qed
+  from assms have "?\<U>\<noteq>\<emptyset>" and "?\<U> \<subseteq> Uniformities(X)"
+    using uniformity_non_empty unif_count_base_unif(1) unif_in_unifs 
+    by auto
+  with assms(1,2) \<open>\<Phi>=\<Union>?\<U>\<close> show "\<Phi> = Supremum(OrderOnUniformities(X),?\<U>)"
+    using union_unif_sup by simp
+qed
 
 end

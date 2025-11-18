@@ -376,6 +376,27 @@ proof -
     by simp
 qed
 
+text\<open>Typically the union of a collection of uniformities is not a uniformity.
+  However, if it is then that union is the supremum of that collection.\<close>
+
+lemma union_unif_sup: 
+  assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>" "(\<Union>\<U>) {is a uniformity on} X"
+  shows "\<Union>\<U> = Supremum(OrderOnUniformities(X),\<U>)"
+proof
+  let ?r = "OrderOnUniformities(X)"
+  let ?s = "Supremum(?r,\<U>)"
+  from assms(1,2,3) have 
+    I: "antisym(?r)" "HasAsupremum(?r,\<U>)" "?s \<in> Uniformities(X)"
+    using lub_unif_sup(1,3) ord_unif_antisymm unif_in_unifs 
+      by simp_all
+  with assms(2) show "\<Union>\<U> \<subseteq> ?s"
+    using sup_is_ub unif_in_unifs order_unif_iff by blast
+  from assms(2,4) have "\<forall>\<Phi>\<in>\<U>. \<langle>\<Phi>,\<Union>\<U>\<rangle> \<in> ?r"
+    using unif_in_unifs order_unif_iff by blast
+  with assms(4) I show "?s\<subseteq>\<Union>\<U>"
+    using sup_leq_up_bnd unif_in_unifs order_unif_iff by blast
+qed
+
 subsection\<open>Greatest lower bound of a set of uniformities\<close>
 
 text\<open>In this this section we show that every set of uniformities on a fixed set $X$

@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2007-2023  Slawomir Kolodynski
+    Copyright (C) 2007-2025  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -1161,5 +1161,116 @@ proof -
   ultimately show ?thesis by (rule ind_on_nat)  
 qed
 
+subsection\<open>Monotonic sequences\<close>
+
+text\<open>In this section we consider monotonic sequences, i.e. sequences $\{x \}_n$ such that
+  $x_{n+1} \leq x_n$ for all $n\in\mathbb{N}$ (a decreasing sequence) or $x_n \leq x_{n+1}$
+  for all $n\in\mathbb{N}$ (an increasing sequence). We will mostly use the raw set theory
+  notation $\langle x_{n+1}, x_n\rangle\in r$ (or $\langle x_n,x_{n+1} \rangle\in r$) instead
+  or the $\leq$ sign to have the relevant relation explicit.\<close>
+
+text\<open>A decreasing sequence is a function $s:\mathbb{N}\rightarrow X$ 
+  defined on the set natural numbers such that $\langle s_{n+1}, s_n\rangle\in r$ for all
+  $n\in \mathbb{N}$.\<close>
+
+definition
+  "IsDecreasingSeq(X,r,s) \<equiv> s:nat\<rightarrow>X \<and> (\<forall>n\<in>nat. \<langle>s`(n #+ 1),s`(n)\<rangle> \<in> r)"
+
+text\<open>An increasing sequence is a function $s:\mathbb{N}\rightarrow X$ 
+  defined on the set natural numbers such that $\langle s_n, s_{n+1}\rangle\in r$ for all
+  $n\in \mathbb{N}$. \<close>
+
+definition
+  "IsIncreasingSeq(X,r,s) \<equiv> s:nat\<rightarrow>X \<and> (\<forall>n\<in>nat. \<langle>s`(n),s`(n #+ 1)\<rangle> \<in> r)"
+
+text\<open>If $r$ is a preorder relation and $s$ is a decreasing sequence then 
+  all terms that come after $s_n$ are less or equal than $s_n$.\<close>
+
+lemma decreasing_seq_mono: 
+  assumes "IsPreorder(X,r)" "IsDecreasingSeq(X,r,s)" "n\<in>nat" "k\<in>nat"
+  shows "\<langle>s`(n #+ k),s`(n)\<rangle> \<in> r" 
+proof -
+  from assms have "k\<in>nat" and "\<langle>s`(n #+ 0),s`(n)\<rangle> \<in> r"
+    unfolding IsDecreasingSeq_def IsPreorder_def refl_def 
+    using apply_funtype by auto
+  moreover from assms(1,2,3) have 
+    "\<forall>j\<in>nat. \<langle>s`(n #+ j),s`(n)\<rangle> \<in> r \<longrightarrow> \<langle>s`(n #+ (j #+ 1)),s`(n)\<rangle> \<in> r"
+    unfolding IsDecreasingSeq_def IsPreorder_def trans_def by auto
+  ultimately show ?thesis by (rule ind_on_nat1)
+qed
+
+text\<open>If $r$ is a preorder relation and $s$ is an increasing sequence then 
+  all terms that come after $s_n$ are greater or equal than $s_n$.\<close>
+
+lemma increasing_seq_mono: 
+  assumes "IsPreorder(X,r)" "IsIncreasingSeq(X,r,s)" "n\<in>nat" "k\<in>nat"
+  shows "\<langle>s`(n),s`(n #+ k)\<rangle> \<in> r" 
+proof -
+  from assms have "k\<in>nat" "\<langle>s`(n),s`(n #+ 0)\<rangle> \<in> r" and
+    "\<forall>j\<in>nat. \<langle>s`(n),s`(n #+ j)\<rangle> \<in> r \<longrightarrow> \<langle>s`(n),s`(n #+ (j #+ 1))\<rangle> \<in> r"
+    unfolding IsIncreasingSeq_def IsPreorder_def refl_def trans_def
+    using apply_funtype by auto
+  then show ?thesis by (rule ind_on_nat1)
+qed
+
+text\<open>Another formulation of \<open>decreasing_seq_mono\<close>: if a sequence $s$ is decreasing,
+  $m$ is a natural number and $n\leq m$ then $s(m)\leq s(n)$.\<close>
+
+lemma decreasing_seq_mono1: 
+  assumes "IsPreorder(X,r)" "IsDecreasingSeq(X,r,s)" "m\<in>nat" "n\<le>m"
+  shows "\<langle>s`(m),s`(n)\<rangle> \<in> r"
+proof -
+  from assms(3,4) have "n\<in>nat" "m #- n \<in> nat" and "n #+ (m #- n) = m" 
+    using add_diff_inverse le_in_nat by simp_all
+  from assms(1,2) \<open>n\<in>nat\<close> \<open>m #- n \<in> nat\<close> have "\<langle>s`(n #+ (m #- n)),s`(n)\<rangle> \<in> r"
+    using decreasing_seq_mono by simp
+  with \<open>n #+ (m #- n) = m\<close> show ?thesis by simp
+qed
+
+text\<open>Another formulation of \<open>increasing_seq_mono\<close>: if a sequence $s$ is increasing,
+  $m$ is a natural number and $n\leq m$ then $s(n)\leq s(m)$.\<close>
+
+lemma increasing_seq_mono1: 
+  assumes "IsPreorder(X,r)" "IsIncreasingSeq(X,r,s)" "m\<in>nat" "n\<le>m"
+  shows "\<langle>s`(n),s`(m)\<rangle> \<in> r"
+proof -
+  from assms(3,4) have "n\<in>nat" "m #- n \<in> nat" and "n #+ (m #- n) = m" 
+    using add_diff_inverse le_in_nat by simp_all
+  from assms(1,2) \<open>n\<in>nat\<close> \<open>m #- n \<in> nat\<close> have "\<langle>s`(n),s`(n #+ (m #- n))\<rangle> \<in> r"
+    using increasing_seq_mono by simp
+  with \<open>n #+ (m #- n) = m\<close> show ?thesis by simp
+qed
+
+text\<open>If a sequence is decreasing then the preorder is total on the sequence's image.\<close>
+
+lemma decr_seq_total: 
+  assumes "IsPreorder(X,r)" "IsDecreasingSeq(X,r,s)" 
+  shows "r {is total on} s``(nat)"
+proof -
+  { fix x y assume "x\<in>s``(nat)" "y\<in>s``(nat)"
+    from assms(2) have "s:nat\<rightarrow>X" unfolding IsDecreasingSeq_def by simp
+    with \<open>x\<in>s``(nat)\<close> \<open>y\<in>s``(nat)\<close> obtain n m where 
+      "n\<in>nat" "m\<in>nat" "x=s`(n)" "y=s`(m)"
+      using func_imagedef by auto
+    with assms(1,2) have "\<langle>x,y\<rangle> \<in> r \<or> \<langle>y,x\<rangle> \<in> r" 
+      using NatOrder_ZF_1_L1 decreasing_seq_mono1 by blast
+  } then show ?thesis unfolding IsTotal_def by simp
+qed
+
+text\<open>If a sequence is increasing then the preorder is total on the sequence's image.\<close>
+
+lemma incr_seq_total: 
+  assumes "IsPreorder(X,r)" "IsIncreasingSeq(X,r,s)" 
+  shows "r {is total on} s``(nat)"
+proof -
+  { fix x y assume "x\<in>s``(nat)" "y\<in>s``(nat)"
+    from assms(2) have "s:nat\<rightarrow>X" unfolding IsIncreasingSeq_def by simp
+    with \<open>x\<in>s``(nat)\<close> \<open>y\<in>s``(nat)\<close> obtain n m where 
+      "n\<in>nat" "m\<in>nat" "x=s`(n)" "y=s`(m)"
+      using func_imagedef by auto
+    with assms(1,2) have "\<langle>x,y\<rangle> \<in> r \<or> \<langle>y,x\<rangle> \<in> r" 
+      using NatOrder_ZF_1_L1 increasing_seq_mono1 by blast
+  } then show ?thesis unfolding IsTotal_def by simp
+qed
 
 end
