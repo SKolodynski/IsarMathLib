@@ -439,8 +439,8 @@ definition
     "h {is a halving function for} \<Phi> \<equiv> 
       h:\<Phi>\<rightarrow>\<Phi> \<and> (\<forall>U\<in>\<Phi>. h`(U) = converse(h`(U)) \<and> h`(U) O h`(U) \<subseteq> U)"
 
-text\<open>Let $\Phi$ be a uniformity on $X$ and assume $U\in\Phi$ and $h$ is a halving function for
-  $\Phi$. This function then defines inductively a sequence $\{ H\}_n$ of entourages 
+text\<open>Let $\Phi$ be a uniformity on $X$, $U\in\Phi$ and $h$ is a halving function for
+  $\Phi$. This function then defines inductively a sequence $\{ H_n\}_{n\in\mathbb{N}}$ of entourages 
   such that $H_0 = U$ and $H_{n+1}\circ H_{n+1}\subseteq H_n$. The next lemma shows
   that $H$ is a $\Phi$-valued sequence which starts at $U$. \<close>
 
@@ -595,7 +595,7 @@ definition
   "CountBaseUnif(X,h,U) \<equiv> Supersets(X\<times>X,InductiveSequence(U,h)``(nat\<setminus>{0}))"
 
 text\<open>If $\Phi$ is a uniformity, $h$ is a halving function for it and $U\in\Phi$ 
-  then \<open>UnifCountBase(X,h,U)\<close> is a uniformity on $X$ that contains $U$ (as a member) and
+  then \<open>CountBaseUnif(X,h,U)\<close> is a uniformity on $X$ that contains $U$ (as a member) and
   is contained in $\Phi$.\<close>
 
 lemma unif_count_base_unif: 

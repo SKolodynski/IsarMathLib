@@ -674,5 +674,85 @@ proof -
     using elem_nat_is_nat(2) nat_mem_total by simp
   with \<open>i\<in>n\<close> \<open>j\<in>n\<close> \<open>b`(i) = b`(j)\<close> show ?thesis by force
 qed
-  
+
+subsection\<open>Countability vs enumerability\<close>
+
+text\<open>There are different definitions of the notion of countability floating around.
+  In the presence if the Axiom of Choice they are typically equivalent, but without
+  AC they are often not. In this section we define the notions to have a reference 
+  what exactly we mean by saying that "$X$ is enumerable" or "$X$ is countable. \<close>
+
+text\<open>We say that a set $X$ is enumerable if it is empty or there is a surjection from the set of
+  natural numbers onto $X$. We (somewhat arbitrarily) want the empty set to be enumerable, 
+  but there are no functions whose domain is the set of natural numbers (or any nonempty set) 
+  and whose codomain is empty, so there are no surjections from natural numbers to $\emptyset$.
+  Hence we have to add the empty set as a special case.\<close>
+
+definition IsEnumerable ("_ {is enumerable}" [90] 91) where
+  "X {is enumerable} \<equiv> X=\<emptyset> \<or> surj(nat,X)\<noteq>\<emptyset>"
+
+text\<open>A set is enumerable iff there exist a sequence that includes all elements of $X$.\<close>
+
+lemma enumerable_iff_seq: 
+  shows "X {is enumerable} \<longleftrightarrow> (\<exists>Y. \<exists>s\<in>nat\<rightarrow>Y. X\<subseteq>s``(nat))"
+proof
+  assume "X {is enumerable}"
+  then have "X=\<emptyset> \<or> surj(nat,X)\<noteq>\<emptyset>" unfolding IsEnumerable_def 
+    by simp
+  moreover have "X=\<emptyset> \<longrightarrow> (\<exists>Y. \<exists>s\<in>nat\<rightarrow>Y. X\<subseteq>s``(nat))"
+    using func1_3_L1 by blast
+  moreover have "surj(nat,X)\<noteq>\<emptyset> \<longrightarrow> (\<exists>Y. \<exists>s\<in>nat\<rightarrow>Y. X\<subseteq>s``(nat))"
+    using func_imagedef unfolding surj_def by force
+  ultimately show "\<exists>Y. \<exists>s\<in>nat\<rightarrow>Y. X\<subseteq>s``(nat)" by auto
+next
+  assume "\<exists>Y. \<exists>s\<in>nat\<rightarrow>Y. X\<subseteq>s``(nat)"
+  then obtain Y s where "s\<in>nat\<rightarrow>Y" and "X\<subseteq>s``(nat)" by auto
+  have "X=\<emptyset> \<longrightarrow> X {is enumerable}" unfolding IsEnumerable_def
+    by simp
+  moreover
+  { assume "X\<noteq>\<emptyset>"
+    then obtain x\<^sub>0 where "x\<^sub>0\<in>X" by auto
+    let ?f = "{\<langle>n,if s`(n) \<in> X then s`(n) else x\<^sub>0\<rangle>. n\<in>nat}"
+    from \<open>x\<^sub>0\<in>X\<close> have "?f:nat\<rightarrow>X" using ZF_fun_from_total
+      by simp
+    with \<open>X\<subseteq>s``(nat)\<close> \<open>s\<in>nat\<rightarrow>Y\<close> have "X {is enumerable}"
+      using func_imagedef ZF_fun_from_tot_val1
+      unfolding surj_def IsEnumerable_def by force
+  }
+  ultimately show "X {is enumerable}" by auto
+qed
+
+text\<open>A set $X$ is countable if there is an injection from $X$ to the natural numbers.\<close>
+
+definition IsCountable ("_ {is countable}" [90] 91) where
+  "X {is countable} \<equiv> inj(X,nat) \<noteq> \<emptyset>"
+
+text\<open>If a set is countable then it is enumerable. In ZF the opposite implication cannot
+  be proven.\<close>
+
+lemma countable_enumerable: 
+  assumes "X {is countable}" shows "X {is enumerable}"
+proof -
+  have "X=\<emptyset> \<longrightarrow> X {is enumerable}" unfolding IsEnumerable_def by simp
+  moreover
+  { assume "X\<noteq>\<emptyset>"
+    then obtain x\<^sub>0 where "x\<^sub>0\<in>X" by auto
+    from assms obtain f where "f\<in>inj(X,nat)"
+      unfolding IsCountable_def by auto
+    let ?g = "{\<langle>n,if n\<in>f``(X) then converse(f)`(n) else x\<^sub>0\<rangle>. n\<in>nat}"
+    from \<open>f\<in>inj(X,nat)\<close> \<open>x\<^sub>0\<in>X\<close> have "?g:nat\<rightarrow>X" 
+      using inj_inv_back_in_set ZF_fun_from_total by simp
+    { fix x assume "x\<in>X"
+      with \<open>f\<in>inj(X,nat)\<close> have "f`(x) \<in> nat" and "f`(x) \<in> f``(X)"
+        using func_imagedef unfolding inj_def by auto
+      with \<open>f\<in>inj(X,nat)\<close> \<open>x\<in>X\<close> have "\<exists>n\<in>nat. ?g`(n) = x"
+        using left_inverse ZF_fun_from_tot_val1 by force
+    }
+    with \<open>?g:nat\<rightarrow>X\<close> have "surj(nat,X)\<noteq>\<emptyset>"
+      unfolding surj_def by auto
+  } then have "X\<noteq>\<emptyset> \<longrightarrow> X {is enumerable}" unfolding IsEnumerable_def
+    by simp
+  ultimately show "X {is enumerable}" by auto
+qed
+
 end 
