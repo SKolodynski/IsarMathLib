@@ -149,7 +149,7 @@ proof -
     then show ?thesis by auto
 qed
 
-text\<open>The inverse image of the range is the domain.\<close>
+text\<open>The inverse image of the codomain is the domain.\<close>
 
 lemma func1_1_L4: assumes "f:X\<rightarrow>Y" shows "f-``(Y) = X"
   using assms func1_1_L3 func1_1_L2 vimage_iff by blast

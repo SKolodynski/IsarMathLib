@@ -100,7 +100,7 @@ definition
 
 text\<open>We define a linear order as a binary relation that is antisymmetric, 
   transitive and total. Note that this terminology is different than the
-  one used the standard Order.thy file.\<close>
+  one used the standard Isabelle's \<open>Order.thy\<close> file.\<close>
 
 definition
   "IsLinOrder(X,r) \<equiv> antisym(r) \<and> trans(r) \<and> (r {is total on} X)"

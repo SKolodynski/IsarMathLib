@@ -430,7 +430,7 @@ proof -
     using pred_succ_eq eq_succ_imp_eq_m1 by simp
 qed
 
-text\<open>For natural numbers if $j\in n$ then $j+1 \subseteq n$.\<close>
+text\<open>For natural numbers if $k\in n$ then $k+1 \subseteq n$.\<close>
 
 lemma mem_add_one_subset: assumes "n \<in> nat" "k\<in>n" shows "k #+ 1 \<subseteq> n"
 proof -

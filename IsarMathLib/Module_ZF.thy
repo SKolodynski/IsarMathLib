@@ -220,7 +220,7 @@ text\<open> $\Theta$ is indeed the neutral element of addition of module element
 
 lemma (in module0) zero_neutral: assumes "x\<in>\<M>" 
   shows "x +\<^sub>V \<Theta> = x" and "\<Theta> +\<^sub>V x = x"
-  using assms  mod_ab_gr.group0_2_L2 by simp_all
+  using assms mod_ab_gr.group0_2_L2 by simp_all
 
 subsection\<open>Module axioms\<close>
 
@@ -295,11 +295,11 @@ lemma (in module0) mult_zero:
   assumes "g\<in>\<M>" shows "\<zero>\<cdot>\<^sub>Sg = \<Theta>"
   using assms add_mult_neut_elems(3) func1_3_L2 by simp
 
-text\<open>Taking inverses in a module is just multiplying by $-1$\<close>
+text\<open>Taking inverses in a module is just multiplying by $-1$.\<close>
 
 lemma (in module0) inv_module:
   assumes "g\<in>\<M>"
-  shows "(\<rm>\<one>)\<cdot>\<^sub>Sg = \<midarrow> g"
+  shows "(\<rm>\<one>)\<cdot>\<^sub>Sg = \<midarrow>g"
 proof-
   have "\<one>\<in>R" using Ring_ZF_1_L2(2) by auto
   then have "(\<rm>\<one>) \<in> R" using Ring_ZF_1_L3(1) by auto

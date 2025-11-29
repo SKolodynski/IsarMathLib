@@ -68,7 +68,7 @@ corollary (in group0) nat_pow_inv_cancel: assumes "n\<in>nat" "x\<in>G"
   using nat_pow_inverse assms group0_2_L6 monoid.nat_mult_type assms by auto
 
 text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, then
-  $x^n\cdot (x^{-1})^k = x^(k-n)$. \<close>
+  $x^n\cdot (x^{-1})^k = x^{n-k}$. \<close>
 
 lemma (in group0) nat_pow_cancel_less: assumes "n\<in>nat" "k\<le>n" "x\<in>G"
   shows "pow(n,x)\<cdot>pow(k,x\<inverse>) = pow(n #- k,x)"
@@ -119,7 +119,7 @@ proof -
 qed
 
 text\<open>If $k\leq n$ are natural numbers and $x$ an element of the group, then
-  $(x^{-1})^k\cdot x^n = x^{(k-n)}$. \<close>
+  $x^k\cdot (x^{-1})^n = x^{n-k)}$. \<close>
 
 lemma (in group0) nat_pow_cancel_more1: assumes "n\<in>nat" "k\<le>n" "x\<in>G"
   shows "pow(k,x)\<cdot>pow(n,x\<inverse>) = pow(n #- k,x\<inverse>)"

@@ -821,7 +821,7 @@ lemma (in group0) endomor_eq: assumes "f \<in> End(G,P)" "g\<^sub>1\<in>G" "g\<^
   using assms homomor_eq unfolding End_def by auto
 
 text\<open>A function that maps a group $G$ into itself and satisfies 
-  $f(g_1\cdot g2) = f(g_1)\cdot f(g_2)$ is an endomorphism.\<close>
+  $f(g_1\cdot g_2) = f(g_1)\cdot f(g_2)$ is an endomorphism.\<close>
 
 lemma (in group0) eq_endomor: 
   assumes "f:G\<rightarrow>G" and "\<forall>g\<^sub>1\<in>G. \<forall>g\<^sub>2\<in>G. f`(g\<^sub>1\<cdot>g\<^sub>2)=f`(g\<^sub>1)\<cdot>f`(g\<^sub>2)"

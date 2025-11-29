@@ -678,9 +678,9 @@ qed
 subsection\<open>Countability vs enumerability\<close>
 
 text\<open>There are different definitions of the notion of countability floating around.
-  In the presence if the Axiom of Choice they are typically equivalent, but without
+  In the presence of the Axiom of Choice they are typically equivalent, but without
   AC they are often not. In this section we define the notions to have a reference 
-  what exactly we mean by saying that "$X$ is enumerable" or "$X$ is countable. \<close>
+  what exactly we mean by saying that "$X$ is enumerable" or "$X$ is countable". \<close>
 
 text\<open>We say that a set $X$ is enumerable if it is empty or there is a surjection from the set of
   natural numbers onto $X$. We (somewhat arbitrarily) want the empty set to be enumerable, 
@@ -691,7 +691,7 @@ text\<open>We say that a set $X$ is enumerable if it is empty or there is a surj
 definition IsEnumerable ("_ {is enumerable}" [90] 91) where
   "X {is enumerable} \<equiv> X=\<emptyset> \<or> surj(nat,X)\<noteq>\<emptyset>"
 
-text\<open>A set is enumerable iff there exist a sequence that includes all elements of $X$.\<close>
+text\<open>A set $X$ is enumerable iff there exist a sequence that includes all elements of $X$.\<close>
 
 lemma enumerable_iff_seq: 
   shows "X {is enumerable} \<longleftrightarrow> (\<exists>Y. \<exists>s\<in>nat\<rightarrow>Y. X\<subseteq>s``(nat))"

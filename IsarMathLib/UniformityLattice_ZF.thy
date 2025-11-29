@@ -270,7 +270,7 @@ definition
   "LUB_Unif(X,\<U>) \<equiv> Supersets(X\<times>X,LUB_UnifBase(\<U>))"
 
 text\<open>With this definition we can rewrite some asssertions of theorem \<open>lub_unif_base_base\<close> 
-  in bit shorter form: \<close>
+  in a bit shorter form: \<close>
 
 corollary lub_unif_base_base1: assumes "X\<noteq>\<emptyset>" "\<U>\<subseteq>Uniformities(X)" "\<U>\<noteq>\<emptyset>"
   shows 
