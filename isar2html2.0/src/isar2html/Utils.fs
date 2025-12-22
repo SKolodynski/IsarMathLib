@@ -181,4 +181,4 @@ namespace iml
 
         ///  writes a list of files given a list of (name, contents) pairs
         let writeFiles (ncs:(string*string) list) : unit=
-            List.map (fun (n,c) -> File.WriteAllText(n,c)) ncs |> ignore
+            List.map (fun (n,c:string) -> File.WriteAllText(n,c)) ncs |> ignore

@@ -1,7 +1,7 @@
 (*
     This file is part of isar2html2.0 - a tool for rendering IsarMathLib
 	theories in in HTML.
-    Copyright (C) 2022  Slawomir Kolodynski
+    Copyright (C) 2022-2025  Slawomir Kolodynski
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -33,7 +33,7 @@ let dbgp (p: Parser<_,_>) stream =
     let r = (p |>> fun x -> (x,posBefore,getPosition stream))
     r
 
-let test p str parsed =
+let test p (str:string) (parsed:string) =
     match run p str with
     | Success(result, _, _)   -> Assert.Equal(parsed,result)
     | Failure(errorMsg, _, _) -> Assert.True(false, errorMsg)
