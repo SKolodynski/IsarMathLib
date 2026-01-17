@@ -116,7 +116,7 @@ proof -
 qed
 
 text\<open>Various forms of saying that for natural numbers taking the successor 
-  is the same as adding one. \<close>
+  is the same as adding one, also a natural number is a subset of its successor. \<close>
 
 lemma succ_add_one: assumes "n\<in>nat" 
   shows 
@@ -209,6 +209,16 @@ proof -
   ultimately show "i \<subseteq> j \<or> j \<subseteq> i" by auto
 qed
 
+text\<open>For natural numbers $i,j$ if $i\subseteq j$ then $i=j$ or $i\in j$.\<close>
+
+lemma nat_incl_mem_eq: assumes "i\<in>nat" "j\<in>nat" "i\<subseteq>j"
+  shows "i\<in>j \<or> i=j"
+proof - 
+  from assms(1,2) have "Ord(i)" and "Ord(j)" using nat_into_Ord by simp_all
+  with assms(3) show "i\<in>j \<or> i=j" using subset_imp_le le_iff
+    unfolding lt_def by auto
+qed
+
 text\<open>If two natural numbers are different then one of them is less than the other.\<close>
 
 lemma nat_mem_total: assumes "i \<in> nat"  "j \<in> nat" "i\<noteq>j"
@@ -244,6 +254,11 @@ proof -
   then show "succ(n) \<subseteq> nat" using nat_union_succ by simp
 qed
 
+text\<open>A natural number is a subset of the set natural numbers. Weird, but true.\<close>
+
+lemma nat_subset_nat: assumes "n\<in>nat" shows "n\<subseteq>nat"
+  using assms succ_explained succnat_subset_nat by auto
+
 text\<open>Element $k$ of a natural number $n$ is a natural number that is smaller than $n$.\<close>
 
 lemma elem_nat_is_nat: assumes A1: "n \<in> nat"  and A2: "k\<in>n"
@@ -276,6 +291,11 @@ text\<open>If $n$ is a natural number and $k\leq n$, then k is a natural number.
 
 lemma leq_nat_is_nat: assumes "n\<in>nat" "k\<le>n" shows "k\<in>nat"
   using assms nat_mem_lt elem_nat_is_nat(2) by auto
+
+text\<open>For natural numbers $k\leq n$ is the same as $k\subseteq n$.\<close>
+
+lemma nat_leq_subset_iff: assumes "k\<in>nat" "n\<in>nat" 
+  shows "k\<le>n \<longleftrightarrow> k\<subseteq>n" using assms nat_into_Ord le_subset_iff by simp
   
 text\<open>The term $k \leq n$ is the same as $k < \textrm{succ}(n)$.  \<close>
 
@@ -283,9 +303,10 @@ lemma leq_mem_succ: shows "k\<le>n \<longleftrightarrow> k < succ(n)" by simp
 
 text\<open>A natural number $n$ is smaller than $n+1$.\<close>
 
-lemma nat_less_add_one: assumes "n\<in>nat" shows "n < n #+ 1"
+lemma nat_less_add_one: assumes "n\<in>nat" 
+  shows "n < n #+ 1" and "n \<in> n #+ 1"
   using assms nat_into_Ord le_refl_iff leq_mem_succ succ_add_one(1)
-  by simp
+  by simp_all
 
 text\<open>If the successor of a natural number $k$ is an element of the successor
   of $n$ then a similar relations holds for the numbers themselves.\<close>
@@ -300,14 +321,6 @@ text\<open>The set of natural numbers is the union of its elements.\<close>
 
 lemma nat_union_nat: shows "nat = \<Union> nat"
   using elem_nat_is_nat by blast
-
-text\<open>A natural number is a subset of the set of natural numbers.\<close>
-
-lemma nat_subset_nat: assumes A1: "n \<in> nat" shows "n \<subseteq> nat"
-proof -
-  from A1 have "n \<subseteq> \<Union> nat" by auto
-  then show "n \<subseteq> nat" using nat_union_nat by simp
-qed
 
 text\<open>Adding natural numbers does not decrease what we add to.\<close>
 

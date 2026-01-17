@@ -503,7 +503,7 @@ proof -
     unfolding IsTotal_def by auto
 qed
 
-text\<open>We aim at showing that the a halving sequence image is a fundamental system of entourages.
+text\<open>We aim at showing that a halving sequence image is a fundamental system of entourages.
   The next lemma shows the first condition in the uniform base definition:
   for two sets in a halving sequence image there is a third one that is contained in both. \<close>
 
@@ -638,9 +638,11 @@ qed
 text\<open>If $\Phi$ is a uniformity on a nonempty set $X$ and admits a halving function $h$
   then $\Phi$ is the supremum of the collection of uniformities $\{\Psi_U: U\in\Phi\}$
   in the inclusion order relation, where $\Psi_U = $\<open>CountBaseUnif(X,h,U)\<close>.
-  Since $\Psi_U$ has a countable base this shows that every uniformity 
+  Since $\Psi_U$ has a enumerable base this shows that every uniformity 
   (that admits a halving function) is a union and a supremum of some collection of uniformities 
-  each of which has a countable base.\<close>
+  each of which has an enumerable base. We are using the word "enumerable" in the sense
+  defined in \<open>Countable vs enumerable\<close> section of the \<open>Cardinal_ZF\<close>, 
+  note in ZF this is not the same as "countable".\<close>
 
 theorem sup_count_base_unifs: 
   assumes "X\<noteq>\<emptyset>" "\<Phi> {is a uniformity on} X" "h {is a halving function for} \<Phi>"
@@ -662,5 +664,24 @@ proof -
   with assms(1,2) \<open>\<Phi>=\<Union>?\<U>\<close> show "\<Phi> = Supremum(OrderOnUniformities(X),?\<U>)"
     using union_unif_sup by simp
 qed
+
+text\<open> The next goal we want to achieve is to show that if a uniformity
+  has an enumerable base consisting of symmetric entourages $\{ V_n\}_{n\in\mathbb{N}}$
+  then it can be represented by a pseudometric. In the Bourbaki's proof
+  the first step is to inductively define a sequence $\{ V_n\}_{n\in\mathbb{N}}$ 
+  of entourages with the property that $U_1 \subseteq V_1$ and for all natural
+  $n\geq 1$ we have $U_{n+1}\circ U_{n+1}\circ U_{n+1} \subseteq U_n\cap V_n$.
+  The existence of such sequence for every uniformity with countable base
+  follows from theorem \<open>ustex3sym\<close> in \<open>UniformSpace_ZF\<close> theory and the Axiom of Choice.
+  Here we construct this sequence from an analogue of the halving function but 
+  with the property the $t(U)\circ t(u)\circ t(U)\subseteq U$ using the notion of 
+  inductive sequence with changing generation function.
+  The \<open>IsDiv3Function(\<Phi>,t)\<close> predicate defines an analogue of the halving function but 
+  with the property the $t(U)\circ t(u)\circ t(U)\subseteq U$ for all $U\in \Phi$. \<close>
+
+definition "IsDiv3Function(\<Phi>,t) \<equiv> t:\<Phi>\<rightarrow>\<Phi> \<and> 
+  (\<forall>U\<in>\<Phi>. t`(U) = converse(t`(U)) \<and> t`(U) O (t`(U) O t`(U)) \<subseteq> U)" 
+
+
 
 end
