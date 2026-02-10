@@ -481,24 +481,26 @@ lemma halving_seq_decr:
     "InclusionOn(\<Phi>) {is total on} (H``(nat))"
     "InclusionOn(\<Phi>) {is total on} (H``(nat\<setminus>{0}))"
 proof -
-  from assms(2,3,4) have "H:nat\<rightarrow>\<Phi>" using halving_seq_start(1) by simp
+  from assms(2,3,4) have "H:nat\<rightarrow>\<Phi>" using halving_seq_start(1) 
+    by simp
   let ?r = "InclusionOn(\<Phi>)"
   { fix n assume "n\<in>nat"
     with \<open>H:nat\<rightarrow>\<Phi>\<close> have "H`(n) \<in> \<Phi>" and "H`(n #+ 1) \<in> \<Phi>" 
       using apply_funtype by simp_all
-    with assms(1) have "H`(n) \<subseteq> X\<times>X" "H`(n #+ 1) \<subseteq> X\<times>X" and "id(X) \<subseteq> H`(n #+ 1)"
+    with assms(1) have "H`(n #+ 1) \<subseteq> X\<times>X" and "id(X) \<subseteq> H`(n #+ 1)"
       using uni_domain(1) unfolding IsUniformity_def by simp_all
     then have "H`(n #+ 1) \<subseteq> H`(n #+ 1) O H`(n #+ 1)"
       using refl_square_greater by simp
     with assms(2,3,4) \<open>n\<in>nat\<close> \<open>H`(n #+ 1) \<in> \<Phi>\<close> \<open>H`(n) \<in> \<Phi>\<close>
     have "\<langle>H`(n #+ 1),H`(n)\<rangle> \<in> ?r"
-      using halving_seq_halves(2) unfolding InclusionOn_def by force
+      using halving_seq_halves(2) unfolding InclusionOn_def 
+      by force
   } hence "\<forall>n\<in>nat. \<langle>H`(n #+ 1),H`(n)\<rangle> \<in> ?r" by simp
   with \<open>H:nat\<rightarrow>\<Phi>\<close> show "IsDecreasingSeq(\<Phi>,InclusionOn(\<Phi>),H)" 
     unfolding IsDecreasingSeq_def by simp
   then show "?r {is total on} H``(nat)"
-    using incl_is_partorder decr_seq_total unfolding IsPartOrder_def IsPreorder_def
-    by blast
+    using incl_is_partorder decr_seq_total 
+    unfolding IsPartOrder_def IsPreorder_def  by blast
   then show "InclusionOn(\<Phi>) {is total on} (H``(nat\<setminus>{0}))"
     unfolding IsTotal_def by auto
 qed
@@ -677,11 +679,112 @@ text\<open> The next goal we want to achieve is to show that if a uniformity
   with the property the $t(U)\circ t(u)\circ t(U)\subseteq U$ using the notion of 
   inductive sequence with changing generation function.
   The \<open>IsDiv3Function(\<Phi>,t)\<close> predicate defines an analogue of the halving function but 
-  with the property the $t(U)\circ t(u)\circ t(U)\subseteq U$ for all $U\in \Phi$. \<close>
+  with the property the $t(U)\circ t(u)\circ t(U)\subseteq U$ for all $U\in\Phi$. \<close>
 
 definition "IsDiv3Function(\<Phi>,t) \<equiv> t:\<Phi>\<rightarrow>\<Phi> \<and> 
   (\<forall>U\<in>\<Phi>. t`(U) = converse(t`(U)) \<and> t`(U) O (t`(U) O t`(U)) \<subseteq> U)" 
 
+text\<open>Given a function $t$ that maps a uniformity $\Phi$ into itself 
+  and a sequence of entourages $\mathcal{V}:mathbb{N}\rightarrow \Phi$
+  we define a sequence of functions called \<open>SeqInter\<close> such that for every $n\in\mathbb{N}$
+  the \<open>SeqInter(n)\<close> maps $\Phi$ into itself and \<open>SeqInter(n)\<close>$(U) = t(U \cap \mathcal{V}_n$. 
+  In actual theorems we will assume that the function $t$ satisfies the 
+  \<open>IsDiv3Function\<close> predicate and the \<open>SeqInter\<close> will be a generating sequence of functions
+  in an inductive definition.\<close>
 
+definition 
+  "SeqInter(\<Phi>,\<V>,t) \<equiv> {\<langle>n,{\<langle>U,t`(U \<inter> \<V>`(n))\<rangle>. U\<in>\<Phi>}\<rangle>. n\<in>nat}"
+
+text\<open>Suppose $\Phi$ is a uniformity on $X$, $t$ maps $\Phi$ into itself and
+  $\mathcal{V}:\mathbb{N}\rightarrow\Phi$ is a sequence of entourages of $\Phi$.
+  Then \<open>SeqInter(\<Phi>,\<V>,t)\<close> is a sequence of functions mapping $\Phi$ into itself.\<close>
+
+lemma seqinter_is_var_seq: 
+  assumes "\<Phi> {is a uniformity on} X" "\<V>:nat\<rightarrow>\<Phi>" "t:\<Phi>\<rightarrow>\<Phi>"
+  shows "SeqInter(\<Phi>,\<V>,t) : nat \<rightarrow> (\<Phi>\<rightarrow>\<Phi>)"
+  using assms apply_funtype ZF_fun_from_total
+  unfolding IsUniformity_def IsFilter_def SeqInter_def
+  by simp
+
+text\<open>The value of the $n$'th element of \<open>SeqInter(\<Phi>,\<V>,t)\<close> at $U\in\Phi$
+  is equal to $t(U\cap \mathcal{V}_n)$. \<close>
+
+lemma seqinter_val: assumes "n\<in>nat" "U\<in>\<Phi>"
+  shows "(SeqInter(\<Phi>,\<V>,t)`(n))`(U) = t`(U \<inter> \<V>`(n))"
+  using assms ZF_fun_from_tot_val1 unfolding SeqInter_def
+  by simp
+
+text\<open>Suppose $\Phi$ is a uniformity on $X$, a function $t$ satisfies the 
+  \<open>IsDiv3Function(\<Phi>,t)\<close> predicate and $\mathcal{V}: \mathbb{N}\rightarrow\Phi$ 
+  is a sequence of entourages of $\Phi$. Then the sequence $\mathcal{U}$ starting at $X\times X$
+  and generated inductively by the seguence of functions \<open>SeqInter(\<Phi>,\<V>,t)\<close>
+  is a sequence of symmetric elements (entourages) of $\Phi$ such that
+  $(\mathcal{U}_{n+1})^3 \subseteq U_n\cap V_n$ fo all $n\in\mathbb{N}$.\<close>
+
+lemma seq_div_cube: 
+  assumes "\<Phi> {is a uniformity on} X" "IsDiv3Function(\<Phi>,t)" "\<V>:nat\<rightarrow>\<Phi>"
+  defines "\<U> \<equiv> InductiveSeqVarF(X\<times>X,\<Phi>,SeqInter(\<Phi>,\<V>,t))"
+  shows "\<U>:nat\<rightarrow>\<Phi>" "\<U>`(0) = X\<times>X" and "\<forall>n\<in>nat. 
+    \<U>`(n) = converse(\<U>`(n)) \<and> \<U>`(n #+ 1) O \<U>`(n #+ 1) O \<U>`(n #+ 1) \<subseteq> \<U>`(n)\<inter>\<V>`(n)"
+proof -
+  let ?\<F> = "SeqInter(\<Phi>,\<V>,t)"
+  from assms(1,2,3) have "X\<times>X \<in> \<Phi>" "t:\<Phi>\<rightarrow>\<Phi>" and I: "?\<F>:nat\<rightarrow>(\<Phi>\<rightarrow>\<Phi>)"
+    using min_uniformity1 seqinter_is_var_seq unfolding IsDiv3Function_def 
+    by simp_all
+  with assms(4) \<open>X\<times>X \<in> \<Phi>\<close> show "\<U>:nat\<rightarrow>\<Phi>" and "\<U>`(0) = X\<times>X"
+    using indseq_var_seq(1,2) by simp_all
+  from \<open>\<U>`(0) = X\<times>X\<close> have "\<U>`(0) = converse(\<U>`(0))" by simp
+  from assms \<open>\<U>:nat\<rightarrow>\<Phi>\<close> \<open>X\<times>X \<in> \<Phi>\<close> I have 
+    "\<forall>n\<in>nat. \<U>`(n #+ 1) = converse(\<U>`(n #+ 1))" and 
+    "\<forall>n\<in>nat. \<U>`(n #+ 1) O \<U>`(n #+ 1) O \<U>`(n #+ 1) \<subseteq> \<U>`(n) \<inter> \<V>`(n)"
+    using apply_funtype seqinter_val indseq_var_seq(3)
+    unfolding IsUniformity_def IsFilter_def IsDiv3Function_def by simp_all
+  with \<open>\<U>`(0) = converse(\<U>`(0))\<close> show "\<forall>n\<in>nat. 
+    \<U>`(n) = converse(\<U>`(n)) \<and> \<U>`(n #+ 1) O \<U>`(n #+ 1) O \<U>`(n #+ 1) \<subseteq> \<U>`(n)\<inter>\<V>`(n)"
+    using zero_pos_all by auto
+qed
+
+text\<open>To shorten the notation we will call the sequence denoted as $\mathcal{U}$ 
+  in lemma \<open>seq_div_third_pow\<close> \<open>Div3Seq\<close> in the formal part and the "thirding sequence" 
+  in the informal comments. These are not good names, but I can't think about
+  anything better. Anyway, all we care about is that its existence follows from the existence
+  of $t:\Phi\rightarrow\Phi$ such that $t(U)$ is symmetric and 
+  $t(U)\circ t(U) \circ t(U)\subseteq U$ for all $U\in \Phi$ and it has the properties listed
+  in \<open>seq_div_third_pow\<close>.\<close>
+
+definition "Div3Seq(X,\<Phi>,\<V>,t) \<equiv> InductiveSeqVarF(X\<times>X,\<Phi>,SeqInter(\<Phi>,\<V>,t))"
+
+text\<open>With the assumptions of \<open>seq_div_third_pow\<close> the thirding sequence is decreasing 
+  in the inclusion order on $\Phi$ hence the inclusion order on $\Phi$ is total on 
+  the sequence's image of the natural numbers.\<close>
+
+lemma div3_seq_decr: 
+  assumes "\<Phi> {is a uniformity on} X" "IsDiv3Function(\<Phi>,t)" "\<V>:nat\<rightarrow>\<Phi>"
+  shows 
+    "IsDecreasingSeq(\<Phi>,InclusionOn(\<Phi>),Div3Seq(X,\<Phi>,\<V>,t))"
+    "InclusionOn(\<Phi>) {is total on} (Div3Seq(X,\<Phi>,\<V>,t)``(nat))"
+proof -
+  let ?\<U> = "Div3Seq(X,\<Phi>,\<V>,t)"
+  let ?r = "InclusionOn(\<Phi>)"
+  from assms(1,2,3) have "?\<U>:nat\<rightarrow>\<Phi>" using seq_div_cube(1)
+    unfolding Div3Seq_def by simp
+  { fix n assume "n\<in>nat"  
+    with \<open>?\<U>:nat\<rightarrow>\<Phi>\<close> have "?\<U>`(n) \<in> \<Phi>" and "?\<U>`(n #+ 1) \<in> \<Phi>" 
+      using apply_funtype by simp_all
+    with assms(1) have "?\<U>`(n #+ 1) \<subseteq> X\<times>X" and "id(X) \<subseteq> ?\<U>`(n #+ 1)"
+      using uni_domain(1) unfolding IsUniformity_def by simp_all
+    then have "?\<U>`(n #+ 1) \<subseteq> ?\<U>`(n #+ 1) O ?\<U>`(n #+ 1) O ?\<U>`(n #+ 1)"
+      using refl_cube_greater by simp
+    with assms(1,2,3) \<open>n\<in>nat\<close> have "?\<U>`(n #+ 1) \<subseteq> ?\<U>`(n)"
+      using seq_div_cube(3) unfolding Div3Seq_def by blast
+    with \<open>?\<U>`(n)\<in>\<Phi>\<close> \<open>?\<U>`(n #+ 1)\<in>\<Phi>\<close> have "\<langle>?\<U>`(n #+ 1),?\<U>`(n)\<rangle> \<in> ?r"
+      unfolding InclusionOn_def by simp
+  } hence "\<forall>n\<in>nat. \<langle>?\<U>`(n #+ 1),?\<U>`(n)\<rangle> \<in> ?r" by simp
+  with \<open>?\<U>:nat\<rightarrow>\<Phi>\<close> show "IsDecreasingSeq(\<Phi>,InclusionOn(\<Phi>),?\<U>)"
+    unfolding IsDecreasingSeq_def by simp
+  then show "?r {is total on} ?\<U>``(nat)"
+    using incl_is_partorder decr_seq_total 
+    unfolding IsPartOrder_def IsPreorder_def by blast
+qed
 
 end

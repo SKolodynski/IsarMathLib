@@ -138,6 +138,12 @@ proof -
     by auto
 qed
 
+text\<open>If a property is true of $n=0$ and for all natural numbers $n+1$ then it is true for all
+  natural numbers.\<close>
+
+lemma zero_pos_all: assumes "\<phi>(0)" and "\<forall>m\<in>nat. \<phi>(m #+ 1)" "n\<in>nat"
+  shows "\<phi>(n)" using assms Nat_ZF_1_L3 succ_add_one(1) by auto
+
 text\<open>A more direct way of stating that empty set is an element of every non-zero natural number:\<close>
 
 lemma empty_in_non_empty: assumes "n\<in>nat" "n\<noteq>0"

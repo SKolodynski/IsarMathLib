@@ -1,4 +1,4 @@
-(* 
+ (* 
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
@@ -497,6 +497,11 @@ text\<open>Square of a reflexive relation contains the relation.
 lemma refl_square_greater: assumes "r \<subseteq> X\<times>X" "id(X) \<subseteq> r"
   shows "r \<subseteq> r O r" using assms by auto
 
+text\<open>The cube of a reflexive relation contains the relation.\<close>
+
+lemma refl_cube_greater: assumes "r \<subseteq> X\<times>X" "id(X) \<subseteq> r"
+  shows "r \<subseteq> r O r O r" using assms by blast 
+
 text\<open>A reflexive relation is contained in the union of products of its singleton images. \<close>
 
 lemma refl_union_singl_image: 
@@ -542,8 +547,7 @@ lemma set_mem_eq: assumes "x\<in>A" "A=B" shows "x\<in>B" using assms by simp
 text\<open>Given some family $\mathcal{A}$ of subsets of $X$ we can define the family of supersets of
   $\mathcal{A}$. \<close>
 
-definition
-  "Supersets(X,\<A>) \<equiv> {B\<in>Pow(X). \<exists>A\<in>\<A>. A\<subseteq>B}"
+definition "Supersets(X,\<A>) \<equiv> {B\<in>Pow(X). \<exists>A\<in>\<A>. A\<subseteq>B}"
 
 text\<open>If $A$ is a member of a collection of sets $\mathcal{A}$ then it is one of
   supersets of $\mathcal{A}$.\<close>
