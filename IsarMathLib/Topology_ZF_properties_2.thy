@@ -2054,4 +2054,53 @@ qed
 text\<open>There can be considered many more local properties, which; as
 happens with locally-$T_2$; can distinguish between spaces other properties cannot.\<close>
 
+subsection\<open>Locally-regular spaces\<close>
+
+text\<open>A topological space is locally-regular if every point has a base of neighbourhoods
+whose subspace topology is regular.\<close>
+
+definition
+  IsLocallyRegular ("_{is locally-regular}" 70)
+  where "T{is locally-regular} \<equiv> T{is locally}(\<lambda>B. \<lambda>TT. (TT{restricted to}B){is regular})"
+
+text\<open>Since regularity is a hereditary property (it passes to every subspace), we can apply
+the general lemma \<open>her_P_is_loc_P\<close>: a space is locally-regular iff every point merely
+has \emph{some} open neighbourhood whose subspace topology is regular (rather than a full neighbourhood basis of them).\<close>
+
+corollary (in topology0) loc_regular:
+  shows "(T{is locally-regular}) \<longleftrightarrow> (\<forall>x\<in>\<Union>T. \<exists>A\<in>T. x\<in>A \<and> (T{restricted to}A){is regular})"
+proof-
+  {
+    fix TT B A assume TT:"TT{is a topology}" "(TT{restricted to}B){is regular}" "A\<in>TT" "B\<in>Pow(\<Union>TT)"
+    then have s:"B\<inter>A\<subseteq>B" "B\<subseteq>\<Union>TT" by auto
+    then have "(TT{restricted to}(B\<inter>A))=(TT{restricted to}B){restricted to}(B\<inter>A)"
+      using subspace_of_subspace by auto moreover
+    have "\<Union>(TT{restricted to}B)=B" unfolding RestrictedTo_def using s(2) by auto
+    then have "B\<inter>A\<subseteq>\<Union>(TT{restricted to}B)" using s(1) by auto moreover
+    note TT(2) ultimately have "(TT{restricted to}(B\<inter>A)){is regular}"
+      using regular_here by auto
+  }
+  then have "\<forall>TT. \<forall>B\<in>Pow(\<Union>TT). \<forall>A\<in>TT. TT{is a topology} \<and> (TT{restricted to}B){is regular}
+      \<longrightarrow> (TT{restricted to}(B\<inter>A)){is regular}" by auto
+  with her_P_is_loc_P[where P="\<lambda>A. \<lambda>TT. (TT{restricted to}A){is regular}"]
+  show ?thesis unfolding IsLocallyRegular_def by auto
+qed
+
+text\<open>Every regular space is locally-regular: the whole space is itself an open
+neighbourhood whose subspace topology is regular, for each of its points.\<close>
+
+lemma (in topology0) regular_imp_locally_regular:
+  assumes "T{is regular}"
+  shows "T{is locally-regular}"
+proof-
+  have "\<forall>x\<in>\<Union>T. \<exists>A\<in>T. x\<in>A \<and> (T{restricted to}A){is regular}"
+  proof
+    fix x assume x:"x\<in>\<Union>T"
+    have tot:"\<Union>T\<in>T" using topSpaceAssum unfolding IsATopology_def by auto
+    with assms have "(T{restricted to}\<Union>T){is regular}" using regular_here by auto
+    with tot x show "\<exists>A\<in>T. x\<in>A \<and> (T{restricted to}A){is regular}" by blast
+  qed
+  then show ?thesis using loc_regular by auto
+qed
+
 end
