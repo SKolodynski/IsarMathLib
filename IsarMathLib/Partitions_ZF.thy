@@ -362,6 +362,43 @@ proof -
   qed
 qed
 
+text\<open>Essentially the same assertions as \<open>decr_pair_disj\<close> but with more explicit assumptions:
+  if $\mathcal{U}$ is a sequence valued in the power set of $X$ and 
+  $\mathcal{U}_{n+1}\subseteq \mathcal{U}_{n+1}$ for all natural numbers $n$, then
+  the assumption and hence the assertions of \<open>decr_pair_disj\<close> hold.\<close>
+
+lemma decr_pair_disj1: 
+  assumes "\<U>:nat\<rightarrow>Pow(X)" "\<forall>n\<in>nat. \<U>`(n #+ 1)\<subseteq>\<U>`(n)"
+  defines "\<V> \<equiv> {\<langle>i,\<U>`(i)\<setminus>\<U>`(i #+ 1)\<rangle>. i\<in>nat}"
+  shows
+  "\<V>:nat\<rightarrow>Pow(X)"
+  "IsDecreasingSeq(Pow(X),InclusionOn(Pow(X)),\<U>)"
+  "\<V> {is pairwise disjoint}"
+  "(\<Union>n\<in>nat. \<U>`(n)\<setminus>\<U>`(n #+ 1)) = \<U>`(0)\<setminus>(\<Inter>n\<in>nat. \<U>`(n))"
+proof -
+  have "\<forall>i\<in>nat. 
+  \<langle>\<U>`(i #+ 1),\<U>`(i)\<rangle> \<in> InclusionOn(Pow(X)) \<and> \<U>`(i)\<setminus>\<U>`(i #+ 1) \<in> Pow(X)"
+  proof 
+    fix i assume "i\<in>nat"
+    with assms(2) have "\<U>`(i #+ 1) \<subseteq> \<U>`(i)" and "i #+ 1 \<in> nat"
+      by simp_all
+    from assms(1) \<open>i\<in>nat\<close> have "\<U>`(i) \<in> Pow(X)" 
+        using apply_funtype by blast
+    from assms(1) \<open>i #+ 1 \<in> nat\<close> have "\<U>`(i #+ 1) \<in> Pow(X)" 
+      using apply_funtype by blast
+    with \<open>\<U>`(i #+ 1) \<subseteq> \<U>`(i)\<close> \<open>\<U>`(i) \<in> Pow(X)\<close> show
+      "\<langle>\<U>`(i #+ 1),\<U>`(i)\<rangle> \<in> InclusionOn(Pow(X)) \<and> \<U>`(i)\<setminus>\<U>`(i #+ 1) \<in> Pow(X)"
+      unfolding InclusionOn_def by auto
+  qed
+  with assms(1,3) show "\<V>:nat\<rightarrow>Pow(X)" and 
+    "IsDecreasingSeq(Pow(X),InclusionOn(Pow(X)),\<U>)"
+    using ZF_fun_from_total unfolding IsDecreasingSeq_def by simp_all
+  with assms(3) show 
+    "\<V> {is pairwise disjoint}" and 
+    "(\<Union>n\<in>nat. \<U>`(n)\<setminus>\<U>`(n #+ 1)) = \<U>`(0)\<setminus>(\<Inter>n\<in>nat. \<U>`(n))"
+    using decr_pair_disj by simp_all
+qed
+
 text\<open>If a sequence $\{\mathcal{U}_i\}_{i\in\mathbb{N}}$ of subsets of $X$ 
   is increasing in the inclusion order on the powerset of $X$ then the sequence 
   $\{\mathcal{U}_{i+1}\setminus \mathcal{U}_{i}\}_{i\in\mathbb{N}}$ is pairwise disjoint. \<close>

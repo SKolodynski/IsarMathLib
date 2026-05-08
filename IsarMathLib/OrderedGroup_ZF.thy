@@ -1,7 +1,7 @@
 (*    This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005-2024  Slawomir Kolodynski
+    Copyright (C) 2005-2026  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -123,6 +123,8 @@ locale group3 =
   fixes oddext ("_ \<degree>")
   defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(G,P,r,f)"
 
+  fixes listprod ("\<Prod> _" 70)
+  defines listprod_def [simp]: "\<Prod>s \<equiv> Fold(P,\<one>,s)"
 
 text\<open>In \<open>group3\<close> context we can use the theorems proven in the 
   \<open>group0\<close> context.\<close>
@@ -1791,5 +1793,5 @@ lemma (in group3) OrderedGroup_ZF_2_L6:
     Order_ZF_2_L6 Order_ZF_2_L2A 
     IsAnOrdGroup_def IsPartOrder_def func1_1_L15A
   by auto
-  
+
 end

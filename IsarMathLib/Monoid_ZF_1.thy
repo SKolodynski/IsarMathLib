@@ -1,7 +1,7 @@
 (* 
 This file is a part of IsarMathLib - 
 a library of formalized mathematics for Isabelle/Isar.
-Copyright (C) 2023  Slawomir Kolodynski
+Copyright (C) 2023-2026  Slawomir Kolodynski
 This program is free software; Redistribution and use in source and binary forms, 
 with or without modification, are permitted provided that the 
 following conditions are met:
@@ -75,6 +75,17 @@ proof -
   from assms have "n \<in> nat" "f:G\<times>G \<rightarrow> G" "?a:n \<rightarrow> G" "\<zero>\<in>G" "G\<noteq>0"
     using zero_monoid_oper ZF_fun_from_total by auto
   then show ?thesis using fold_props by simp
+qed
+
+text\<open>A different expression of the fact the sum of a list valued in monoid is a monoid element.\<close>
+
+lemma (in monoid1) sum_in_mono1: assumes "n\<in>nat" "b:n\<rightarrow>G"
+  shows "(\<Sum>b) \<in> G"
+proof -
+  from assms have "(\<Sum>{\<langle>k,b`(k)\<rangle>. k\<in>n}) \<in> G"
+    using apply_funtype sum_in_mono by simp
+  with assms(2) show "(\<Sum>b) \<in> G" using fun_is_set_of_pairs
+    by simp
 qed
 
 text\<open>The reason we start from $0$ in the definition of the summation sign in the \<open>monoid1\<close> locale
@@ -160,6 +171,44 @@ proof -
   from assms show "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n #+ 1}) =  (\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>n}) \<oplus> q(n)"
     using zero_monoid_oper fold_detach_last by simp
 qed
+
+text\<open>If we append an element to a list then its sum  increases by that element.\<close>
+
+lemma (in monoid1) seq_sum_append:
+  assumes "n \<in> nat" "s:n\<rightarrow>G" "x\<in>G"
+  shows "(\<Sum>Append(s,x)) = (\<Sum>s)\<oplus>x"
+proof -
+  let ?q = "Append(s,x)"
+  from assms have 
+    "?q:n #+ 1 \<rightarrow> G" and I: "\<forall>k\<in>n #+ 1. ?q`(k)\<in>G" 
+    and II: "\<forall>k\<in>n. ?q`(k) = s`(k)" "?q`(n) = x"
+    using append_props apply_funtype by simp_all
+  from \<open>?q:n #+ 1 \<rightarrow> G\<close> have "?q = {\<langle>k,?q`(k)\<rangle>. k\<in>n #+ 1}"
+    using fun_is_set_of_pairs by blast
+  hence "(\<Sum>?q) = (\<Sum>{\<langle>k,?q`(k)\<rangle>. k\<in>n #+ 1})" by simp
+  also from assms(1) I have "... = (\<Sum>{\<langle>k,?q`(k)\<rangle>. k\<in>n}) \<oplus> ?q`(n)"
+    using seq_sum_pull_one_elem(2) by simp
+  also from assms(2) II have "... = (\<Sum>s) \<oplus> x"
+    using fun_is_set_of_pairs by simp
+  finally show "(\<Sum>?q) = (\<Sum>s) \<oplus> x" by simp
+qed
+
+(*text\<open>Sum of concatenation of two lists is the sum of sums.\<close>
+
+lemma (in monoid1) seq_sum_concat: 
+  assumes "n\<in>nat" "s:n\<rightarrow>G" "m\<in>nat" "q:m\<rightarrow>G"
+  shows "(\<Sum>Concat(s,q)) = (\<Sum>s)\<oplus>(\<Sum>q)"
+proof -
+  have "\<forall>r\<in>0\<rightarrow>G. (\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r)"
+  proof -
+    { fix r assume "r\<in>0\<rightarrow>G" 
+      then have "(\<Sum>r) = \<zero>" using sum_empty by simp 
+      from \<open>r\<in>0\<rightarrow>G\<close> have "(\<Sum>Concat(s,r)) = \<Sum>Concat(s,\<emptyset>)"
+        using fun_empty_empty by simp
+      also from assms(1,2) have "... = \<Sum>s" using concat_empty(1) 
+        by simp
+
+ *) 
 
 text\<open>The sum of a singleton list is its only element,\<close>
 

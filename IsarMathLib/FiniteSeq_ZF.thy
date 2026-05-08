@@ -180,7 +180,19 @@ proof -
     by simp
 qed
 
-text\<open>Basis properties of the contatenation of two finite sequences.\<close>
+text\<open>A list shifted by a $0$ is the same list.\<close>
+
+lemma seq_shifted_by_zero: assumes "n\<in>nat" "b:n\<rightarrow>X" 
+  shows "ShiftedSeq(b,0) = b"
+  using assms func1_1_L1 nat_interval_zero_beg elem_nat_is_nat(2) fun_is_set_of_pairs
+  unfolding ShiftedSeq_def by simp
+
+text\<open>A shifted empty list is still empty.\<close>
+
+lemma empty_shifted_empty: shows "ShiftedSeq(\<emptyset>,n) = \<emptyset>"
+  using nat_interval_zero_len unfolding ShiftedSeq_def by simp
+
+text\<open>Basis properties of the concatenation of two finite sequences.\<close>
 
 theorem concat_props:
   assumes A1: "n \<in> nat"  "k \<in> nat" and A2: "a:n\<rightarrow>X"   "b:k\<rightarrow>X"
@@ -503,7 +515,7 @@ proof -
   ultimately show "?b = ?c" by (rule func_eq)
 qed  
 
-text\<open>@{term NELists} are non-empty lists\<close>
+text\<open> \<open>NELists\<close> are nonempty lists\<close>
 
 lemma non_zero_List_func_is_NEList:
   shows "NELists(X) = {a\<in>Lists(X). a\<noteq>0}"
@@ -580,7 +592,7 @@ proof -
   ultimately show "a = ?b" by (rule func_eq)
 qed
 
-text\<open>The initial part of a non-empty list
+text\<open>The initial part of a nonempty list
   is a list, and the domain of the original list
   is the successor of its initial part.\<close>
 
@@ -681,7 +693,7 @@ text\<open>The next lemma rephrases the definition of \<open>Last\<close>.
 lemma last_seq_elem: assumes "a: succ(n) \<rightarrow> X" shows "Last(a) = a`(n)"
   using assms func1_1_L1 pred_succ_eq Last_def by simp
 
-text\<open>The last element of a non-empty list valued in $X$ is in $X$.\<close>
+text\<open>The last element of a nonempty list valued in $X$ is in $X$.\<close>
 
 lemma last_type: assumes "a \<in> NELists(X)" shows "Last(a) \<in> X"
   using assms last_seq_elem apply_funtype unfolding NELists_def 
@@ -805,13 +817,15 @@ proof -
     using list_len1_singleton pair_func_singleton
     by auto
 qed
+
+text\<open>Concatenating with an empty list gives the same list.
+  Recall that an empty list is in fact an empty set (see \<open>fun_empty_empty\<close> in \<open>func1\<close> theory.\<close>
+
+lemma concat_empty: assumes "n\<in>nat" "x:n\<rightarrow>X"
+  shows "Concat(x,\<emptyset>) = x" and "Concat(\<emptyset>,x) = x"
+  using assms empty_shifted_empty seq_shifted_by_zero 
+  unfolding Concat_def by simp_all
   
-(*text{*Tail of a list of length 1 is a list of length 0.*}
-
-lemma list_len1_tail: assumes "a:1\<rightarrow>X"
-  shows "Tail(a) : 0 \<rightarrow> X"
-  using assms tail_props by blast *)
-
 text\<open>Appending an element is the same as concatenating
   with certain pair.\<close>
 
@@ -883,16 +897,54 @@ proof -
   moreover have "\<forall>k \<in> succ(n). (c O ?b) `(k) = ?d`(k)"
   proof -
     { fix k assume "k \<in> succ(n)"
-      with \<open>?b : succ(n) \<rightarrow> X\<close> have 
-	"(c O ?b) `(k) = c`(?b`(k))"
-	using comp_fun_apply by simp
+      with \<open>?b : succ(n) \<rightarrow> X\<close> have "(c O ?b) `(k) = c`(?b`(k))"
+        using comp_fun_apply by simp
       with A2 A3 A4 \<open>c O a : n \<rightarrow> Y\<close> \<open>c O a : n \<rightarrow> Y\<close> \<open>k \<in> succ(n)\<close>
       have "(c O ?b) `(k) = ?d`(k)"
-	using append_props comp_fun_apply apply_funtype
-	by auto
+        using append_props comp_fun_apply apply_funtype
+          by auto
     } thus ?thesis by simp
   qed
   ultimately show "c O ?b = ?d" by (rule func_eq)
+qed
+
+text\<open>Composition commutes with concatenation i.e. composition with a concatenation
+  is concatenation of compositions.\<close>
+
+lemma list_compose_concat:
+  assumes "n \<in> nat" "m\<in>nat" "a:n\<rightarrow>X" "b:m\<rightarrow>X" "c:X\<rightarrow>Y"
+  shows "c O Concat(a,b) = Concat(c O a, c O b)"
+proof -
+  let ?L = "c O Concat(a,b)"
+  let ?R = "Concat(c O a, c O b)"
+  from assms(1,2,3,4) have "Concat(a,b):n #+ m \<rightarrow> X" using concat_props(1)
+    by simp
+  with assms(5) have "?L : n #+ m \<rightarrow> Y" using comp_fun by simp
+  moreover
+  from assms(3,4,5) have I: "(c O a): n\<rightarrow>Y" "(c O b): m\<rightarrow>Y"
+    using comp_fun by simp_all
+  with assms(1,2) have "?R : n #+ m \<rightarrow> Y" using concat_props(1)
+    by simp
+  moreover
+  { fix i assume "i \<in> n #+ m"
+    with assms(1,2) \<open>Concat(a,b):n #+ m \<rightarrow> X\<close> 
+    have II: "?L`(i) = c`(Concat(a,b)`(i))" "i \<in> n\<union>NatInterval(n,m)"
+      using comp_fun_apply length_start_decomp(2) by simp_all
+    hence "i \<in> n \<or> i \<in> NatInterval(n,m)" by simp
+    moreover
+    { assume "i\<in>n"
+      with assms(1,2,3,4) I II have "?L`(i) = ?R`(i)" 
+        using concat_props(2) comp_fun_apply by simp
+    }
+    moreover
+    { assume "i\<in>NatInterval(n,m)"
+      with assms(1,2,3,4) I II have "?L`(i) = ?R`(i)"
+        using inter_diff_in_len concat_props(3) comp_fun_apply 
+        by simp
+    }
+    ultimately have "?L`(i) = ?R`(i)" by auto
+  } hence "\<forall>i \<in> n #+ m. ?L`(i) = ?R`(i)" by simp
+  ultimately show "?L = ?R" by (rule func_eq)
 qed
 
 text\<open>A lemma about appending an element to a list defined by set
@@ -1190,59 +1242,181 @@ subsection\<open>Chains\<close>
 text\<open>In this section we define chains and operations on them. Chains 
   are essentially lists that are parametrized by the first and last element.\<close>
 
-text\<open>Chains of elements of $X$ connesting $x$ and $y$ are lists (i.e. functions)
+text\<open>Chains of elements of $X$ connecting $x$ and $y$ are lists (i.e. functions)
   $c:\{0,1,...,n\}\rightarrow X$ for some $n\in \mathbb{N}$ such that the first element 
   (i.e. $c(0)$) is $x$ and the last (i.e. $c(n)$) element is $y$. 
   In informal comments we will say that the chain has length $n$ when it consists of $n+1$
-  elements of $X$.\<close>
+  elements of $X$, i.e. it has $n$ links, see the definition below.\<close>
 
 definition "Chains(X,n,x,y) \<equiv> {c \<in> n #+ 1\<rightarrow>X. c`(0) = x \<and> c`(n) = y}"
 
 text\<open>One operation that we can do on a chain $x=c_0,c_1,...,c_n=y$ is converting it
   to a list of pairs $\langle c_i, c_{i+1}\rangle, 0 \leq i < n$. 
-  I don't have a good name for this operation, let's call it \<open>ChainIntervals\<close> for now.\<close>
+  I don't have a good name for this operation, let's call it \<open>ChainLinks\<close> for now.\<close>
 
-definition "ChainIntervals(c) \<equiv> {\<langle>i,\<langle>c`(i),c`(i #+ 1)\<rangle>\<rangle>. i \<in> (domain(c) #- 1)}"
+definition "ChainLinks(c) \<equiv> {\<langle>i,\<langle>c`(i),c`(i #+ 1)\<rangle>\<rangle>. i \<in> (domain(c) #- 1)}"
 
-text\<open>If $c$ is a chain in $X$ of length $n+1$ then chain intervals of $c$ form a list of 
+text\<open>If $c$ is a chain in $X$ of length $n$ then chain links of $c$ form a list of 
   elements of $X\times X$ of length $n$.\<close>
 
-lemma chain_intervals_fun: assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)"
-  shows "domain(c )#- 1 = n" and "ChainIntervals(c):n\<rightarrow>X\<times>X"
+lemma chain_links_fun: assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)"
+  shows "domain(c) #- 1 = n" and "ChainLinks(c):n\<rightarrow>X\<times>X"
   using assms func1_1_L1 ZF_fun_from_total succ_ineq1(2,3) apply_funtype
-  unfolding Chains_def ChainIntervals_def by auto
+  unfolding Chains_def ChainLinks_def by auto
 
-text\<open>If $c$ is a chain in $X$ connecting $x$ and $y$ of length $n$ and "k<n" (i.e. $k\in n$)
-  then the value of the $k$'th element of the derived chain intervals is 
+text\<open>If $c$ is a chain in $X$ connecting $x$ and $y$ of length $n$ and $k < n$ (i.e. $k\in n$)
+  then the value of the $k$'th element of the derived chain links is 
   $\langle c(k),c(k+1)\rangle$.\<close>
 
-lemma chain_intervals_val: assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)" "k\<in>n"
-  shows "ChainIntervals(c)`(k) = \<langle>c`(k),c`(k #+ 1)\<rangle>"
-  using assms chain_intervals_fun(1) ZF_fun_from_tot_val1 
-  unfolding ChainIntervals_def by simp
+lemma chain_links_val: assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)" "k\<in>n"
+  shows "ChainLinks(c)`(k) = \<langle>c`(k),c`(k #+ 1)\<rangle>"
+  using assms chain_links_fun(1) ZF_fun_from_tot_val1 
+  unfolding ChainLinks_def by simp
 
 text\<open>If $c$ is a chain in $X$ connecting $x$ and $y$ of a non-zero length $n$ 
-  then the first component of the first element of the derived chain intervals 
-  is $x$ and the second component of the last element of the derived chain intervals is equal 
+  then the first component of the first element of the derived chain links
+  is $x$ and the second component of the last element of the derived chain links is equal 
   to $y$.\<close>
 
 lemma chain_intervals_ends: 
   assumes "n\<in>nat" "n\<noteq>0" "c\<in>Chains(X,n,x,y)"
   shows 
-    "fst(ChainIntervals(c)`(0)) = x" and 
-    "snd(ChainIntervals(c)`(n #- 1)) = y"
+    "fst(ChainLinks(c)`(0)) = x" and 
+    "snd(ChainLinks(c)`(n #- 1)) = y"
   using assms empty_in_non_empty nat_subtr_add1 func1_1_L1 nat_subtr_add1 
     pred_minus_one(2) ZF_fun_from_tot_val1
-  unfolding ChainIntervals_def Chains_def by auto
+  unfolding ChainLinks_def Chains_def by auto
 
 text\<open>If $c$ is a chain in $X$ connecting $x$ and $y$ of length $n$ and $k$ is a natural number 
   such that $k+1\in n$ then the second component of the $k$'th element of the derived chain intervals
   is the same as the first component of the $k+1$'th element of the derived chain intervals.\<close>
 
-lemma chain_inervals_connected:
+lemma chain_links_connected:
   assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)" "k\<in>nat" "k #+ 1 \<in> n"
-  shows "snd(ChainIntervals(c)`(k)) = fst(ChainIntervals(c)`(k #+ 1))"
-  using assms succ_mem_mem(2) chain_intervals_fun(1) ZF_fun_from_tot_val1
-    unfolding ChainIntervals_def by simp
+  shows "snd(ChainLinks(c)`(k)) = fst(ChainLinks(c)`(k #+ 1))"
+  using assms succ_mem_mem(2) chain_links_fun(1) ZF_fun_from_tot_val1
+  unfolding ChainLinks_def by simp
+
+text\<open>If $c_i$ are chains from $x_i$ to $y_i$ of natural length $n_i$ for $i=1,2$ 
+  then concatenation $c_3$ of $c_1$ and $c_2$ is a chain from $x_1$ to $y_1$ of length 
+  $n_1 + n_2 + 1$.  The chain links of the concatenation is a list of elements of $X\times X$ 
+  of length $n_1 + n_2 + 1$, obtained by appending the pair $\langle c_1(n_1), c_2(0)\rangle$
+  to the chain links of $c_1$ and then concatenating that with the chain links of $c_2$.
+  The proof is surprisingly long and tedious for such trivial fact.\<close>
+
+lemma concat_chains: 
+  assumes "n\<^sub>1\<in>nat" "c\<^sub>1\<in>Chains(X,n\<^sub>1,x\<^sub>1,y\<^sub>1)" "n\<^sub>2\<in>nat" "c\<^sub>2\<in>Chains(X,n\<^sub>2,x\<^sub>2,y\<^sub>2)"
+  defines "c\<^sub>3 \<equiv> Concat(c\<^sub>1,c\<^sub>2)"
+  shows 
+    "c\<^sub>3 \<in> Chains(X,n\<^sub>1 #+ n\<^sub>2 #+ 1,x\<^sub>1,y\<^sub>2)"
+    "ChainLinks(c\<^sub>3): (n\<^sub>1 #+ n\<^sub>2 #+ 1)\<rightarrow>X\<times>X"
+    "ChainLinks(c\<^sub>3) = Concat(Append(ChainLinks(c\<^sub>1),\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle>),ChainLinks(c\<^sub>2))"
+proof -
+  let ?L\<^sub>1 = "ChainLinks(c\<^sub>1)"
+  let ?L\<^sub>2 = "ChainLinks(c\<^sub>2)"
+  let ?L\<^sub>3 = "ChainLinks(c\<^sub>3)"
+  let ?R = "Concat(Append(?L\<^sub>1,\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle>),?L\<^sub>2)"
+  from assms(1,2,3,4) have 
+      "?L\<^sub>1:n\<^sub>1\<rightarrow>X\<times>X" and "?L\<^sub>2:n\<^sub>2\<rightarrow>X\<times>X"
+      using chain_links_fun(2) by simp_all
+  from assms(2,4) have I: "c\<^sub>1: n\<^sub>1 #+ 1\<rightarrow>X" "c\<^sub>2: n\<^sub>2 #+ 1\<rightarrow>X"
+    unfolding Chains_def by simp_all
+  with assms(1,3,5) have "c\<^sub>3 : ((n\<^sub>1 #+ 1) #+ (n\<^sub>2 #+ 1)) \<rightarrow> X"
+    using concat_props(1) by blast
+  with assms(1,2) have "c\<^sub>3 : ((n\<^sub>1 #+ n\<^sub>2 #+ 1) #+ 1) \<rightarrow> X"
+    by simp
+  moreover from assms(1,2,3,5) I have "c\<^sub>3`(0) = x\<^sub>1" 
+    using concat_props(2) succ_add_one(6)succ_add_one(6)
+    unfolding Chains_def by blast
+  moreover
+  from assms(1,3) have "n\<^sub>2 \<in> (n\<^sub>2 #+ 1)" by simp
+  with assms(5) I have "c\<^sub>3`(n\<^sub>1 #+ 1 #+ n\<^sub>2) = c\<^sub>2`(n\<^sub>2)"
+    using concat_props(4) by blast  
+  with assms(4) have "c\<^sub>3`(n\<^sub>1 #+ n\<^sub>2 #+ 1) = y\<^sub>2"
+    unfolding Chains_def by simp
+  ultimately show "c\<^sub>3 \<in> Chains(X,n\<^sub>1 #+ n\<^sub>2 #+ 1,x\<^sub>1,y\<^sub>2)" 
+    unfolding Chains_def by simp
+  with assms(1,3) show "?L\<^sub>3: (n\<^sub>1 #+ n\<^sub>2 #+ 1)\<rightarrow>X\<times>X"
+    using chain_links_fun(2) by simp
+  moreover have "?R: (n\<^sub>1 #+ n\<^sub>2 #+ 1)\<rightarrow>X\<times>X"
+  proof -
+    from assms(1,3) I \<open>?L\<^sub>1:n\<^sub>1\<rightarrow>X\<times>X\<close> have 
+      "Append(?L\<^sub>1,\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle>): (n\<^sub>1 #+ 1)\<rightarrow>X\<times>X"
+      using succ_add_one(6) apply_funtype append_props(1) by auto
+    with assms(3) \<open>?L\<^sub>2:n\<^sub>2\<rightarrow>X\<times>X\<close> have "?R: ((n\<^sub>1 #+ 1) #+ n\<^sub>2) \<rightarrow> X\<times>X" 
+      using concat_props(1) by blast
+    with assms(1) show ?thesis by simp
+  qed
+  moreover have "\<forall>i\<in>(n\<^sub>1 #+ n\<^sub>2 #+ 1). ?L\<^sub>3`(i) = ?R`(i)"
+  proof -
+    from assms(1,3) I have "\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle> \<in> X\<times>X" 
+      using succ_add_one(6) apply_funtype by auto
+    with assms(1) \<open>?L\<^sub>1:n\<^sub>1\<rightarrow>X\<times>X\<close> have 
+      II: "Append(?L\<^sub>1,\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle>): (n\<^sub>1 #+ 1)\<rightarrow>X\<times>X"
+      using append_props(1) by simp
+    { fix i assume "i\<in>(n\<^sub>1 #+ n\<^sub>2 #+ 1)"
+      with assms(1,3) \<open>c\<^sub>3 \<in> Chains(X,n\<^sub>1 #+ n\<^sub>2 #+ 1,x\<^sub>1,y\<^sub>2)\<close>
+      have III: "?L\<^sub>3`(i) = \<langle>c\<^sub>3`(i),c\<^sub>3`(i #+ 1)\<rangle>"
+        using chain_links_val by blast
+      from assms(1,3) \<open>i\<in>(n\<^sub>1 #+ n\<^sub>2 #+ 1)\<close> have 
+        "i \<in> (n\<^sub>1 #+ 1) \<union> NatInterval((n\<^sub>1 #+ 1),n\<^sub>2)"
+        using length_start_decomp(2) by simp
+      hence "i\<in>(n\<^sub>1 #+ 1) \<or> i\<in>NatInterval((n\<^sub>1 #+ 1),n\<^sub>2)" by simp
+      moreover
+      { assume "i\<in>(n\<^sub>1 #+ 1)"
+        with assms(1,3,5) I have "c\<^sub>3`(i)=c\<^sub>1`(i)" using concat_props(2) 
+          by blast
+        from assms(1,3) \<open>?L\<^sub>2:n\<^sub>2\<rightarrow>X\<times>X\<close> II \<open>i\<in>(n\<^sub>1 #+ 1)\<close> 
+        have IV: "?R`(i) = Append(?L\<^sub>1,\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle>)`(i)"
+          using concat_props(2) by blast
+        from \<open>i\<in>(n\<^sub>1 #+ 1)\<close> assms(1) have "i\<in>n\<^sub>1 \<or> i=n\<^sub>1" 
+          using succ_ineq2(3) by simp
+        moreover
+        { assume "i\<in>n\<^sub>1"
+          with assms(1) have "i #+ 1 \<in> (n\<^sub>1 #+ 1)" using  succ_ineq1(2) 
+            by simp
+          with assms(1,3,5) I have "c\<^sub>3`(i #+ 1)=c\<^sub>1`(i #+ 1)" 
+            using concat_props(2) by blast
+          from \<open>?L\<^sub>1:n\<^sub>1\<rightarrow>X\<times>X\<close> \<open>\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle> \<in> X\<times>X\<close> \<open>i\<in>n\<^sub>1\<close> IV
+          have "?R`(i) = ?L\<^sub>1`(i)" using append_props(2) by simp
+          with assms(1,2) \<open>i\<in>n\<^sub>1\<close> \<open>c\<^sub>3`(i)=c\<^sub>1`(i)\<close> \<open>c\<^sub>3`(i #+ 1)=c\<^sub>1`(i #+ 1)\<close> III
+          have "?L\<^sub>3`(i) = ?R`(i)" using chain_links_val by simp
+        }
+        moreover
+        { assume "i=n\<^sub>1"
+          from assms(1,3,5) I have "c\<^sub>3`(n\<^sub>1 #+ 1 #+ 0)=c\<^sub>2`(0)"
+            using concat_props(4) succ_add_one(6) by blast
+          with assms(1) \<open>i=n\<^sub>1\<close> have "c\<^sub>3`(i #+ 1)=c\<^sub>2`(0)" by simp
+          with III IV  \<open>c\<^sub>3`(i)=c\<^sub>1`(i)\<close> \<open>?L\<^sub>1:n\<^sub>1\<rightarrow>X\<times>X\<close> \<open>\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle> \<in> X\<times>X\<close> \<open>i=n\<^sub>1\<close>
+          have "?L\<^sub>3`(i) = ?R`(i)" using append_props(3) by force
+        }
+        ultimately have "?L\<^sub>3`(i) = ?R`(i)" by blast
+      }
+      moreover
+      { assume "i\<in>NatInterval(n\<^sub>1 #+ 1,n\<^sub>2)"
+        with assms(1,3) have
+          "i\<in>NatInterval(n\<^sub>1 #+ 1,n\<^sub>2 #+ 1)" and 
+          "(i #+ 1) \<in> NatInterval(n\<^sub>1 #+ 1,n\<^sub>2 #+ 1)"
+          using interval_incr_len by simp_all
+        from assms(3) \<open>i\<in>NatInterval(n\<^sub>1 #+ 1,n\<^sub>2)\<close> 
+        have "i #- (n\<^sub>1 #+ 1) \<in> n\<^sub>2" using inter_diff_in_len by simp
+        from assms(1,3,5) I \<open>i\<in>NatInterval(n\<^sub>1 #+ 1,n\<^sub>2 #+ 1)\<close>
+          have VI: "c\<^sub>3`(i)=c\<^sub>2`(i #- (n\<^sub>1 #+ 1))"
+            using concat_props(3) by blast
+        from assms(1,3,5) I \<open>(i #+ 1) \<in> NatInterval(n\<^sub>1 #+ 1,n\<^sub>2 #+ 1)\<close>
+        have VII: "c\<^sub>3`(i #+ 1)=c\<^sub>2`((i #+ 1) #- (n\<^sub>1 #+ 1))"
+          using concat_props(3) by blast
+        from assms(1,3) \<open>?L\<^sub>2:n\<^sub>2\<rightarrow>X\<times>X\<close> II \<open>i\<in>NatInterval(n\<^sub>1 #+ 1,n\<^sub>2)\<close>
+        have "?R`(i) = ?L\<^sub>2`(i #- (n\<^sub>1 #+ 1))"
+          using concat_props(3) by blast
+        with assms(1,3,4) III VI VII \<open>i\<in>NatInterval(n\<^sub>1 #+ 1,n\<^sub>2)\<close> \<open>i #- (n\<^sub>1 #+ 1) \<in> n\<^sub>2\<close>
+        have "?L\<^sub>3`(i) = ?R`(i)" using chain_links_val inter_diff_in_len(2) by force
+      }
+      ultimately have "?L\<^sub>3`(i) = ?R`(i)" by auto
+    } thus ?thesis by simp
+  qed
+  ultimately show "?L\<^sub>3 = ?R" by (rule func_eq)
+qed
+ 
 
 end
