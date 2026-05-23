@@ -178,6 +178,10 @@ locale int0 =
   fixes oddext ("_ \<degree>")
   defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(\<int>,IntegerAddition,IntegerOrder,f)"
 
+  fixes listsum ("\<Sum> _" 70)
+  defines listsum_def [simp]: "\<Sum>s \<equiv> Fold(IntegerAddition,\<zero>,s)"
+
+
 text\<open>IntegerAddition adds integers and IntegerMultiplication multiplies
   integers. This states that the ZF functions \<open>IntegerAddition\<close> and
   \<open>IntegerMultiplication\<close> give the same results as the higher-order
@@ -605,7 +609,7 @@ text\<open>Another way of stating that we can apply theorems proven in the \<ope
   (defined \<open>OrderedGroup_ZF\<close> theory) to the ordered group of integers. \<close>
 
 sublocale int0 < group3 int IntegerAddition IntegerOrder 
-  "\<zero>" ia iminus lesseq sless nonnegative positive setneg abs oddext
+  "\<zero>" ia iminus lesseq sless nonnegative positive setneg abs oddext listsum
   using Int_ZF_2_T1(3) by auto
 
 text\<open>Negative numbers are not nonnegative. This is a special case of \<open>ls_not_leq\<close>

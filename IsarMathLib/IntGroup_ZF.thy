@@ -254,6 +254,10 @@ locale group_int0 = group0 +
   fixes oddext ("_ \<degree>")
   defines oddext_def [simp]: "f\<degree> \<equiv> OddExtension(\<int>,IntegerAddition,IntegerOrder,f)"
 
+  fixes listsum ("\<Sum> _" 70)
+  defines listsum_def [simp]: "\<Sum>s \<equiv> Fold(IntegerAddition,\<zero>,s)"
+
+
 text\<open>Next define notation for the integer power \<open>powz(z,x)\<close>. 
   The difficulty here is that in ZF set theory nonnegative integers and natural numbers are 
   different things. So, we use the notion of \<open>zmagnitude\<close> defined in the standard Isabelle/ZF 
@@ -268,7 +272,7 @@ definition (in group_int0) powz where
 text\<open>We bring in all the results about integers in \<open>int0\<close> with the notation included in \<open>group_int0\<close>.\<close>
 
 sublocale group_int0 < ints:int0 "\<int>" ia iminus isub imul setneg izero ione itwo 
-  ithree nonnegative positive abs lesseq sless interval maxf minf oddext
+  ithree nonnegative positive abs lesseq sless interval maxf minf oddext listsum
 by auto
 
 text\<open>An integer power of a group element is in the group.\<close>

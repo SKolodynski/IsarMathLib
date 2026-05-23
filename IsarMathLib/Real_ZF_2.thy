@@ -125,6 +125,18 @@ locale reals =
   fixes pow
   defines pow_def [simp]: "pow(n,x) \<equiv> \<Prod>{\<langle>k,x\<rangle>. k\<in>n}"
 
+  fixes has_supremum ("_ {has a supremum}" [90] 91) 
+  defines has_supremum_def [simp]: "A {has a supremum} \<equiv> HasAsupremum(ROrd,A)"
+
+  fixes has_infimum ("_ {has an infimum}" [90] 91) 
+  defines has_infimum_def [simp]: "A {has an infimum} \<equiv> HasAnInfimum(ROrd,A)"
+
+  fixes sup
+  defines sup_def [simp]: "sup(A) \<equiv> Supremum(ROrd,A)"
+
+  fixes inf
+  defines inf_def [simp]: "inf(A) \<equiv> Infimum(ROrd,A)"
+
 text\<open> The assumptions of the \<open>field1\<close> locale (that sets the context for ordered fields) 
   hold in the \<open>reals\<close> locale \<close>
 
@@ -152,7 +164,8 @@ text\<open> The \<open>group3\<close> locale from the \<open>OrderedGroup_ZF\<cl
   ordered groups. We can use theorems proven in there in the \<open>reals\<close> locale as real numbers 
   with addition form an ordered group. \<close>
 
-sublocale reals < group3 Reals Add ROrd zero realadd realminus lesseq sless nonnegative positiveset
+sublocale reals < group3 Reals Add ROrd zero realadd realminus lesseq sless 
+  nonnegative positiveset setinv abs oddext listsum
   unfolding group3_def using OrdRing_ZF_1_L4 by auto
 
 text\<open>Since real numbers with addition form a group we can use the theorems proven in the  \<open>group0\<close> 

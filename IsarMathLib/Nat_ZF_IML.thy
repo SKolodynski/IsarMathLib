@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005 - 2025  Slawomir Kolodynski
+    Copyright (C) 2005 - 2026  Slawomir Kolodynski
 
     This program is free software Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -483,11 +483,14 @@ qed
 text\<open>For a natural $n$ if $k\in n+1$ then $k+1\leq n+1$.\<close>
 
 lemma succ_ineq2: assumes "n \<in> nat" "k \<in> n #+ 1"
-  shows "k #+ 1 \<le> n #+ 1" and "k\<le>n"
+  shows "k #+ 1 \<le> n #+ 1" "k\<le>n" "k\<in>n \<or> k=n"
 proof -
   from assms show "k\<le>n" using succ_add_one(1) nat_mem_lt(2)
     by simp
   with assms(1) show  "k #+ 1 \<le> n #+ 1" using add_le_mono1 by blast
+  from assms have "k\<in>nat" using elem_nat_is_nat(2) by blast
+  with assms(1) \<open>k\<le>n\<close> show "k\<in>n \<or> k=n" using nat_leq_subset_iff nat_incl_mem_eq 
+    by simp
 qed
 
 text\<open>A nonzero natural number is of the form $n=m+1$ for some natural number $m$.
@@ -575,21 +578,21 @@ definition
 
   "NatInterval(n,k) \<equiv> {n #+ j. j\<in>k}"
 
-text\<open>Subtracting the beginning af the interval results in a number from
-  the length of the interval. It may sound weird, but note that the length of
-  such interval is a natural number, hence a set.\<close>
+text\<open>If $k$ is a natural number and $i$ is in the natural interval 
+  starting from $n$ of length $k$ then $i-n\in k$ and $i+1-n = i-n+1$.
+  The first assertion may look weird, but note that natural numbers are sets
+  and for natural numbers $i\in k$ is the same as $i < k$.\<close>
 
 lemma inter_diff_in_len: 
-  assumes A1: "k \<in> nat" and A2: "i \<in> NatInterval(n,k)"
-  shows "i #- n \<in> k"
+  assumes "k \<in> nat" and "i \<in> NatInterval(n,k)"
+  shows "i #- n \<in> k" and "i #+ 1 #- n = i #- n #+ 1"
 proof -
-  from A2 obtain j where I: "i = n #+ j" and II: "j \<in> k"
-    using NatInterval_def by auto
-  from A1 II have "j \<in> nat" using elem_nat_is_nat by blast
-  moreover from I have "i #- n = natify(j)" using diff_add_inverse
-    by simp
-  ultimately have "i #- n = j" by simp
-  with II show ?thesis by simp
+  from assms(2) obtain j where "i = n #+ j" and "j \<in> k"
+    unfolding NatInterval_def by auto
+  with assms(1) show "i #- n \<in> k" 
+    using elem_nat_is_nat diff_add_inverse by simp
+  from assms(1) \<open>i = n #+ j\<close> show "i #+ 1 #- n = i #- n #+ 1"
+    using add_assoc diff_add_inverse by force
 qed
 
 text\<open>Intervals don't overlap with their starting point and 
@@ -624,6 +627,34 @@ proof -
   ultimately show "n \<union> NatInterval(n,k) = n #+ k" by auto
 qed
 
+text\<open>Natural interval with zero length is empty. Recall that in ZF the empty set is the same as
+  zero of natural numbers.\<close>
+
+lemma nat_interval_zero_len: shows "NatInterval(n,0) = 0" 
+  unfolding NatInterval_def by simp
+
+text\<open>Natural interval starting with zero is the same as its the length.\<close>
+
+lemma nat_interval_zero_beg: assumes "n\<in>nat" shows "NatInterval(0,n) = n"
+  using assms elem_nat_is_nat(2) unfolding NatInterval_def by simp
+
+text\<open>If $i$ is in the interval starting at $n\in\mathbb{N}$ and length $k\in\mathbb{N}$
+  then both $i$ and $i+1$ are in the interval starting at $n$ and of length $k+1$.\<close>
+
+lemma interval_incr_len: 
+  assumes "n \<in> nat"  "k \<in> nat" "i \<in> NatInterval(n,k)"
+  shows "i \<in> NatInterval(n,k #+ 1)" and "(i #+ 1) \<in> NatInterval(n,k #+ 1)"
+proof -
+  from assms(3) obtain j where "i = n #+ j" and "j\<in>k"
+    unfolding NatInterval_def by auto
+  with assms(2) show "i \<in> NatInterval(n,k #+ 1)" 
+    using succ_add_one(7) unfolding NatInterval_def by auto
+  from assms(2) \<open>j\<in>k\<close> have "j\<in>nat" and "(j #+ 1)\<in>(k #+ 1)"
+    using elem_nat_is_nat(2) succ_ineq1(2) by simp_all
+  with assms(1) \<open>i = n #+ j\<close> show "(i #+ 1) \<in> NatInterval(n,k #+ 1)"
+    unfolding NatInterval_def by force
+qed
+ 
 text\<open>Some properties of three adjacent intervals.\<close>
 
 lemma adjacent_intervals3: assumes "n \<in> nat"  "k \<in> nat"  "m \<in> nat"

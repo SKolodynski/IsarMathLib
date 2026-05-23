@@ -444,6 +444,11 @@ proof -
   then show "f`(x) = \<emptyset>" unfolding apply_def by simp
 qed
 
+text\<open>A function maps an empty set if and only if it is empty. A well known fact.
+  Yes, an empty set is a function.\<close>
+
+lemma fun_empty_empty: shows "(f:\<emptyset>\<rightarrow>X) \<longleftrightarrow> f=\<emptyset>" by auto
+
 text\<open>We can extend a function by specifying its values on a set
   disjoint with the domain.\<close>
 
