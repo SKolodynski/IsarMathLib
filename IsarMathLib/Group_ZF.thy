@@ -1327,8 +1327,6 @@ text\<open>In a typical textbook a group is defined as a set $G$ with an
   formulated in \<open>Group_ZF.thy\<close>. The informal proofs come from an Aug. 14, 2005
   post by buli on the matematyka.org forum.\<close>
 
-text\<open>First we will define notation for writing about groups.\<close>
-
 text\<open>We will use the multiplicative notation for the group operation. To do this, we
   define a context (locale) that tells Isabelle
   to interpret $a\cdot b$ as the value of function $P$ on the pair

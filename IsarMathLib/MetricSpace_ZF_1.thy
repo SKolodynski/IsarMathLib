@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib -
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2020 - 2024 Slawomir Kolodynski
+    Copyright (C) 2023 Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms,
     with or without modification, are permitted provided that the following conditions are met:
@@ -26,16 +26,16 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
-section \<open>Real-valued metric spaces\<close>
+section \<open> Real valued metric spaces \<close>
 
-theory MetricSpace_ZF_1 imports MetricSpace_ZF Real_ZF_2
+theory MetricSpace_ZF_1 imports Real_ZF_2
 begin
 
 text\<open>The development of metric spaces in IsarMathLib is different from the usual treatment
   of the subject because the notion of a metric (or a pseudometric) is defined in the
   \<open>MetricSpace_ZF\<close> theory a more generally as a function valued in an ordered loop.
-  This subsection brings the subject closer to the standard way by specializing that general
-  definition to the usual special case where the value of the metric are nonneg real numbers. \<close>
+  This theory file brings the subject closer to the standard way by specializing that general
+  definition to the usual special case where the value of the metric are nonnegative real numbers. \<close>
 
 subsection\<open>Real valued metric scapes: context and notation\<close>
 

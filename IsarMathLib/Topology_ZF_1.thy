@@ -820,9 +820,6 @@ text\<open>One of the facts demonstrated in every class on General Topology is t
   the case for the fact that in a $T_2$ space compact sets are closed.
 \<close>
 
-text\<open>In this section we show that in a $T_2$ topological
-  space compact sets are closed.\<close>
-
 text\<open>First we prove a lemma that in a $T_2$ space two points
   can be separated by the closure of an open set.\<close>
 
