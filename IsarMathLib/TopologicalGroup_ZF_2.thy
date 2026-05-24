@@ -354,72 +354,6 @@ proof-
   then show ?thesis using Top_3_L8 sub by auto
 qed
 
-text\<open>We can always consider a factor group which is $T_2$.\<close>
-
-theorem(in topgroup) factor_haus:
-  shows "(T{quotient by}QuotientGroupRel(G,f,cl({\<zero>}))){is T\<^sub>2}"
-proof-
-  let ?r="QuotientGroupRel(G,f,cl({\<zero>}))"
-  let ?f="QuotientGroupOp(G,f,cl({\<zero>}))"
-  let ?i="GroupInv(G//?r,?f)"
-  have "IsAnormalSubgroup(G,f,{\<zero>})" using group0.trivial_normal_subgroup Ggroup unfolding group0_def
-    by auto
-  then have normal:"IsAnormalSubgroup(G,f,cl({\<zero>}))" using normal_subg by auto
-  then have eq:"equiv(\<Union>T,?r)" using group0.Group_ZF_2_4_L3[OF group0_valid_in_tgroup]
-    unfolding IsAnormalSubgroup_def by auto
-  then have tot:"\<Union>(T{quotient by}?r)=G//?r" using total_quo_equi by auto
-  have neu:"?r``{\<zero>}=TheNeutralElement(G//?r,?f)" using Group_ZF_2_4_L5B[OF Ggroup normal] by auto
-  then have "?r``{\<zero>}\<in>G//?r" using group0.group0_2_L2 Group_ZF_2_4_T1[OF Ggroup normal] unfolding group0_def by auto
-  then have sub1:"{?r``{\<zero>}}\<subseteq>G//?r" by auto
-  then have sub:"{?r``{\<zero>}}\<subseteq>\<Union>(T{quotient by}?r)" using tot by auto
-  have zG:"\<zero>\<in>\<Union>T" using group0.group0_2_L2[OF group0_valid_in_tgroup] by auto
-  from zG have cla:"?r``{\<zero>}\<in>G//?r" unfolding quotient_def by auto
-  let ?x="G//?r-{?r``{\<zero>}}"
-  {
-    fix s assume A:"s\<in>\<Union>(G//?r-{?r``{\<zero>}})"
-    then obtain U where "s\<in>U" "U\<in>G//?r-{?r``{\<zero>}}" by auto
-    then have "U\<in>G//?r" "U\<noteq>?r``{\<zero>}" "s\<in>U" by auto
-    then have "U\<in>G//?r" "s\<in>U" "s\<notin>?r``{\<zero>}" using cla quotient_disj[OF eq] by auto
-    then have "s\<in>\<Union>(G//?r)-?r``{\<zero>}" by auto
-  }
-  moreover
-  {
-    fix s assume A:"s\<in>\<Union>(G//?r)-?r``{\<zero>}"
-    then obtain U where "s\<in>U" "U\<in>G//?r" "s\<notin>?r``{\<zero>}" by auto
-    then have "s\<in>U" "U\<in>G//?r-{?r``{\<zero>}}" by auto
-    then have "s\<in>\<Union>(G//?r-{?r``{\<zero>}})" by auto
-  }
-  ultimately have "\<Union>(G//?r-{?r``{\<zero>}})=\<Union>(G//?r)-?r``{\<zero>}" by auto
-  then have A:"\<Union>(G//?r-{?r``{\<zero>}})=G-?r``{\<zero>}" using Union_quotient eq by auto
-  {
-    fix s assume A:"s\<in>?r``{\<zero>}"
-    then have "\<langle>\<zero>,s\<rangle>\<in>?r" by auto
-    then have "\<langle>s,\<zero>\<rangle>\<in>?r" using eq unfolding equiv_def sym_def by auto
-    then have "s\<in>cl({\<zero>})" using group0.Group_ZF_2_4_L5C[OF group0_valid_in_tgroup] unfolding QuotientGroupRel_def by auto
-  }
-  moreover
-  {
-    fix s assume A:"s\<in>cl({\<zero>})"
-    then have "s\<in>G" using Top_3_L11(1) zG by auto
-    then have "\<langle>s,\<zero>\<rangle>\<in>?r" using group0.Group_ZF_2_4_L5C[OF group0_valid_in_tgroup] A by auto
-    then have "\<langle>\<zero>,s\<rangle>\<in>?r" using eq unfolding equiv_def sym_def by auto
-    then have "s\<in>?r``{\<zero>}" by auto
-  }
-  ultimately have "?r``{\<zero>}=cl({\<zero>})" by blast
-  with A have "\<Union>(G//?r-{?r``{\<zero>}})=G-cl({\<zero>})" by auto
-  moreover have "cl({\<zero>}){is closed in}T" using cl_is_closed zG by auto
-  ultimately have "\<Union>(G//?r-{?r``{\<zero>}})\<in>T" unfolding IsClosed_def by auto
-  then have "(G//?r-{?r``{\<zero>}})\<in>{quotient by}?r" using quotient_equiv_rel eq by auto
-  then have "(\<Union>(T{quotient by}?r)-{?r``{\<zero>}})\<in>{quotient by}?r" using total_quo_equi[OF eq] by auto
-  moreover from sub1 have "{?r``{\<zero>}}\<subseteq>(\<Union>(T{quotient by}?r))" using total_quo_equi[OF eq] by auto
-  ultimately have "{?r``{\<zero>}}{is closed in}(T{quotient by}?r)" unfolding IsClosed_def by auto
-  then have "{TheNeutralElement(G//?r,?f)}{is closed in}(T{quotient by}?r)" using neu by auto
-  then have "(T{quotient by}?r){is T\<^sub>1}" using topgroup.neu_closed_imp_T1[OF topGroupLocale[OF quotient_top_group[OF normal]]]
-    total_quo_equi[OF eq] by auto
-  then show ?thesis using topgroup.T1_imp_T2[OF topGroupLocale[OF quotient_top_group[OF normal]]] by auto
-qed
-
-
 subsection\<open>Quotient topological groups\<close>
 
 text\<open>The quotient topology given by the quotient group equivalent relation, has
@@ -609,5 +543,70 @@ theorem(in topgroup) quotient_top_group:
     Group_ZF_2_4_T1 Ggroup assms(1) quotient_top_group_INV_cont quotient_top_group_F_cont
     group0.Group_ZF_2_4_L3 group0_valid_in_tgroup assms(1) unfolding r_def F_def IsAnormalSubgroup_def
     by auto
+
+text\<open>We can always consider a factor group which is $T_2$.\<close>
+
+theorem(in topgroup) factor_haus:
+  shows "(T{quotient by}QuotientGroupRel(G,f,cl({\<zero>}))){is T\<^sub>2}"
+proof-
+  let ?r="QuotientGroupRel(G,f,cl({\<zero>}))"
+  let ?f="QuotientGroupOp(G,f,cl({\<zero>}))"
+  let ?i="GroupInv(G//?r,?f)"
+  have "IsAnormalSubgroup(G,f,{\<zero>})" using group0.trivial_normal_subgroup Ggroup unfolding group0_def
+    by auto
+  then have normal:"IsAnormalSubgroup(G,f,cl({\<zero>}))" using normal_subg by auto
+  then have eq:"equiv(\<Union>T,?r)" using group0.Group_ZF_2_4_L3[OF group0_valid_in_tgroup]
+    unfolding IsAnormalSubgroup_def by auto
+  then have tot:"\<Union>(T{quotient by}?r)=G//?r" using total_quo_equi by auto
+  have neu:"?r``{\<zero>}=TheNeutralElement(G//?r,?f)" using Group_ZF_2_4_L5B[OF Ggroup normal] by auto
+  then have "?r``{\<zero>}\<in>G//?r" using group0.group0_2_L2 Group_ZF_2_4_T1[OF Ggroup normal] unfolding group0_def by auto
+  then have sub1:"{?r``{\<zero>}}\<subseteq>G//?r" by auto
+  then have sub:"{?r``{\<zero>}}\<subseteq>\<Union>(T{quotient by}?r)" using tot by auto
+  have zG:"\<zero>\<in>\<Union>T" using group0.group0_2_L2[OF group0_valid_in_tgroup] by auto
+  from zG have cla:"?r``{\<zero>}\<in>G//?r" unfolding quotient_def by auto
+  let ?x="G//?r-{?r``{\<zero>}}"
+  {
+    fix s assume A:"s\<in>\<Union>(G//?r-{?r``{\<zero>}})"
+    then obtain U where "s\<in>U" "U\<in>G//?r-{?r``{\<zero>}}" by auto
+    then have "U\<in>G//?r" "U\<noteq>?r``{\<zero>}" "s\<in>U" by auto
+    then have "U\<in>G//?r" "s\<in>U" "s\<notin>?r``{\<zero>}" using cla quotient_disj[OF eq] by auto
+    then have "s\<in>\<Union>(G//?r)-?r``{\<zero>}" by auto
+  }
+  moreover
+  {
+    fix s assume A:"s\<in>\<Union>(G//?r)-?r``{\<zero>}"
+    then obtain U where "s\<in>U" "U\<in>G//?r" "s\<notin>?r``{\<zero>}" by auto
+    then have "s\<in>U" "U\<in>G//?r-{?r``{\<zero>}}" by auto
+    then have "s\<in>\<Union>(G//?r-{?r``{\<zero>}})" by auto
+  }
+  ultimately have "\<Union>(G//?r-{?r``{\<zero>}})=\<Union>(G//?r)-?r``{\<zero>}" by auto
+  then have A:"\<Union>(G//?r-{?r``{\<zero>}})=G-?r``{\<zero>}" using Union_quotient eq by auto
+  {
+    fix s assume A:"s\<in>?r``{\<zero>}"
+    then have "\<langle>\<zero>,s\<rangle>\<in>?r" by auto
+    then have "\<langle>s,\<zero>\<rangle>\<in>?r" using eq unfolding equiv_def sym_def by auto
+    then have "s\<in>cl({\<zero>})" using group0.Group_ZF_2_4_L5C[OF group0_valid_in_tgroup] unfolding QuotientGroupRel_def by auto
+  }
+  moreover
+  {
+    fix s assume A:"s\<in>cl({\<zero>})"
+    then have "s\<in>G" using Top_3_L11(1) zG by auto
+    then have "\<langle>s,\<zero>\<rangle>\<in>?r" using group0.Group_ZF_2_4_L5C[OF group0_valid_in_tgroup] A by auto
+    then have "\<langle>\<zero>,s\<rangle>\<in>?r" using eq unfolding equiv_def sym_def by auto
+    then have "s\<in>?r``{\<zero>}" by auto
+  }
+  ultimately have "?r``{\<zero>}=cl({\<zero>})" by blast
+  with A have "\<Union>(G//?r-{?r``{\<zero>}})=G-cl({\<zero>})" by auto
+  moreover have "cl({\<zero>}){is closed in}T" using cl_is_closed zG by auto
+  ultimately have "\<Union>(G//?r-{?r``{\<zero>}})\<in>T" unfolding IsClosed_def by auto
+  then have "(G//?r-{?r``{\<zero>}})\<in>{quotient by}?r" using quotient_equiv_rel eq by auto
+  then have "(\<Union>(T{quotient by}?r)-{?r``{\<zero>}})\<in>{quotient by}?r" using total_quo_equi[OF eq] by auto
+  moreover from sub1 have "{?r``{\<zero>}}\<subseteq>(\<Union>(T{quotient by}?r))" using total_quo_equi[OF eq] by auto
+  ultimately have "{?r``{\<zero>}}{is closed in}(T{quotient by}?r)" unfolding IsClosed_def by auto
+  then have "{TheNeutralElement(G//?r,?f)}{is closed in}(T{quotient by}?r)" using neu by auto
+  then have "(T{quotient by}?r){is T\<^sub>1}" using topgroup.neu_closed_imp_T1[OF topGroupLocale[OF quotient_top_group[OF normal]]]
+    total_quo_equi[OF eq] by auto
+  then show ?thesis using topgroup.T1_imp_T2[OF topGroupLocale[OF quotient_top_group[OF normal]]] by auto
+qed
 
 end

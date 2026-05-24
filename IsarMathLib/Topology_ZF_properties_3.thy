@@ -504,7 +504,7 @@ text\<open>In this section we study more separation properties.\<close>
 subsection\<open>Definitions\<close>
 
 text\<open>We start with a property that has already appeared in
-@{file "Topology_ZF_1b.thy"}. A KC-space is a space where
+@{file "Topology_ZF_1.thy"}. A KC-space is a space where
 compact sets are closed.\<close>
 
 definition
@@ -520,7 +520,7 @@ definition
 
 subsection\<open>First results\<close>
 
-text\<open>The proof in @{file "Topology_ZF_1b.thy"} shows that a Hausdorff space
+text\<open>The proof in @{file "Topology_ZF_1.thy"} shows that a Hausdorff space
 is KC.\<close>
 
 corollary(in topology0) T2_imp_KC:
