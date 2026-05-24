@@ -94,6 +94,7 @@ session "IsarMathLib" = "ZF" +
     UniformSpace_ZF_1
     UniformityLattice_ZF
 	MetricSpace_ZF
+    MetricSpace_ZF_1
     MetricUniform_ZF
     TopologicalGroup_ZF
     TopologicalGroup_ZF_1
