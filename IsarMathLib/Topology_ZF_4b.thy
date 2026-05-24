@@ -34,8 +34,8 @@ text\<open>This theory continues \<open>Topology_ZF_4\<close> with results relat
 
 subsection\<open>Relation between nets and filters\<close>
 
-text\<open>In this section we show that filters do not generalize nets, but still nets and filter
-  are in w way equivalent as far as convergence is considered.\<close>
+text\<open>In this section we show that filters do not generalize nets, but still nets and filters
+  are in a way equivalent as far as convergence is considered.\<close>
 
 text\<open>Let's build now a net from a filter, such that both converge to the same points.\<close>
 
