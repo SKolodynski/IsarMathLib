@@ -28,7 +28,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Relation between nets and filters\<close>
 
-theory Topology_ZF_4b imports Topology_ZF_4 begin
+theory Topology_ZF_4b imports Topology_ZF_4
+begin
 
 text\<open>This theory continues \<open>Topology_ZF_4\<close> with results relating the net and filter convergence notions introduced there.\<close>
 
