@@ -26,9 +26,9 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *)
 
-section \<open>Topological groups - uniformity\<close>
+section \<open>Uniform structures on topological groups\<close>
 
-theory TopologicalGroup_Uniformity_ZF imports TopologicalGroup_ZF UniformSpace_ZF_1
+theory TopologicalGroup_Uniformity_ZF imports TopologicalGroup_ZF UniformSpace_ZF
 
 begin
 text\<open> Each topological group is a uniform space.

@@ -26,7 +26,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
-section \<open>Topology 11\<close>
+section \<open>Order topology — connecting order theory and topology\<close>
 
 theory Topology_ZF_11 imports Topology_ZF_7 Finite_ZF_1
 

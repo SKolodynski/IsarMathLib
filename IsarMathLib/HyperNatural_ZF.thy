@@ -28,13 +28,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Hypernatural numbers\<close>
 
-theory HyperNatural_ZF imports UltraConstruction_ZF ZF.Cardinal Finite1
+theory HyperNatural_ZF imports UltraConstruction_ZF UltraConstruction_ZF_1 ZF.Cardinal Finite1
 begin
 
 text\<open>The goal of this file is to show that hyperfinite sets are the sets of
 hypernatural numbers internally bijective with an open left ray of hypernatural.\<close>
 
-text\<open>The cardinality of a non-trivial set difference is 
+subsection\<open>Auxiliary results on finite sets\<close>
+
+text\<open>The following results about finite sets and cardinalities are needed in the
+  construction and study of the hypernatural numbers.\<close>
+
+text\<open>The cardinality of a non-trivial set difference is
 strictly smaller for finite sets\<close>
 
 lemma finite_diff_strict_smaller: assumes "Finite(A)" "A\<noteq>0" "A\<inter>B\<noteq>0"
@@ -97,6 +102,14 @@ locale hyperNatural = ultra _ nat "\<lambda>_. nat" +
   assumes non_pricipal_filter:"\<Inter>\<FF> = 0"
 
 begin
+
+subsection\<open>Ultraproduct of the naturals\<close>
+
+text\<open>The hypernatural numbers $\mathbb{N}^*$ are constructed as an ultraproduct of
+  copies of $\mathbb{N}$ indexed by $\mathbb{N}$ itself, modulo a non-principal ultrafilter
+  $\mathcal{F}$. Elements of $\mathbb{N}^*$ are equivalence classes $[x]$ of sequences
+  $x : \mathbb{N} \to \mathbb{N}$, with $[x] = [y]$ iff $\{n \in \mathbb{N} \mid x(n) = y(n)\} \in \mathcal{F}$.
+  This section defines the basic structure and the order relation on $\mathbb{N}^*$.\<close>
 
 abbreviation hyperNat ("*\<nat>") where
 "*\<nat> \<equiv> hyper_set"
@@ -290,6 +303,15 @@ corollary less_imp_less_eq:
     unfolding lessEq_star_def less_star_def
     apply (rule star_rel_imp_seq[OF assms]) using leI unfolding Lt_def Le_def by auto 
 
+
+subsection\<open>Transfer principle instances\<close>
+
+text\<open>Properties of the natural numbers that hold on a filter-large set of indices
+  transfer to corresponding properties of the hypernatural numbers. This section
+  establishes the key instances: $\omega$ is larger than every standard natural number,
+  every function $f : \mathbb{N} \to \mathbb{N}$ extends to a hyperfunction on $\mathbb{N}^*$,
+  every subset of the standard naturals is an internal set, and every non-empty internal
+  set has a least element.\<close>
 
 text\<open>There is a hypernatural bigger than all natural numbers\<close>
 
@@ -609,6 +631,14 @@ proof-
   with Q s(2) show ?thesis by auto
 qed
 
+
+subsection\<open>Arithmetic of hypernatural numbers\<close>
+
+text\<open>Hypernatural arithmetic mirrors natural number arithmetic via the transfer principle.
+  Every non-zero hypernatural has a predecessor, the non-standard part $\mathbb{N}^* \setminus \mathbb{N}$
+  has no minimum element, and the standard copy of $\mathbb{N}$ is not an internal set.
+  The section culminates in the characterisation of hyperfinite sets as exactly those
+  internally bijective with a bounded initial segment of $\mathbb{N}^*$.\<close>
 
 text\<open>Every hypernatural that is not zero, is a successor\<close>
 

@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Properties in Topology 3\<close>
 
-theory Topology_ZF_properties_3 imports Topology_ZF_7 Finite_ZF_1 Topology_ZF_1b Topology_ZF_9
+theory Topology_ZF_properties_3 imports Topology_ZF_7 Finite_ZF_1 Topology_ZF_1 Topology_ZF_9
   Topology_ZF_properties_2 FinOrd_ZF
 begin
 

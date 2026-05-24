@@ -25,7 +25,7 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-section \<open>Groups 5\<close>
+section \<open>Endomorphisms and the first isomorphism theorem\<close>
 
 theory Group_ZF_5 imports Group_ZF_4 Ring_ZF Semigroup_ZF
 

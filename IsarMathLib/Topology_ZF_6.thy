@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Topology 6\<close>
 
-theory Topology_ZF_6 imports Topology_ZF_4 Topology_ZF_2 Topology_ZF_1
+theory Topology_ZF_6 imports Topology_ZF_4 Topology_ZF_4b Topology_ZF_2 Topology_ZF_1
 
 begin
 

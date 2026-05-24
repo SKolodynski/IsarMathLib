@@ -412,7 +412,7 @@ subsection\<open>Halving sequences of entourages\<close>
 
 text\<open>The notion of uniformity can be defined in several ways. Our primary definition
   in the \<open>UniformSpace_ZF\<close> theory is based on the concept of entourages. 
-  In \<open>UniformSpace_ZF_2\<close> we consider the an alternative definition based on uniform covers.
+  In \<open>UniformSpace_ZF_1\<close> we consider the an alternative definition based on uniform covers.
   The third possible definition is based on families of pseudometrics.
  "The significance of defining a uniformity by means of a family 
   of pseudometrics lies in the fact that all unifomities can be so obtained." 

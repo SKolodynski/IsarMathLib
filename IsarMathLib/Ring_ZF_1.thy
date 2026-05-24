@@ -27,7 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-section \<open>More on rings\<close>
+section \<open>Ring of almost homomorphisms — the ring of integers as a quotient\<close>
 
 theory Ring_ZF_1 imports Ring_ZF Group_ZF_3
 

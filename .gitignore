@@ -35,4 +35,4 @@ isar2html2.0/*/*/obj
 
 # claude
 .claude
-**/plan.md
+**/*plan.md
