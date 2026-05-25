@@ -33,11 +33,11 @@ begin
 
 text\<open>The development of metric spaces in IsarMathLib is different from the usual treatment
   of the subject because the notion of a metric (or a pseudometric) is defined in the
-  \<open>MetricSpace_ZF\<close> theory a more generally as a function valued in an ordered loop.
+  \<open>MetricSpace_ZF\<close> theory more generally as a function valued in an ordered loop.
   This theory file brings the subject closer to the standard way by specializing that general
   definition to the usual special case where the value of the metric are nonnegative real numbers. \<close>
 
-subsection\<open>Real valued metric scapes: context and notation\<close>
+subsection\<open>Real valued metric spaces: context and notation\<close>
 
 text\<open> The \<open>reals\<close> context (locale) defined in the \<open>Real_ZF_2\<close> theory fixes a model of reals
   (i.e. a complete ordered field) and defines notation for things like zero, one, the set of
@@ -93,7 +93,7 @@ text\<open>The \<open>rmetric_space\<close> locale (context) specializes the the
   by adding the assumption of identity of indiscernibles. \<close>
 
 locale rmetric_space = rpmetric_space +
-  assumes ident_indisc: "\<forall>x\<in>X. \<forall>y\<in>Y. \<d>`\<langle>x,y\<rangle> = \<zero> \<longrightarrow> x=y"
+  assumes ident_indisc: "\<forall>x\<in>X. \<forall>y\<in>X. \<d>`\<langle>x,y\<rangle> = \<zero> \<longrightarrow> x=y"
 
 text\<open>The propositions proven in the \<open>metric_space\<close> context defined in \<open>Metric_Space_ZF\<close> theory
   are valid in the \<open>rmetric_space\<close> context. \<close>

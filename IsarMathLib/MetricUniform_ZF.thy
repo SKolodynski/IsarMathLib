@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *)
 
-section\<open>Uniformity defined by a a collection of pseudometrics\<close>
+section\<open>Uniformity defined by a collection of pseudometrics\<close>
 
 theory MetricUniform_ZF imports FinOrd_ZF_1 MetricSpace_ZF UniformityLattice_ZF
 
@@ -36,7 +36,7 @@ begin
 
 text\<open>In the \<open>MetricSpace_ZF\<close> we show how a single (ordered loop valued) pseudometric
   defines a uniformity. In this theory we extend this to the situation where we have
-  an arbitrary collection of pseudometrics, all defined on the the same set $X$ and valued
+  an arbitrary collection of pseudometrics, all defined on the same set $X$ and valued
   in an ordered loop $L$. Since real numbers form an ordered loop all results proven in
   this theory are true for the standard real-valued pseudometrics. \<close>
 

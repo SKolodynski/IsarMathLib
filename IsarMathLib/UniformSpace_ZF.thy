@@ -870,7 +870,7 @@ qed
 
 subsection\<open>Uniformly continuous functions\<close>
 
-text\<open> Just as the the most general setting for continuity of functions is that of topological spaces, uniform spaces
+text\<open> Just as the most general setting for continuity of functions is that of topological spaces, uniform spaces
   are the most general setting for the study of uniform continuity. \<close>
 
 text\<open> A map between 2 uniformities is uniformly continuous if it preserves
