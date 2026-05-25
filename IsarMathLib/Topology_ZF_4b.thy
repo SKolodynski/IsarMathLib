@@ -441,7 +441,7 @@ theorem (in topology0) filter_of_net_conv_iff_net_conv:
     by auto
 
 text\<open>We know now that filters and nets are the same thing, when working convergence
-of topological spaces. Sometimes, the nature of filters makes it easier to generalized
+of topological spaces. Sometimes, the nature of filters makes it easier to generalize
 them as follows.
 
 Instead of considering all subsets of some set $X$, we can consider only open sets (we
@@ -498,7 +498,7 @@ text\<open>The next abbreviation introduces notation where we want to specify th
 abbreviation NetConvTop("_ \<rightarrow>\<^sub>N _ {in} _")
   where "N \<rightarrow>\<^sub>N x {in} T \<equiv> topology0.NetConverges(T,N,x)"
 
-text\<open>Each point of a the union of a filter is a limit of that filter.\<close>
+text\<open>Each point of the union of a filter is a limit of that filter.\<close>
 
 lemma lim_filter_top_of_filter:
   assumes "\<FF> {is a filter on} \<Union>\<FF>" and "x\<in>\<Union>\<FF>"

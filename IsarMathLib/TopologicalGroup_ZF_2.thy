@@ -34,7 +34,7 @@ theory TopologicalGroup_ZF_2 imports Topology_ZF_10 Topology_ZF_8 Group_ZF_2 Top
 begin
 
 text\<open>This theory deals with topological properties of subgroups, quotient groups
-and relations between group theorical properties and topological properties.\<close>
+and relations between group-theoretical properties and topological properties.\<close>
 
 subsection\<open>Subgroups topologies\<close>
 
