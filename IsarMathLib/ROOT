@@ -35,6 +35,7 @@ session "IsarMathLib" = "ZF" +
     Group_ZF
     Group_ZF_1
     AbelianGroup_ZF
+    DirectProduct_ZF
     Group_ZF_2
     Group_ZF_3
     OrderedGroup_ZF
