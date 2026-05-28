@@ -27,7 +27,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-section \<open>Groups 3\<close>
+section \<open>Almost homomorphisms — foundation of the real number construction\<close>
 
 theory Group_ZF_3 imports Group_ZF_2 Finite1
 

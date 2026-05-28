@@ -3,7 +3,7 @@ session "IsarMathLib" = "ZF" +
   theories
     Introduction
     Fol1
-    ZF1 
+    ZF1
     Nat_ZF_IML
     Order_ZF
     Order_ZF_1
@@ -34,11 +34,10 @@ session "IsarMathLib" = "ZF" +
     Monoid_ZF_1
     Group_ZF
     Group_ZF_1
-    Group_ZF_1b
     AbelianGroup_ZF
+    DirectProduct_ZF
     Group_ZF_2
     Group_ZF_3
-    DirectProduct_ZF
     OrderedGroup_ZF
     OrderedGroup_ZF_1
     Ring_ZF
@@ -68,15 +67,14 @@ session "IsarMathLib" = "ZF" +
     Real_ZF_2
     Complex_ZF
     Topology_ZF
-    Ring_Zariski_ZF
     Topology_ZF_1
-    Ring_Zariski_ZF_2
-    Topology_ZF_1b
+    Ring_Zariski_ZF
     Topology_ZF_2
-    Ring_Zariski_ZF_3
+    Ring_Zariski_ZF_1
     Topology_ZF_3
     Topology_ZF_4
     Topology_ZF_4a
+    Topology_ZF_4b
     Topology_ZF_examples
     Topology_ZF_examples_1
     Topology_ZF_properties
@@ -91,10 +89,10 @@ session "IsarMathLib" = "ZF" +
     Topology_ZF_properties_3
     Ultrafilter_ZF
     UltraConstruction_ZF
+    UltraConstruction_ZF_1
     HyperNatural_ZF
     UniformSpace_ZF
     UniformSpace_ZF_1
-    UniformSpace_ZF_2
     UniformityLattice_ZF
 	MetricSpace_ZF
     MetricSpace_ZF_1
@@ -102,7 +100,6 @@ session "IsarMathLib" = "ZF" +
     TopologicalGroup_ZF
     TopologicalGroup_ZF_1
     TopologicalGroup_ZF_2
-    TopologicalGroup_ZF_3
     TopologicalGroup_Uniformity_ZF
     Tarski_ZF
     MMI_prelude
@@ -114,6 +111,6 @@ session "IsarMathLib" = "ZF" +
     MMI_Complex_ZF_1
     MMI_Complex_ZF_2
 theories [document = true]
-    Metamath_Interface     
+    Metamath_Interface
     Metamath_Sampler
 document_files "root.bib" "root.tex"

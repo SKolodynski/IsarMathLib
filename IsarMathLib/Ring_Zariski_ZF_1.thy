@@ -1,18 +1,18 @@
-(* 
-    This file is a part of IsarMathLib - 
+(*
+    This file is a part of IsarMathLib -
     a library of formalized mathematics written for Isabelle/Isar.
 
     Copyright (C) 2023  Daniel de la Concepcion
 
-    This program is free software; Redistribution and use in source and binary forms, 
+    This program is free software; Redistribution and use in source and binary forms,
     with or without modification, are permitted provided that the following conditions are met:
 
-   1. Redistributions of source code must retain the above copyright notice, 
+   1. Redistributions of source code must retain the above copyright notice,
    this list of conditions and the following disclaimer.
-   2. Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation and/or 
+   2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation and/or
    other materials provided with the distribution.
-   3. The name of the author may not be used to endorse or promote products 
+   3. The name of the author may not be used to endorse or promote products
    derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -26,11 +26,16 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *)
 
-section \<open>Rings - Zariski Topology - maps\<close>
+section \<open>Ring homomorphisms as continuous maps on Spec\<close>
 
-theory Ring_Zariski_ZF_3 imports Ring_Zariski_ZF Ring_ZF_3 Topology_ZF_2
+theory Ring_Zariski_ZF_1 imports Ring_Zariski_ZF Ring_ZF_3 Topology_ZF_2
 
 begin
+
+text\<open>Every ring homomorphism $f: R \to S$ induces a map $f^*: \mathrm{Spec}(S) \to \mathrm{Spec}(R)$
+  on prime spectra by pulling back prime ideals. This file shows that $f^*$ is continuous with
+  respect to the Zariski topologies on $\mathrm{Spec}(R)$ and $\mathrm{Spec}(S)$, establishing
+  $\mathrm{Spec}$ as a contravariant functor from commutative rings to topological spaces.\<close>
 
 lemma (in ring_homo) spectrum_surj:
   defines "g \<equiv> \<lambda>u\<in>target_ring.Spec. f-``u"
@@ -81,7 +86,7 @@ proof-
       by auto
     moreover note assms(2) st(1,2)
     ultimately have "s=t" using surj_image_vimage
-      unfolding target_ring.Spec_def origin_ring.Spec_def 
+      unfolding target_ring.Spec_def origin_ring.Spec_def
       by auto
   }
   then have "g\<in>inj(target_ring.Spec, origin_ring.closeBasic(f-``{\<zero>\<^sub>S}))"
@@ -140,7 +145,7 @@ qed
 
 definition (in ring_homo) top_origin ("\<tau>\<^sub>o") where
   "top_origin \<equiv> {origin_ring.openBasic(J) . J \<in> origin_ring.ideals}"
-  
+
 definition (in ring_homo) top_target ("\<tau>\<^sub>t") where
   "top_target \<equiv> {target_ring.openBasic(J) . J \<in> target_ring.ideals}"
 
@@ -156,7 +161,7 @@ proof(safe)
   fix x assume ass:"x\<triangleleft>R\<^sub>o" "x \<subseteq> R"
   have "origin_ring.openBasic(x) = {u\<in>origin_ring.Spec. \<not>(x \<subseteq> u)}"
     unfolding origin_ring.openBasic_def[OF ass(2)] by auto
-  have "g-``(origin_ring.openBasic(x)) = {t\<in>target_ring.Spec. g`t \<in> origin_ring.openBasic(x)}" 
+  have "g-``(origin_ring.openBasic(x)) = {t\<in>target_ring.Spec. g`t \<in> origin_ring.openBasic(x)}"
     using spectrum_surj assms(2) unfolding g_def
     using func1_1_L15 by auto
   then have G:"g-``(origin_ring.openBasic(x)) = {t\<in>target_ring.Spec. f-``t \<in> origin_ring.openBasic(x)}"
@@ -221,23 +226,23 @@ proof(safe)
   with F have "target_ring.openBasic(f``x) = {t \<in> target_ring.Spec . f -`` t \<in> origin_ring.openBasic(x)}"
     by auto
   with G have T:"target_ring.openBasic(f``x) = g-`` origin_ring.openBasic(x)" by auto
-  have "g-``(origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})) = {t\<in>target_ring.Spec. g`t \<in> origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})}" 
+  have "g-``(origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})) = {t\<in>target_ring.Spec. g`t \<in> origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})}"
     using spectrum_surj assms(2) unfolding g_def
     using func1_1_L15 by auto
-  then have "g-``(origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})) = {t\<in>target_ring.Spec. f-``t \<in> origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})}" 
+  then have "g-``(origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})) = {t\<in>target_ring.Spec. f-``t \<in> origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})}"
     using beta unfolding g_def by auto
-  then have E:"g-``(origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})) = {t\<in>target_ring.Spec. f-``t \<in> {q\<in>origin_ring.Spec. (f -`` {\<zero>\<^sub>S}) \<subseteq> q}}" 
+  then have E:"g-``(origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})) = {t\<in>target_ring.Spec. f-``t \<in> {q\<in>origin_ring.Spec. (f -`` {\<zero>\<^sub>S}) \<subseteq> q}}"
     unfolding origin_ring.closeBasic_def[OF func1_1_L3[OF surj_is_fun[OF assms(2)]]] by auto
   {
     fix s assume s:"s\<in>target_ring.openBasic(f``x)"
-    with E have ss:"s\<in>target_ring.Spec" "\<not>(f``x \<subseteq> s)" 
+    with E have ss:"s\<in>target_ring.Spec" "\<not>(f``x \<subseteq> s)"
       using target_ring.openBasic_def func1_1_L6(2) surj_is_fun[OF assms(2)] by auto
     from this(1) have "g`s \<in> origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})" using spectrum_surj[OF assms(2)]
       apply_type[of g target_ring.Spec "\<lambda>u. origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})"] unfolding g_def
       by auto
     with ss(1) have "f-``s \<in> origin_ring.closeBasic(f -`` {\<zero>\<^sub>S})" using beta
       unfolding g_def by auto
-    moreover 
+    moreover
     from ss(1) have "s\<triangleleft>R\<^sub>t" unfolding target_ring.Spec_def
       target_ring.primeIdeal_def by auto
     then have "\<zero>\<^sub>S \<in>s" using target_ring.ideal_dest_zero by auto
@@ -278,10 +283,10 @@ lemma (in ring_homo) spectrum_surj_open:
   shows "\<forall>U\<in>\<tau>\<^sub>t. g``U \<in> \<tau>\<^sub>o {restricted to} V(ker)"
 proof
   fix U assume U:"U\<in>\<tau>\<^sub>t"
-  then obtain I where I:"I\<triangleleft>R\<^sub>t" "I\<subseteq>S" 
+  then obtain I where I:"I\<triangleleft>R\<^sub>t" "I\<subseteq>S"
     "U=target_ring.openBasic(I)" unfolding top_target_def
     by auto
-  from I(3) have sub:"U \<subseteq> target_ring.Spec" 
+  from I(3) have sub:"U \<subseteq> target_ring.Spec"
     using target_ring.openBasic_def[OF I(2)] by auto
   {
     fix t assume t:"t\<in>g``U"
@@ -329,10 +334,10 @@ proof
       then obtain s where s:"f`x = f`s" "s\<in>t" using
         func_imagedef[OF surj_is_fun[OF assms(2)]]
         p(1) unfolding origin_ring.Spec_def by auto
-      from s(2) have ss:"s\<in>R" using p(1) 
+      from s(2) have ss:"s\<in>R" using p(1)
         unfolding origin_ring.Spec_def by auto
       from s(1) have "(f`x) \<rs>\<^sub>S (f`s) = \<zero>\<^sub>S" using
-        target_ring.Ring_ZF_1_L3(7)[OF apply_type[OF 
+        target_ring.Ring_ZF_1_L3(7)[OF apply_type[OF
             surj_is_fun[OF assms(2)]
         t(2)]] by auto
       then have "f`(x\<rs>\<^sub>Rs) = \<zero>\<^sub>S" using homomor_dest_subs
@@ -341,7 +346,7 @@ proof
       ultimately have "x\<rs>\<^sub>Rs \<in> f-``{\<zero>\<^sub>S}" using func1_1_L15
         surj_is_fun[OF assms(2)] by auto
       then have "x\<rs>\<^sub>Rs \<in> t" using kt by auto
-      then have "s\<ra>\<^sub>R(x\<rs>\<^sub>Rs) \<in> t" 
+      then have "s\<ra>\<^sub>R(x\<rs>\<^sub>Rs) \<in> t"
         using origin_ring.ideal_dest_sum
         s(2) p(1) unfolding origin_ring.Spec_def by auto
       then have "x\<in>t" using origin_ring.Ring_ZF_2_L1A(5)
@@ -380,10 +385,10 @@ proof
   ultimately
   have "V(ker)\<inter>D(f -`` I) = g``U"
     using func1_1_L6(2)[OF bij_is_fun[OF
-    spectrum_surj_bij[OF assms(2)]],of U] 
+    spectrum_surj_bij[OF assms(2)]],of U]
     unfolding g_def by blast
   moreover
-  from I(1) have "(f-``(I)) \<triangleleft>R" and "(f-``(I)) \<subseteq> R" 
+  from I(1) have "(f-``(I)) \<triangleleft>R" and "(f-``(I)) \<subseteq> R"
     using preimage_ideal(2)  origin_ring.ideal_dest_subset by simp_all
   then have "V(ker)\<inter>D(f-``(I)) \<in> {V(ker) \<inter> A . A \<in> \<tau>\<^sub>o}"
     unfolding top_origin_def by auto
@@ -414,5 +419,5 @@ proof-
     spectrum_surj_cont[OF assms(1)]
     unfolding g_def by auto
 qed
-  
+
 end
