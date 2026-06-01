@@ -1248,7 +1248,16 @@ text\<open>Chains of elements of $X$ connecting $x$ and $y$ are lists (i.e. func
   In informal comments we will say that the chain has length $n$ when it consists of $n+1$
   elements of $X$, i.e. it has $n$ links, see the definition below.\<close>
 
-definition "Chains(X,n,x,y) \<equiv> {c \<in> n #+ 1\<rightarrow>X. c`(0) = x \<and> c`(n) = y}"
+definition "Chains(X,n,x,y) \<equiv> {c \<in> (n #+ 1)\<rightarrow>X. c`(0) = x \<and> c`(n) = y}"
+
+text\<open>If $c$ is a chain in $X$ of length $n$ connecting $x$ and $y$ 
+  then it maps $n+1$ (i.e. the set $\{0,1,..., n\}$) to $X$, the first element is $x$,
+  the $n$'th (last) element is $y$ and both $x$ and $y$ are elements of $X$.\<close>
+
+lemma chain_props: assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)"
+  shows "c \<in> (n #+ 1)\<rightarrow>X" "c`(0) = x" "c`(n) = y" "x\<in>X" "y\<in>X"
+  using assms succ_add_one(6) nat_less_add_one(2) apply_funtype
+  unfolding Chains_def by auto
 
 text\<open>One operation that we can do on a chain $x=c_0,c_1,...,c_n=y$ is converting it
   to a list of pairs $\langle c_i, c_{i+1}\rangle, 0 \leq i < n$. 
@@ -1302,7 +1311,7 @@ text\<open>If $c_i$ are chains from $x_i$ to $y_i$ of natural length $n_i$ for $
   $n_1 + n_2 + 1$.  The chain links of the concatenation is a list of elements of $X\times X$ 
   of length $n_1 + n_2 + 1$, obtained by appending the pair $\langle c_1(n_1), c_2(0)\rangle$
   to the chain links of $c_1$ and then concatenating that with the chain links of $c_2$.
-  The proof is surprisingly long and tedious for such trivial fact.\<close>
+  The proof is surprisingly long and tedious for such a trivial fact.\<close>
 
 lemma concat_chains: 
   assumes "n\<^sub>1\<in>nat" "c\<^sub>1\<in>Chains(X,n\<^sub>1,x\<^sub>1,y\<^sub>1)" "n\<^sub>2\<in>nat" "c\<^sub>2\<in>Chains(X,n\<^sub>2,x\<^sub>2,y\<^sub>2)"
@@ -1311,6 +1320,7 @@ lemma concat_chains:
     "c\<^sub>3 \<in> Chains(X,n\<^sub>1 #+ n\<^sub>2 #+ 1,x\<^sub>1,y\<^sub>2)"
     "ChainLinks(c\<^sub>3): (n\<^sub>1 #+ n\<^sub>2 #+ 1)\<rightarrow>X\<times>X"
     "ChainLinks(c\<^sub>3) = Concat(Append(ChainLinks(c\<^sub>1),\<langle>c\<^sub>1`(n\<^sub>1),c\<^sub>2`(0)\<rangle>),ChainLinks(c\<^sub>2))"
+    "ChainLinks(c\<^sub>3) = Concat(Append(ChainLinks(c\<^sub>1),\<langle>y\<^sub>1,x\<^sub>2\<rangle>),ChainLinks(c\<^sub>2))"
 proof -
   let ?L\<^sub>1 = "ChainLinks(c\<^sub>1)"
   let ?L\<^sub>2 = "ChainLinks(c\<^sub>2)"
@@ -1416,6 +1426,9 @@ proof -
     } thus ?thesis by simp
   qed
   ultimately show "?L\<^sub>3 = ?R" by (rule func_eq)
+  with assms(1,2,3,4) show 
+    "?L\<^sub>3 = Concat(Append(ChainLinks(c\<^sub>1),\<langle>y\<^sub>1,x\<^sub>2\<rangle>),ChainLinks(c\<^sub>2))"
+    using chain_props(2,3) by simp_all
 qed
  
 
