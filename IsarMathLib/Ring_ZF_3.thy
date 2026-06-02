@@ -1055,7 +1055,7 @@ text\<open>A subring of a ring $(R,A,M)$ is a subset $S$ which forms a ring
 text\<open>We define \<open>IsAsubring(S,A,M)\<close> to mean that $S$ is a subring
   of a ring with addition $A$ and multiplication $M$.\<close>
 
-definition IsAsubring where
+definition (in ring0) IsAsubring where
   "S \<subseteq> R \<Longrightarrow> IsAsubring(S,A,M) \<equiv> IsAring(S, restrict(A,S\<times>S), restrict(M,S\<times>S))"
 
 text\<open>Every ring is a subring of itself.\<close>
