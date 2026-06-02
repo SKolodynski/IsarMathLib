@@ -1056,16 +1056,16 @@ text\<open>We define \<open>IsAsubring(S,A,M)\<close> to mean that $S$ is a subr
   of a ring with addition $A$ and multiplication $M$.\<close>
 
 definition (in ring0) IsAsubring where
-  "S \<subseteq> R \<Longrightarrow> IsAsubring(S,A,M) \<equiv> IsAring(S, restrict(A,S\<times>S), restrict(M,S\<times>S))"
+  "S \<subseteq> R \<Longrightarrow> IsAsubring(S) \<equiv> IsAring(S, restrict(A,S\<times>S), restrict(M,S\<times>S))"
 
 text\<open>Every ring is a subring of itself.\<close>
 
 lemma (in ring0) ring_self_subring:
-  shows "IsAsubring(R,A,M)"
+  shows "IsAsubring(R)"
 proof -
   have restA: "restrict(A,R\<times>R) = A" using add_group.group_oper_fun restrict_domain by simp
   have restM: "restrict(M,R\<times>R) = M" using mult_monoid.monoid_oper_fun restrict_domain by simp
-  have "R\<subseteq>R \<Longrightarrow> IsAsubring(R,A,M) \<longleftrightarrow> IsAring(R, restrict(A,R\<times>R), restrict(M,R\<times>R))"
+  have "R\<subseteq>R \<Longrightarrow> IsAsubring(R) \<longleftrightarrow> IsAring(R, restrict(A,R\<times>R), restrict(M,R\<times>R))"
     using IsAsubring_def by blast
   then show ?thesis using restA restM ringAssum by simp
 qed
@@ -1073,11 +1073,11 @@ qed
 text\<open>The image of a ring under a ring homomorphism is a subring of the target ring.\<close>
 
 lemma (in ring_homo) image_is_subring:
-  shows "IsAsubring(f``(R), U, V)"
+  shows "target_ring.IsAsubring(f``(R))"
 proof -
   let ?T = "f``(R)"
-  have R: "?T \<subseteq> S \<Longrightarrow> IsAsubring(?T,U,V) \<equiv> IsAring(?T, restrict(U,?T\<times>?T), restrict(V,?T\<times>?T))"
-    using IsAsubring_def by assumption
+  have R: "?T \<subseteq> S \<Longrightarrow> target_ring.IsAsubring(?T) \<equiv> IsAring(?T, restrict(U,?T\<times>?T), restrict(V,?T\<times>?T))"
+    using target_ring.IsAsubring_def by assumption
   have fR_sub_S: "?T \<subseteq> S" using func1_1_L6(2) f_is_fun by simp
   have groupS: "IsAgroup(S,U)" using target IsAring_def by auto
   have groupR: "IsAgroup(R,A)" using origin IsAring_def by auto
@@ -1133,7 +1133,7 @@ proof -
       using func_ZF_7_L2 by auto
   qed
   from T_add_group T_add_comm T_mul_monoid T_distrib show ?thesis
-     using IsAsubring_def fR_sub_S unfolding IsAring_def IsAsubgroup_def by simp
+     using target_ring.IsAsubring_def fR_sub_S unfolding IsAring_def IsAsubgroup_def by simp
 qed
 
 text\<open>The converse of a bijective ring homomorphism is also a ring homomorphism.\<close>
