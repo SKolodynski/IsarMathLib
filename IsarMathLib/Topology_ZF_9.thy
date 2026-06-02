@@ -26,11 +26,15 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
-section \<open>Topology 9\<close>
+section \<open>Homeomorphisms as a group — connecting topology and group theory\<close>
 
 theory Topology_ZF_9
 imports Topology_ZF_2 Group_ZF_2 Topology_ZF_7 Topology_ZF_8
 begin
+
+text\<open>The collection of all homeomorphisms of a topological space onto itself forms a group
+  under composition. This file develops that group structure, connecting the theory of
+  topological spaces with the algebraic theory of groups.\<close>
 
 subsection\<open>Group of homeomorphisms\<close>
 text\<open>This theory file deals with the fact the set homeomorphisms of a topological space into itself

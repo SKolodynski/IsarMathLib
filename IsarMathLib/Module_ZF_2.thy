@@ -26,12 +26,16 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *)
 
+section \<open>Ideals as modules — connecting ring and module theories\<close>
+
 theory Module_ZF_2 imports Module_ZF_1 Ring_ZF_2
 
 begin
 
-text\<open>The most basic examples of modules, are subsets of the ring; since a ring is an abelian group
-when considering addition. \<close>
+text\<open>The most basic examples of modules are subsets of the ring itself: since a ring is an abelian
+  group under addition, the ring acts on itself and on its ideals. This file bridges the theory of
+  rings developed in \<open>Ring_ZF\<close> with the module theory of \<open>Module_ZF_1\<close> by showing that every
+  ideal is a submodule of the ring regarded as a module over itself.\<close>
 
 subsection\<open>Ideals as Modules\<close>
 

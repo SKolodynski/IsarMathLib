@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Properties in Topology 3\<close>
 
-theory Topology_ZF_properties_3 imports Topology_ZF_7 Finite_ZF_1 Topology_ZF_1b Topology_ZF_9
+theory Topology_ZF_properties_3 imports Topology_ZF_7 Finite_ZF_1 Topology_ZF_1 Topology_ZF_9
   Topology_ZF_properties_2 FinOrd_ZF
 begin
 
@@ -504,7 +504,7 @@ text\<open>In this section we study more separation properties.\<close>
 subsection\<open>Definitions\<close>
 
 text\<open>We start with a property that has already appeared in
-@{file "Topology_ZF_1b.thy"}. A KC-space is a space where
+@{file "Topology_ZF_1.thy"}. A KC-space is a space where
 compact sets are closed.\<close>
 
 definition
@@ -520,7 +520,7 @@ definition
 
 subsection\<open>First results\<close>
 
-text\<open>The proof in @{file "Topology_ZF_1b.thy"} shows that a Hausdorff space
+text\<open>The proof in @{file "Topology_ZF_1.thy"} shows that a Hausdorff space
 is KC.\<close>
 
 corollary(in topology0) T2_imp_KC:
