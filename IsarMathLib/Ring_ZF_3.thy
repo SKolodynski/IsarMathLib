@@ -357,7 +357,7 @@ proof -
           using origin_ring.Ring_ZF_1_L2(2) origin_ring.Ring_ZF_1_L3(5)
             func1_1_L15 f_is_fun target_ring.ideal_dest_mult(2)
           unfolding target_ring.primeIdeal_def by auto
-      } hence "\<forall>z\<in>S. (f`x) \<cdot>\<^sub>S z \<cdot>\<^sub>S (f`y) \<in> J" by simp
+      } then have "\<forall>z\<in>S. (f`x) \<cdot>\<^sub>S z \<cdot>\<^sub>S (f`y) \<in> J" by simp
       with assms(1) \<open>x\<in>R\<close> \<open>y\<in>R\<close>  have "f`(x)\<in> J \<or> f`(y)\<in>J" 
         using target_ring.equivalent_prime_ideal f_is_fun apply_funtype 
           by simp
@@ -391,7 +391,7 @@ proof -
         with \<open>x\<in>R\<close> \<open>y\<in>R\<close> as have "(f`x)\<cdot>\<^sub>Ss\<cdot>\<^sub>S(f`y)\<in>J"
           using homomor_dest_mult origin_ring.Ring_ZF_1_L4(3) 
             func1_1_L15 f_is_fun by simp
-      } hence "\<forall>z\<in>S. (f`(x)) \<cdot>\<^sub>S z \<cdot>\<^sub>S (f`(y)) \<in> J" by simp
+      } then have "\<forall>z\<in>S. (f`(x)) \<cdot>\<^sub>S z \<cdot>\<^sub>S (f`(y)) \<in> J" by simp
       with target_ring.equivalent_prime_ideal assms(1) \<open>x\<in>R\<close> \<open>y\<in>R\<close>
       have "f`(x)\<in>J\<or>f`(y)\<in>J" using f_is_fun apply_funtype 
         by auto
@@ -623,7 +623,7 @@ proof -
     with assms(1) \<open>j\<in>J\<close> \<open>s\<in>R\<close> have "(x\<cdot>\<^sub>Sy)\<in>f``(J)" and "(y\<cdot>\<^sub>Sx)\<in>f``J"
       using origin_ring.ideal_dest_mult func_imagedef f_is_fun 
         origin_ring.ideal_dest_subset by auto
-  } hence "\<forall>x\<in>f``(J). \<forall>y\<in>S. (y\<cdot>\<^sub>Sx) \<in> f``(J) \<and> (x\<cdot>\<^sub>Sy) \<in> f``(J)"
+  } then have "\<forall>x\<in>f``(J). \<forall>y\<in>S. (y\<cdot>\<^sub>Sx) \<in> f``(J) \<and> (x\<cdot>\<^sub>Sy) \<in> f``(J)"
     by auto
   ultimately show ?thesis unfolding target_ring.Ideal_def by simp
 qed
@@ -681,7 +681,7 @@ proof
       by blast
     with \<open>?P\<subseteq>R\<close> \<open>t=f`(M`\<langle>j\<^sub>0,k\<^sub>0\<rangle>)\<close> have "t\<in>(f``(?P))"
       using f_is_fun func1_1_L15D by simp
-  } hence "V``(J \<times> K) \<subseteq> f``(?P)" by blast
+  } then have "V``(J \<times> K) \<subseteq> f``(?P)" by blast
   with assms(1,2) \<open>(f``(?P)) \<triangleleft>R\<^sub>t\<close> have "?Q\<subseteq>f``(?P)"
     using target_ring.generated_ideal_small target_ring.productIdeal_def
     by simp
@@ -729,7 +729,7 @@ proof
     with assms ft \<open>t\<in>R\<close> have "t \<in> f-``(?Q)"
       using target_ring.product_in_intersection(3) func1_1_L15 f_is_fun 
       by auto  
-  } hence "M``(f-``(J)\<times>f-``(K))\<subseteq>f-``(?Q)" 
+  } then have "M``(f-``(J)\<times>f-``(K))\<subseteq>f-``(?Q)" 
     by auto
   moreover from assms(1,2) have 
     id: "(f-``(?Q)) \<triangleleft>R\<^sub>o"
@@ -799,7 +799,7 @@ proof -
       using origin_ring.ideal_dest_sum by auto
     with \<open>j\<in>R\<close> \<open>t\<in>R-J\<close> have False using origin_ring.Ring_ZF_2_L1A(5)
       by auto
-  } hence "f``(J) \<noteq> S" by auto 
+  } then have "f``(J) \<noteq> S" by auto 
   moreover
   { fix I K assume as: "I\<in>target_ring.ideals" "K\<in>target_ring.ideals"
            "target_ring.productIdeal(I, K) \<subseteq> f``(J)"
@@ -831,13 +831,13 @@ proof -
         unfolding origin_ring.primeIdeal_def by auto
       with \<open>s\<in>R\<close> \<open>t\<in>R\<close> have "t\<in>J" using origin_ring.Ring_ZF_2_L1A(5)
         by auto
-    } hence "f-``(f``J) \<subseteq> J" by auto
+    } then have "f-``(f``J) \<subseteq> J" by auto
     ultimately have "?A \<subseteq> J" by auto    
     with assms(1) as(1,2) have "(f-``(I)) \<subseteq> J \<or> (f-``(K)) \<subseteq> J"
       using preimage_ideal origin_ring.ideal_dest_subset
       unfolding origin_ring.primeIdeal_def
       by auto
-    hence "f``(f-``(I)) \<subseteq> f``J \<or> f``(f-``(K)) \<subseteq> f``(J)"
+    then have "f``(f-``(I)) \<subseteq> f``J \<or> f``(f-``(K)) \<subseteq> f``(J)"
       by auto
     with assms(3) as(1,2) have "I \<subseteq> f``(J) \<or> K \<subseteq> f``(J)"
       using surj_image_vimage by auto
@@ -866,7 +866,7 @@ proof -
     with \<open>f-``(K) = t\<close> have "ker \<subseteq> t" "t\<triangleleft>R" by simp_all
     with \<open>f-``(K) = t\<close> have "t\<in>{K\<in>\<I>. ker \<subseteq> K}" using func1_1_L3 f_is_fun 
       by blast
-  } hence "{f-``(J). J\<in>?\<I>\<^sub>t} \<subseteq> {K\<in>\<I>. ker \<subseteq> K}" by blast
+  } then have "{f-``(J). J\<in>?\<I>\<^sub>t} \<subseteq> {K\<in>\<I>. ker \<subseteq> K}" by blast
   ultimately have I: "idealFun : ?\<I>\<^sub>t \<rightarrow> {K\<in>\<I>. ker \<subseteq> K}"
     using func1_1_L1B by auto
   { fix w x assume 
@@ -1046,5 +1046,311 @@ proof -
   qed
   ultimately show ?thesis by auto
 qed
-    
+
+subsection\<open>Subrings\<close>
+
+text\<open>A subring of a ring $(R,A,M)$ is a subset $S$ which forms a ring
+  under the operations restricted from $(R,A,M)$.\<close>
+
+text\<open>We define \<open>IsAsubring(S,A,M)\<close> to mean that $S$ is a subring
+  of a ring with addition $A$ and multiplication $M$.\<close>
+
+definition IsAsubring where
+  "S \<subseteq> R \<Longrightarrow> IsAsubring(S,A,M) \<equiv> IsAring(S, restrict(A,S\<times>S), restrict(M,S\<times>S))"
+
+text\<open>Every ring is a subring of itself.\<close>
+
+lemma (in ring0) ring_self_subring:
+  shows "IsAsubring(R,A,M)"
+proof -
+  have restA: "restrict(A,R\<times>R) = A" using add_group.group_oper_fun restrict_domain by simp
+  have restM: "restrict(M,R\<times>R) = M" using mult_monoid.monoid_oper_fun restrict_domain by simp
+  have "R\<subseteq>R \<Longrightarrow> IsAsubring(R,A,M) \<longleftrightarrow> IsAring(R, restrict(A,R\<times>R), restrict(M,R\<times>R))"
+    using IsAsubring_def by blast
+  then show ?thesis using restA restM ringAssum by simp
+qed
+
+text\<open>The image of a ring under a ring homomorphism is a subring of the target ring.\<close>
+
+lemma (in ring_homo) image_is_subring:
+  shows "IsAsubring(f``(R), U, V)"
+proof -
+  let ?T = "f``(R)"
+  have R: "?T \<subseteq> S \<Longrightarrow> IsAsubring(?T,U,V) \<equiv> IsAring(?T, restrict(U,?T\<times>?T), restrict(V,?T\<times>?T))"
+    using IsAsubring_def by assumption
+  have fR_sub_S: "?T \<subseteq> S" using func1_1_L6(2) f_is_fun by simp
+  have groupS: "IsAgroup(S,U)" using target IsAring_def by auto
+  have groupR: "IsAgroup(R,A)" using origin IsAring_def by auto
+  have T_add_group: "IsAsubgroup(?T,U)"
+    using ringHomHom(1) homomorphism image_group R groupS groupR by blast
+  have T_mul_closed: "?T {is closed under} V"
+  proof -
+    { fix x y assume xT: "x\<in>?T" and yT: "y\<in>?T"
+      from xT obtain g where aR: "g\<in>R" and xeq: "x = f`(g)"
+        using func_imagedef f_is_fun by auto
+      from yT obtain b where bR: "b\<in>R" and yeq: "y = f`(b)"
+        using func_imagedef f_is_fun by auto
+      have "V`\<langle>x,y\<rangle> = f`(M`\<langle>g,b\<rangle>)"
+        using homomor_dest_mult aR bR xeq yeq by simp
+      with aR bR have "V`\<langle>x,y\<rangle> \<in> ?T"
+        using origin_ring.Ring_ZF_1_L4(3) func_imagedef f_is_fun by auto
+    }
+    then show ?thesis unfolding IsOpClosed_def by auto
+  qed
+  have one_in_T: "TheNeutralElement(S,V) \<in> ?T"
+  proof -
+    have oneR: "\<one>\<^sub>R \<in> R" using origin_ring.Ring_ZF_1_L2(2) by simp
+    have hf: "f`(\<one>\<^sub>R) \<in> ?T" using func1_1_L15D f_is_fun oneR subset_refl by blast
+    have feq: "f`(\<one>\<^sub>R) = TheNeutralElement(S,V)"
+      using homomorphism unfolding IsRingHomomor_def by simp
+    show ?thesis using hf feq by simp
+  qed
+  have T_add_closed: "?T {is closed under} U"
+  proof -
+    from T_add_group have rU_fun: "restrict(U,?T\<times>?T):?T\<times>?T\<rightarrow>?T"
+      unfolding IsAsubgroup_def IsAgroup_def IsAmonoid_def IsAssociative_def
+      by auto
+    { fix x y assume xT: "x\<in>?T" and yT: "y\<in>?T"
+      from xT yT rU_fun have "restrict(U,?T\<times>?T)`\<langle>x,y\<rangle> \<in> ?T"
+        using apply_funtype by blast
+      with xT yT have "U`\<langle>x,y\<rangle> \<in> ?T" using restrict_if by simp
+    }
+    then show ?thesis unfolding IsOpClosed_def by auto
+  qed
+  have T_mul_monoid: "IsAmonoid(?T, restrict(V,?T\<times>?T))"
+    using target_ring.mult_monoid.group0_1_T1 T_mul_closed fR_sub_S one_in_T
+    by simp
+  have T_add_comm: "restrict(U,?T\<times>?T) {is commutative on} ?T"
+  proof -
+    from target_ring.ringAssum have "U {is commutative on} S"
+      unfolding IsAring_def by auto
+    with fR_sub_S AMUV_are_ops(3) show ?thesis using func_ZF_4_L1 by auto
+  qed
+  have T_distrib: "IsDistributive(?T, restrict(U,?T\<times>?T), restrict(V,?T\<times>?T))"
+  proof -
+    from target_ring.ringAssum have "IsDistributive(S,U,V)" unfolding IsAring_def by auto
+    with fR_sub_S T_add_closed T_mul_closed show ?thesis
+      using func_ZF_7_L2 by auto
+  qed
+  from T_add_group T_add_comm T_mul_monoid T_distrib show ?thesis
+     using IsAsubring_def fR_sub_S unfolding IsAring_def IsAsubgroup_def by simp
+qed
+
+text\<open>The converse of a bijective ring homomorphism is also a ring homomorphism.\<close>
+
+lemma (in ring_homo) bij_ring_homo_converse:
+  assumes bij: "f \<in> bij(R,S)"
+  shows "IsRingHomomor(converse(f), S, U, V, R, A, M)"
+proof -
+  have cf_fun: "converse(f) : S \<rightarrow> R"
+    using bij_converse_bij bij bij_is_fun by auto
+  have cf_add: "IsMorphism(S, U, A, converse(f))"
+  proof -
+    have "IsAgroup(R,A)" using origin unfolding IsAring_def by auto
+    with bij ringHomHom(1) homomorphism have "Homomor(converse(f),S,U,R,A)" using bij_homomor by auto
+    then show ?thesis unfolding Homomor_def by auto
+  qed
+  have cf_mult: "IsMorphism(S, V, M, converse(f))"
+  proof -
+    { fix s\<^sub>1 s\<^sub>2 assume s1: "s\<^sub>1 \<in> S" and s2: "s\<^sub>2 \<in> S"
+      from s1 bij obtain r\<^sub>1 where r1: "r\<^sub>1 \<in> R" "f`(r\<^sub>1) = s\<^sub>1"
+        unfolding bij_def surj_def by blast
+      from s2 bij obtain r\<^sub>2 where r2: "r\<^sub>2 \<in> R" "f`(r\<^sub>2) = s\<^sub>2"
+        unfolding bij_def surj_def by blast
+      have "converse(f)`(V`\<langle>s\<^sub>1,s\<^sub>2\<rangle>) = converse(f)`(f`(M`\<langle>r\<^sub>1,r\<^sub>2\<rangle>))"
+        using homomor_dest_mult r1 r2 by simp
+      moreover have "M`\<langle>r\<^sub>1,r\<^sub>2\<rangle> \<in> R"
+        using origin_ring.Ring_ZF_1_L4(3) r1(1) r2(1) by auto
+      moreover have "\<And>f A B x. f \<in> inj(A, B) \<Longrightarrow> x \<in> A \<Longrightarrow> converse(f) ` (f`x) = x"
+        using left_inverse_eq by auto
+      then have "\<And>x. f\<in>inj(R,S) \<Longrightarrow> x\<in>R \<Longrightarrow> converse(f)`(f`x) = x" by auto
+      ultimately have step: "converse(f)`(V`\<langle>s\<^sub>1,s\<^sub>2\<rangle>) = M`\<langle>r\<^sub>1,r\<^sub>2\<rangle>"
+        using bij bij_is_inj by auto
+      from bij have "f:inj(R,S)" using bij_is_inj by auto
+      with r1 r2 have
+        "converse(f)`(s\<^sub>1) = r\<^sub>1" "converse(f)`(s\<^sub>2) = r\<^sub>2"
+        using left_inverse_eq by auto
+      with step have
+        "converse(f)`(V`\<langle>s\<^sub>1,s\<^sub>2\<rangle>) = M`\<langle>converse(f)`(s\<^sub>1),converse(f)`(s\<^sub>2)\<rangle>"
+        by simp
+    }
+    then show ?thesis unfolding IsMorphism_def by auto
+  qed
+  have cf_one: "converse(f)`(TheNeutralElement(S,V)) = TheNeutralElement(R,M)"
+  proof -
+    from homomorphism have one_eq: "f`(TheNeutralElement(R,M)) = TheNeutralElement(S,V)"
+      unfolding IsRingHomomor_def by simp
+    have "\<And>f A B x. f \<in> inj(A, B) \<Longrightarrow> x \<in> A \<Longrightarrow> converse(f) ` (f`x) = x"
+        using left_inverse_eq by auto
+    then have "\<And>x. f\<in>inj(R,S) \<Longrightarrow> x\<in>R \<Longrightarrow> converse(f)`(f`x) = x" by auto
+    then have "converse(f)`(f`(TheNeutralElement(R,M))) = TheNeutralElement(R,M)"
+      using left_inverse_eq bij_is_inj bij origin_ring.Ring_ZF_1_L2(2) by auto
+    with one_eq show ?thesis by simp
+  qed
+  from cf_fun cf_add cf_mult cf_one show ?thesis unfolding IsRingHomomor_def by simp
+qed
+
+subsection\<open>First isomorphism theorem\<close>
+
+text\<open>The first isomorphism theorem for rings: any ring homomorphism
+  $f: R \to S$ induces a ring isomorphism $R/\ker(f) \cong f(R)$.
+  The isomorphism sends each coset $[r]_{\ker(f)}$ to $f(r)$.\<close>
+
+text\<open>If $f: R \to S$ is a surjective ring homomorphism, then there exists a ring
+  isomorphism $\phi: R/\ker(f) \to S$.\<close>
+
+theorem (in ring_homo) first_isomorphism_theorem:
+  assumes surj: "f \<in> surj(R,S)"
+  shows "\<exists>\<phi>. IsRingHomomor(\<phi>, origin_ring.QuotientBy(ker),
+              QuotientGroupOp(R,A,ker),
+              ProjFun2(R,QuotientGroupRel(R,A,ker),M),
+              S, U, V) \<and> \<phi>\<in>bij(origin_ring.QuotientBy(ker), S)"
+proof -
+  let ?K = "ker"
+  let ?r = "QuotientGroupRel(R,A,?K)"
+  let ?Q = "origin_ring.QuotientBy(?K)"
+  let ?A\<^sub>Q = "QuotientGroupOp(R,A,?K)"
+  let ?M\<^sub>Q = "ProjFun2(R,?r,M)"
+  let ?\<phi> = "{\<langle>?r``{g}, f`(g)\<rangle>. g\<in>R}"
+  have K_ideal: "?K\<triangleleft>R\<^sub>o" using kernel_ideal by simp
+  have equiv_r: "equiv(R,?r)" using K_ideal origin_ring.ideal_equiv_rel by simp
+  have add_congr: "Congruent2(?r,A)"
+    using K_ideal origin_ring.ideal_normal_add_subgroup
+          Group_ZF_2_4_L5A origin_ring.ringAssum
+    unfolding IsAring_def by auto
+  have mul_congr: "Congruent2(?r,M)"
+    using K_ideal origin_ring.quotientBy_mul_monoid(1) by simp
+  have phi_fun: "?\<phi>: ?Q \<rightarrow> S"
+  proof -
+    have qQ: "\<And>g. g\<in>R \<Longrightarrow> ?r``{g} \<in> ?Q"
+      using equiv_r K_ideal origin_ring.QuotientBy_def quotientI by auto
+    have I: "?\<phi> \<in> Pow(?Q \<times> S)"
+      using qQ homomor_val by auto
+    have II: "?Q \<subseteq> domain(?\<phi>)"
+    proof
+      fix q assume "q \<in> ?Q"
+      then obtain g where "g\<in>R" "q = ?r``{g}"
+        using K_ideal origin_ring.QuotientBy_def
+        unfolding quotient_def by auto
+      then show "q \<in> domain(?\<phi>)" unfolding domain_def by auto
+    qed
+    { fix x y t assume "\<langle>x,y\<rangle> \<in> ?\<phi>" "\<langle>x,t\<rangle> \<in> ?\<phi>"
+      then obtain g b where
+        Hy: "\<langle>x,y\<rangle> = \<langle>?r``{g},f`(g)\<rangle>" and aR: "g\<in>R" and
+        Ht: "\<langle>x,t\<rangle> = \<langle>?r``{b},f`(b)\<rangle>" and bR: "b\<in>R"
+        by auto
+      from Hy Ht have rEq: "?r``{g} = ?r``{b}" and yEq: "y = f`(g)" and tEq: "t = f`(b)"
+        by auto
+      from equiv_r bR rEq have ab_r: "\<langle>g,b\<rangle> \<in> ?r" using same_image_equiv by simp
+      from ab_r have "g\<rs>\<^sub>Rb \<in> ?K" unfolding QuotientGroupRel_def by auto
+      then have "f`(g\<rs>\<^sub>Rb) = \<zero>\<^sub>S"
+        using func1_1_L15 f_is_fun origin_ring.Ring_ZF_1_L4(2) aR bR by auto
+      with aR bR have "f`(g)\<rs>\<^sub>S(f`b) = \<zero>\<^sub>S" using homomor_dest_subs by auto
+      with homomor_val aR bR have "f`(g) = f`(b)"
+        using target_ring.Ring_ZF_1_L9A by auto
+      then have "y = t" using yEq tEq by simp
+    }
+    then have III: "\<forall>x y t. \<langle>x,y\<rangle> \<in> ?\<phi> \<longrightarrow> \<langle>x,t\<rangle> \<in> ?\<phi> \<longrightarrow> y = t" by auto
+    from I II III show ?thesis unfolding Pi_def function_def by auto
+  qed
+  have phi_val: "\<And>g. g\<in>R \<Longrightarrow> ?\<phi>`(?r``{g}) = f`(g)"
+  proof -
+    fix g assume "g\<in>R"
+    then have "\<langle>?r``{g}, f`(g)\<rangle> \<in> ?\<phi>" by auto
+    with phi_fun show "?\<phi>`(?r``{g}) = f`(g)" using apply_equality by simp
+  qed
+  have phi_add: "IsMorphism(?Q,?A\<^sub>Q,U,?\<phi>)"
+  proof -
+    {
+      fix x y assume xQ: "x\<in>?Q" and yQ: "y\<in>?Q"
+      from xQ obtain g where aR: "g\<in>R" and xeq: "x = ?r``{g}"
+        using K_ideal origin_ring.QuotientBy_def
+        unfolding quotient_def by auto
+      from yQ obtain b where bR: "b\<in>R" and yeq: "y = ?r``{b}"
+        using K_ideal origin_ring.QuotientBy_def
+        unfolding quotient_def by auto
+      have "?A\<^sub>Q`\<langle>x,y\<rangle> = ?r``{A`\<langle>g,b\<rangle>}"
+        unfolding QuotientGroupOp_def
+        using EquivClass_1_L10 equiv_r add_congr aR bR xeq yeq by simp
+      then have "?\<phi>`(?A\<^sub>Q`\<langle>x,y\<rangle>) = f`(A`\<langle>g,b\<rangle>)"
+        using phi_val origin_ring.Ring_ZF_1_L4(1) aR bR by simp
+      also have "\<dots> = U`\<langle>f`(g),f`(b)\<rangle>" using homomor_dest_add aR bR by simp
+      also have "\<dots> = U`\<langle>?\<phi>`(x),?\<phi>`(y)\<rangle>"
+        using aR phi_val bR xeq yeq by simp
+      finally have "?\<phi>`(?A\<^sub>Q`\<langle>x,y\<rangle>) = U`\<langle>?\<phi>`(x),?\<phi>`(y)\<rangle>" by assumption
+    }
+    then show ?thesis unfolding IsMorphism_def by auto
+  qed
+  have phi_mult: "IsMorphism(?Q,?M\<^sub>Q,V,?\<phi>)"
+  proof -
+    {
+      fix x y assume xQ: "x\<in>?Q" and yQ: "y\<in>?Q"
+      from xQ obtain g where aR: "g\<in>R" and xeq: "x = ?r``{g}"
+        using K_ideal origin_ring.QuotientBy_def
+        unfolding quotient_def by auto
+      from yQ obtain b where bR: "b\<in>R" and yeq: "y = ?r``{b}"
+        using K_ideal origin_ring.QuotientBy_def
+        unfolding quotient_def by auto
+      have "?M\<^sub>Q`\<langle>x,y\<rangle> = ?r``{M`\<langle>g,b\<rangle>}"
+        using EquivClass_1_L10 equiv_r mul_congr aR bR xeq yeq by simp
+      then have "?\<phi>`(?M\<^sub>Q`\<langle>x,y\<rangle>) = f`(M`\<langle>g,b\<rangle>)"
+        using phi_val origin_ring.Ring_ZF_1_L4(3) aR bR by simp
+      also have "\<dots> = V`\<langle>f`(g),f`(b)\<rangle>" using homomor_dest_mult aR bR by simp
+      also have "\<dots> = V`\<langle>?\<phi>`(x),?\<phi>`(y)\<rangle>"
+        using phi_val aR bR xeq yeq by simp
+      finally have "?\<phi>`(?M\<^sub>Q`\<langle>x,y\<rangle>) = V`\<langle>?\<phi>`(x),?\<phi>`(y)\<rangle>" by assumption
+    }
+    then show "IsMorphism(?Q,?M\<^sub>Q,V,?\<phi>)" unfolding IsMorphism_def by auto
+  qed
+  have phi_one: "?\<phi>`(TheNeutralElement(?Q,?M\<^sub>Q)) = TheNeutralElement(S,V)"
+  proof -
+    have "TheNeutralElement(?Q,?M\<^sub>Q) = ?r``{\<one>\<^sub>R}"
+      using K_ideal origin_ring.one_quotient by simp
+    with origin_ring.Ring_ZF_1_L2(2) have
+      "?\<phi>`(TheNeutralElement(?Q,?M\<^sub>Q)) = f`(\<one>\<^sub>R)"
+      using phi_val by simp
+    also have "\<dots> = TheNeutralElement(S,V)"
+      using homomorphism unfolding IsRingHomomor_def by simp
+    finally show ?thesis by assumption
+  qed
+  have phi_inj: "?\<phi> \<in> inj(?Q,S)"
+  proof -
+    { fix x y assume xQ: "x\<in>?Q" and yQ: "y\<in>?Q" and eq: "?\<phi>`(x) = ?\<phi>`(y)"
+      from xQ obtain g where aR: "g\<in>R" and xeq: "x = ?r``{g}"
+        using K_ideal origin_ring.QuotientBy_def
+        unfolding quotient_def by auto
+      from yQ obtain b where bR: "b\<in>R" and yeq: "y = ?r``{b}"
+        using K_ideal origin_ring.QuotientBy_def
+        unfolding quotient_def by auto
+      from eq xeq yeq aR bR have fab: "f`(g) = f`(b)" using phi_val by simp
+      moreover have "f`g\<in>S" using homomor_val aR by auto
+      ultimately have "f`(g)\<rs>\<^sub>S(f`b) = \<zero>\<^sub>S"
+        using target_ring.Ring_ZF_1_L3(7) by auto
+      with aR bR have "f`(g\<rs>\<^sub>Rb) = \<zero>\<^sub>S" using homomor_dest_subs by simp
+      then have "g\<rs>\<^sub>Rb \<in> ?K"
+        using func1_1_L15 f_is_fun origin_ring.Ring_ZF_1_L4(2) aR bR by auto
+      then have "\<langle>g,b\<rangle> \<in> ?r" using aR bR unfolding QuotientGroupRel_def by auto
+      then have "x = y" using xeq yeq equiv_class_eq equiv_r by simp
+    }
+    with phi_fun show ?thesis unfolding inj_def by auto
+  qed
+  have phi_surj: "?\<phi> \<in> surj(?Q,S)"
+  proof -
+    { fix s assume "s\<in>S"
+      with surj obtain g where aR: "g\<in>R" and fs: "f`(g) = s"
+        unfolding surj_def by auto
+      from quotientI have "?r``{g} \<in> ?Q" using equiv_r aR K_ideal origin_ring.QuotientBy_def
+        by auto
+      with aR fs phi_val have "\<exists>q\<in>?Q. ?\<phi>`(q) = s" by auto
+    }
+    with phi_fun show ?thesis unfolding surj_def by auto
+  qed
+  from phi_inj phi_surj phi_fun have "?\<phi>\<in>bij(?Q,S)"
+    unfolding bij_def by auto
+  moreover have "IsRingHomomor(?\<phi>,?Q,?A\<^sub>Q,?M\<^sub>Q,S,U,V)"
+    using phi_fun phi_add phi_mult phi_one
+    unfolding IsRingHomomor_def Homomor_def by auto
+  ultimately show ?thesis by auto
+qed
+
 end
