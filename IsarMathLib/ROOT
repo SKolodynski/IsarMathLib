@@ -49,6 +49,7 @@ session "IsarMathLib" = "ZF" +
     Ring_ZF_2
     Ring_ZF_3
     Ring_ZF_4
+    Ring_ZF_5
     Field_ZF
     Module_ZF
     Module_ZF_1

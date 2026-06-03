@@ -311,7 +311,7 @@ module IMLParser =
     /// parses a tactic
     let tactic : Parser<string,unit> =
         attempt (pstring "simp_all") <|> pstring "simp" <|> pstring "auto" <|> pstring "blast" <|>
-        attempt (pstring "fast") <|> pstring "force"
+        attempt (pstring "fast") <|> pstring "force" <|> pstring "assumption"
 
     /// parses a short proof that has only a tactic in it
     let shortProofByTac : Parser<Proof,unit> =

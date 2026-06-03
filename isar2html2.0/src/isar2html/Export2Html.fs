@@ -18,7 +18,7 @@ namespace iml
     
     /// The function export2Html in this module takes a parsed 
     /// IsarMathLib theory and produces corresponding body of the HTML document.
-    // TODO: maybe use Giraffe.view or smth to gnerate HTML instead of string manipulation
+    // TODO: maybe use Giraffe.view or smth to generate HTML instead of string manipulation
     module Export2Html =
         open IsarSym2Latex
         open Utils
