@@ -25,7 +25,7 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-section \<open>Groups 4\<close>
+section \<open>Normal subgroups, simple groups and Lagrange's theorem\<close>
 
 theory Group_ZF_4 imports Group_ZF_1 Group_ZF_2 Finite_ZF Cardinal_ZF
 

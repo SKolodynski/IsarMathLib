@@ -36,6 +36,7 @@ session "IsarMathLib" = "ZF" +
     Group_ZF_1
     AbelianGroup_ZF
     DirectProduct_ZF
+    DirectProduct_ZF_1
     Group_ZF_2
     Group_ZF_3
     OrderedGroup_ZF
@@ -46,6 +47,7 @@ session "IsarMathLib" = "ZF" +
     OrderedRing_ZF
     Group_ZF_4
     Group_ZF_5
+    Group_ZF_6
     Ring_ZF_2
     Ring_ZF_3
     Ring_ZF_4
@@ -58,6 +60,10 @@ session "IsarMathLib" = "ZF" +
     Int_ZF_IML
     Int_ZF_1
     IntDiv_ZF_IML
+    IntDiv_ZF_1
+    ChainComplex_ZF
+    Homology_ZF
+    ExactSequence_ZF
     Int_ZF_2
     Int_ZF_3
     IntGroup_ZF

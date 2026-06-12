@@ -30,7 +30,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Rings - Ideals of quotient rings\<close>
 
-theory Ring_ZF_3 imports Ring_ZF_2 Group_ZF_5
+theory Ring_ZF_3 imports Ring_ZF_2 Group_ZF_6
 
 begin
 
@@ -152,11 +152,24 @@ text\<open> \<open>ker\<close> denotes the kernel of $f$ (which is assumed to be
 abbreviation (in ring_homo) kernel ("ker" 90) where
   "ker \<equiv> f-``{\<zero>\<^sub>S}"
 
-text\<open>The theorems proven in the \<open>ring0\<close> context are valid in the \<open>ring_homo\<close> 
+text\<open>The theorems proven in the \<open>ring0\<close> context are valid in the \<open>ring_homo\<close>
   context when applied to the ring $R$.\<close>
 
-sublocale ring_homo < origin_ring:ring0 
+sublocale ring_homo < origin_ring:ring0
   using origin unfolding ring0_def by auto
+
+text\<open>The group homomorphism locale applies to the additive part of a ring homomorphism:
+  $(R,A)$ is the origin group and $(S,U)$ is the target group.\<close>
+
+sublocale ring_homo < add_group_homo: group_homo R A S U f
+  ringzero ringa ringminus rlistsum rnat_mult
+  ringzeros ringas ringminuss
+  "\<lambda>s. Fold(U, \<zero>\<^sub>S, s)"
+  "\<lambda>n x. Fold(U, \<zero>\<^sub>S, {\<langle>k,x\<rangle>. k\<in>n})"
+  using origin target homomorphism ringHomHom(1)
+  unfolding IsAring_def ringa_def ringminus_def ringzero_def
+    ringas_def ringminuss_def ringzeros_def
+  by auto
 
 text\<open>The theorems proven in the \<open>ring0\<close> context are valid in the \<open>ring_homo\<close> 
   context when applied to the ring $S$.\<close>
@@ -237,8 +250,7 @@ text\<open>A ring homomorphism preserves taking negative of an element.\<close>
 lemma (in ring_homo) homomor_dest_minus:
   assumes "x\<in>R"
   shows "f`(\<rm>\<^sub>Rx) = \<rm>\<^sub>S(f`(x))"
-  using origin target homomorphism assms ringHomHom image_inv
-  unfolding IsAring_def by auto
+  using assms add_group_homo.f_inv by simp
 
 text\<open>A ring homomorphism preserves substraction.\<close> 
 
@@ -252,8 +264,7 @@ text\<open>A ring homomorphism maps zero to zero.\<close>
 
 lemma (in ring_homo) homomor_dest_zero:
   shows "f`(\<zero>\<^sub>R) = \<zero>\<^sub>S"
-  using origin target homomorphism ringHomHom(1) image_neutral
-  unfolding IsAring_def by auto
+  using add_group_homo.f_neutral by simp
 
 text\<open>The kernel of a homomorphism is never empty.\<close>
 
@@ -283,9 +294,9 @@ lemma (in ring_homo) preimage_ideal:
     "IsAnormalSubgroup(R,A,f-``(J))"
     "(f-``(J))\<triangleleft>R\<^sub>o" "ker \<subseteq> f-``(J)"
 proof -
-  from origin target homomorphism assms 
+  from origin target homomorphism assms
     show "IsAnormalSubgroup(R,A,f-``(J))"
-      using ringHomHom(1) preimage_normal_subgroup
+      using add_group_homo.preimage_normal_subgroup
         target_ring.ideal_normal_add_subgroup
       unfolding IsAring_def by blast
   then have "IsAsubgroup(f-``(J),A)" unfolding IsAnormalSubgroup_def
@@ -604,7 +615,8 @@ lemma (in ring_homo) image_ideal_surj:
 proof -
   from assms homomorphism target_ring.ringAssum origin_ring.ringAssum 
   have "IsAsubgroup(f``(J),U)"
-    using ringHomHom(1) image_subgroup f_is_fun
+    using add_group_homo.image_is_subgroup f_is_fun
+      origin_ring.ideal_dest_subset
     unfolding IsAring_def origin_ring.Ideal_def by blast
   moreover
   { fix x y assume "x\<in>f``(J)" "y\<in>S"
