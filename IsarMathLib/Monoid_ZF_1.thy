@@ -26,10 +26,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Summing lists in a monoid\<close>
 
-theory Monoid_ZF_1 imports Monoid_ZF
+theory Monoid_ZF_1 imports Monoid_ZF FiniteSeq_ZF
 
 begin
-
 
 text\<open>This theory consider properties of sums of monoid elements, similar
   to the ones formalized in the \<open>Semigroup_ZF\<close> theory for sums of semigroup elements. The main
@@ -77,7 +76,8 @@ proof -
   then show ?thesis using fold_props by simp
 qed
 
-text\<open>A different expression of the fact the sum of a list valued in monoid is a monoid element.\<close>
+text\<open>A different expression of the fact the sum of a list valued in monoid 
+  is a monoid element.\<close>
 
 lemma (in monoid1) sum_in_mono1: assumes "n\<in>nat" "b:n\<rightarrow>G"
   shows "(\<Sum>b) \<in> G"
@@ -175,7 +175,7 @@ qed
 text\<open>If we append an element to a list then its sum  increases by that element.\<close>
 
 lemma (in monoid1) seq_sum_append:
-  assumes "n \<in> nat" "s:n\<rightarrow>G" "x\<in>G"
+  assumes "n\<in>nat" "s:n\<rightarrow>G" "x\<in>G"
   shows "(\<Sum>Append(s,x)) = (\<Sum>s)\<oplus>x"
 proof -
   let ?q = "Append(s,x)"
@@ -193,22 +193,59 @@ proof -
   finally show "(\<Sum>?q) = (\<Sum>s) \<oplus> x" by simp
 qed
 
-(*text\<open>Sum of concatenation of two lists is the sum of sums.\<close>
+text\<open>The sum of a nonempty list is the sum of its init plus the last element. \<close>
+
+lemma (in monoid1) seq_sum_init_last:
+  assumes "n\<in>nat" "s:(n #+ 1)\<rightarrow>G"
+  shows "(\<Sum>s) = (\<Sum>Init(s))\<oplus>(s`(n))"
+proof -
+    from assms have 
+    "Init(s):n\<rightarrow>G" "s=Append(Init(s),s`(n))" "s`(n)\<in>G"
+    using init_props(1,3) nat_less_add_one(2) apply_funtype 
+      by simp_all
+    with assms(1) \<open>Init(s):n\<rightarrow>G\<close> \<open>s`(n)\<in>G\<close> show ?thesis
+    using seq_sum_append by force
+qed
+ 
+text\<open>Sum of concatenation of two lists is the sum of sums.\<close>
 
 lemma (in monoid1) seq_sum_concat: 
   assumes "n\<in>nat" "s:n\<rightarrow>G" "m\<in>nat" "q:m\<rightarrow>G"
   shows "(\<Sum>Concat(s,q)) = (\<Sum>s)\<oplus>(\<Sum>q)"
 proof -
-  have "\<forall>r\<in>0\<rightarrow>G. (\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r)"
+  from assms(1,2) have I: "\<forall>r\<in>0\<rightarrow>G. (\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r)"
+    using sum_empty fun_empty_empty concat_empty(1) sum_in_mono1 
+      unit_is_neutral by simp
+  have "\<forall>k\<in>nat. ((\<forall>r\<in>k\<rightarrow>G. (\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r))
+        \<longrightarrow> (\<forall>r\<in>(k #+ 1)\<rightarrow>G. (\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r)))"
   proof -
-    { fix r assume "r\<in>0\<rightarrow>G" 
-      then have "(\<Sum>r) = \<zero>" using sum_empty by simp 
-      from \<open>r\<in>0\<rightarrow>G\<close> have "(\<Sum>Concat(s,r)) = \<Sum>Concat(s,\<emptyset>)"
-        using fun_empty_empty by simp
-      also from assms(1,2) have "... = \<Sum>s" using concat_empty(1) 
+    { fix k assume "k\<in>nat"
+      assume A: "(\<forall>r\<in>k\<rightarrow>G. (\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r))"
+      { fix r assume "r:(k #+ 1)\<rightarrow>G"
+        with assms(1,2) \<open>k\<in>nat\<close> have "Init(r):k\<rightarrow>G" "r`(k)\<in>G" 
+          and T1: "(\<Sum>s)\<in>G" "(\<Sum>Init(r))\<in>G" 
+          and T2: "Concat(s,Init(r)):(n #+ k)\<rightarrow>G"
+        using init_props(1) nat_less_add_one(2) apply_funtype 
+          sum_in_mono1 concat_props(1) by simp_all
+        from assms(1,2) \<open>k\<in>nat\<close> \<open>r:(k #+ 1)\<rightarrow>G\<close>
+        have "(\<Sum>Concat(s,r)) = \<Sum>Append(Concat(s,Init(r)),r`(k))"
+          using concat_init_last_elem by simp
+        also from T2 \<open>r`(k)\<in>G\<close> A \<open>Init(r):k\<rightarrow>G\<close>
+        have "... = ((\<Sum>s)\<oplus>(\<Sum>Init(r)))\<oplus>(r`(k))"
+          using seq_sum_append by force
+        also from T1 \<open>r`(k)\<in>G\<close> \<open>k\<in>nat\<close> \<open>r:(k #+ 1)\<rightarrow>G\<close>
+        have "... = (\<Sum>s)\<oplus>(\<Sum>r)"
+          using sum_associative seq_sum_init_last by simp
+        finally have "(\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r)" by simp
+      } hence "\<forall>r\<in>(k #+ 1)\<rightarrow>G. (\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r)"
         by simp
-
- *) 
+    } thus ?thesis by simp
+  qed
+  with assms(3) I have "(\<forall>r\<in>m\<rightarrow>G. (\<Sum>Concat(s,r)) = (\<Sum>s)\<oplus>(\<Sum>r))"
+    by (rule ind_on_nat1)
+  with assms(4) show "(\<Sum>Concat(s,q)) = (\<Sum>s)\<oplus>(\<Sum>q)"
+    by simp
+qed
 
 text\<open>The sum of a singleton list is its only element,\<close>
 
@@ -349,6 +386,85 @@ proof -
     "\<forall>k\<in>nat. k\<cdot>\<zero> = \<zero> \<longrightarrow> (k #+ 1)\<cdot>\<zero> = \<zero>"
     using nat_mult_add_one nat_mult_one unit_is_neutral by auto
   ultimately show ?thesis by (rule ind_on_nat1)
+qed
+
+subsection\<open>Chains weighted in a monoid\<close>
+
+text\<open>In the \<open>FiniteSeq_ZF\<close> theory we define the notions of \<open>chains\<close>, which are essentially 
+  lists of points of some set $X$ and their \<open>chain links\<close>, which are lists of 
+  elements of $X\times X$.
+  Here we consider what happens when the chain intervals are composed with a function valued 
+  in a monoid.\<close>
+
+text\<open>For a chain $c$ and a weight function $w:X\times X\rightarrow G$ we define
+  the chain weight as the sum of its intervals composed with $w$.\<close>
+
+definition (in monoid1) ChainWeight where
+  "ChainWeight(w,c) \<equiv> \<Sum> (w O ChainLinks(c))"
+
+text\<open>If $c$ is a chain in $X$ of a natural length $n$ connecting $x$ and $y$
+  and if the weight function $w$ maps $X\times X$ to the monoid $G$, then the weight
+  of the chain $c$ is an element of $G$. \<close>
+
+lemma (in monoid1) chain_weight_type: 
+  assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)" "w:X\<times>X\<rightarrow>G"
+  shows "ChainWeight(w,c) \<in> G"
+  using assms chain_links_fun(2) comp_fun sum_in_mono1
+  unfolding ChainWeight_def by blast
+
+text\<open>The weight of the concatenation of chains is equal to the weight of the first
+  chain plus the the weight of the link connecting the chains plus the weight of the second chain.\<close>
+
+lemma (in monoid1) chain_concat_weight:
+  assumes "n\<^sub>1\<in>nat" "c\<^sub>1\<in>Chains(X,n\<^sub>1,x\<^sub>1,y\<^sub>1)" "n\<^sub>2\<in>nat" "c\<^sub>2\<in>Chains(X,n\<^sub>2,x\<^sub>2,y\<^sub>2)" 
+    and "w:X\<times>X\<rightarrow>G"
+  shows "ChainWeight(w,Concat(c\<^sub>1,c\<^sub>2)) = 
+    ChainWeight(w,c\<^sub>1)\<oplus>(w`\<langle>y\<^sub>1,x\<^sub>2\<rangle>)\<oplus>ChainWeight(w,c\<^sub>2)"
+proof -
+  let ?L\<^sub>1 = "ChainLinks(c\<^sub>1)"
+  let ?L\<^sub>2 = "ChainLinks(c\<^sub>2)"
+  from assms(1,2) have "y\<^sub>1\<in>X" using chain_props(5) by blast
+  from assms(3,4) have "x\<^sub>2\<in>X" using chain_props(4) by blast
+  from assms(1,2,3,4) \<open>y\<^sub>1\<in>X\<close> \<open>x\<^sub>2\<in>X\<close> have
+    "?L\<^sub>1:n\<^sub>1\<rightarrow>X\<times>X" "?L\<^sub>2:n\<^sub>2\<rightarrow>X\<times>X" "\<langle>y\<^sub>1,x\<^sub>2\<rangle> \<in> X\<times>X" and
+    "Append(?L\<^sub>1,\<langle>y\<^sub>1,x\<^sub>2\<rangle>):(n\<^sub>1 #+ 1)\<rightarrow>X\<times>X"
+  using chain_links_fun(2) append_props(1) by simp_all
+  with assms(1,3,5) \<open>?L\<^sub>2:n\<^sub>2\<rightarrow>X\<times>X\<close> have
+    I: "w O Concat(Append(?L\<^sub>1,\<langle>y\<^sub>1,x\<^sub>2\<rangle>),?L\<^sub>2) = 
+    Concat(w O Append(?L\<^sub>1,\<langle>y\<^sub>1,x\<^sub>2\<rangle>), w O ?L\<^sub>2)"
+    using list_compose_concat by blast
+  from assms(1,5) \<open>?L\<^sub>1:n\<^sub>1\<rightarrow>X\<times>X\<close> \<open>?L\<^sub>2:n\<^sub>2\<rightarrow>X\<times>X\<close> \<open>\<langle>y\<^sub>1,x\<^sub>2\<rangle> \<in> X\<times>X\<close>
+  have "(w O ?L\<^sub>1):n\<^sub>1\<rightarrow>G" "(w O ?L\<^sub>2): n\<^sub>2\<rightarrow>G" "w`\<langle>y\<^sub>1,x\<^sub>2\<rangle> \<in> G" and
+    II: "Append(w O ?L\<^sub>1,w`(\<langle>y\<^sub>1,x\<^sub>2\<rangle>)):(n\<^sub>1 #+ 1)\<rightarrow>G"
+    using comp_fun apply_funtype append_props(1) by simp_all
+  from assms(1,2,3,4) I have "ChainWeight(w,Concat(c\<^sub>1,c\<^sub>2)) = 
+      \<Sum> Concat(w O Append(?L\<^sub>1,\<langle>y\<^sub>1,x\<^sub>2\<rangle>), w O ?L\<^sub>2)"
+    unfolding ChainWeight_def using concat_chains(4) by simp
+  also from assms(1,5) \<open>?L\<^sub>1:n\<^sub>1\<rightarrow>X\<times>X\<close> \<open>\<langle>y\<^sub>1,x\<^sub>2\<rangle> \<in> X\<times>X\<close>
+  have "... = \<Sum> Concat(Append(w O ?L\<^sub>1,w`(\<langle>y\<^sub>1,x\<^sub>2\<rangle>)), w O ?L\<^sub>2)"
+    using list_compose_append(2) by simp
+  also from assms(1,3) II \<open>(w O ?L\<^sub>2): n\<^sub>2\<rightarrow>G\<close>
+  have "... = (\<Sum>Append(w O ?L\<^sub>1,w`\<langle>y\<^sub>1,x\<^sub>2\<rangle>))\<oplus>(\<Sum>(w O ?L\<^sub>2))"
+    using seq_sum_concat by blast
+  also from assms(1) \<open>(w O ?L\<^sub>1):n\<^sub>1\<rightarrow>G\<close> \<open>w`\<langle>y\<^sub>1,x\<^sub>2\<rangle> \<in> G\<close>
+  have "... = ChainWeight(w,c\<^sub>1)\<oplus>(w`\<langle>y\<^sub>1,x\<^sub>2\<rangle>)\<oplus>ChainWeight(w,c\<^sub>2)"
+    using seq_sum_append unfolding ChainWeight_def by simp
+  finally show ?thesis by simp
+qed
+
+text\<open>If, in addition to assumptions of \<open>chain_weight_concat\<close> the weight function
+  $w$ vanishes on the diagonal and the first chain ends at the beginning of the second
+  one, then the weight of the concatenated chain is the sum of the chain weights.\<close>
+
+lemma (in monoid1) chain_concat_weight1: 
+  assumes "n\<^sub>1\<in>nat" "c\<^sub>1\<in>Chains(X,n\<^sub>1,x,y)" "n\<^sub>2\<in>nat" "c\<^sub>2\<in>Chains(X,n\<^sub>2,y,z)"
+    and "w:X\<times>X\<rightarrow>G" "\<forall>x\<in>X. w`\<langle>x,x\<rangle> = \<zero>"
+  shows "ChainWeight(w,Concat(c\<^sub>1,c\<^sub>2)) = ChainWeight(w,c\<^sub>1)\<oplus>ChainWeight(w,c\<^sub>2)"
+proof -
+  from assms(1,2) have "y\<in>X" using chain_props(5) by blast
+  with assms show ?thesis 
+    using chain_weight_type chain_concat_weight unit_is_neutral 
+    by simp
 qed
 
 end
