@@ -1,4 +1,4 @@
-﻿(*
+(*
     This file is a part of IsarMathLib -
     a library of formalized mathematics written for Isabelle/Isar.
 
