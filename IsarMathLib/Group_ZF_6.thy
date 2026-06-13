@@ -125,7 +125,7 @@ proof -
   from eG have fval: "f`(\<one>\<^sub>G) \<in> H" using f_is_fun apply_type by simp
   have eq: "f`(\<one>\<^sub>G) = f`(\<one>\<^sub>G) \<cdot>\<^sub>H f`(\<one>\<^sub>G)"
     using f_hom[OF eG eG] neut by auto 
-  then have "((f`(\<one>\<^sub>G))¯⇩H)\<cdot>\<^sub>H(f`(\<one>\<^sub>G)) = ((f`(\<one>\<^sub>G))¯⇩H)\<cdot>\<^sub>H(f`(\<one>\<^sub>G) \<cdot>\<^sub>H f`(\<one>\<^sub>G))" by auto
+  then have "((f`(\<one>\<^sub>G))\<inverse>\<^sub>H)\<cdot>\<^sub>H(f`(\<one>\<^sub>G)) = ((f`(\<one>\<^sub>G))\<inverse>\<^sub>H)\<cdot>\<^sub>H(f`(\<one>\<^sub>G) \<cdot>\<^sub>H f`(\<one>\<^sub>G))" by auto
   with fval show ?thesis
     using tgt.group0_2_L6 tgt.group_oper_assoc tgt.inverse_in_group
       tgt.group0_2_L2 by auto
@@ -417,16 +417,16 @@ proof -
     have "?\<ff>`(GroupInv(G//r,\<P>)`b\<^sub>2) = GroupInv(f``G,restrict(F,f``G \<times> f``G))`(?\<ff>`b\<^sub>2)"
       using group_homo.f_inv[of "G//r" \<P> "f``G" "restrict(F,f``G\<times>f``G)"  ?\<ff>] 
         HOM image_is_group Gq AS(3) unfolding group_homo_def IsAsubgroup_def by auto
-    moreover from rr AS(2) invb2 have "restrict(F, f `` G × f `` G) `
-          ⟨?\<ff> ` b⇩1,
-           ?\<ff> ` (GroupInv(G // r, 𝒫) `b⇩2)⟩ =
+    moreover from rr AS(2) invb2 have "restrict(F, f `` G \<times> f `` G) `
+          \<langle>?\<ff> ` b\<^sub>1,
+           ?\<ff> ` (GroupInv(G // r, \<P>) `b\<^sub>2)\<rangle> =
           ?\<ff> `
-          (𝒫 ` ⟨b⇩1, GroupInv(G // r, 𝒫) `b⇩2⟩)" 
+          (\<P> ` \<langle>b\<^sub>1, GroupInv(G // r, \<P>) `b\<^sub>2\<rangle>)" 
       by auto moreover
     note AS(1) ultimately
-    have "restrict(F, f `` G × f `` G) `
-          ⟨?\<ff> ` b⇩2,
-            GroupInv(f``G,restrict(F,f``G \<times> f``G))`(?\<ff>`b⇩2)⟩ =
+    have "restrict(F, f `` G \<times> f `` G) `
+          \<langle>?\<ff> ` b\<^sub>2,
+            GroupInv(f``G,restrict(F,f``G \<times> f``G))`(?\<ff>`b\<^sub>2)\<rangle> =
           f`g" using E by auto
     then have "TheNeutralElement(f``G, restrict(F,f``G\<times>f``G)) = f`g"
       using fff(2) group0.group0_2_L6[of "f``G" "restrict(F,f``G\<times>f``G)" "?\<ff>`b\<^sub>2"] image_is_group unfolding IsAsubgroup_def
@@ -435,7 +435,7 @@ proof -
       by simp
     with f_is_fun gG have "g \<in> ker" using func1_1_L15 by simp
     with origin gG gg have "\<P>`\<langle>b\<^sub>1,GroupInv(G//r,\<P>)`b\<^sub>2\<rangle> = TheNeutralElement(G//r,\<P>)"
-      using org.Group_ZF_2_4_L5E[OF kernel_normal_subgroup, of g r " TheNeutralElement(G // r, 𝒫)"]
+      using org.Group_ZF_2_4_L5E[OF kernel_normal_subgroup, of g r " TheNeutralElement(G // r, \<P>)"]
       unfolding r_def group0_def \<P>_def by auto
     with AS(2,3) Gq have "b\<^sub>1 = b\<^sub>2" using group0.group0_2_L11A unfolding group0_def by auto
   } with ff_fun have "?\<ff> \<in> inj(G//r, f``G)" unfolding inj_def by blast
@@ -932,10 +932,10 @@ proof (intro conjI)
     interpret h_hom: group_homo H F D R h 
       "TheNeutralElement(H,F)" "\<lambda>x y. F`\<langle>x,y\<rangle>"
       "\<lambda>x. GroupInv(H,F)`x" "\<lambda>s. Fold(F, TheNeutralElement(H, F),s)"
-      "\<lambda>n x.  Fold(F, TheNeutralElement(H, F), {⟨k, x⟩ . k ∈ n})"
+      "\<lambda>n x.  Fold(F, TheNeutralElement(H, F), {\<langle>k, x\<rangle> . k \<in> n})"
       "TheNeutralElement(D,R)" "\<lambda>x y. R`\<langle>x,y\<rangle>"
       "\<lambda>x. GroupInv(D,R)`x" "\<lambda>s. Fold(R, TheNeutralElement(D, R),s)"
-      "\<lambda>n x.  Fold(R, TheNeutralElement(D, R), {⟨k, x⟩ . k ∈ n})"
+      "\<lambda>n x.  Fold(R, TheNeutralElement(D, R), {\<langle>k, x\<rangle> . k \<in> n})"
       using target Dgrp hHom unfolding group_homo_def by simp
     have hfun: "h: H \<rightarrow> D" using h_hom.f_is_fun .
     have im_in_ker: "\<forall>x \<in> f``G. h`x = ?e\<^sub>D"
@@ -995,15 +995,15 @@ proof (intro conjI)
           unfolding quotient_def by auto
         from b1(1) b2(1) have b12H: "F`\<langle>b\<^sub>1,b\<^sub>2\<rangle> \<in> H"
           using tgt.group_op_closed tgt.groper_def by (simp only:)
-        have "Q`\<langle>c\<^sub>1,c\<^sub>2\<rangle> = ProjFun2(H, QuotientGroupRel(H, F, f `` G), F) `⟨c⇩1, c⇩2⟩"
+        have "Q`\<langle>c\<^sub>1,c\<^sub>2\<rangle> = ProjFun2(H, QuotientGroupRel(H, F, f `` G), F) `\<langle>c\<^sub>1, c\<^sub>2\<rangle>"
           unfolding Q_def QuotientGroupOp_def by auto
         with b1(2) b2(2) have opQ:
           "Q`\<langle>c\<^sub>1,c\<^sub>2\<rangle> = r``{F`\<langle>b\<^sub>1,b\<^sub>2\<rangle>}"
           using Group_ZF_2_4_L5A[OF target norm] tgt.Group_ZF_2_2_L2[OF equiv_r _ _ b1(1) b2(1), of "ProjFun2(H,r,F)"]
           unfolding Q_def r_def tgt.groper_def by (simp only:)
-        from b12H have Fh:"\<langle>r ``{F ` ⟨b⇩1, b⇩2⟩},h`(F ` ⟨b⇩1, b⇩2⟩)\<rangle>:?h" by blast
+        from b12H have Fh:"\<langle>r ``{F ` \<langle>b\<^sub>1, b\<^sub>2\<rangle>},h`(F ` \<langle>b\<^sub>1, b\<^sub>2\<rangle>)\<rangle>:?h" by blast
         have lhs: "?h`(Q`\<langle>c\<^sub>1,c\<^sub>2\<rangle>) = h`(F`\<langle>b\<^sub>1,b\<^sub>2\<rangle>)"
-          apply (rule apply_equality[OF _ bhfun, of "Q ` ⟨c⇩1, c⇩2⟩"
+          apply (rule apply_equality[OF _ bhfun, of "Q ` \<langle>c\<^sub>1, c\<^sub>2\<rangle>"
               "h`(F`\<langle>b\<^sub>1,b\<^sub>2\<rangle>)"]) using opQ Fh by (simp only:sym) 
         from b1(1) b2(1) have hprod: "h`(F`\<langle>b\<^sub>1,b\<^sub>2\<rangle>) = R`\<langle>h`b\<^sub>1, h`b\<^sub>2\<rangle>"
           using h_hom.f_hom by (simp only:)

@@ -210,7 +210,7 @@ lemma (in ses_chain_complex) conn_lift_maps:
   assumes "n \<in> ints" "b \<in> B(n)" "g(n)`b \<in> bc.tgt.Cycles(n)"
   shows "f(n \<rs> \<one>)`(conn_lift(n, b)) = dB(n)`b"
   unfolding conn_lift_def
-  using theI2[OF conn_lift_exists[OF assms], of "\<lambda>x.  f(n \<rs> 𝟭) ` x = dB(n) ` b"] by blast
+  using theI2[OF conn_lift_exists[OF assms], of "\<lambda>x.  f(n \<rs> \<one>) ` x = dB(n) ` b"] by blast
 
 lemma (in ses_chain_complex) conn_lift_in_A:
   assumes "n \<in> ints" "b \<in> B(n)" "g(n)`b \<in> bc.tgt.Cycles(n)"
@@ -576,25 +576,25 @@ proof -
   have grpCyc: "IsAgroup(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>))"
     using ab.src.cycles_is_group[OF pn] .
   from rel cl_spec_zero
-  have " ⟨conn_lift(n, b), ab.src.zero_C(n \<rs> 𝟭)⟩ ∈
-    QuotientGroupRel(ab.src.Cycles(n \<rs> 𝟭),
-      restrict(PA(n \<rs> 𝟭),
-        ab.src.Cycles(n \<rs> 𝟭) ×
-        ab.src.Cycles(n \<rs> 𝟭)),
-      ab.src.Boundaries(n \<rs> 𝟭))" by auto
+  have " \<langle>conn_lift(n, b), ab.src.zero_C(n \<rs> \<one>)\<rangle> \<in>
+    QuotientGroupRel(ab.src.Cycles(n \<rs> \<one>),
+      restrict(PA(n \<rs> \<one>),
+        ab.src.Cycles(n \<rs> \<one>) \<times>
+        ab.src.Cycles(n \<rs> \<one>)),
+      ab.src.Boundaries(n \<rs> \<one>))" by auto
   then have rel2: "ab.src.CycleOp(n \<rs> \<one>)`\<langle>conn_lift(n, b),
                GroupInv(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>))`
                  (TheNeutralElement(A(n \<rs> \<one>), PA(n \<rs> \<one>)))\<rangle> \<in>
                ab.src.Boundaries(n \<rs> \<one>)"
     unfolding QuotientGroupRel_def by auto
-  have subgCycles:"IsAsubgroup(ab.src.Cycles(n \<rs> 𝟭), PA(n \<rs> 𝟭))"
+  have subgCycles:"IsAsubgroup(ab.src.Cycles(n \<rs> \<one>), PA(n \<rs> \<one>))"
     using  chain_complex.cycles_is_subgroup[of A PA dA "n\<rs>\<one>"] pn ses_cplx_A
     unfolding chain_complex_def by auto
-  then have neu_cyc_eq:"TheNeutralElement(ab.src.Cycles(n \<rs> 𝟭),
-      restrict(PA(n \<rs> 𝟭),
-        ab.src.Cycles(n \<rs> 𝟭) ×
-        ab.src.Cycles(n \<rs> 𝟭))) =
-    ab.src.zero_C(n \<rs> 𝟭)" using group0.group0_3_L4[of "A(n\<rs>\<one>)" "PA(n\<rs>\<one>)" "ab.src.Cycles(n \<rs> 𝟭)"]
+  then have neu_cyc_eq:"TheNeutralElement(ab.src.Cycles(n \<rs> \<one>),
+      restrict(PA(n \<rs> \<one>),
+        ab.src.Cycles(n \<rs> \<one>) \<times>
+        ab.src.Cycles(n \<rs> \<one>))) =
+    ab.src.zero_C(n \<rs> \<one>)" using group0.group0_3_L4[of "A(n\<rs>\<one>)" "PA(n\<rs>\<one>)" "ab.src.Cycles(n \<rs> \<one>)"]
     unfolding group0_def using ab.src.cplx_group pn by auto
   then have inv_neu: "GroupInv(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>))`
                    (TheNeutralElement(A(n \<rs> \<one>), PA(n \<rs> \<one>))) =
@@ -605,27 +605,27 @@ proof -
   have conn_lift_is_cl_b: "conn_lift(n, b) \<in> ab.src.Cycles(n \<rs> \<one>)"
     using conn_lift_in_cycles[OF n bB cyc] .
   from inv_neu have "restrict
-     (PA(n \<rs> 𝟭),
-      ab.src.Cycles(n \<rs> 𝟭) ×
-      ab.src.Cycles(n \<rs> 𝟭)) `
-    ⟨conn_lift(n, b),
+     (PA(n \<rs> \<one>),
+      ab.src.Cycles(n \<rs> \<one>) \<times>
+      ab.src.Cycles(n \<rs> \<one>)) `
+    \<langle>conn_lift(n, b),
      GroupInv
-      (ab.src.Cycles(n \<rs> 𝟭),
+      (ab.src.Cycles(n \<rs> \<one>),
        restrict
-        (PA(n \<rs> 𝟭),
-         ab.src.Cycles(n \<rs> 𝟭) ×
-         ab.src.Cycles(n \<rs> 𝟭))) `
-     ab.src.zero_C(n \<rs> 𝟭)⟩ = restrict
-     (PA(n \<rs> 𝟭),
-      ab.src.Cycles(n \<rs> 𝟭) ×
-      ab.src.Cycles(n \<rs> 𝟭)) `
-    ⟨conn_lift(n, b),
+        (PA(n \<rs> \<one>),
+         ab.src.Cycles(n \<rs> \<one>) \<times>
+         ab.src.Cycles(n \<rs> \<one>))) `
+     ab.src.zero_C(n \<rs> \<one>)\<rangle> = restrict
+     (PA(n \<rs> \<one>),
+      ab.src.Cycles(n \<rs> \<one>) \<times>
+      ab.src.Cycles(n \<rs> \<one>)) `
+    \<langle>conn_lift(n, b),
      TheNeutralElement
-     (ab.src.Cycles(n \<rs> 𝟭),
+     (ab.src.Cycles(n \<rs> \<one>),
       restrict
-       (PA(n \<rs> 𝟭),
-        ab.src.Cycles(n \<rs> 𝟭) ×
-        ab.src.Cycles(n \<rs> 𝟭)))⟩" by auto
+       (PA(n \<rs> \<one>),
+        ab.src.Cycles(n \<rs> \<one>) \<times>
+        ab.src.Cycles(n \<rs> \<one>)))\<rangle>" by auto
   with rel2 neu_cyc_eq have "ab.src.CycleOp(n \<rs> \<one>)`\<langle>conn_lift(n, b),
          TheNeutralElement(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>))\<rangle> \<in>
         ab.src.Boundaries(n \<rs> \<one>)"
@@ -1039,15 +1039,15 @@ proof -
         unfolding bc.tgt.HnOp_def QuotientGroupOp_def group0_def by auto
       have g_b_sum': "g(n)`(b1 \<ra>\<^sup>B\<^bsub>n\<^esub> b2) = bc.tgt.CycleOp(n)`\<langle>c1, c2\<rangle>"
         using g_b_sum cycop_c_eq by simp
-      have prd_m:"⟨QuotientGroupRel
-       (bc.tgt.Cycles(n), restrict(PC(n), bc.tgt.Cycles(n) × bc.tgt.Cycles(n)),
+      have prd_m:"\<langle>QuotientGroupRel
+       (bc.tgt.Cycles(n), restrict(PC(n), bc.tgt.Cycles(n) \<times> bc.tgt.Cycles(n)),
         bc.tgt.Boundaries(n)) ``
       {g(n) ` (b1 \<ra>\<^sup>B\<^bsub>n\<^esub> b2)},
       QuotientGroupRel
-       (ab.src.Cycles(n \<rs> 𝟭),
-        restrict(PA(n \<rs> 𝟭), ab.src.Cycles(n \<rs> 𝟭) × ab.src.Cycles(n \<rs> 𝟭)),
-        ab.src.Boundaries(n \<rs> 𝟭)) ``
-      {conn_lift(n, b1 \<ra>\<^sup>B\<^bsub>n\<^esub> b2)}⟩\<in>?M" using M_eq b_sum_lft by auto
+       (ab.src.Cycles(n \<rs> \<one>),
+        restrict(PA(n \<rs> \<one>), ab.src.Cycles(n \<rs> \<one>) \<times> ab.src.Cycles(n \<rs> \<one>)),
+        ab.src.Boundaries(n \<rs> \<one>)) ``
+      {conn_lift(n, b1 \<ra>\<^sup>B\<^bsub>n\<^esub> b2)}\<rangle>\<in>?M" using M_eq b_sum_lft by auto
       then have pair_sum: "\<langle>?Rc``{bc.tgt.CycleOp(n)`\<langle>c1, c2\<rangle>},
                        ?Ra``{conn_lift(n, b1 \<ra>\<^sup>B\<^bsub>n\<^esub> b2)}\<rangle> \<in> ?M"
         using g_b_sum' by auto
@@ -1507,16 +1507,16 @@ proof -
           using group_homo.f_inv[OF hg b_spec_B] .
         have e3: "PC(n)`\<langle>g(n)`b, GroupInv(C(n),PC(n))`(g(n)`b)\<rangle> = bc.tgt.zero_C(n)"
           using group0.group0_2_L6[of "C(n)" "PC(n)"] gnb_C grpC unfolding group0_def by simp
-        have "g(n) ` (\<rm>⇧B⇘n⇙ dB(n \<ra> 𝟭) ` b') = \<rm>⇧C⇘n⇙ (g(n) ` b)" 
-          using e2 subst[OF g_b_spec, of "\<lambda>q. g(n) ` (\<rm>⇧B⇘n⇙ dB(n \<ra> 𝟭) ` b') = \<rm>⇧C⇘n⇙ q"]
+        have "g(n) ` (\<rm>\<^sup>B\<^bsub>n\<^esub> dB(n \<ra> \<one>) ` b') = \<rm>\<^sup>C\<^bsub>n\<^esub> (g(n) ` b)" 
+          using e2 subst[OF g_b_spec, of "\<lambda>q. g(n) ` (\<rm>\<^sup>B\<^bsub>n\<^esub> dB(n \<ra> \<one>) ` b') = \<rm>\<^sup>C\<^bsub>n\<^esub> q"]
           by blast
         with e1 e3 show ?thesis by (simp only:)
       qed
       let ?diff = "PB(n)`\<langle>b, GroupInv(B(n),PB(n))`?b_spec\<rangle>"
       have diff_B: "?diff \<in> B(n)"
         using BnGrp.group_op_closed bB inv_bs_B .
-      have " b \<ra>⇧B⇘n⇙ \<rm>⇧B⇘n⇙ dB(n \<ra> 𝟭) ` b' ∈
-         {x ∈ B(n) . g(n) ` x ∈ {bc.tgt.zero_C(n)}}" using diff_B
+      have " b \<ra>\<^sup>B\<^bsub>n\<^esub> \<rm>\<^sup>B\<^bsub>n\<^esub> dB(n \<ra> \<one>) ` b' \<in>
+         {x \<in> B(n) . g(n) ` x \<in> {bc.tgt.zero_C(n)}}" using diff_B
         g_diff_zero by blast
       then have diff_ker: "?diff \<in> g(n)-``{bc.tgt.zero_C(n)}"
         using func1_1_L15[OF gn_fun, of "{bc.tgt.zero_C(n)}"] 
@@ -1609,8 +1609,8 @@ proof -
           "GroupInv(ab.tgt.Cycles(n), ab.tgt.CycleOp(n))`?b_spec \<in> ab.tgt.Boundaries(n)"
           using BnCyc.group0_3_T3A[OF ab.tgt.boundaries_subgroup_cycles[OF n]] b_spec_bnd by auto
         from inv_b_eq b_spec_cyc have "GroupInv(ab.tgt.Cycles(n), restrict(PB(n),
-           ab.tgt.Cycles(n) × ab.tgt.Cycles(n))) ` (dB(n \<ra> 𝟭) ` b') = 
-            \<rm>⇧B⇘n⇙ (dB(n \<ra> 𝟭) ` b')"
+           ab.tgt.Cycles(n) \<times> ab.tgt.Cycles(n))) ` (dB(n \<ra> \<one>) ` b') = 
+            \<rm>\<^sup>B\<^bsub>n\<^esub> (dB(n \<ra> \<one>) ` b')"
           by blast
           with inv_bspec_cyc show ?thesis by (simp only:)
       qed
@@ -1911,7 +1911,7 @@ proof -
         from e1 e2 e3 e5 show ?thesis by (auto simp only:)
       qed
       have b'_cyc: "?b' \<in> ab.tgt.Cycles(n)"
-        using b'_B dBb' func1_1_L15[OF dBn_fun, of "{ab.tgt.zero_C(n \<rs> 𝟭)}"]
+        using b'_B dBb' func1_1_L15[OF dBn_fun, of "{ab.tgt.zero_C(n \<rs> \<one>)}"]
         by (auto simp only:)
       have pair: "\<langle>?Rb``{?b'}, ?Rc``{g(n)`?b'}\<rangle> \<in> bc.Hn_map(n)"
         unfolding bc.Hn_map_def using b'_cyc by (auto simp only:)
@@ -1919,7 +1919,7 @@ proof -
         using b'_cyc equiv_b unfolding ab.tgt.Hn_def quotient_def by (auto simp only:)
       have bc_Y: "bc.Hn_map(n)`(?Rb``{?b'}) = ?Rc``{c}"
         using apply_equality[OF pair bc_map_fun] g_b' by (auto simp only:)
-      from Y_Hn have "bc.Hn_map(n)`(?Rb``{?b'})\<in>{bc.Hn_map(n) ` x . x ∈ ab.tgt.Hn(n)}" by blast
+      from Y_Hn have "bc.Hn_map(n)`(?Rb``{?b'})\<in>{bc.Hn_map(n) ` x . x \<in> ab.tgt.Hn(n)}" by blast
       then have "bc.Hn_map(n)`(?Rb``{?b'})\<in>bc.Hn_map(n)``ab.tgt.Hn(n)"
         using func_imagedef[OF bc_map_fun subset_refl] by (auto simp only:)
       with bc_Y have "?Rc``{c}\<in>bc.Hn_map(n)``ab.tgt.Hn(n)" by (auto simp only:)
@@ -2497,22 +2497,22 @@ proof(safe)
       have "(n\<ra>\<one>) zmod \<three> = ((n zmod \<three>)\<ra>\<one>)zmod \<three>"
         using zmod_add_left[OF n Int_ZF_1_L8A(2)] int_two_three_are_int(2) by auto
       with A have B:"(n\<ra>\<one>) zmod \<three> = \<two> zmod \<three>" by auto
-      have T: "𝟬∈ℤ" "𝟭∈ℤ" "𝟮∈ℤ" "𝟯∈ℤ"
+      have T: "\<zero>\<in>\<int>" "\<one>\<in>\<int>" "\<two>\<in>\<int>" "\<three>\<in>\<int>"
         using int_zero_one_are_int int_two_three_are_int by auto
-      have lt23: "𝟮 $< 𝟯"
+      have lt23: "\<two> $< \<three>"
       proof -
-        have "𝟮 \<lsq> 𝟯" using T(3) Int_ZF_2_L12B by simp
-        moreover have "𝟮 ≠ 𝟯" using Int_ZF_1_L14(1)[OF T(3)] by auto
+        have "\<two> \<lsq> \<three>" using T(3) Int_ZF_2_L12B by simp
+        moreover have "\<two> \<noteq> \<three>" using Int_ZF_1_L14(1)[OF T(3)] by auto
         ultimately show ?thesis using Int_ZF_2_L9 by auto
       qed
-      have le02: "𝟬 \<lsq> 𝟮"
+      have le02: "\<zero> \<lsq> \<two>"
       proof -
-        have "𝟬 \<lsq> 𝟭" using T Int_ZF_2_L12B[of 𝟬] Int_ZF_1_1_L4 by simp
-        moreover have "𝟭 \<lsq> 𝟮" using Int_ZF_2_L16B by simp
+        have "\<zero> \<lsq> \<one>" using T Int_ZF_2_L12B[of \<zero>] Int_ZF_1_1_L4 by simp
+        moreover have "\<one> \<lsq> \<two>" using Int_ZF_2_L16B by simp
         ultimately show ?thesis using Int_order_transitive by auto
       qed
-      have h1: "#0 $≤ 𝟮" using le02 Int_ZF_2_L1A Int_ZF_1_L8 by auto
-      have two_mod: "𝟮 zmod 𝟯 = 𝟮"
+      have h1: "#0 $\<le> \<two>" using le02 Int_ZF_2_L1A Int_ZF_1_L8 by auto
+      have two_mod: "\<two> zmod \<three> = \<two>"
       using zmod_pos_pos_trivial[OF h1 lt23] T(3) intify_ident by auto
       with B have nn:"(n\<ra>\<one>) zmod \<three> = \<two>" by auto
       have C:"n\<ra>\<one>\<ra>\<one> = n\<ra>\<two>" using Int_ZF_1_1_L7(1)
@@ -2552,7 +2552,7 @@ proof(safe)
         unfolding les_d_def using nm1_mod one_neq_zero one_neq_two by simp
       have d_nm1_k: "les_d((n \<ra> \<one>) \<rs> \<one>) = delta(?k)"
         using d_nm1 nm1T by simp
-      have  "les_G((n \<ra> \<one>) \<rs> \<one> \<rs> \<one>) = ab.src.Hn((n \<rs> 𝟭) zdiv 𝟯)"
+      have  "les_G((n \<ra> \<one>) \<rs> \<one> \<rs> \<one>) = ab.src.Hn((n \<rs> \<one>) zdiv \<three>)"
         unfolding les_G_def using nm2_mod nn nm1T by simp
       then have G_nm2:"les_G((n \<ra> \<one>) \<rs> \<one> \<rs> \<one>) = ab.src.Hn(?k\<rs>\<one>)" using zdiv_minus_one[OF n] by auto
       have  "les_opG((n \<ra> \<one>) \<rs> \<one> \<rs> \<one>) = ab.src.HnOp((n \<rs> \<one>) zdiv \<three>)"
@@ -2569,7 +2569,7 @@ proof(safe)
       let ?k="(n zdiv \<three>)\<ra>\<one>"
       have kT: "?k \<in> ints" using zdiv_type Int_ZF_1_L8A(2) Int_ZF_1_1_L5(1) by simp
       have C:"(n\<ra>\<one>) zmod \<three> = \<one>" using zmod_0_plus_one n as by auto
-      have eq:"(n \<ra> 𝟭 \<ra> 𝟮) zdiv 𝟯 = ?k" 
+      have eq:"(n \<ra> \<one> \<ra> \<two>) zdiv \<three> = ?k" 
         using Int_ZF_1_L8A(2) n int_two_three_are_int(1) Int_ZF_1_1_L7(1) Int_ZF_1_1_L5(4)
           zdiv_add_three by auto
       have nm1T: "(n\<ra>\<one>) \<rs> \<one> = n"
@@ -2581,7 +2581,7 @@ proof(safe)
       have one_neq_zero: "\<one> \<noteq> \<zero>" using int_zero_not_one by auto
       have one_neq_two: "\<one> \<noteq> \<two>"
         using Int_ZF_1_L14(1)[OF Int_ZF_1_L8A(2)] by auto
-      have "les_G(n \<ra> \<one>) = bc.tgt.Hn((n \<ra> 𝟭 \<ra> 𝟮) zdiv 𝟯)"
+      have "les_G(n \<ra> \<one>) = bc.tgt.Hn((n \<ra> \<one> \<ra> \<two>) zdiv \<three>)"
         unfolding les_G_def using one_neq_zero one_neq_two C by simp
       then have G_n:"les_G(n \<ra> \<one>) = bc.tgt.Hn(?k)"
         using eq n by auto
@@ -2963,8 +2963,8 @@ proof -
   then have diff_b_ker_g: "?diff_b \<in> f``A"
     using func1_1_L15[OF g_fun, of "{TheNeutralElement(C,PC)}"] 
       diff_b_B row1_im_eq_ker by (auto simp only:)
-  have im:"f `` A = {f ` x . x ∈ A}" using func_imagedef[OF f_fun] by auto
-  then have "?diff_b\<in>{f ` x . x ∈ A}" using diff_b_ker_g by (auto simp only:)
+  have im:"f `` A = {f ` x . x \<in> A}" using func_imagedef[OF f_fun] by auto
+  then have "?diff_b\<in>{f ` x . x \<in> A}" using diff_b_ker_g by (auto simp only:)
   then obtain aa where aaA: "aa \<in> A" and f_aa: "?diff_b = f`aa"
     by blast 
   have \<alpha>aa_A': "\<alpha>`aa \<in> A'" using \<alpha>_fun aaA apply_type by (auto simp only:)
@@ -3019,10 +3019,10 @@ proof -
   proof -
     have A:"\<langle>?a\<^sub>1, ?a\<^sub>2\<rangle> \<in> A' \<times> A'" using a1_A' a2_A' by simp
     from diff_a1_a2 have "PA'`\<langle>?a\<^sub>1, GroupInv(A',PA')`?a\<^sub>2\<rangle> = \<alpha>`aa" by (auto simp only:)
-    then have E:"PA'`\<langle>snake_a_of_b(b⇩1), GroupInv(A',PA')`snake_a_of_b(b⇩2)\<rangle> \<in> {\<alpha>`x. x\<in>A}"
+    then have E:"PA'`\<langle>snake_a_of_b(b\<^sub>1), GroupInv(A',PA')`snake_a_of_b(b\<^sub>2)\<rangle> \<in> {\<alpha>`x. x\<in>A}"
       using aaA by (auto simp only:)
     have "\<alpha>``A = {\<alpha>`x. x\<in>A}" using func_imagedef[OF \<alpha>_fun, of A] by auto
-    with E have "PA'`\<langle>snake_a_of_b(b⇩1), GroupInv(A',PA')`snake_a_of_b(b⇩2)\<rangle> \<in> \<alpha>``A"
+    with E have "PA'`\<langle>snake_a_of_b(b\<^sub>1), GroupInv(A',PA')`snake_a_of_b(b\<^sub>2)\<rangle> \<in> \<alpha>``A"
       by (auto simp only:)
     with A show ?thesis unfolding QuotientGroupRel_def by (auto simp only: split)
   qed
@@ -3194,14 +3194,14 @@ proof -
         unfolding snake_delta_def using c1K b1B gb1 by auto
       have pair2: "\<langle>c\<^sub>2, ?R``{?a\<^sub>2}\<rangle> \<in> snake_delta"
         unfolding snake_delta_def using c2K b2B gb2 by auto
-      have "\<langle>PC ` ⟨c⇩1, c⇩2⟩,PB ` ⟨b⇩1, b⇩2⟩\<rangle>\<in> {p ∈ ker_γ × B .
+      have "\<langle>PC ` \<langle>c\<^sub>1, c\<^sub>2\<rangle>,PB ` \<langle>b\<^sub>1, b\<^sub>2\<rangle>\<rangle>\<in> {p \<in> ker_\<gamma> \<times> B .
            g ` snd(p) = fst(p)}" using sum_ker b12B g_b12 by (auto simp only:fst_conv snd_conv)
-      then have "⟨fst(\<langle>PC ` ⟨c⇩1, c⇩2⟩,PB ` ⟨b⇩1, b⇩2⟩\<rangle>),
-      QuotientGroupRel(A', PA', α `` A) ``
-      {snake_a_of_b(snd(\<langle>PC ` ⟨c⇩1, c⇩2⟩,PB ` ⟨b⇩1, b⇩2⟩\<rangle>))}⟩ \<in> snake_delta"
+      then have "\<langle>fst(\<langle>PC ` \<langle>c\<^sub>1, c\<^sub>2\<rangle>,PB ` \<langle>b\<^sub>1, b\<^sub>2\<rangle>\<rangle>),
+      QuotientGroupRel(A', PA', \<alpha> `` A) ``
+      {snake_a_of_b(snd(\<langle>PC ` \<langle>c\<^sub>1, c\<^sub>2\<rangle>,PB ` \<langle>b\<^sub>1, b\<^sub>2\<rangle>\<rangle>))}\<rangle> \<in> snake_delta"
         unfolding snake_delta_def by (auto simp only:)
-      then have pair12:"\<langle>PC`\<langle>c⇩1, c⇩2⟩, QuotientGroupRel(A', PA', α `` A) ``
-      {snake_a_of_b(PB ` ⟨b⇩1, b⇩2⟩)}⟩ \<in> snake_delta" by (simp only:fst_conv snd_conv)
+      then have pair12:"\<langle>PC`\<langle>c\<^sub>1, c\<^sub>2\<rangle>, QuotientGroupRel(A', PA', \<alpha> `` A) ``
+      {snake_a_of_b(PB ` \<langle>b\<^sub>1, b\<^sub>2\<rangle>)}\<rangle> \<in> snake_delta" by (simp only:fst_conv snd_conv)
       from pair1 delta_fun have step1: "snake_delta`c\<^sub>1 = ?R``{?a\<^sub>1}"
         using apply_equality by simp
       from pair2 delta_fun have step2: "snake_delta`c\<^sub>2 = ?R``{?a\<^sub>2}"
