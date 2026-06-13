@@ -99,7 +99,7 @@ lemma (in chain_complex) bnd_sq_zero_elem:
   assumes "n \<in> ints" and "x \<in> C(n)"
   shows "d(n \<rs> \<one>)`(d(n)`x) = zero_C(n \<rs> \<one>\<rs> \<one>)"
 proof -
-  from assms(1) have pn: "n\<rs> \<one> \<in> int" using Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+  from assms(1) have pn: "n\<rs> \<one> \<in> int" using Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   from assms(1) have fn: "d(n) : C(n) \<rightarrow> C(n \<rs> \<one>)"
     using cplx_hom isub_def Int_ZF_1_L10 unfolding Homomor_def by simp
   from fn assms(2) have bx: "d(n)`x \<in> C(n \<rs>\<one>)" using apply_type by simp
@@ -122,9 +122,9 @@ lemma (in chain_complex) bnd_sq_zero_2:
 proof -
   let ?e = "zero_C(n \<rs> \<one>\<rs> \<one>)"
   from assms have pn: "n \<rs> \<one> \<in> ints"
-    using Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   from pn have ppn: "n \<rs> \<one> \<rs> \<one> \<in> ints"
-    using Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   from assms have fn: "d(n) : C(n) \<rightarrow> C(n \<rs> \<one>)"
     using cplx_hom unfolding Homomor_def by simp
   from pn have fpn: "d(n \<rs> \<one>) : C(n \<rs> \<one>) \<rightarrow> C(n\<rs> \<one>\<rs> \<one>)"

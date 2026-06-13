@@ -164,7 +164,7 @@ lemma (in ses_chain_complex) conn_lift_exists:
   shows "\<exists>!x. x \<in> A(n \<rs> \<one>) \<and> f(n \<rs> \<one>)`x = dB(n)`b"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp 
   have dBn_fun: "dB(n) : B(n) \<rightarrow> B(n \<rs> \<one>)"
     using ses_cplx_B n unfolding IsAchainComplex_def Homomor_def by auto
   have dBb_B: "dB(n)`b \<in> B(n \<rs> \<one>)"
@@ -225,9 +225,9 @@ lemma (in ses_chain_complex) conn_lift_in_cycles:
   shows "conn_lift(n, b) \<in> ab.src.Cycles(n \<rs> \<one>)"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have ppn: "n \<rs> \<one> \<rs> \<one> \<in> ints"
-    using pn Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using pn Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   let ?cl = "conn_lift(n, b)"
   have clA: "?cl \<in> A(n \<rs> \<one>)" using conn_lift_in_A[OF assms] .
   have fn_maps: "f(n \<rs> \<one>)`?cl = dB(n)`b" using conn_lift_maps[OF assms] .
@@ -287,7 +287,7 @@ lemma (in ses_chain_complex) conn_lift_indep:
     QuotientGroupRel(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>), ab.src.Boundaries(n \<rs> \<one>))"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have cyc2: "g(n)`b2 \<in> bc.tgt.Cycles(n)" using cyc eq by simp
   have cl1_A: "conn_lift(n, b1) \<in> A(n \<rs> \<one>)" using conn_lift_in_A[OF n b1 cyc] .
   have cl2_A: "conn_lift(n, b2) \<in> A(n \<rs> \<one>)" using conn_lift_in_A[OF n b2 cyc2] .
@@ -467,7 +467,7 @@ lemma (in ses_chain_complex) conn_lift_bnd_to_bnd:
   shows "conn_lift(n, b) \<in> ab.src.Boundaries(n \<rs> \<one>)"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have np: "n \<ra> \<one> \<in> ints"
     using n Int_ZF_1_L8A(2) Int_ZF_1_T2(3) group0.group_op_closed by simp
   have arith_np: "(n \<ra> \<one>) \<rs> \<one> = n"
@@ -654,7 +654,7 @@ lemma (in ses_chain_complex) delta_fun:
   shows "delta(n) : bc.tgt.Hn(n) \<rightarrow> ab.src.Hn(n \<rs> \<one>)"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   let ?Lft = "{x \<in> B(n). g(n)`x \<in> bc.tgt.Cycles(n)}"
   let ?Rc = "QuotientGroupRel(bc.tgt.Cycles(n), bc.tgt.CycleOp(n), bc.tgt.Boundaries(n))"
   let ?Ra = "QuotientGroupRel(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>), ab.src.Boundaries(n \<rs> \<one>))"
@@ -906,7 +906,7 @@ theorem (in ses_chain_complex) delta_is_hom:
                  ab.src.Hn(n \<rs> \<one>), ab.src.HnOp(n \<rs> \<one>))"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   let ?Lft = "{x \<in> B(n). g(n)`x \<in> bc.tgt.Cycles(n)}"
   let ?Rc = "QuotientGroupRel(bc.tgt.Cycles(n), bc.tgt.CycleOp(n), bc.tgt.Boundaries(n))"
   let ?Ra = "QuotientGroupRel(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>), ab.src.Boundaries(n \<rs> \<one>))"
@@ -1084,7 +1084,7 @@ proof -
   let ?Ra = "QuotientGroupRel(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>), ab.src.Boundaries(n \<rs> \<one>))"
   let ?Rb = "QuotientGroupRel(ab.tgt.Cycles(n \<rs> \<one>), ab.tgt.CycleOp(n \<rs> \<one>), ab.tgt.Boundaries(n \<rs> \<one>))"
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have M_fun: "ab.Hn_map(n \<rs> \<one>) : ab.src.Hn(n \<rs> \<one>) \<rightarrow> ab.tgt.Hn(n \<rs> \<one>)"
     using ab.Hn_map_is_hom[OF pn] unfolding Homomor_def by simp
   have pair: "\<langle>?Ra``{z}, ?Rb``{f(n \<rs> \<one>)`z}\<rangle> \<in> ab.Hn_map(n \<rs> \<one>)"
@@ -1101,7 +1101,7 @@ lemma (in ses_chain_complex) dBb_class_zero:
 proof -
   let ?Rb = "QuotientGroupRel(ab.tgt.Cycles(n \<rs> \<one>), ab.tgt.CycleOp(n \<rs> \<one>), ab.tgt.Boundaries(n \<rs> \<one>))"
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have arith: "(n \<rs> \<one>) \<ra> \<one> = n"
     using Int_ZF_1_L8A(2) group0.inv_cancel_two(1)[OF Int_ZF_1_T2(3)] n by simp
   have dBn_fun: "dB(n) : B(n) \<rightarrow> B(n \<rs> \<one>)"
@@ -1138,7 +1138,7 @@ theorem (in ses_chain_complex) les_exact_at_HnA:
                    ab.tgt.Hn(n \<rs> \<one>), ab.tgt.HnOp(n \<rs> \<one>))"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   let ?Ra = "QuotientGroupRel(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>), ab.src.Boundaries(n \<rs> \<one>))"
   let ?Rb = "QuotientGroupRel(ab.tgt.Cycles(n \<rs> \<one>), ab.tgt.CycleOp(n \<rs> \<one>), ab.tgt.Boundaries(n \<rs> \<one>))"
   let ?Rc = "QuotientGroupRel(bc.tgt.Cycles(n), bc.tgt.CycleOp(n), bc.tgt.Boundaries(n))"
@@ -1528,14 +1528,13 @@ proof -
       have a_cyc: "z \<in> ab.src.Cycles(n)"
       proof -
         have pn: "n \<rs> \<one> \<in> ints"
-          using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+          using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
         have fn_nm1_fun: "f(n \<rs> \<one>) : A(n \<rs> \<one>) \<rightarrow> B(n \<rs> \<one>)"
           using ses_map_f pn unfolding IsAchainMap_def Homomor_def by auto
         have fn_nm1_inj: "f(n \<rs> \<one>) \<in> inj(A(n \<rs> \<one>), B(n \<rs> \<one>))"
           using ses_f_inj[OF pn] .
         have dAn_fun: "dA(n) : A(n) \<rightarrow> A(n \<rs> \<one>)"
-          using ses_cplx_A n unfolding IsAchainComplex_def Homomor_def by auto
-        have dBn_fun: "dB(n) : B(n) \<rightarrow> B(n \<rs> \<one>)"
+          using ses_cplx_A n unfolding IsAchainComplex_def Homomor_def by auto       have dBn_fun: "dB(n) : B(n) \<rightarrow> B(n \<rs> \<one>)"
           using ses_cplx_B n unfolding IsAchainComplex_def Homomor_def by auto
         have grpBpn: "IsAgroup(B(n \<rs> \<one>), PB(n \<rs> \<one>))"
           using ses_cplx_B pn unfolding IsAchainComplex_def by auto
@@ -1678,7 +1677,7 @@ theorem (in ses_chain_complex) les_exact_at_HnC:
                    ab.src.Hn(n \<rs> \<one>), ab.src.HnOp(n \<rs> \<one>))"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   let ?Rb = "QuotientGroupRel(ab.tgt.Cycles(n), ab.tgt.CycleOp(n), ab.tgt.Boundaries(n))"
   let ?Rc = "QuotientGroupRel(bc.tgt.Cycles(n), bc.tgt.CycleOp(n), bc.tgt.Boundaries(n))"
   let ?Ra = "QuotientGroupRel(ab.src.Cycles(n \<rs> \<one>), ab.src.CycleOp(n \<rs> \<one>), ab.src.Boundaries(n \<rs> \<one>))"
@@ -1992,9 +1991,9 @@ proof -
   let ?k = "n zdiv \<three>"
   have kT: "?k \<in> ints" using zdiv_type by simp
   have nm1T: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have nm2T: "n \<rs> \<one> \<rs> \<one> \<in> ints"
-    using nm1T Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using nm1T Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have nm1_mod: "(n \<rs> \<one>) zmod \<three> = \<two>"
     using zmod_0_minus_one[OF n nmod] .
   have nm2_mod: "(n \<rs> \<one> \<rs> \<one>) zmod \<three> = \<one>"
@@ -2061,11 +2060,11 @@ proof -
   let ?k = "(n \<ra> \<one>) zdiv \<three>"
   have kT: "?k \<in> ints" using zdiv_type by simp
   have km1T: "?k \<rs> \<one> \<in> ints"
-    using kT Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using kT Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have nm1T: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have nm2T: "n \<rs> \<one> \<rs> \<one> \<in> ints"
-    using nm1T Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using nm1T Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have nm1_mod: "(n \<rs> \<one>) zmod \<three> = \<one>"
     using zmod_2_minus_one[OF n nmod] .
   have nm2_mod: "(n \<rs> \<one> \<rs> \<one>) zmod \<three> = \<zero>"
@@ -2156,11 +2155,11 @@ proof -
   let ?k = "(n \<ra> \<two>) zdiv \<three>"
   have kT: "?k \<in> ints" using zdiv_type by simp
   have km1T: "?k \<rs> \<one> \<in> ints"
-    using kT Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using kT Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have nm1T: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have nm2T: "n \<rs> \<one> \<rs> \<one> \<in> ints"
-    using nm1T Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using nm1T Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have nm1_mod: "(n \<rs> \<one>) zmod \<three> = \<zero>"
     using zmod_1_minus_one[OF n nmod] .
   have nm2_mod: "(n \<rs> \<one> \<rs> \<one>) zmod \<three> = \<two>"
@@ -2290,7 +2289,7 @@ lemma (in ses_chain_complex) les_d_is_hom:
   shows "Homomor(les_d(n), les_G(n), les_opG(n), les_G(n \<rs> \<one>), les_opG(n \<rs> \<one>))"
 proof -
   have nm1T: "n \<rs> \<one> \<in> ints"
-    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have two_neq_zero: "\<two> \<noteq> \<zero>"
     using int_one_two_are_pos(2) Int_ZF_1_5_L3 Int_ZF_2_L16C(2) by auto
   have one_neq_zero: "\<one> \<noteq> \<zero>" using int_zero_not_one by auto
@@ -2393,7 +2392,7 @@ proof -
   proof (rule ballI)
     fix n assume n: "n \<in> int"
     have nm1T: "n \<rs> \<one> \<in> ints"
-      using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+      using n Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
     have dn_fun: "les_d(n) : les_G(n) \<rightarrow> les_G(n \<rs> \<one>)"
       using les_d_is_hom n unfolding Homomor_def by simp
     have dnm1_fun: "les_d(n \<rs> \<one>) : les_G(n \<rs> \<one>) \<rightarrow> les_G(n \<rs> \<one> \<rs> \<one>)"

@@ -84,7 +84,7 @@ lemma (in chain_complex) cycles_is_subgroup:
   shows "IsAsubgroup(Cycles(n), P(n))"
 proof -
   have pn: "n \<rs> \<one> \<in> \<int>"
-    using assms Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using assms Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   interpret dn: group_homo "C(n)" "P(n)" "C(n \<rs> \<one>)" "P(n \<rs> \<one>)" "d(n)"
     "TheNeutralElement(C(n), P(n))" "\<lambda>x y. P(n)`\<langle>x, y\<rangle>"
     "\<lambda>x. GroupInv(C(n), P(n))`x"
@@ -207,7 +207,7 @@ lemma (in chain_map) cmap_maps_cycles:
   shows "f(n)`z \<in> tgt.Cycles(n)"
 proof -
   have pn: "n \<rs> \<one> \<in> ints"
-    using assms(1) Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by (simp add: zdiff_type)
+    using assms(1) Int_ZF_1_L10(1) Int_ZF_1_L8A(2) by simp
   have fn: "f(n) : C(n) \<rightarrow> C'(n)"
     using cmap_hom[OF assms(1)] unfolding Homomor_def by simp
   have fnp: "f(n \<rs> \<one>) : C(n \<rs> \<one>) \<rightarrow> C'(n \<rs> \<one>)"
