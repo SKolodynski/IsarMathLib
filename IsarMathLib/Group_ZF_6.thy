@@ -511,19 +511,19 @@ abbreviation (in two_group_homo) ExactAtB where
 sublocale two_group_homo < second_homo: group_homo B F C Q g
   "TheNeutralElement(B,F)" "\<lambda>x y. F`\<langle>x,y\<rangle>"
   "\<lambda>x. GroupInv(B,F)`x" "\<lambda>s.  Fold(F, TheNeutralElement(B, F), s)"
-  "\<lambda>n x.  Fold(F, TheNeutralElement(B, F), {⟨k, x⟩ . k ∈ n})"
+  "\<lambda>n x.  Fold(F, TheNeutralElement(B, F), {\<langle>k, x\<rangle> . k \<in> n})"
   "TheNeutralElement(C,Q)" "\<lambda>x y. Q`\<langle>x,y\<rangle>"
   "\<lambda>x. GroupInv(C,Q)`x" "\<lambda>s.  Fold(Q, TheNeutralElement(C, Q), s)"
-  "\<lambda>n x.  Fold(Q, TheNeutralElement(C, Q), {⟨k, x⟩ . k ∈ n})"
+  "\<lambda>n x.  Fold(Q, TheNeutralElement(C, Q), {\<langle>k, x\<rangle> . k \<in> n})"
   apply auto using hg by auto
 
 sublocale two_group_homo < first_homo: group_homo A P B F f
   "TheNeutralElement(A,P)" "\<lambda>x y. P`\<langle>x,y\<rangle>"
   "\<lambda>x. GroupInv(A,P)`x" "\<lambda>s.  Fold(P, TheNeutralElement(A, P), s)"
-  "\<lambda>n x.  Fold(P, TheNeutralElement(A, P), {⟨k, x⟩ . k ∈ n})"
+  "\<lambda>n x.  Fold(P, TheNeutralElement(A, P), {\<langle>k, x\<rangle> . k \<in> n})"
   "TheNeutralElement(B,F)" "\<lambda>x y. F`\<langle>x,y\<rangle>"
   "\<lambda>x. GroupInv(B,F)`x" "\<lambda>s.  Fold(F, TheNeutralElement(B, F), s)"
-  "\<lambda>n x.  Fold(F, TheNeutralElement(B, F), {⟨k, x⟩ . k ∈ n})"
+  "\<lambda>n x.  Fold(F, TheNeutralElement(B, F), {\<langle>k, x\<rangle> . k \<in> n})"
   apply (simp only: hf) apply simp apply simp apply simp apply simp apply simp
   by assumption
 
