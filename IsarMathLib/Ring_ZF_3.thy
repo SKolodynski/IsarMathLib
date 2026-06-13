@@ -166,9 +166,10 @@ sublocale ring_homo < add_group_homo: group_homo R A S U f
   ringzeros ringas ringminuss
   "\<lambda>s. Fold(U, \<zero>\<^sub>S, s)"
   "\<lambda>n x. Fold(U, \<zero>\<^sub>S, {\<langle>k,x\<rangle>. k\<in>n})"
-  using origin target homomorphism ringHomHom(1)
+  using origin target homomorphism 
   unfolding IsAring_def ringa_def ringminus_def ringzero_def
-    ringas_def ringminuss_def ringzeros_def
+    ringas_def ringminuss_def ringzeros_def group_homo_def
+    IsRingHomomor_def IsMorphism_def Homomor_def
   by auto
 
 text\<open>The theorems proven in the \<open>ring0\<close> context are valid in the \<open>ring_homo\<close> 
@@ -1094,7 +1095,7 @@ proof -
   have groupS: "IsAgroup(S,U)" using target IsAring_def by auto
   have groupR: "IsAgroup(R,A)" using origin IsAring_def by auto
   have T_add_group: "IsAsubgroup(?T,U)"
-    using ringHomHom(1) homomorphism image_group R groupS groupR by blast
+    using ringHomHom(1) homomorphism add_group_homo.image_is_group R groupS groupR by blast
   have T_mul_closed: "?T {is closed under} V"
   proof -
     { fix x y assume xT: "x\<in>?T" and yT: "y\<in>?T"
@@ -1159,7 +1160,7 @@ proof -
   have cf_add: "IsMorphism(S, U, A, converse(f))"
   proof -
     have "IsAgroup(R,A)" using origin unfolding IsAring_def by auto
-    with bij ringHomHom(1) homomorphism have "Homomor(converse(f),S,U,R,A)" using bij_homomor by auto
+    with bij have "Homomor(converse(f),S,U,R,A)" using add_group_homo.bijective_hom_inverse by auto
     then show ?thesis unfolding Homomor_def by auto
   qed
   have cf_mult: "IsMorphism(S, V, M, converse(f))"

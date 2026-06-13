@@ -28,7 +28,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 section \<open>Modules\<close>
 
-theory Module_ZF imports Ring_ZF_3 Field_ZF
+theory Module_ZF imports Ring_ZF_3 Field_ZF Group_ZF_5
 
 begin
 
@@ -235,7 +235,11 @@ text\<open> $\Theta$ is fixed by scalar multiplication.\<close>
 
 lemma (in module0) zero_fixed: assumes "r\<in>R" 
   shows "r \<cdot>\<^sub>S \<Theta> = \<Theta>"
-  using mAbGr assms H_val_type(1) image_neutral unfolding End_def by auto
+proof-
+  from assms have "group_homo(\<M>,A\<^sub>M,\<M>,A\<^sub>M,H`r)"
+    using mAbGr H_val_type(1) unfolding group_homo_def End_def by auto
+  then show ?thesis using group_homo.f_neutral by auto
+qed
 
 text\<open>The scalar multiplication is distributive with respect to the module addition.\<close>
 
