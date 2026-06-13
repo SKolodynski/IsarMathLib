@@ -37,8 +37,8 @@ text\<open>The collection of all homeomorphisms of a topological space onto itse
   topological spaces with the algebraic theory of groups.\<close>
 
 subsection\<open>Group of homeomorphisms\<close>
-text\<open>This theory file deals with the fact the set homeomorphisms of a topological space into itself
- forms a group.\<close>
+text\<open>We show that the homeomorphisms of a topological space onto itself form a group
+under composition, and compute this group for several concrete topologies.\<close>
 
 text\<open>First, we define the set of homeomorphisms.\<close>
 
@@ -115,8 +115,11 @@ qed
 
 subsection\<open>Examples computed\<close>
 
-text\<open>As a first example, we show that the group of homeomorphisms of the cocardinal
-topology is the group of bijective functions.\<close>
+text\<open>We compute $\text{HomeoG}$ for several concrete topologies: the cocardinal topology,
+the excluded set topology, the included set topology, and the order topology.\<close>
+
+text\<open>For the cocardinal topology every bijection is a homeomorphism, so $\text{HomeoG}$
+equals $\text{bij}(X,X)$.\<close>
 
 theorem homeo_cocardinal:
   assumes "InfCard(Q)"
@@ -155,8 +158,8 @@ proof
     by auto
 qed
 
-text\<open>The group of homeomorphism of the excluded set is a direct product of the bijections on $X\setminus T$
-  and the bijections on $X\cap T$.\<close>
+text\<open>The homeomorphisms of the excluded set topology are exactly the bijections of $X$
+that map $X\setminus T$ to itself.\<close>
 
 theorem homeo_excluded:
   shows "HomeoG(ExcludedSet(X,T))={f\<in>bij(X,X). f``(X-T)=(X-T)}"
@@ -291,7 +294,7 @@ proof
   then show "{f \<in> bij(X, X) . f `` (X - T) = X - T} \<subseteq> HomeoG(ExcludedSet(X,T))" by auto
 qed
 
-text\<open>We now give some lemmas that will help us compute \<open>HomeoG(IncludedSet(X,T))\<close>.\<close>
+text\<open>Continuity in the included set topology implies continuity in the excluded set topology.\<close>
 
 lemma cont_in_cont_ex:
   assumes "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),f)" "f:X\<rightarrow>X" "T\<subseteq>X"
@@ -311,6 +314,8 @@ proof-
   then show "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),f)" unfolding IsContinuous_def by auto
 qed
 
+text\<open>Continuity in the excluded set topology implies continuity in the included set topology.\<close>
+
 lemma cont_ex_cont_in:
   assumes "IsContinuous(ExcludedSet(X,T),ExcludedSet(X,T),f)" "f:X\<rightarrow>X" "T\<subseteq>X"
   shows "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),f)"
@@ -329,8 +334,8 @@ proof-
   then show "IsContinuous(IncludedSet(X,T),IncludedSet(X,T),f)" unfolding IsContinuous_def by auto
 qed
 
-text\<open>The previous lemmas imply that the group of homeomorphisms of the included set topology
-is the same as the one of the excluded set topology.\<close>
+text\<open>By the previous two lemmas, the homeomorphism groups of the included and excluded
+set topologies on $X$ coincide.\<close>
 
 lemma homeo_included:
   assumes "T\<subseteq>X"
@@ -377,7 +382,8 @@ proof-
   show ?thesis using homeo_excluded by auto
 qed
 
-text\<open>Finally, let's compute part of the group of homeomorphisms of an order topology.\<close>
+text\<open>Every order isomorphism of a linearly ordered set is a homeomorphism of
+the induced order topology.\<close>
 
 lemma homeo_order:
   assumes "IsLinOrder(X,r)""\<exists>x y. x\<noteq>y\<and>x\<in>X\<and>y\<in>X"
@@ -580,12 +586,12 @@ proof
     unfolding bij_def inj_def by auto
 qed
       
-text\<open>This last example shows that order isomorphic sets give homeomorphic
-topological spaces.\<close>
-
 subsection\<open>Properties preserved by functions\<close>
 
-text\<open>The continuous image of a connected space is connected.\<close>
+text\<open>Continuous surjections preserve connectedness and compactness. As consequences,
+quotient spaces of connected or compact spaces inherit those properties.\<close>
+
+text\<open>The continuous surjective image of a connected space is connected.\<close>
 
 theorem (in two_top_spaces0) cont_image_conn:
   assumes "IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>2,f)" "f\<in>surj(X\<^sub>1,X\<^sub>2)" "\<tau>\<^sub>1{is connected}"
@@ -621,11 +627,8 @@ proof-
   then show ?thesis unfolding IsConnected_def by auto
 qed
 
-text\<open>Every continuous function from a space which has some property \<open>P\<close>
-  and a space which has the property \<open>anti(P)\<close>, given that
-  this property is preserved by continuous functions, if follows that the range of the function
-  is in the spectrum. Applied to connectedness, it follows that continuous functions from
-  a connected space to a totally-disconnected one are constant.\<close>
+text\<open>A continuous function from a connected space to a totally-disconnected space
+must be constant.\<close>
 
 corollary(in two_top_spaces0) cont_conn_tot_disc:
   assumes "IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>2,f)" "\<tau>\<^sub>1{is connected}" "\<tau>\<^sub>2{is totally-disconnected}" "f:X\<^sub>1\<rightarrow>X\<^sub>2" "X\<^sub>1\<noteq>0"
@@ -703,8 +706,8 @@ proof-
   ultimately show ?thesis using assms(3) unfolding IsCompactOfCard_def by auto
 qed
 
-text\<open>As it happends to connected spaces, a continuous function from a compact space
-to an anti-compact space has finite range.\<close>
+text\<open>Analogously to the connected case, the continuous image of a compact space
+in an anti-compact space is finite.\<close>
 
 corollary (in two_top_spaces0) cont_comp_anti_comp:
   assumes "IsContinuous(\<tau>\<^sub>1,\<tau>\<^sub>2,f)" "X\<^sub>1{is compact in}\<tau>\<^sub>1" "\<tau>\<^sub>2{is anti-compact}" "f:X\<^sub>1\<rightarrow>X\<^sub>2" "X\<^sub>1\<noteq>0"
@@ -727,8 +730,7 @@ proof-
   then show "range(f)\<noteq>0" using range_image_domain assms(4) by auto
 qed
 
-text\<open>As a consequence, it follows that quotient topological spaces of
-compact (connected) spaces are compact (connected).\<close>
+text\<open>A quotient of a compact space is compact.\<close>
 
 corollary(in topology0) compQuot:
   assumes "(\<Union>T){is compact in}T" "equiv(\<Union>T,r)"
@@ -742,6 +744,8 @@ proof-
     using topSpaceAssum equiv_quo_is_top assms(2) unfolding surj_def by auto
   with surj cont tot assms(1) show ?thesis using two_top_spaces0.cont_image_com Compact_is_card_nat by force
 qed
+
+text\<open>A quotient of a connected space is connected.\<close>
 
 corollary(in topology0) ConnQuot:
   assumes "T{is connected}" "equiv(\<Union>T,r)"

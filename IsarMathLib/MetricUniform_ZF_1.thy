@@ -64,8 +64,8 @@ text\<open>We define the \<open>DistWeight(\<U>,p)\<close> expression as equal t
   This means that the set $\{n\in n\in mathbb{N}: p\in \mathcal{U}_n\setminus \mathcal{U}_{n+1}\}$ 
   is a singleton and we can use the $\bigcup \{ x\} = x$ identity to extract its only element.\<close>
 
-definition (in reals) 
-  "DistWeight(\<U>,p) \<equiv> if p \<in> (\<Inter>n\<in>nat. \<U>`(n)) then \<zero> else pow(\<Union>{n\<in>nat. p\<in>(\<U>`(n)\<setminus>\<U>`(n #+ 1))},\<onehalf>)"
+definition (in reals) DistWeight
+  where "DistWeight(\<U>,p) \<equiv> if p \<in> (\<Inter>n\<in>nat. \<U>`(n)) then \<zero> else pow(\<Union>{n\<in>nat. p\<in>(\<U>`(n)\<setminus>\<U>`(n #+ 1))},\<onehalf>)"
 
 text\<open>Suppose $\mathcal{U}:\mathbb{N}\rightarrow \<P>(X\times X)$ is a sequence of subsets 
   of $X\times X$ such that $\mathcal{U}_{n+1}\subseteq \mathcal{U}_n$ 

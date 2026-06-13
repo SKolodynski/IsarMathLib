@@ -109,12 +109,13 @@ module IMLP_datatypes =
 
     type PropPremise = PropDefines of namedstrs list | PropAssumes of namedstrs list
 
+    type PropConclusion = Shows of namedstrs list | Obtains of string list * namedstrs list
 
-    type Proposition = {    proptype: string; // may be "theorem", "lemma" or "corollary" 
+    type Proposition = {    proptype: string; // may be "theorem", "lemma" or "corollary"
                             context: string; // an optional locale
                             propname: string;
                             propprems: PropPremise list
-                            claims:namedstrs list;
+                            conclusion: PropConclusion;
                             propproof: Proof
     }
 
@@ -145,7 +146,7 @@ module IMLP_datatypes =
                     scontext: string;
                     spropname: string;
                     sproprems: PropPremise list;
-                    sclaims: namedstrs list;
+                    sconclusion: PropConclusion;
                     sdeps: string list // names of dependencies
                     }
 

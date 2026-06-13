@@ -48,7 +48,7 @@ text\<open>A commutative ring is defined as a \<open>ring0\<close> in which mult
   is commutative.\<close>
 
 locale commutative_ring = ring0 +
-  assumes commutative:"M{is commutative on}R" 
+  assumes commutative:"M{is commutative on}R"
 
 text\<open>For any element $x$ of a commutative ring, the set $\{x \cdot y \mid y \in R\}$
   is an ideal of the ring.\<close>
@@ -170,7 +170,7 @@ lemma (in commutative_ring) prime_ring_zero_divs_2:
   shows "[R,A,M]{is a prime ring}"
 proof -
   {
-    fix aa b assume as:"aa\<in>R" "b\<in>R" "\<forall>z\<in>R. M ` \<langle>M ` \<langle>aa, z\<rangle>, b\<rangle> = TheNeutralElement(R, A)" 
+    fix aa b assume as:"aa\<in>R" "b\<in>R" "\<forall>z\<in>R. M ` \<langle>M ` \<langle>aa, z\<rangle>, b\<rangle> = TheNeutralElement(R, A)"
       "b\<noteq>TheNeutralElement(R,A)"
     with assms have "\<forall>c\<in>R. \<forall>b\<in>R. M ` \<langle>c, b\<rangle> = \<zero> \<longrightarrow>
                    c = \<zero> \<or> b = \<zero>" unfolding HasNoZeroDivs_def by auto
@@ -225,20 +225,20 @@ proof-
         fix yy assume yy:"yy\<in>R" "QuotientGroupRel(R, A, I)``{yy} = y"
         {
           fix zz assume zz:"zz\<in>R"
-          from ideal have equiv:"equiv(R, QuotientGroupRel(R, A, I))" and 
+          from ideal have equiv:"equiv(R, QuotientGroupRel(R, A, I))" and
             cong2:"Congruent2(QuotientGroupRel(R, A, I), M)" using ideal_equiv_rel quotientBy_mul_monoid(1) by auto
-          have "\<And>x y r f. equiv(R,r) \<Longrightarrow> Congruent2(r,f) \<Longrightarrow> x\<in>R \<Longrightarrow> y\<in>R \<Longrightarrow> ProjFun2(R, r, f) ` 
+          have "\<And>x y r f. equiv(R,r) \<Longrightarrow> Congruent2(r,f) \<Longrightarrow> x\<in>R \<Longrightarrow> y\<in>R \<Longrightarrow> ProjFun2(R, r, f) `
               \<langle>r `` {x}, r `` {y}\<rangle> =
                 r ``{f ` \<langle>x, y\<rangle>}" using EquivClass_1_L10 by auto
           then have "\<And>x y. equiv(R,  QuotientGroupRel(R, A, I)) \<Longrightarrow> Congruent2( QuotientGroupRel(R, A, I),M) \<Longrightarrow> x\<in>R \<Longrightarrow> y\<in>R
-            \<Longrightarrow> ProjFun2(R, QuotientGroupRel(R, A, I), M) ` 
+            \<Longrightarrow> ProjFun2(R, QuotientGroupRel(R, A, I), M) `
               \<langle>QuotientGroupRel(R, A, I) `` {x},  QuotientGroupRel(R, A, I) `` {y}\<rangle> =
                 QuotientGroupRel(R, A, I) ``{M ` \<langle>x, y\<rangle>}" by auto
           with equiv cong2
-          have eq:"\<And>x y. x\<in>R \<Longrightarrow> y\<in>R \<Longrightarrow> ProjFun2(R, QuotientGroupRel(R, A, I), M) ` 
+          have eq:"\<And>x y. x\<in>R \<Longrightarrow> y\<in>R \<Longrightarrow> ProjFun2(R, QuotientGroupRel(R, A, I), M) `
               \<langle>QuotientGroupRel(R, A, I) `` {x},  QuotientGroupRel(R, A, I) `` {y}\<rangle> =
                 QuotientGroupRel(R, A, I) ``{M ` \<langle>x, y\<rangle>}" by auto
-          have "QuotientGroupRel(R, A, I)``{xx\<cdot>zz\<cdot>yy} = 
+          have "QuotientGroupRel(R, A, I)``{xx\<cdot>zz\<cdot>yy} =
             ProjFun2(R, QuotientGroupRel(R, A, I), M)`\<langle>QuotientGroupRel(R, A, I)``{xx\<cdot>zz},QuotientGroupRel(R, A, I)``{yy}\<rangle>"
             using eq xx(1) yy(1) zz Ring_ZF_1_L4(3) by auto
           then have "QuotientGroupRel(R, A, I)``{xx\<cdot>zz\<cdot>yy} = 
@@ -271,7 +271,7 @@ proof-
         (\<And>x. y = QuotientGroupRel(R, A, I) `` {x} \<Longrightarrow> x \<in> R \<Longrightarrow> xx\<in>I) \<Longrightarrow> xx\<in>I" by (rule quotientE)
       ultimately have "xx\<in>I" using as(2) QuotientBy_def ideal by auto
       then have "QuotientGroupRel(R, A, I)``{xx} = TheNeutralElement(QuotientBy(I), QuotientGroupOp(R, A, I))"
-        using add_group.Group_ZF_2_4_L5E ideal_normal_add_subgroup 
+        using add_group.Group_ZF_2_4_L5E ideal_normal_add_subgroup
         QuotientBy_def ideal xx(1) by auto
       with xx(2) have "x = TheNeutralElement(QuotientBy(I), QuotientGroupOp(R, A, I))" by auto
     } moreover

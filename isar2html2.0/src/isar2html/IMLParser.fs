@@ -311,7 +311,7 @@ module IMLParser =
     /// parses a tactic
     let tactic : Parser<string,unit> =
         attempt (pstring "simp_all") <|> pstring "simp" <|> pstring "auto" <|> pstring "blast" <|>
-        attempt (pstring "fast") <|> pstring "force" <|> pstring "assumption"
+        attempt (pstring "fast") <|> pstring "force" <|> pstring "safe" <|> pstring "assumption"
 
     /// parses a short proof that has only a tactic in it
     let shortProofByTac : Parser<Proof,unit> =
@@ -491,19 +491,30 @@ module IMLParser =
     let premises : Parser<PropPremise list,unit> =
         sepEndBy (premassumes <|> premdefines) whiteSpace
 
+    /// parses the conclusion of a proposition: either "shows <claims>" or "obtains <vars> where <claims>"
+    let propconclusion : Parser<PropConclusion,unit> =
+        attempt (
+            pipe2
+                (pstring "obtains" >>. whiteSpace >>. sepEndBy1 varname whiteSpace)
+                (pstring "where" >>. whiteSpace >>. listLabStatLists)
+                (fun vars cl -> Obtains(vars, cl))
+        )
+        <|>
+        (pstring "shows" >>. whiteSpace >>. listLabStatLists |>> Shows)
+
     /// parses a proposition
     let proposition : Parser<FormalItem,unit> =
         pipe5
             ((propSynonim .>> pchar ' ') .>>. poption "" incontext)
             (whiteSpace >>. itemName .>> pchar ':')
             (whiteSpace >>. poption [] premises)
-            (pstring "shows" >>. listLabStatLists)
+            propconclusion
             (whiteSpace >>. proof)
-            (fun (t,c) n ps cl pr -> Prop { proptype = t; // may be "theorem", "lemma" or "corollary" 
+            (fun (t,c) n ps cl pr -> Prop { proptype = t; // may be "theorem", "lemma" or "corollary"
                                             context = c; // an optional locale
                                             propname = n;
                                             propprems = ps;
-                                            claims = cl;
+                                            conclusion = cl;
                                             propproof = pr
                                         })
 
