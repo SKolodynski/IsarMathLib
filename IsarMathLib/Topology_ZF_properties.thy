@@ -38,11 +38,12 @@ text\<open>
 
 subsection\<open>Properties of compactness\<close>
 
+text\<open>In this section we study generalizations of compactness.\<close>
+
 text\<open>It is already defined what is a compact topological space, but the is a
 generalization which may be useful sometimes.\<close>
 
-definition
-  IsCompactOfCard ("_{is compact of cardinal}_ {in}_" 90)
+definition IsCompactOfCard ("_{is compact of cardinal}_ {in}_" 90)
   where "K{is compact of cardinal} Q{in}T \<equiv> (Card(Q) \<and> K \<subseteq> \<Union>T \<and> 
   (\<forall> M\<in>Pow(T). K \<subseteq> \<Union>M \<longrightarrow> (\<exists> N \<in> Pow(M). K \<subseteq> \<Union>N \<and> N\<prec>Q)))"
 
@@ -72,8 +73,9 @@ proof
         then have "n \<approx>nat" using eqpoll_sym by auto
         with \<open>n\<prec>nat\<close> have "False" using lesspoll_def by auto
       }
-      then have "~(N \<approx>nat)" by auto
-      with calculation \<open>K\<subseteq>\<Union>N\<close>\<open>N\<in>FinPow(M)\<close> have "N\<prec>nat""K\<subseteq>\<Union>N""N\<in>Pow(M)" using lesspoll_def
+      then have "~(N \<approx>nat)" by auto moreover
+      note \<open>K\<subseteq>\<Union>N\<close> \<open>N\<in>FinPow(M)\<close>
+      ultimately have "N\<prec>nat""K\<subseteq>\<Union>N""N\<in>Pow(M)" using lesspoll_def
         FinPow_def by auto
       hence "(\<exists> N \<in> Pow(M). K \<subseteq> \<Union>N \<and> N\<prec>nat)" by auto
     }
@@ -100,15 +102,15 @@ it is the one on the successor of the natural numbers.\<close>
 
 definition
   IsLindeloef  ("_{is lindeloef in}_" 90) where
-  "K {is lindeloef in} T\<equiv>K{is compact of cardinal}csucc(nat){in}T"
+  "K {is lindeloef in} T \<equiv> K{is compact of cardinal}csucc(nat){in}T"
 
 text\<open>It would be natural to think that every countable set with any topology
 is Lindeloef; but this statement is not provable in ZF. The reason is that
 to build a subcover, most of the time we need to \emph{choose} sets
 from an infinite collection which cannot be done in ZF. Additional axioms are needed,
-but strictly weaker than the axiom of choice.\<close>
+but strictly weaker than the axiom of choice.
 
-text\<open>However, if the topology has not many open sets, then the topological
+However, if the topology has not many open sets, then the topological
 space is indeed compact.\<close>
 
 theorem card_top_comp:
@@ -127,20 +129,24 @@ text\<open>The union of two compact sets, is compact; of any cardinality.\<close
 
 theorem union_compact:
   assumes "K{is compact of cardinal}Q{in}T" "K1{is compact of cardinal}Q{in}T" "InfCard(Q)"
-  shows "(K \<union> K1){is compact of cardinal}Q{in}T" unfolding IsCompactOfCard_def
-proof(safe)
-  from assms(1) show "Card(Q)" unfolding IsCompactOfCard_def by auto
-  fix x assume "x\<in>K" then show "x\<in>\<Union>T" using assms(1) unfolding IsCompactOfCard_def by blast
-next
-  fix x assume "x\<in>K1" then show "x\<in>\<Union>T" using assms(2) unfolding IsCompactOfCard_def by blast
-next
-  fix M assume "M\<subseteq>T" "K\<union>K1\<subseteq>\<Union>M"
-  then have "K\<subseteq>\<Union>M""K1\<subseteq>\<Union>M" by auto
-  with \<open>M\<subseteq>T\<close> have "\<exists>N\<in>Pow(M). K \<subseteq> \<Union>N \<and> N \<prec> Q""\<exists>N\<in>Pow(M). K1 \<subseteq> \<Union>N \<and> N \<prec> Q" using assms unfolding IsCompactOfCard_def
-    by auto
-  then obtain NK NK1 where "NK\<in>Pow(M)""NK1\<in>Pow(M)""K \<subseteq> \<Union>NK""K1 \<subseteq> \<Union>NK1""NK \<prec> Q""NK1 \<prec> Q" by auto
-  then have "NK\<union>NK1 \<prec> Q""K\<union>K1\<subseteq>\<Union>(NK\<union>NK1)""NK\<union>NK1\<in>Pow(M)" using assms(3) less_less_imp_un_less by auto
-  then show "\<exists>N\<in>Pow(M). K\<union>K1\<subseteq>\<Union>N \<and> N\<prec>Q" by auto
+  shows "(K \<union> K1){is compact of cardinal}Q{in}T"
+proof-
+  from assms(1) have I:"Card(Q)" unfolding IsCompactOfCard_def by auto
+  {
+    fix x assume "x\<in>K\<union>K1" 
+    then have "x\<in>\<Union>T" using assms(1,2) unfolding IsCompactOfCard_def by blast
+  }
+  then have II:"K\<union>K1 \<subseteq> \<Union>T" by auto
+  {
+    fix M assume "M\<subseteq>T" "K\<union>K1\<subseteq>\<Union>M"
+    then have "K\<subseteq>\<Union>M""K1\<subseteq>\<Union>M" by auto
+    with \<open>M\<subseteq>T\<close> have "\<exists>N\<in>Pow(M). K \<subseteq> \<Union>N \<and> N \<prec> Q""\<exists>N\<in>Pow(M). K1 \<subseteq> \<Union>N \<and> N \<prec> Q" using assms unfolding IsCompactOfCard_def
+      by auto
+    then obtain NK NK1 where "NK\<in>Pow(M)""NK1\<in>Pow(M)""K \<subseteq> \<Union>NK""K1 \<subseteq> \<Union>NK1""NK \<prec> Q""NK1 \<prec> Q" by auto
+    then have "NK\<union>NK1 \<prec> Q""K\<union>K1\<subseteq>\<Union>(NK\<union>NK1)""NK\<union>NK1\<in>Pow(M)" using assms(3) less_less_imp_un_less by auto
+    then have "\<exists>N\<in>Pow(M). K\<union>K1\<subseteq>\<Union>N \<and> N\<prec>Q" by auto
+  }
+  with I II show ?thesis unfolding IsCompactOfCard_def by auto
 qed
 
 text\<open>If a set is compact of cardinality \<open>Q\<close> for some topology,
@@ -188,37 +194,33 @@ proof-
     assume AS:"M\<in>Pow(T)""K\<inter>R\<subseteq>\<Union>M"
     have "\<Union>T-R\<in>T" using assms(2) IsClosed_def by auto
     have "K-R\<subseteq>(\<Union>T-R)" using assms(1) IsCompactOfCard_def by auto
-    with \<open>\<Union>T-R\<in>T\<close> have "K\<subseteq>\<Union>(M \<union>{\<Union>T-R})" and "M \<union>{\<Union>T-R}\<in>Pow(T)"
-    proof (safe)
+    have "K\<subseteq>\<Union>(M \<union>{\<Union>T-R})" and "M \<union>{\<Union>T-R}\<in>Pow(T)"
+    proof-
       {
-        fix x
-        assume "x\<in>M"
-        with AS(1) show "x\<in>T" by auto
-      }
-      {
-        fix x
-        assume "x\<in>K"
+        fix x  assume "x\<in>K"
         have "x\<in>R\<or>x\<notin>R" by auto
         with \<open>x\<in>K\<close> have "x\<in>K\<inter>R\<or>x\<in>K-R" by auto
         with AS(2) \<open>K-R\<subseteq>(\<Union>T-R)\<close> have "x\<in>\<Union>M\<or>x\<in>(\<Union>T-R)" by auto
-        then show "x\<in>\<Union>(M \<union>{\<Union>T-R})" by auto
+        then have "x\<in>\<Union>(M \<union>{\<Union>T-R})" by auto
       }
+      then show "K \<subseteq> \<Union>(M \<union>{\<Union>T-R})" by auto
+      from AS(1) \<open>\<Union>T-R\<in>T\<close> show "M\<union>{\<Union>T-R}\<in>Pow(T)" by auto
     qed
     with assms(1) have "\<exists>N\<in>Pow(M\<union>{\<Union>T-R}). K \<subseteq> \<Union>N \<and> N \<prec> Q" unfolding IsCompactOfCard_def by auto
     then obtain N where cub:"N\<in>Pow(M\<union>{\<Union>T-R})" "K\<subseteq>\<Union>N" "N\<prec>Q" by auto
     have "N-{\<Union>T-R}\<in>Pow(M)""K\<inter>R\<subseteq>\<Union>(N-{\<Union>T-R})" "N-{\<Union>T-R}\<prec>Q"
-    proof (safe)
+    proof
       {
-        fix x
-        assume "x\<in>N""x\<notin>M"
-        then show "x=\<Union>T-R" using cub(1) by auto
+        fix x assume "x\<in>N\<setminus>{\<Union>T-R}"
+        then have "x:M" using cub(1) by auto
       }
+      then show "N-{\<Union>T-R} \<subseteq> M" by auto
       {
-        fix x
-        assume "x\<in>K""x\<in>R"
+        fix x assume "x\<in>K\<inter>R"
         then have "x\<notin>\<Union>T-R""x\<in>K" by auto
-        then show "x\<in>\<Union>(N-{\<Union>T-R})" using cub(2) by blast
+        then have "x\<in>\<Union>(N-{\<Union>T-R})" using cub(2) by blast
       }
+      then show "K\<inter>R \<subseteq> \<Union>(N-{\<Union>T-R})" by auto
       have "N-{\<Union>T-R}\<subseteq>N" by auto
       with cub(3) show "N-{\<Union>T-R}\<prec>Q" using subset_imp_lepoll lesspoll_trans1 by blast
     qed
@@ -234,25 +236,42 @@ text\<open>The properties of numerability deal with cardinals of some sets
 built from the topology. The properties which are normally used
 are the ones related to the cardinal of the natural numbers or its successor.\<close>
 
+text\<open>A topology is of first type of cardinal \<open>Q\<close> if every point has a neighborhood
+base of cardinality less than \<open>Q\<close>.\<close>
+
 definition
   IsFirstOfCard ("_ {is of first type of cardinal}_" 90) where
   "(T {is of first type of cardinal} Q) \<equiv> \<forall>x\<in>\<Union>T. (\<exists>B. (B {is a base for} T) \<and> ({b\<in>B. x\<in>b} \<prec> Q))"
+
+text\<open>A topology is of second type of cardinal \<open>Q\<close> if the whole topology has a base
+of cardinality less than \<open>Q\<close>.\<close>
 
 definition
   IsSecondOfCard ("_ {is of second type of cardinal}_" 90) where
   "(T {is of second type of cardinal}Q) \<equiv> (\<exists>B. (B {is a base for} T) \<and> (B \<prec> Q))"
 
+text\<open>A topology is separable of cardinal \<open>Q\<close> if it has a dense subset of
+cardinality less than \<open>Q\<close>.\<close>
+
 definition
   IsSeparableOfCard ("_{is separable of cardinal}_" 90) where
   "T{is separable of cardinal}Q\<equiv> \<exists>U\<in>Pow(\<Union>T). Closure(U,T)=\<Union>T \<and> U\<prec>Q"
+
+text\<open>A topology is first countable if it is of first type of cardinal \<open>csucc(nat)\<close>,
+i.e., every point has a countable neighborhood base.\<close>
 
 definition
   IsFirstCountable ("_ {is first countable}" 90) where
   "(T {is first countable}) \<equiv> T {is of first type of cardinal} csucc(nat)"
 
+text\<open>A topology is second countable if it is of second type of cardinal \<open>csucc(nat)\<close>,
+i.e., it has a countable base.\<close>
+
 definition
   IsSecondCountable ("_ {is second countable}" 90) where
   "(T {is second countable}) \<equiv> (T {is of second type of cardinal}csucc(nat))"
+
+text\<open>A topology is separable if it has a countable dense subset.\<close>
 
 definition
   IsSeparable ("_{is separable}" 90) where
@@ -333,10 +352,10 @@ theorem Q_choice_imp_second_imp_separable:
 proof-
   from assms(1) have "\<exists>B. (B {is a base for} T) \<and> (B \<prec> csucc(Q))" using IsSecondOfCard_def by auto
   then obtain B where base:"(B {is a base for} T) \<and> (B \<prec> csucc(Q))" by auto
-  let ?N="\<lambda>b\<in>B. b"
-  let ?B="B-{0}"
-  have "B-{0}\<subseteq>B" by auto
-  with base have prec:"B-{0}\<prec>csucc(Q)" using subset_imp_lepoll lesspoll_trans1 by blast
+  let ?N = "\<lambda>b\<in>B. b"
+  let ?B = "B-{0}"
+  have "?B\<subseteq>B" by auto
+  with base have prec:"?B\<prec>csucc(Q)" using subset_imp_lepoll lesspoll_trans1 by blast
   from base have baseOpen:"\<forall>b\<in>B. ?N`b\<in>T" using base_sets_open by auto
   from assms(2) have car:"Card(Q)" and reg:"(\<forall> M N. (M \<lesssim>Q \<and>  (\<forall>t\<in>M. N`t\<noteq>0 \<and> N`t\<subseteq>\<Union>T)) \<longrightarrow> (\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t)))"
   using AxiomCardinalChoice_def by auto
@@ -347,24 +366,23 @@ proof-
   {
     fix U
     assume "U\<in>T" and "U\<noteq>0"
-    then obtain b where A1:"b\<in>B-{0}" and "b\<subseteq>U" using Top_1_2_L1 base by blast
+    then obtain b where A1:"b\<in>?B" and "b\<subseteq>U" using Top_1_2_L1 base by blast
     with f2 have "f`b\<in>U" by auto
     with A1 have "{f`b. b\<in>?B}\<inter>U\<noteq>0" by auto
   }
   then have r:"\<forall>U\<in>T. U\<noteq>0 \<longrightarrow> {f`b. b\<in>?B}\<inter>U\<noteq>0" by auto
-  have "{f`b. b\<in>?B}\<subseteq>\<Union>T" using f2 baseOpen by auto
-  moreover
-  with r have "Closure({f`b. b\<in>?B},T)=\<Union>T" using dense_int_open assms(3) by auto
-  moreover
+  have I:"{f`b. b\<in>?B}\<subseteq>\<Union>T" using f2 baseOpen by auto
+  from this r have II:"Closure({f`b. b\<in>?B},T)=\<Union>T" using dense_int_open assms(3) by auto
   have ffun:"f:?B\<rightarrow>range(f)" using f range_of_fun by auto
-  then have "f\<in>surj(?B,range(f))" using fun_is_surj by auto
-  then have des1:"range(f)\<lesssim>?B" using surj_fun_inv_2[of "f""?B""range(f)""Q"] prec Card_less_csucc_eq_le car
+  then have R:"\<And>b. b:?B \<Longrightarrow> f`b\<in>range(f)" using apply_rangeI by auto
+  from ffun have "f\<in>surj(?B,range(f))" using fun_is_surj by auto
+  then have des1:"range(f)\<lesssim>?B" using surj_fun_inv_2 prec Card_less_csucc_eq_le car
     Card_is_Ord by auto
-  then have "{f`b. b\<in>?B}\<subseteq>range(f)" using apply_rangeI[OF ffun] by auto
+  with R have "{f`b. b\<in>?B}\<subseteq>range(f)" by auto
   then have "{f`b. b\<in>?B}\<lesssim>range(f)" using subset_imp_lepoll by auto
   with des1 have "{f`b. b\<in>?B}\<lesssim>?B" using lepoll_trans by blast
   with prec have "{f`b. b\<in>?B}\<prec>csucc(Q)" using lesspoll_trans1 by auto
-  ultimately show ?thesis using IsSeparableOfCard_def by auto
+  with I II show ?thesis using IsSeparableOfCard_def by auto
 qed
 
 text\<open>The next theorem resolves that the axiom of \<open>Q\<close> choice for subsets
@@ -383,7 +401,7 @@ proof-
     second type of cardinal csucc(Q). It will be a partition topology.*)
     then obtain h where inj:"h\<in>inj(M,Q)" using lepoll_def by auto
     then have bij:"converse(h):bij(range(h),M)" using inj_bij_range bij_converse_bij by auto
-    let ?T="{(N`(converse(h)`i))\<times>{i}. i\<in>range(h)}"
+    let ?T = "{(N`(converse(h)`i))\<times>{i}. i\<in>range(h)}"
     {
       fix j
       assume AS2:"j\<in>range(h)"
@@ -406,15 +424,20 @@ proof-
     then have "(\<forall>A\<in>?T. \<forall>B\<in>?T. A=B\<or> A\<inter>B=0)" by auto
     ultimately
     have Part:"?T {is a partition of} \<Union>?T" unfolding IsAPartition_def by auto
-    let ?\<tau>="PTopology \<Union>?T ?T"
+    let ?\<tau> = "PTopology \<Union>?T ?T"
     from Part have top:"?\<tau> {is a topology}" and base:"?T {is a base for}?\<tau>"
       using Ptopology_is_a_topology by auto
-    let ?f="{\<langle>i,(N`(converse(h)`i))\<times>{i}\<rangle>. i\<in>range(h)}" 
-    have "?f:range(h)\<rightarrow>?T" using functionI[of "?f"] Pi_def by auto
+    let ?f = "{\<langle>i,(N`(converse(h)`i))\<times>{i}\<rangle>. i\<in>range(h)}" 
+    from functionI have "(\<And>x y z. \<langle>x,y\<rangle>\<in>?f \<Longrightarrow> \<langle>x,z\<rangle>\<in>?f \<Longrightarrow> y=z) \<Longrightarrow> function(?f)"
+      by blast
+    then have "?f:range(h)\<rightarrow>?T" using Pi_def by auto
     then have "?f\<in>surj(range(h),?T)" unfolding surj_def using apply_equality by auto
     moreover
     have "range(h)\<subseteq>Q" using inj unfolding inj_def range_def domain_def Pi_def by auto
-    ultimately have "?T\<lesssim> Q" using surj_fun_inv[of "?f""range(h)""?T""Q"] assms(2) Card_is_Ord lepoll_trans
+    moreover
+    have "?f \<in> surj(range(h), ?T) \<Longrightarrow> range(h) \<subseteq> Q \<Longrightarrow> Ord(Q) \<Longrightarrow> ?T \<lesssim> range(h)"
+      using surj_fun_inv by auto
+    ultimately have "?T\<lesssim> Q" using assms(2) Card_is_Ord lepoll_trans
       subset_imp_lepoll by auto
     then have  "?T\<prec>csucc(Q)" using Card_less_csucc_eq_le assms(2) by auto
     with base have "(?\<tau>{is of second type of cardinal}csucc(Q))" using IsSecondOfCard_def by auto
@@ -427,7 +450,7 @@ proof-
     then obtain r where r:"r\<in>inj(D,Q)" using lepoll_def by auto
     then have bij2:"converse(r):bij(range(r),D)" using inj_bij_range bij_converse_bij by auto
     then have surj2:"converse(r):surj(range(r),D)" using bij_def by auto
-    let ?R="\<lambda>i\<in>range(h). {j\<in>range(r). converse(r)`j\<in>((N`(converse(h)`i))\<times>{i})}"
+    let ?R = "\<lambda>i\<in>range(h). {j\<in>range(r). converse(r)`j\<in>((N`(converse(h)`i))\<times>{i})}"
     {
       fix i
       assume AS:"i\<in>range(h)"
@@ -439,7 +462,7 @@ proof-
       then obtain x where "x\<in>D" and px:"x\<in>(N`(converse(h)`i))\<times>{i}" by auto
       with surj2 obtain j where "j\<in>range(r)" and "converse(r)`j=x" unfolding surj_def by blast
       with px have "j\<in>{j\<in>range(r). converse(r)`j\<in>((N`(converse(h)`i))\<times>{i})}" by auto
-      then have "?R`i\<noteq>0" using beta_if[of "range(h)" _ i] AS by auto
+      then have "?R`i\<noteq>0" using beta_if AS by auto
     }
     then have nonE:"\<forall>i\<in>range(h). ?R`i\<noteq>0" by auto
     {
@@ -448,7 +471,7 @@ proof-
       from j i have "converse(r)`j\<in>((N`(converse(h)`i))\<times>{i})" using beta_if by auto
     }
     then have pp:"\<forall>i\<in>range(h). \<forall>j\<in>?R`i. converse(r)`j\<in>((N`(converse(h)`i))\<times>{i})" by auto
-    let ?E="{\<langle>m,fst(converse(r)`(\<mu> j. j\<in>?R`(h`m)))\<rangle>. m\<in>M}"
+    let ?E = "{\<langle>m,fst(converse(r)`(\<mu> j. j\<in>?R`(h`m)))\<rangle>. m\<in>M}"
     have ff:"function(?E)" unfolding function_def by auto
     moreover
     (*We now have to prove that ?E is a choice function for M and N*)
@@ -467,11 +490,11 @@ proof-
       then have subcar:"?R`(h`m)\<subseteq>Q" by blast
       from nonE hm obtain ee where P:"ee\<in>?R`(h`m)" by blast
       with subcar have "ee\<in>Q" by auto
-      then have "Ord(ee)" using assms(2) Card_is_Ord Ord_in_Ord by auto
-      with P have "(\<mu> j. j\<in>?R`(h`m))\<in>?R`(h`m)" using LeastI[where i=ee and P="\<lambda>j. j\<in>?R`(h`m)"]
-      by auto
+      then have ord:"Ord(ee)" using assms(2) Card_is_Ord Ord_in_Ord by auto
+      have "ee\<in>?R`(h`m) \<Longrightarrow> Ord(ee) \<Longrightarrow> (\<mu> j. j\<in>?R`(h`m))\<in>?R`(h`m)" using LeastI by assumption
+      with P ord have "(\<mu> j. j\<in>?R`(h`m))\<in>?R`(h`m)" by auto
       with pp hm have "converse(r)`(\<mu> j. j\<in>?R`(h`m))\<in>((N`(converse(h)`(h`m)))\<times>{(h`m)})" by auto
-      then have "converse(r)`(\<mu> j. j\<in>?R`(h`m))\<in>((N`(m))\<times>{(h`m)})" using left_inverse[OF inj M]
+      then have "converse(r)`(\<mu> j. j\<in>?R`(h`m))\<in>((N`(m))\<times>{(h`m)})" using left_inverse inj M
         by simp
       then have "fst(converse(r)`(\<mu> j. j\<in>?R`(h`m)))\<in>(N`(m))" by auto
       }
@@ -506,39 +529,42 @@ lemma base_to_indexed_base:
   shows "\<exists>N. {N`i. i\<in>Q}{is a base for}T"
 proof-
   from assms obtain f where f_def:"f\<in>inj(B,Q)" unfolding lepoll_def by auto
-  let ?ff="{\<langle>b,f`b\<rangle>. b\<in>B}"
+  let ?ff = "{\<langle>b,f`b\<rangle>. b\<in>B}"
   have "domain(?ff)=B" by auto
   moreover
   have "relation(?ff)" unfolding relation_def by auto
   moreover
   have "function(?ff)" unfolding function_def by auto
+  moreover
+  have "relation(?ff) \<Longrightarrow> function(?ff) \<Longrightarrow> ?ff:domain(?ff)\<rightarrow>range(?ff)" using function_imp_Pi by auto
   ultimately
-  have fun:"?ff:B\<rightarrow>range(?ff)" using function_imp_Pi[of "?ff"] by auto
-  then have injj:"?ff\<in>inj(B,range(?ff))" unfolding inj_def
-  proof
+  have fun:"?ff:B\<rightarrow>range(?ff)" by auto
+  have injj:"?ff\<in>inj(B,range(?ff))"
+  proof-
     {
       fix w x
       assume AS:"w\<in>B""x\<in>B""{\<langle>b, f ` b\<rangle> . b \<in> B} ` w = {\<langle>b, f ` b\<rangle> . b \<in> B} ` x"
-      then have "f`w=f`x" using apply_equality[OF _ fun] by auto
+      then have "f`w=f`x" using apply_equality fun by auto
       then have "w=x" using f_def inj_def AS(1,2) by auto
     }
-    then show "\<forall>w\<in>B. \<forall>x\<in>B. {\<langle>b, f ` b\<rangle> . b \<in> B} ` w = {\<langle>b, f ` b\<rangle> . b \<in> B} ` x \<longrightarrow> w = x" by auto
+    then have "\<forall>w\<in>B. \<forall>x\<in>B. {\<langle>b, f ` b\<rangle> . b \<in> B} ` w = {\<langle>b, f ` b\<rangle> . b \<in> B} ` x \<longrightarrow> w = x" by auto
+    then show "?ff\<in>inj(B,range(?ff))" unfolding inj_def using fun by auto
   qed
   then have bij:"?ff\<in>bij(B,range(?ff))" using inj_bij_range by auto
   from fun have "range(?ff)={f`b. b\<in>B}" by auto
   with f_def have ran:"range(?ff)\<subseteq>Q" using inj_def by auto
-  let ?N="{\<langle>i,(if i\<in>range(?ff) then converse(?ff)`i else 0)\<rangle>. i\<in>Q}"
+  let ?N = "{\<langle>i,(if i\<in>range(?ff) then converse(?ff)`i else 0)\<rangle>. i\<in>Q}"
   have FN:"function(?N)" unfolding function_def by auto
   have "B \<subseteq>{?N`i. i\<in>Q}"
   proof
     fix t
     assume a:"t\<in>B"
     from bij have rr:"?ff:B\<rightarrow>range(?ff)" unfolding bij_def inj_def by auto
-    have ig:"?ff`t=f`t" using a apply_equality[OF _ rr] by auto
-    have r:"?ff`t\<in>range(?ff)" using apply_type[OF rr a].
-    from ig have t:"?ff`t\<in>Q" using apply_type[OF _ a] f_def unfolding inj_def by auto
-    with r have "?N`(?ff`t)=converse(?ff)`(?ff`t)" using function_apply_equality[OF _ FN] by auto
-    then have "?N`(?ff`t)=t" using left_inverse[OF injj a] by auto
+    have ig:"?ff`t=f`t" using a apply_equality rr by auto
+    have r:"?ff`t\<in>range(?ff)" using apply_type rr a by auto
+    from ig have t:"?ff`t\<in>Q" using apply_type a f_def unfolding inj_def by auto
+    with r have "?N`(?ff`t)=converse(?ff)`(?ff`t)" using function_apply_equality FN by auto
+    then have "?N`(?ff`t)=t" using left_inverse injj a by auto
     then have "t=?N`(?ff`t)" by auto
     then have "\<exists>i\<in>Q. t=?N`i" using t(1) by auto
     then show "t\<in>{?N`i. i\<in>Q}" by simp
@@ -551,19 +577,20 @@ proof-
     then obtain j where R:"j\<in>Q""r=?N`j""r\<notin>B" by auto
     {
       assume AS:"j\<in>range(?ff)"
-      with R(1) have "?N`j=converse(?ff)`j" using function_apply_equality[OF _ FN] by auto
-      then have "?N`j\<in>B" using  apply_funtype[OF inj_is_fun[OF bij_is_inj[OF bij_converse_bij[OF bij]]] AS]
-      by auto
+      with R(1) have "?N`j=converse(?ff)`j" using function_apply_equality FN by auto
+      moreover
+      have "converse(?ff):range(?ff)\<rightarrow>B" using inj_is_fun bij_is_inj bij_converse_bij bij by auto
+      ultimately have "?N`j\<in>B" using apply_funtype AS by auto
       then have "False" using R(3,2) by auto
     }
     then have "j\<notin>range(?ff)" by auto
-    then show "r=0" using function_apply_equality[OF _ FN] R(1,2) by auto
+    then show "r=0" using function_apply_equality FN R(1,2) by auto
   qed
   ultimately have "{?N`i. i\<in>Q}=B\<or>{?N`i. i\<in>Q}=B \<union>{0}" by blast
   moreover
   have "(B \<union>{0})-{0}=B-{0}" by blast
-  then have "(B \<union>{0})-{0} {is a base for}T" using base_no_0[of "B""T"] assms(2) by auto
-  then have "B \<union>{0} {is a base for}T" using base_no_0[of "B \<union>{0}""T"] by auto
+  then have "(B \<union>{0})-{0} {is a base for}T" using base_no_0 assms(2) by auto
+  then have "B \<union>{0} {is a base for}T" using base_no_0 by auto
   ultimately
   have "{?N`i. i\<in>Q}{is a base for}T" using assms(2) by auto
   then show ?thesis by auto
@@ -573,6 +600,9 @@ subsection\<open>Relation between numerability and compactness\<close>
 
 text\<open>If the axiom of \<open>Q\<close> choice holds, then any topology
 of second type of cardinal \<open>csucc(Q)\<close> is compact of cardinal \<open>csucc(Q)\<close>\<close>
+
+text\<open>Under the axiom of \<open>Q\<close> choice for subsets of \<open>Pow(Q)\<close>, every topology of
+second type of cardinal \<open>csucc(Q)\<close> is compact of that same cardinal.\<close>
 
 theorem compact_of_cardinal_Q:
   assumes "{the axiom of} Q {choice holds for subsets} (Pow(Q))"
@@ -587,17 +617,18 @@ proof-
   {
     fix M
     assume A:"\<Union>T\<subseteq>\<Union>M""M\<in>Pow(T)"
-    let ?\<alpha>="\<lambda>U\<in>M. {i\<in>Q. N`(i)\<subseteq>U}"
-    have inj:"?\<alpha>\<in>inj(M,Pow(Q))" unfolding inj_def
-    proof
+    let ?\<alpha> = "\<lambda>U\<in>M. {i\<in>Q. N`(i)\<subseteq>U}"
+    have inj:"?\<alpha>\<in>inj(M,Pow(Q))"
+    proof-
     {
-      show "(\<lambda>U\<in>M. {i \<in> Q . N ` i \<subseteq> U}) \<in> M \<rightarrow> Pow(Q)" using lam_type[of "M""\<lambda>U. {i \<in> Q . N`(i) \<subseteq> U}""%t. Pow(Q)"] by auto
+      have "(\<And>x. x \<in> M \<Longrightarrow> {i \<in> Q . N ` i \<subseteq> x} \<in> Pow(Q)) \<Longrightarrow> ?\<alpha> \<in>  M \<rightarrow> Pow(Q)" using lam_type by auto
+      then have I:"?\<alpha> \<in> M \<rightarrow> Pow(Q)" by auto
       {
         fix w x
         assume AS:"w\<in>M""x\<in>M""{i \<in> Q . N`(i) \<subseteq> w} = {i \<in> Q . N`(i) \<subseteq> x}"
         from AS(1,2) A(2) have "w\<in>T""x\<in>T" by auto
-        then have "w=Interior(w,T)""x=Interior(x,T)" using assms(3) topology0.Top_2_L3[of "T"]
-          topology0_def[of "T"] by auto
+        then have "w=Interior(w,T)""x=Interior(x,T)" using assms(3) topology0.Top_2_L3
+          topology0_def by auto
         then have UN:"w=(\<Union>{B\<in>{N`(i). i\<in>Q}. B\<subseteq>w})""x=(\<Union>{B\<in>{N`(i). i\<in>Q}. B\<subseteq>x})"
           using interior_set_base_topology assms(3) base by auto
         {
@@ -626,42 +657,47 @@ proof-
         }
         ultimately have "w=x" by auto
       }
-      then show "\<forall>w\<in>M. \<forall>x\<in>M. (\<lambda>U\<in>M. {i \<in> Q . N ` i \<subseteq> U}) ` w = (\<lambda>U\<in>M. {i \<in> Q . N ` i \<subseteq> U}) ` x \<longrightarrow> w = x" by auto
+      then have II:"\<forall>w\<in>M. \<forall>x\<in>M. (\<lambda>U\<in>M. {i \<in> Q . N ` i \<subseteq> U}) ` w = (\<lambda>U\<in>M. {i \<in> Q . N ` i \<subseteq> U}) ` x \<longrightarrow> w = x" by auto
+      from I II show ?thesis unfolding inj_def by auto
     }
     qed
-    let ?X="\<lambda>i\<in>Q. {?\<alpha>`U. U\<in>{V\<in>M. N`(i)\<subseteq>V}}"
-    let ?M="{i\<in>Q. ?X`i\<noteq>0}"
+    let ?X = "\<lambda>i\<in>Q. {?\<alpha>`U. U\<in>{V\<in>M. N`(i)\<subseteq>V}}"
+    let ?M = "{i\<in>Q. ?X`i\<noteq>0}"
     have subMQ:"?M\<subseteq>Q" by auto
     then have ddd:"?M \<lesssim>Q" using subset_imp_lepoll by auto
     then have "?M \<lesssim>Q""\<forall>i\<in>?M. ?X`i\<noteq>0""\<forall>i\<in>?M. ?X`i\<subseteq>Pow(Q)" by auto
     then have "?M \<lesssim>Q""\<forall>i\<in>?M. ?X`i\<noteq>0""\<forall>i\<in>?M. ?X`i \<lesssim> Pow(Q)" using subset_imp_lepoll by auto
-    then have "(\<exists>f. f:Pi(?M,\<lambda>t. ?X`t) \<and> (\<forall>t\<in>?M. f`t\<in>?X`t))" using reg[of "?M""?X"] by auto
-    then obtain f where f:"f:Pi(?M,\<lambda>t. ?X`t)""(!!t. t\<in>?M \<Longrightarrow> f`t\<in>?X`t)" by auto
+    moreover
+    from reg have "(?M \<lesssim>Q \<and> (\<forall>t\<in>?M. ?X`t\<noteq>0\<and>?X`t\<subseteq>Pow(Q))) \<longrightarrow> (\<exists>f. f:Pi(?M,\<lambda>t. ?X`t) \<and> (\<forall>t\<in>?M. f`t\<in>?X`t))"
+      by assumption
+    ultimately have "(\<exists>f. f:Pi(?M,\<lambda>t. ?X`t) \<and> (\<forall>t\<in>?M. f`t\<in>?X`t))" by auto
+    then obtain f where f:"f:Pi(?M,\<lambda>t. ?X`t)" "(\<And>t. t\<in>?M \<Longrightarrow> f`t\<in>?X`t)" by auto
     {
       fix m
       assume S:"m\<in>?M"
       from f(2) S obtain YY where YY:"(YY\<in>M)" "(f`m=?\<alpha>`YY)" by auto
       then have Y:"(YY\<in>M)\<and>(f`m=?\<alpha>`YY)" by auto
-      moreover
       { 
         fix U
         assume "U\<in>M\<and>(f`m=?\<alpha>`U)"
         then have "U=YY" using inj inj_def YY by auto
       }
       then have r:"\<And>x. x\<in>M\<and>(f`m=?\<alpha>`x) \<Longrightarrow> x=YY" by blast
-      have "\<exists>!YY. YY\<in>M \<and> f`m=?\<alpha>`YY" using ex1I[of "%Y. Y\<in>M\<and> f`m=?\<alpha>`Y",OF Y r] by auto
+      have "(YY\<in>M)\<and>(f`m=?\<alpha>`YY) \<Longrightarrow> (\<And>x. x\<in>M\<and>(f`m=?\<alpha>`x) \<Longrightarrow> x=YY) \<Longrightarrow> \<exists>!x. x \<in> M \<and> f ` m = ?\<alpha> ` x" by (rule ex1I)
+      then have "\<exists>!YY. YY\<in>M \<and> f`m=?\<alpha>`YY" using Y r by blast
     }
     then have ex1YY:"\<forall>m\<in>?M. \<exists>!YY. YY\<in>M \<and> f`m=?\<alpha>`YY" by auto
-    let ?YYm="{\<langle>m,(THE YY. YY\<in>M \<and> f`m=?\<alpha>`YY)\<rangle>. m\<in>?M}"
+    let ?YYm = "{\<langle>m,(THE YY. YY\<in>M \<and> f`m=?\<alpha>`YY)\<rangle>. m\<in>?M}"
     have aux:"\<And>m. m\<in>?M \<Longrightarrow> ?YYm`m=(THE YY. YY\<in>M \<and> f`m=?\<alpha>`YY)" unfolding apply_def by auto
     have ree:"\<forall>m\<in>?M. (?YYm`m)\<in>M \<and> f`m=?\<alpha>`(?YYm`m)"
     proof
-      fix m
-      assume C:"m\<in>?M"
+      fix m assume C:"m\<in>?M"
       then have "\<exists>!YY. YY\<in>M \<and> f`m=?\<alpha>`YY" using ex1YY by auto
       then have "(THE YY. YY\<in>M \<and> f`m=?\<alpha>`YY)\<in>M\<and>f`m=?\<alpha>`(THE YY. YY\<in>M \<and> f`m=?\<alpha>`YY)"
-        using theI[of "%Y. Y\<in>M\<and> f`m=?\<alpha>`Y"] by blast
-      then show "(?YYm`m)\<in>M \<and> f`m=?\<alpha>`(?YYm`m)" apply (simp only: aux[OF C]) done
+        by (rule theI)
+      moreover
+      from aux C have "(THE YY. YY\<in>M \<and> f`m=?\<alpha>`YY) = ?YYm`m" by auto
+      ultimately show "(?YYm`m)\<in>M \<and> f`m=?\<alpha>`(?YYm`m)" by auto 
     qed
     have tt:"\<And>m. m\<in>?M \<Longrightarrow> N`(m)\<subseteq>?YYm`m"
     proof-
@@ -670,38 +706,47 @@ proof-
       then have QQ:"m\<in>Q" by auto
       from D have t:"(?YYm`m)\<in>M \<and> f`m=?\<alpha>`(?YYm`m)" using ree by blast
       then have "f`m=?\<alpha>`(?YYm`m)" by blast
-      then have "(?\<alpha>`(?YYm`m))\<in>(\<lambda>i\<in>Q. {?\<alpha>`U. U\<in>{V\<in>M. N`(i)\<subseteq>V}})`m" using f(2)[OF D]
-        by auto
+      moreover from f(2) D have "f`m\<in>?X`m" by auto
+      ultimately have "(?\<alpha>`(?YYm`m))\<in>?X`m" by auto
       then have "(?\<alpha>`(?YYm`m))\<in>{?\<alpha>`U. U\<in>{V\<in>M. N`(m)\<subseteq>V}}" using QQ by auto
       then obtain U where "U\<in>{V\<in>M. N`(m)\<subseteq>V}""?\<alpha>`(?YYm`m)=?\<alpha>`U" by auto
       then have r:"U\<in>M""N`(m)\<subseteq>U""?\<alpha>`(?YYm`m)=?\<alpha>`U""(?YYm`m)\<in>M" using t by auto
-      then have "?YYm`m=U" using  inj_apply_equality[OF inj] by blast
+      then have "?YYm`m=U" using inj_apply_equality inj by blast
       then show "N`(m)\<subseteq>?YYm`m" using r by auto
     qed
-    then have "(\<Union>m\<in>?M. N`(m))\<subseteq>(\<Union>m\<in>?M. ?YYm`m)"
+    then have I:"(\<Union>m\<in>?M. N`(m))\<subseteq>(\<Union>m\<in>?M. ?YYm`m)"
     proof-
       {
         fix s
         assume "s\<in>(\<Union>m\<in>?M. N`(m))"
         then obtain t where r:"t\<in>?M""s\<in>N`(t)" by auto
-        then have "s\<in>?YYm`t" using tt[OF r(1)] by blast
+        then have "s\<in>?YYm`t" using tt r(1) by blast
         then have "s\<in>(\<Union>m\<in>?M. ?YYm`m)" using r(1) by blast
       }
       then show ?thesis by blast
     qed
-    moreover
     {
       fix x
       assume AT:"x\<in>\<Union>T"
       with A obtain U where BB:"U\<in>M""U\<in>T""x\<in>U" by auto
-      then obtain j where BC:"j\<in>Q" "N`(j)\<subseteq>U""x\<in>N`(j)" using point_open_base_neigh[OF base,of "U""x"] by auto
+      have "U \<in> T \<Longrightarrow> x \<in> U \<Longrightarrow> \<exists>V\<in>{N`j. j\<in>Q}. V \<subseteq> U \<and> x \<in> V"
+        using point_open_base_neigh base by force
+      with BB(2,3) obtain j where BC:"j\<in>Q" "N`(j)\<subseteq>U""x\<in>N`(j)" 
+        by auto
       then have "?X`j\<noteq>0" using BB(1) by auto
       then have "j\<in>?M" using BC(1) by auto
       then have "x\<in>(\<Union>m\<in>?M. N`(m))" using BC(3) by auto
     }
-    then have "\<Union>T\<subseteq>(\<Union>m\<in>?M. N`(m))" by blast
-    ultimately have covers:"\<Union>T\<subseteq>(\<Union>m\<in>?M. ?YYm`m)" using subset_trans[of "\<Union>T""(\<Union>m\<in>?M. N`(m))""(\<Union>m\<in>?M. ?YYm`m)"]
-      by auto
+    then have II:"\<Union>T\<subseteq>(\<Union>m\<in>?M. N`(m))" by blast
+    have covers:"\<Union>T\<subseteq>(\<Union>m\<in>?M. ?YYm`m)"
+    proof-
+      {
+        fix x assume "x\<in>\<Union>T"
+        with II have "x\<in>(\<Union>m\<in>?M. N`m)" by auto
+        with I have "x\<in>(\<Union>m\<in>?M. ?YYm`m)" by blast
+      }
+      then show ?thesis by blast
+    qed
     have "relation(?YYm)" unfolding relation_def by auto
     moreover
     have f:"function(?YYm)" unfolding function_def by auto
@@ -709,30 +754,35 @@ proof-
     have d:"domain(?YYm)=?M" by auto
     moreover
     have r:"range(?YYm)=?YYm``?M" by auto
+    moreover
+    have "relation(?YYm) \<Longrightarrow> function(?YYm) \<Longrightarrow> ?YYm:domain(?YYm)\<rightarrow>range(?YYm)"
+      using function_imp_Pi by auto
     ultimately
-    have fun:"?YYm:?M\<rightarrow>?YYm``?M" using function_imp_Pi[of "?YYm"] by auto
-    have "?YYm\<in>surj(?M,?YYm``?M)" using fun_is_surj[OF fun] r by auto
-    with surj_fun_inv[OF this subMQ Card_is_Ord[OF CC]]
+    have fun:"?YYm:?M\<rightarrow>?YYm``?M" by auto
+    have "?YYm:?M\<rightarrow>?YYm``?M \<Longrightarrow> ?YYm\<in>surj(?M,range(?YYm))" using fun_is_surj by auto
+    with fun have "?YYm\<in>surj(?M,?YYm``?M)" using r by auto
+    with surj_fun_inv subMQ Card_is_Ord CC
     have "?YYm``?M \<lesssim> ?M" by auto
     with ddd have Rw:"?YYm``?M \<lesssim>Q" using lepoll_trans by blast
     {
       fix m assume "m\<in>?M"
-      then have "\<langle>m,?YYm`m\<rangle>\<in>?YYm" using function_apply_Pair[OF f] d by blast
-      then have "?YYm`m\<in>?YYm``?M" by auto}
-      then have l1:"{?YYm`m. m\<in>?M}\<subseteq>?YYm``?M" by blast
-      {
-        fix t assume "t\<in>?YYm``?M"
-        then have "\<exists>x\<in>?M. \<langle>x,t\<rangle>\<in>?YYm" unfolding image_def by auto
-        then obtain r where S:"r\<in>?M""\<langle>r,t\<rangle>\<in>?YYm" by auto
-        have "?YYm`r=t" using apply_equality[OF S(2) fun] by auto
-        with S(1) have "t\<in>{?YYm`m. m\<in>?M}" by auto
-      }
-      with l1 have "{?YYm`m. m\<in>?M}=?YYm``?M" by blast
-      with Rw have "{?YYm`m. m\<in>?M} \<lesssim>Q" by auto
-      with covers have "{?YYm`m. m\<in>?M}\<in>Pow(M)\<and>\<Union>T\<subseteq>\<Union>{?YYm`m. m\<in>?M}\<and>{?YYm`m. m\<in>?M} \<prec>csucc(Q)" using ree 
-        Card_less_csucc_eq_le[OF CC] by blast
-      then have "\<exists>N\<in>Pow(M). \<Union>T\<subseteq>\<Union>N\<and>N\<prec>csucc(Q)" by auto
+      then have "\<langle>m,?YYm`m\<rangle>\<in>?YYm" using function_apply_Pair f d by blast
+      then have "?YYm`m\<in>?YYm``?M" by auto
     }
+    then have l1:"{?YYm`m. m\<in>?M}\<subseteq>?YYm``?M" by blast
+    {
+      fix t assume "t\<in>?YYm``?M"
+      then have "\<exists>x\<in>?M. \<langle>x,t\<rangle>\<in>?YYm" unfolding image_def by auto
+      then obtain r where S:"r\<in>?M""\<langle>r,t\<rangle>\<in>?YYm" by auto
+      have "?YYm`r=t" using apply_equality S(2) fun by auto
+      with S(1) have "t\<in>{?YYm`m. m\<in>?M}" by auto
+    }
+    with l1 have "{?YYm`m. m\<in>?M}=?YYm``?M" by blast
+    with Rw have "{?YYm`m. m\<in>?M} \<lesssim>Q" by auto
+    with covers have "{?YYm`m. m\<in>?M}\<in>Pow(M)\<and>\<Union>T\<subseteq>\<Union>{?YYm`m. m\<in>?M}\<and>{?YYm`m. m\<in>?M} \<prec>csucc(Q)" using ree 
+      Card_less_csucc_eq_le CC by blast
+    then have "\<exists>N\<in>Pow(M). \<Union>T\<subseteq>\<Union>N\<and>N\<prec>csucc(Q)" by auto
+  }
   then have "\<forall>M\<in>Pow(T). \<Union>T \<subseteq> \<Union>M \<longrightarrow> (\<exists>N\<in>Pow(M). \<Union>T \<subseteq> \<Union>N \<and> N \<prec> csucc(Q))" by auto
   then show ?thesis using IsCompactOfCard_def Card_csucc CC Card_is_Ord by auto
 qed
@@ -768,7 +818,10 @@ proof-
     }
     ultimately
     have base:"{{x}. x\<in>Q\<times>M} {is a base for} Pow(Q\<times>M)" unfolding IsAbaseFor_def by blast
-    let ?f="{\<langle>i,{i}\<rangle>. i\<in>Q\<times>M}"
+    let ?f = "{\<langle>i,{i}\<rangle>. i\<in>Q\<times>M}"
+    have " Q \<lesssim> Q \<Longrightarrow> M \<lesssim> Q \<Longrightarrow> Q \<times> M \<lesssim> Q \<times> Q" using prod_lepoll_mono by auto
+    then have "M \<lesssim> Q \<Longrightarrow> Q \<times> M \<lesssim> Q \<times> Q" using lepoll_refl by auto
+    with AS have R:" Q \<times> M \<lesssim> Q \<times> Q" by auto
     have fff:"?f\<in>Q\<times>M\<rightarrow>{{i}. i\<in>Q\<times>M}" using Pi_def function_def by auto
     then have "?f\<in>inj(Q\<times>M,{{i}. i\<in>Q\<times>M})" unfolding inj_def using apply_equality by auto
     then have "?f\<in>bij(Q\<times>M,{{i}. i\<in>Q\<times>M})" unfolding bij_def surj_def  using fff
@@ -776,7 +829,7 @@ proof-
     then have "Q\<times>M\<approx>{{i}. i\<in>Q\<times>M}" using eqpoll_def by auto
     then have "{{i}. i\<in>Q\<times>M}\<approx>Q\<times>M" using eqpoll_sym by auto
     then have "{{i}. i\<in>Q\<times>M}\<lesssim>Q\<times>M" using eqpoll_imp_lepoll by auto
-    then have "{{i}. i\<in>Q\<times>M}\<lesssim>Q\<times>Q" using AS prod_lepoll_mono[of "Q""Q""M""Q"] lepoll_refl[of "Q"]
+    then have "{{i}. i\<in>Q\<times>M}\<lesssim>Q\<times>Q" using R
       lepoll_trans by blast
     then have "{{i}. i\<in>Q\<times>M}\<lesssim>Q" using InfCard_square_eqpoll assms(2) lepoll_eq_trans by auto
     then have "{{i}. i\<in>Q\<times>M}\<prec>csucc(Q)" using Card_less_csucc_eq_le assms(2) InfCard_is_Card by auto
@@ -785,11 +838,14 @@ proof-
     {
       fix W
       assume "W\<in>Pow(Q\<times>M)"
-      then have T:"W{is closed in} Pow(Q\<times>M)" and "(Q\<times>M)\<inter>W=W" using IsClosed_def by auto
-      with compact_closed[OF comp T] have "(W {is compact of cardinal}csucc(Q){in}Pow(Q\<times>M))" by auto
+      then have T:"W{is closed in} Pow(Q\<times>M)" "(Q\<times>M)\<inter>W=W" using IsClosed_def by auto
+      have "((Q\<times>M) {is compact of cardinal}csucc(Q){in}Pow(Q\<times>M)) \<Longrightarrow> (W {is closed in} Pow(Q\<times>M)) 
+      \<Longrightarrow> (((Q\<times>M)\<inter>W) {is compact of cardinal}csucc(Q){in}Pow(Q\<times>M))" using compact_closed by auto
+      with comp T(1) have "(((Q\<times>M)\<inter>W) {is compact of cardinal}csucc(Q){in}Pow(Q\<times>M))" by auto
+      with T(2) have "W{is compact of cardinal}csucc(Q){in}Pow(Q\<times>M)" by auto
     }
     then have subCompact:"\<forall>W\<in>Pow(Q\<times>M). (W {is compact of cardinal}csucc(Q){in}Pow(Q\<times>M))" by auto
-    let ?cub="\<Union>{{(U)\<times>{t}. U\<in>N`t}. t\<in>M}"
+    let ?cub = "\<Union>{{(U)\<times>{t}. U\<in>N`t}. t\<in>M}"
     from AS have "(\<Union>?cub)\<in>Pow((Q)\<times>M)" by auto
     with subCompact have Ncomp:"((\<Union>?cub) {is compact of cardinal}csucc(Q){in}Pow(Q\<times>M))" by auto
     have cond:"(?cub)\<in>Pow(Pow(Q\<times>M))\<and> \<Union>?cub\<subseteq>\<Union>?cub" using AS by auto
@@ -822,7 +878,7 @@ proof-
     from S_def(3) obtain r where r:"r:inj(S,Q)" using lepoll_def by auto
     then have bij2:"converse(r):bij(range(r),S)" using inj_bij_range bij_converse_bij by auto
     then have surj2:"converse(r):surj(range(r),S)" using bij_def by auto
-    let ?R="\<lambda>t\<in>M. {j\<in>range(r). converse(r)`j\<in>({U\<times>{t}. U\<in>N`t})}"
+    let ?R = "\<lambda>t\<in>M. {j\<in>range(r). converse(r)`j\<in>({U\<times>{t}. U\<in>N`t})}"
     {
       fix t
       assume AA:"t\<in>M""N`t\<noteq>{0}"
@@ -866,7 +922,7 @@ proof-
       then show ?thesis by auto
     qed
     (*The last part is to prove that ?E is the choice function.*)
-    let ?E="{\<langle>t,if N`t={0} then 0 else (THE U. converse(r)`(\<mu> j. j\<in>?R`t)=U\<times>{t})\<rangle>. t\<in>M}"
+    let ?E = "{\<langle>t,if N`t={0} then 0 else (THE U. converse(r)`(\<mu> j. j\<in>?R`t)=U\<times>{t})\<rangle>. t\<in>M}"
     have ff:"function(?E)" unfolding function_def by auto
     moreover
     {
@@ -885,7 +941,7 @@ proof-
       from nonE pm nonEE obtain ee where P:"ee\<in>?R`t" by blast
       with sub have "ee\<in>Q" by auto
       then have "Ord(ee)" using assms(2) Card_is_Ord Ord_in_Ord InfCard_is_Card by blast
-      with P have "(\<mu> j. j\<in>?R`t)\<in>?R`t" using LeastI[where i=ee and P="\<lambda>j. j\<in>?R`t"] by auto
+      with P have "(\<mu> j. j\<in>?R`t)\<in>?R`t" by (rule LeastI)
       with pp pm have "converse(r)`(\<mu> j. j\<in>?R`t)\<in>{U\<times>{t}. U\<in>N`t}" by auto
       then obtain W where "converse(r)`(\<mu> j. j\<in>?R`t)=W\<times>{t}" and s:"W\<in>N`t" by auto
       then have "(THE U. converse(r)`(\<mu> j. j\<in>?R`t)=U\<times>{t})=W" using reg by auto
@@ -902,8 +958,9 @@ proof-
     }
     then have "?E\<in>Pow(Sigma(M,\<lambda>t. N`t))" by auto
     with ff have "?E\<in>Pi(M,\<lambda>m. N`m)" using Pi_iff by auto
-    then have "(\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t))" using thesis1 by auto}
-    then show ?thesis using AxiomCardinalChoice_def assms(2) InfCard_is_Card by auto
+    then have "(\<exists>f. f:Pi(M,\<lambda>t. N`t) \<and> (\<forall>t\<in>M. f`t\<in>N`t))" using thesis1 by auto
+  }
+  then show ?thesis using AxiomCardinalChoice_def assms(2) InfCard_is_Card by auto
 qed
 
 text\<open>The two previous results, state the following equivalence:\<close>
@@ -936,18 +993,18 @@ proof
       from sec obtain B where "B {is a base for} T" "B\<prec>csucc(Q)" using IsSecondOfCard_def by auto
       with \<open>Card(Q)\<close> obtain N where base:"{N`i. i\<in>Q}{is a base for}T" using Card_less_csucc_eq_le
         base_to_indexed_base by blast
-      let ?S="{\<langle>u,{i\<in>Q. N`i\<subseteq>u}\<rangle>. u\<in>M}"
+      let ?S = "{\<langle>u,{i\<in>Q. N`i\<subseteq>u}\<rangle>. u\<in>M}"
       have "function(?S)" unfolding function_def by auto
-      then have "?S:M\<rightarrow>Pow(Q)" using Pi_iff by auto
-      then have "?S\<in>inj(M,Pow(Q))" unfolding inj_def
-        proof
+      then have I:"?S:M\<rightarrow>Pow(Q)" using Pi_iff by auto
+      have "?S\<in>inj(M,Pow(Q))"
+      proof-
         {
           fix w x
           assume AS:"w\<in>M""x\<in>M""{\<langle>u, {i \<in> Q . N ` i \<subseteq> u}\<rangle> . u \<in> M} ` w = {\<langle>u, {i \<in> Q . N ` i \<subseteq> u}\<rangle> . u \<in> M} ` x"
           with \<open>?S:M\<rightarrow>Pow(Q)\<close> have ASS:"{i \<in> Q . N ` i \<subseteq> w}={i \<in> Q . N ` i \<subseteq> x}" using apply_equality by auto
           from AS(1,2) MT have "w\<in>T""x\<in>T" by auto
-          then have "w=Interior(w,T)""x=Interior(x,T)" using top topology0.Top_2_L3[of "T"]
-            topology0_def[of "T"] by auto
+          then have "w=Interior(w,T)""x=Interior(x,T)" using top topology0.Top_2_L3
+            topology0_def by auto
           then have UN:"w=(\<Union>{B\<in>{N`(i). i\<in>Q}. B\<subseteq>w})""x=(\<Union>{B\<in>{N`(i). i\<in>Q}. B\<subseteq>x})"
             using interior_set_base_topology top base by auto
           {
@@ -976,14 +1033,18 @@ proof
           }
           ultimately have "w=x" by auto 
         }
-        then show "\<forall>w\<in>M. \<forall>x\<in>M. {\<langle>u, {i \<in> Q . N ` i \<subseteq> u}\<rangle> . u \<in> M} ` w = {\<langle>u, {i \<in> Q . N ` i \<subseteq> u}\<rangle> . u \<in> M} ` x \<longrightarrow> w = x" by auto
+        then have II:"\<forall>w\<in>M. \<forall>x\<in>M. {\<langle>u, {i \<in> Q . N ` i \<subseteq> u}\<rangle> . u \<in> M} ` w = {\<langle>u, {i \<in> Q . N ` i \<subseteq> u}\<rangle> . u \<in> M} ` x \<longrightarrow> w = x" by auto
+        from I II show ?thesis unfolding inj_def by auto
       qed
       then have "?S\<in>bij(M,range(?S))" using fun_is_surj unfolding bij_def inj_def surj_def by force
+      have M:"(\<Union>(range(?S))) {is closed in} Pow(Q)" "Q\<inter>(\<Union>range(?S))=(\<Union>range(?S))" using IsClosed_def by auto
       have "range(?S)\<subseteq>Pow(Q)" by auto
       then have "range(?S)\<in>Pow(Pow(Q))" by auto
       moreover
-      have "(\<Union>(range(?S))) {is closed in} Pow(Q)" "Q\<inter>(\<Union>range(?S))=(\<Union>range(?S))" using IsClosed_def by auto
-      from this(2) compact_closed[OF assms(2) this(1)] have "(\<Union>range(?S)){is compact of cardinal}csucc(Q) {in}Pow(Q)"
+      from compact_closed have "Q{is compact of cardinal}csucc(Q) {in}Pow(Q) 
+        \<Longrightarrow> (\<Union>(range(?S))) {is closed in} Pow(Q) 
+        \<Longrightarrow> (Q\<inter>(\<Union>(range(?S)))){is compact of cardinal}csucc(Q) {in}Pow(Q)" by auto
+      with M assms(2) have "(\<Union>range(?S)){is compact of cardinal}csucc(Q) {in}Pow(Q)"
         by auto
       moreover
       have "\<Union>(range(?S))\<subseteq>\<Union>(range(?S))" by auto
@@ -1002,8 +1063,8 @@ proof
         then obtain j where "j\<in>Q" "N`j\<subseteq>R" and x_p:"x\<in>N`j" by auto
         with \<open>R\<in>M\<close> \<open>?S:M\<rightarrow>Pow(Q)\<close> \<open>?S\<in>bij(M,range(?S))\<close> have "?S`R\<in>range(?S) \<and> j\<in>?S`R" using apply_equality 
           bij_def inj_def by auto
-        from exI[where P="\<lambda>t. t\<in>range(?S) \<and> j\<in>t", OF this] have "\<exists>A\<in>range(?S). j\<in>A" unfolding Bex_def
-          by auto
+        then have "\<exists>A. A\<in>range(?S) \<and> j\<in>A" by (rule exI)
+        then have "\<exists>A\<in>range(?S). j\<in>A" unfolding Bex_def by auto
         then have "j\<in>(\<Union>(range(?S)))" by auto
         then have "j\<in>\<Union>SS" using SS_def(2) by blast
         then obtain SR where "SR\<in>SS" "j\<in>SR" by auto
@@ -1015,36 +1076,40 @@ proof
         moreover
         have "converse(restrict(converse(?S),SS))\<in>inj(converse(?S)``SS,SS)" using rr unfolding bij_def by auto
         moreover
-        ultimately have "RR=converse(converse(restrict(converse(?S),SS)))`SR" using left_inverse[OF _ p]
+        have "converse(restrict(converse(?S),SS)) \<in> inj(converse(?S)``SS, SS) \<Longrightarrow> RR \<in> converse(?S) `` SS \<Longrightarrow>
+           converse(converse(restrict(converse(?S),SS))) ` (converse(restrict(converse(?S),SS)) ` RR) = RR"
+          using left_inverse by blast
+        ultimately have "RR=converse(converse(restrict(converse(?S),SS)))`SR" using p
           by force
         moreover
-        with r1 have "restrict(converse(?S),SS)\<in>SS\<rightarrow>converse(?S)``SS" unfolding bij_def inj_def by auto
+        from this r1 have "restrict(converse(?S),SS)\<in>SS\<rightarrow>converse(?S)``SS" unfolding bij_def inj_def by auto
         then have "relation(restrict(converse(?S),SS))" using Pi_def relation_def by auto
         then have "converse(converse(restrict(converse(?S),SS)))=restrict(converse(?S),SS)" using relation_converse_converse by auto
         ultimately have "RR=restrict(converse(?S),SS)`SR" by auto
         with \<open>SR\<in>SS\<close> have eq:"RR=converse(?S)`SR" unfolding restrict by auto
         then have "converse(converse(?S))`RR=converse(converse(?S))`(converse(?S)`SR)" by auto
         moreover
-        with \<open>SR\<in>SS\<close> have "SR\<in>range(?S)" using SS_def(1) by auto
-        from con left_inverse[OF _ this] have "converse(converse(?S))`(converse(?S)`SR)=SR" unfolding bij_def
+        from this \<open>SR\<in>SS\<close> have "SR\<in>range(?S)" using SS_def(1) by auto
+        then have "converse(?S) \<in> inj(range(?S),M) \<Longrightarrow> converse(converse(?S)) ` (converse(?S) ` SR) = SR" by auto
+        with con have "converse(converse(?S))`(converse(?S)`SR)=SR" unfolding bij_def
           by auto
         ultimately have "converse(converse(?S))`RR=SR" by auto
-        then have "?S`RR=SR" using relation_converse_converse[of "?S"] unfolding relation_def by auto
+        then have "?S`RR=SR" using relation_converse_converse unfolding relation_def by auto
         moreover
         have "converse(?S):range(?S)\<rightarrow>M" using con bij_def inj_def by auto
         with \<open>SR\<in>range(?S)\<close> have "converse(?S)`SR\<in>M" using apply_funtype
           by auto
         with eq have "RR\<in>M" by auto
-        ultimately have "SR={i\<in>Q. N`i\<subseteq>RR}" using \<open>?S:M\<rightarrow>Pow(Q)\<close> apply_equality by auto
-        then have "N`j\<subseteq>RR" using \<open>j\<in>SR\<close> by auto
+        ultimately have "SR={i\<in>Q. N`i\<subseteq>RR}" using I apply_equality by auto
+        with \<open>j\<in>SR\<close> have "N`j\<subseteq>RR" by auto
         with x_p have "x\<in>RR" by auto
         with p have "x\<in>\<Union>(converse(?S)``SS)" by auto
       }
       then have "\<Union>T\<subseteq>\<Union>(converse(?S)``SS)" by blast
       moreover
       {
-        from con have "converse(?S)``SS={converse(?S)`R. R\<in>SS}" using image_function[of "converse(?S)" "SS"]
-          SS_def(1) unfolding range_def bij_def inj_def Pi_def by auto
+        from con have "converse(?S)``SS={converse(?S)`R. R\<in>SS}" 
+          using image_function SS_def(1) unfolding range_def bij_def inj_def Pi_def by auto
         have "{converse(?S)`R. R\<in>SS}\<subseteq>{converse(?S)`R. R\<in>range(?S)}" using SS_def(1) by auto
         moreover
         have "converse(?S):range(?S)\<rightarrow>M" using con unfolding bij_def inj_def by auto
@@ -1054,7 +1119,7 @@ proof
       }
       then have "converse(?S)``SS\<in>Pow(M)" by auto
       moreover
-      with rr have "converse(?S)``SS\<approx>SS" using eqpoll_def by auto
+      from this rr have "converse(?S)``SS\<approx>SS" using eqpoll_def by auto
       then have "converse(?S)``SS\<prec>csucc(Q)" using SS_def(3) eq_lesspoll_trans by auto
       ultimately
       have "\<exists>N\<in>Pow(M). \<Union>T\<subseteq>\<Union>N \<and> N\<prec>csucc(Q)" by auto
@@ -1066,6 +1131,9 @@ proof
   then show "(T {is a topology}) \<and> (T {is of second type of cardinal}csucc(Q)) \<longrightarrow> ((\<Union>T){is compact of cardinal}csucc(Q) {in}T)"
   by auto
 qed
+
+text\<open>The discrete topology on an infinite cardinal \<open>Q\<close> is of second type of
+cardinal \<open>csucc(Q)\<close>, as witnessed by the base of singletons.\<close>
 
 theorem Q_disc_is_second_card_csuccQ:
   assumes "InfCard(Q)" 
@@ -1086,7 +1154,7 @@ proof-
   }
   ultimately
   have base:"{{x}. x\<in>Q} {is a base for} Pow(Q)" unfolding IsAbaseFor_def by blast
-  let ?f="{\<langle>i,{i}\<rangle>. i\<in>Q}"
+  let ?f = "{\<langle>i,{i}\<rangle>. i\<in>Q}"
   have "?f\<in>Q\<rightarrow>{{x}. x\<in>Q}" unfolding Pi_def function_def by auto
   then have "?f\<in>inj(Q,{{x}. x\<in>Q})" unfolding inj_def using apply_equality by auto
   moreover
@@ -1112,7 +1180,7 @@ theorem Q_disc_comp_csuccQ_eq_Q_choice_csuccQ:
     by auto
   next
   assume "{the axiom of}Q{choice holds for subsets}(Pow(Q))"
-  with assms show "Q{is compact of cardinal}csucc(Q){in}(Pow(Q))" using Q_disc_is_second_card_csuccQ Q_choice_Pow_eq_secon_imp_comp Pow_is_top[of "Q"]
+  with assms show "Q{is compact of cardinal}csucc(Q){in}(Pow(Q))" using Q_disc_is_second_card_csuccQ Q_choice_Pow_eq_secon_imp_comp Pow_is_top
     by force
 qed
 
