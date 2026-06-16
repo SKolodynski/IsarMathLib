@@ -31,10 +31,15 @@ section \<open>Topology 5\<close>
 theory Topology_ZF_5 imports Topology_ZF_properties Topology_ZF_examples_1 Topology_ZF_4b
 begin
 
+text\<open>This theory continues the study of topological spaces, covering separation axioms,
+hereditability of topological properties, spectra of properties, and anti-properties.\<close>
+
 subsection\<open>Some results for separation axioms\<close>
 
 text\<open>First we will give a global characterization of $T_1$-spaces; which is interesting
 because it involves the cardinal $\mathbb{N}$.\<close>
+
+text\<open>A topology is $T_1$ if and only if it contains the cofinite topology.\<close>
 
 lemma (in topology0)  T1_cocardinal_coarser:
   shows "(T {is T\<^sub>1}) \<longleftrightarrow> (CoFinite (\<Union>T))\<subseteq>T"
@@ -57,14 +62,14 @@ proof
     {
       fix A
       assume AS2:"A\<in>FinPow(\<Union>T)"
-      let ?p="{\<langle>x,{x}\<rangle>. x\<in>A}"
+      let ?p = "{\<langle>x,{x}\<rangle>. x\<in>A}"
       have "?p\<in>A\<rightarrow>{{x}. x\<in>A}" using Pi_def unfolding function_def by auto
       then have "?p:bij(A,{{x}. x\<in>A})" unfolding bij_def inj_def surj_def using apply_equality
         by auto
       then have "A\<approx>{{x}. x\<in>A}" unfolding eqpoll_def by auto
       with AS2 have "Finite({{x}. x\<in>A})" unfolding FinPow_def using eqpoll_imp_Finite_iff by auto
-      then have "{{x}. x\<in>A}\<in>FinPow({D \<in> Pow(\<Union>T) . D {is closed in} T})" using AS2 pointCl unfolding FinPow_def
-      by (safe, blast+) 
+      then have "{{x}. x\<in>A}\<in>FinPow({D \<in> Pow(\<Union>T) . D {is closed in} T})" 
+        using AS2 pointCl unfolding FinPow_def by blast 
       then have "(\<Union>{{x}. x\<in>A}) {is closed in} T" using fin_union_cl_is_cl by auto
       moreover
       have "\<Union>{{x}. x\<in>A}=A" by auto
@@ -80,7 +85,7 @@ proof
         reg unfolding FinPow_def by auto
       then have "U\<in>Pow(\<Union>T)" "U\<in>T\<or>(\<Union>T-(\<Union>T-U))\<in>T" using IsClosed_def by auto
       moreover
-      then have "(\<Union>T-(\<Union>T-U))=U" by blast
+      from this have "(\<Union>T-(\<Union>T-U))=U" by blast
       ultimately have "U\<in>T" by auto
     }
     then show "(CoFinite (\<Union>T))\<subseteq>T" using Cofinite_def by auto
@@ -99,8 +104,10 @@ proof
       then have "(\<Union>T)-{y}\<in>CoCardinal(\<Union>T,nat)" using union_cocardinal IsClosed_def by auto
       with AS have "(\<Union>T)-{y}\<in>T" by auto
       moreover
-      with AS2(1,3) have "x\<in>((\<Union>T)-{y}) \<and> y\<notin>((\<Union>T)-{y})" by auto
-      ultimately have "\<exists>V\<in>T. x\<in>V\<and>y\<notin>V" by(safe,auto)
+      from this AS2(1,3) have "x\<in>((\<Union>T)-{y}) \<and> y\<notin>((\<Union>T)-{y})" by auto
+      ultimately have "(\<Union>T)-{y}\<in>T \<and> x\<in>((\<Union>T)-{y}) \<and> y\<notin>((\<Union>T)-{y})" by auto
+      then have "\<exists>V. V\<in>T\<and> x\<in>V\<and>y\<notin>V" by (rule exI)
+      then have "\<exists>V\<in>T. x\<in>V\<and>y\<notin>V" by auto
     }
     then show "T {is T\<^sub>1}" using isT1_def by auto
   }
@@ -109,7 +116,7 @@ qed
 text\<open>In the previous proof, it is obvious that we don't need to check
 if ever cofinite set is open. It is enough to check if every singleton is closed.\<close>
 
-corollary(in topology0) T1_iff_singleton_closed:
+corollary (in topology0) T1_iff_singleton_closed:
   shows "(T {is T\<^sub>1}) \<longleftrightarrow> (\<forall>x\<in>\<Union>T. {x}{is closed in}T)"
 proof
   assume AS:"T {is T\<^sub>1}"
@@ -131,14 +138,14 @@ next
   {
     fix A
     assume AS2:"A\<in>FinPow(\<Union>T)"
-    let ?p="{\<langle>x,{x}\<rangle>. x\<in>A}"
+    let ?p = "{\<langle>x,{x}\<rangle>. x\<in>A}"
     have "?p\<in>A\<rightarrow>{{x}. x\<in>A}" using Pi_def unfolding function_def by auto
     then have "?p:bij(A,{{x}. x\<in>A})" unfolding bij_def inj_def surj_def using apply_equality
       by auto
     then have "A\<approx>{{x}. x\<in>A}" unfolding eqpoll_def by auto
     with AS2 have "Finite({{x}. x\<in>A})" unfolding FinPow_def using eqpoll_imp_Finite_iff by auto
     then have "{{x}. x\<in>A}\<in>FinPow({D \<in> Pow(\<Union>T) . D {is closed in} T})" using AS2 pointCl unfolding FinPow_def
-    by (safe, blast+) 
+    by blast
     then have "(\<Union>{{x}. x\<in>A}) {is closed in} T" using fin_union_cl_is_cl by auto
     moreover
     have "\<Union>{{x}. x\<in>A}=A" by auto
@@ -154,7 +161,7 @@ next
       reg unfolding FinPow_def by auto
     then have "U\<in>Pow(\<Union>T)" "U\<in>T\<or>(\<Union>T-(\<Union>T-U))\<in>T" using IsClosed_def by auto
     moreover
-    then have "(\<Union>T-(\<Union>T-U))=U" by blast
+    from this have "(\<Union>T-(\<Union>T-U))=U" by blast
     ultimately have "U\<in>T" by auto
   }
   then have "(CoFinite (\<Union>T))\<subseteq>T" using Cofinite_def by auto
@@ -166,7 +173,6 @@ topologies for different sets $Q$ are all ordered
 as the partial order of sets. (The order is linear when considering only cardinals)\<close>
 
 lemma order_cocardinal_top:
-  fixes X
   assumes "Q1\<lesssim>Q2"
   shows "CoCardinal(X,Q1) \<subseteq> CoCardinal(X,Q2)"
 proof
@@ -177,8 +183,9 @@ proof
   then show "x\<in>CoCardinal(X,Q2)" using CoCardinal_def by auto
 qed
 
+text\<open>Any cocardinal topology defined with respect to an infinite cardinal is $T_1$.\<close>
+
 corollary cocardinal_is_T1:
-  fixes X K
   assumes "InfCard(K)"
   shows "CoCardinal(X,K) {is T\<^sub>1}"
 proof-
@@ -213,6 +220,8 @@ proof-
   then show ?thesis by auto
 qed
 
+text\<open>In $T_2$-spaces, nets also have at most one limit point.\<close>
+
 lemma (in topology0) T2_imp_unique_limit_net:
   assumes "T {is T\<^sub>2}" "N {is a net on}\<Union>T" "N \<rightarrow>\<^sub>N x" "N \<rightarrow>\<^sub>N y"
   shows "x=y"
@@ -235,14 +244,14 @@ proof-
     assume "x\<in>\<Union>T" "y\<in>\<Union>T" "x\<noteq>y"
     {
       assume "\<forall>U\<in>T. \<forall>V\<in>T. (x\<in>U \<and> y\<in>V) \<longrightarrow> U\<inter>V\<noteq>0"
-      let ?Ux="{A\<in>Pow(\<Union>T). x\<in>int(A)}"
-      let ?Uy="{A\<in>Pow(\<Union>T). y\<in>int(A)}"
-      let ?FF="?Ux \<union> ?Uy \<union> {A\<inter>B. \<langle>A,B\<rangle>\<in>?Ux \<times> ?Uy}"
+      let ?Ux = "{A\<in>Pow(\<Union>T). x\<in>int(A)}"
+      let ?Uy = "{A\<in>Pow(\<Union>T). y\<in>int(A)}"
+      let ?FF = "?Ux \<union> ?Uy \<union> {A\<inter>B. \<langle>A,B\<rangle>\<in>?Ux \<times> ?Uy}"
       have sat:"?FF {satisfies the filter base condition}"
       proof-
         {
           fix A B
-          assume "A\<in>?FF" "B\<in>?FF"
+          assume as:"A\<in>?FF" "B\<in>?FF"
           {
             assume "A\<in>?Ux" 
             {
@@ -263,7 +272,7 @@ proof-
               with \<open>BB\<in>?Uy\<close> have "A\<inter>B\<in>{A\<inter>B. \<langle>A,B\<rangle>\<in>?Ux \<times> ?Uy}" by auto
               then have "A\<inter>B\<in>?FF" by auto
             }
-            ultimately have "A\<inter>B\<in>?FF" using \<open>B\<in>?FF\<close> by auto
+            ultimately have "A\<inter>B\<in>?FF" using as(2) by auto
           }
           moreover
           {
@@ -288,24 +297,24 @@ proof-
               with \<open>AA\<in>?Ux\<close> have "A\<inter>B\<in>{A\<inter>B. \<langle>A,B\<rangle>\<in>?Ux \<times> ?Uy}" by auto
               then have "A\<inter>B\<in>?FF" by auto
             }
-            ultimately have "A\<inter>B\<in>?FF" using \<open>B\<in>?FF\<close> by auto
+            ultimately have "A\<inter>B\<in>?FF" using as(2) by auto
           }
           moreover
           {
             assume "A\<in>{A\<inter>B. \<langle>A,B\<rangle>\<in>?Ux \<times> ?Uy}"
-            then obtain AA BB where "A=AA\<inter>BB" "AA\<in>?Ux" "BB\<in>?Uy" by auto
+            then obtain AA BB where AB:"A=AA\<inter>BB" "AA\<in>?Ux" "BB\<in>?Uy" by auto
             {
               assume "B\<in>?Uy"
-              with \<open>BB\<in>?Uy\<close> \<open>y\<in>\<Union>T\<close> have "B\<inter>BB\<in>?Uy" using neigh_filter(1) IsFilter_def by auto
+              with \<open>BB\<in>?Uy\<close> \<open>y\<in>\<Union>T\<close> have B:"B\<inter>BB\<in>?Uy" using neigh_filter(1) IsFilter_def by auto
               moreover from \<open>A=AA\<inter>BB\<close> have "A\<inter>B=AA\<inter>(B\<inter>BB)" by auto
-              ultimately have "A\<inter>B\<in>?FF" using \<open>AA\<in>?Ux\<close> \<open>B\<inter>BB\<in>?Uy\<close> by auto
+              ultimately have "A\<inter>B\<in>?FF" using AB(2) B by auto
             }
             moreover
             {
               assume "B\<in>?Ux"
-              with \<open>AA\<in>?Ux\<close> \<open>x\<in>\<Union>T\<close> have "B\<inter>AA\<in>?Ux" using neigh_filter(1) IsFilter_def by auto
+              with \<open>AA\<in>?Ux\<close> \<open>x\<in>\<Union>T\<close> have BA:"B\<inter>AA\<in>?Ux" using neigh_filter(1) IsFilter_def by auto
               moreover from \<open>A=AA\<inter>BB\<close> have "A\<inter>B=(B\<inter>AA)\<inter>BB" by auto
-              ultimately have "A\<inter>B\<in>?FF" using \<open>B\<inter>AA\<in>?Ux\<close> \<open>BB\<in>?Uy\<close> by auto
+              ultimately have "A\<inter>B\<in>?FF" using AB(3) by auto
             }
             moreover
             {
@@ -318,51 +327,74 @@ proof-
               from \<open>BB\<in>?Uy\<close>\<open>BB2\<in>?Uy\<close>\<open>y\<in>\<Union>T\<close> have "BB\<inter>BB2\<in>?Uy" using neigh_filter(1) IsFilter_def by auto
               ultimately have "A\<inter>B\<in>?FF" by auto
             }
-            ultimately have "A\<inter>B\<in>?FF" using \<open>B\<in>?FF\<close> by auto
+            ultimately have "A\<inter>B\<in>?FF" using as(2) by auto
           }
-          ultimately have "A\<inter>B\<in>?FF" using \<open>A\<in>?FF\<close> by auto
+          ultimately have "A\<inter>B\<in>?FF" using as(1) by auto
           then have "\<exists>D\<in>?FF. D\<subseteq>A\<inter>B" unfolding Bex_def by auto
         }
         then have "\<forall>A\<in>?FF. \<forall>B\<in>?FF. \<exists>D\<in>?FF. D\<subseteq>A\<inter>B" by force
         moreover
-        have "\<Union>T\<in>?Ux" using \<open>x\<in>\<Union>T\<close> neigh_filter(1) IsFilter_def by auto
+        from \<open>x\<in>\<Union>T\<close> have "\<Union>T\<in>?Ux" using  neigh_filter(1) IsFilter_def by auto
         then have "?FF\<noteq>0" by auto
         moreover
         {
           assume "0\<in>?FF"
           moreover
-          have "0\<notin>?Ux" using \<open>x\<in>\<Union>T\<close> neigh_filter(1) IsFilter_def by auto
+          from \<open>x\<in>\<Union>T\<close> have "0\<notin>?Ux" using neigh_filter(1) IsFilter_def by auto
           moreover
-          have "0\<notin>?Uy" using \<open>y\<in>\<Union>T\<close> neigh_filter(1) IsFilter_def by auto
+          from \<open>y\<in>\<Union>T\<close> have "0\<notin>?Uy" using neigh_filter(1) IsFilter_def by auto
           ultimately have "0\<in>{A\<inter>B. \<langle>A,B\<rangle>\<in>?Ux \<times> ?Uy}" by auto
           then obtain A B where "0=A\<inter>B" "A\<in>?Ux""B\<in>?Uy" by auto
           then have "x\<in>int(A)""y\<in>int(B)" by auto
           moreover
-          with \<open>0=A\<inter>B\<close> have "int(A)\<inter>int(B)=0" using Top_2_L1 by auto
+          from this \<open>0=A\<inter>B\<close> have "int(A)\<inter>int(B)=0" using Top_2_L1 by auto
           moreover
           have "int(A)\<in>T""int(B)\<in>T" using Top_2_L2 by auto
-          ultimately have "False" using \<open>\<forall>U\<in>T. \<forall>V\<in>T. x\<in>U\<and>y\<in>V \<longrightarrow> U\<inter>V\<noteq>0\<close> by auto
+          moreover note \<open>\<forall>U\<in>T. \<forall>V\<in>T. x\<in>U\<and>y\<in>V \<longrightarrow> U\<inter>V\<noteq>0\<close>
+          ultimately have "False" by auto
         }
         then have "0\<notin>?FF" by auto
         ultimately show ?thesis using SatisfiesFilterBase_def by auto
       qed
       moreover
-      have "?FF\<subseteq>Pow(\<Union>T)" by auto
+      have "?FF\<subseteq>Pow(\<Union>T)" by auto moreover
+      have "?FF \<subseteq> Pow(\<Union>T) \<Longrightarrow>
+    ?FF {satisfies the filter base condition} \<Longrightarrow>
+    ((?FF {is a base filter} {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A}) \<and> (\<Union>{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A}) = \<Union>T) \<longleftrightarrow> {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} = {A \<in> Pow(\<Union>T) . \<exists>D\<in>?FF. D \<subseteq> A}"
+        by (rule base_unique_filter_set2)
+      then have "?FF \<subseteq> Pow(\<Union>T) \<Longrightarrow>
+    ?FF {satisfies the filter base condition} \<Longrightarrow>
+    ((?FF {is a base filter} {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A}) \<and> (\<Union>{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A}) = \<Union>T)" by auto
       ultimately have bas:"?FF {is a base filter} {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A}" "\<Union>{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A}=\<Union>T" 
-        using base_unique_filter_set2[of "?FF"] by auto
+        by auto
       then have fil:"{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} {is a filter on} \<Union>T" using basic_filter sat by auto
       have "\<forall>U\<in>Pow(\<Union>T). x\<in>int(U) \<longrightarrow> (\<exists>D\<in>?FF. D\<subseteq>U)" by auto
-      then have "{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F x" using convergence_filter_base2[OF fil bas(1) _ \<open>x\<in>\<Union>T\<close>] by auto
+      have R:"\<And>x. {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} {is a filter on} \<Union>T \<Longrightarrow> ?FF {is a base filter} {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<Longrightarrow> \<forall>U\<in>Pow(\<Union>T).
+     x \<in> int(U) \<longrightarrow> (\<exists>D\<in>?FF. D \<subseteq> U) \<Longrightarrow> x \<in> \<Union>T \<Longrightarrow> {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F x {in} T" by (rule convergence_filter_base2)
+      then have "{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} {is a filter on} \<Union>T \<Longrightarrow> ?FF {is a base filter} {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<Longrightarrow> \<forall>U\<in>Pow(\<Union>T).
+     x \<in> int(U) \<longrightarrow> (\<exists>D\<in>?FF. D \<subseteq> U) \<Longrightarrow> x \<in> \<Union>T \<Longrightarrow> {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F x {in} T" by assumption
+      with fil bas(1) have "\<forall>U\<in>Pow(\<Union>T). x \<in> int(U) \<longrightarrow> (\<exists>D\<in>?FF. D \<subseteq> U) \<Longrightarrow> x \<in> \<Union>T \<Longrightarrow> {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F x {in} T"
+        by auto
+      with \<open>x\<in>\<Union>T\<close> have "{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F x" by auto
       moreover
-      then have "\<forall>U\<in>Pow(\<Union>T). y\<in>int(U) \<longrightarrow> (\<exists>D\<in>?FF. D\<subseteq>U)" by auto
-      then have "{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F y" using convergence_filter_base2[OF fil bas(1) _ \<open>y\<in>\<Union>T\<close>] by auto
-      ultimately have "x=y" using assms fil \<open>x\<in>\<Union>T\<close>\<open>y\<in>\<Union>T\<close> by blast
+      {
+        from R have "{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} {is a filter on} \<Union>T \<Longrightarrow> ?FF {is a base filter} {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<Longrightarrow> \<forall>U\<in>Pow(\<Union>T).
+       y \<in> int(U) \<longrightarrow> (\<exists>D\<in>?FF. D \<subseteq> U) \<Longrightarrow> y \<in> \<Union>T \<Longrightarrow> {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F y {in} T" by assumption
+        with fil bas(1) have I:"\<forall>U\<in>Pow(\<Union>T).
+       y \<in> int(U) \<longrightarrow> (\<exists>D\<in>?FF. D \<subseteq> U) \<Longrightarrow> y \<in> \<Union>T \<Longrightarrow> {A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F y {in} T" by auto
+        have "\<forall>U\<in>Pow(\<Union>T). y\<in>int(U) \<longrightarrow> (\<exists>D\<in>?FF. D\<subseteq>U)" by auto
+        with I \<open>y\<in>\<Union>T\<close> have "{A\<in>Pow(\<Union>T). \<exists>D\<in>?FF. D\<subseteq>A} \<rightarrow>\<^sub>F y"  by auto
+      }
+      moreover note \<open>x\<in>\<Union>T\<close>\<open>y\<in>\<Union>T\<close>
+      ultimately have "x=y" using assms fil  by blast
       with \<open>x\<noteq>y\<close> have "False" by auto
     }
     then have "\<exists>U\<in>T. \<exists>V\<in>T. x\<in>U \<and> y\<in>V \<and> U\<inter>V=0" by blast
   }
   then show ?thesis using isT2_def by auto
 qed
+
+text\<open>Uniqueness of net limits is also sufficient for $T_2$.\<close>
 
 lemma (in topology0) unique_limit_net_imp_T2:
   assumes "\<forall>x\<in>\<Union>T. \<forall>y\<in>\<Union>T. \<forall>N. ((N {is a net on}\<Union>T) \<and> (N \<rightarrow>\<^sub>N x) \<and> (N \<rightarrow>\<^sub>N y)) \<longrightarrow> x=y"
@@ -379,8 +411,6 @@ proof-
   then show ?thesis using unique_limit_filter_imp_T2 by auto
 qed
 
-text\<open>This results make easy to check if a space is $T_2$.\<close>
-
 text\<open>The topology
 which comes from a filter as in @{thm "top_of_filter"} is not $T_2$ generally.
   We will see in this file later on, that the exceptions are a consequence of the spectrum.\<close>
@@ -396,8 +426,10 @@ proof-
     have "\<FF> \<rightarrow>\<^sub>F x {in} (\<FF>\<union>{0})" using lim_filter_top_of_filter assms(2,3) by auto
     moreover
     have "\<Union>\<FF>=\<Union>(\<FF>\<union>{0})" by auto
+    moreover
+    have "topology0(\<FF>\<union>{0})" using topology0_filter assms(2) by auto
     ultimately
-    have "y=x" using topology0.T2_imp_unique_limit_filter[OF topology0_filter[OF assms(2)] assms(1)] assms(2)
+    have "y=x" using topology0.T2_imp_unique_limit_filter assms
       by auto
   }
   then have "\<Union>\<FF>\<subseteq>{x}" by auto
@@ -411,9 +443,13 @@ definition
   where "T{is normal} \<equiv> \<forall>A. A{is closed in}T \<longrightarrow> (\<forall>B. B{is closed in}T \<and> A\<inter>B=0 \<longrightarrow>
   (\<exists>U\<in>T. \<exists>V\<in>T. A\<subseteq>U\<and>B\<subseteq>V\<and>U\<inter>V=0))"
 
+text\<open>A topological space is $T_4$ if it is both $T_1$ and normal.\<close>
+
 definition
   isT4 ("_{is T\<^sub>4}" 90)
   where "T{is T\<^sub>4} \<equiv> (T{is T\<^sub>1}) \<and> (T{is normal})"
+
+text\<open>Every $T_4$-space is $T_3$.\<close>
 
 lemma (in topology0) T4_is_T3:
   assumes "T{is T\<^sub>4}" shows "T{is T\<^sub>3}"
@@ -464,6 +500,8 @@ proof-
   then show ?thesis by auto
 qed
 
+text\<open>The converse: existence of closed neighborhood bases implies regularity.\<close>
+
 lemma (in topology0) exist_clos_neig_imp_regular:
   assumes "\<forall>x\<in>\<Union>T. \<forall>U\<in>T. x\<in>U \<longrightarrow> (\<exists>V\<in>T. x\<in>V\<and> cl(V)\<subseteq>U)"
   shows "T{is regular}"
@@ -476,9 +514,12 @@ proof-
       with \<open>F{is closed in}T\<close> have "x\<in>\<Union>T" "\<Union>T-F\<in>T" "F\<subseteq>\<Union>T" unfolding IsClosed_def by auto
       with assms \<open>x\<in>\<Union>T-F\<close> have "\<exists>V\<in>T. x\<in>V \<and> cl(V)\<subseteq>\<Union>T-F" by auto
       then obtain V where "V\<in>T" "x\<in>V" "cl(V)\<subseteq>\<Union>T-F" by auto
+      from \<open>V\<in>T\<close> have I:"\<Union>T-(\<Union>T-V)=V" by auto
       from \<open>cl(V)\<subseteq>\<Union>T-F\<close> \<open>F\<subseteq>\<Union>T\<close> have "F\<subseteq>\<Union>T-cl(V)" by auto
-      moreover from \<open>V\<in>T\<close> have "\<Union>T-(\<Union>T-V)=V" by auto
-      then have "cl(V)=\<Union>T-int(\<Union>T-V)" using Top_3_L11(2)[of "\<Union>T-V"] by auto
+      moreover 
+      from Top_3_L11(2) have "\<Union>T-V \<subseteq> \<Union>T \<Longrightarrow> cl(\<Union>T-(\<Union>T-V)) = \<Union>T-int(\<Union>T-V)"
+        by auto
+      with I have "cl(V)=\<Union>T-int(\<Union>T-V)" by auto
       ultimately have "F\<subseteq>int(\<Union>T-V)" by auto moreover
       have "int(\<Union>T-V)\<subseteq>\<Union>T-V" using Top_2_L1 by auto
       then have "V\<inter>(int(\<Union>T-V))=0" by auto moreover
@@ -491,6 +532,8 @@ proof-
   }
   then show ?thesis using IsRegular_def by blast
 qed
+
+text\<open>Regularity is equivalent to the existence of closed neighborhood bases at every point.\<close>
 
 lemma (in topology0) regular_eq:
   shows "T{is regular} \<longleftrightarrow> (\<forall>x\<in>\<Union>T. \<forall>U\<in>T. x\<in>U \<longrightarrow> (\<exists>V\<in>T. x\<in>V\<and> cl(V)\<subseteq>U))"
@@ -510,7 +553,7 @@ proof-
   moreover
   {
     assume noEmpty:"A\<noteq>0"
-    let ?U="{\<langle>U,V\<rangle>\<in>T\<times>T. x\<in>U\<and>U\<inter>V=0}"
+    let ?U = "{\<langle>U,V\<rangle>\<in>T\<times>T. x\<in>U\<and>U\<inter>V=0}"
     {
       fix y assume "y\<in>A"
       with \<open>x\<notin>A\<close> assms(4) have "x\<noteq>y" by auto
@@ -529,7 +572,7 @@ proof-
     then obtain n where "n\<in>nat" "N\<approx>n" unfolding Finite_def by auto
     then have "N\<lesssim>n" using eqpoll_imp_lepoll by auto
     from noEmpty \<open>A\<subseteq>\<Union>N\<close> have NnoEmpty:"N\<noteq>0" by auto
-    let ?QQ="{\<langle>n,{fst(B). B\<in>{A\<in>?U. snd(A)=n}}\<rangle>. n\<in>N}"
+    let ?QQ = "{\<langle>n,{fst(B). B\<in>{A\<in>?U. snd(A)=n}}\<rangle>. n\<in>N}"
     have QQPi:"?QQ:N\<rightarrow>{{fst(B). B\<in>{A\<in>?U. snd(A)=n}}. n\<in>N}" unfolding Pi_def function_def domain_def by auto
     {
       fix n assume "n\<in>N"
@@ -544,7 +587,9 @@ proof-
     with \<open>n\<in>nat\<close> \<open>N\<lesssim>n\<close> have "\<exists>f. f\<in>Pi(N,\<lambda>t. ?QQ`t) \<and> (\<forall>t\<in>N. f`t\<in>?QQ`t)" using finite_choice unfolding AxiomCardinalChoiceGen_def
       by auto
     then obtain f where fPI:"f\<in>Pi(N,\<lambda>t. ?QQ`t)" "(\<forall>t\<in>N. f`t\<in>?QQ`t)" by auto
-    from fPI(1) NnoEmpty have "range(f)\<noteq>0" unfolding Pi_def range_def domain_def converse_def by (safe,blast)
+    from NnoEmpty obtain q where q:"q:N" by auto
+    with fPI(1) have "f`q\<in>range(f)" using apply_rangeI by auto
+    then have "range(f)\<noteq>0" by auto
     {
       fix t assume "t\<in>N"
       then have "f`t\<in>?QQ`t" using fPI(2) by auto
@@ -568,7 +613,7 @@ proof-
     moreover from ffun have rr:"range(f)\<subseteq>\<Union>(?QQ``N)" unfolding Pi_def by auto
     then have "range(f)\<subseteq>T" by auto
     ultimately have "range(f)\<in>FinPow(T)" unfolding FinPow_def by auto
-    then have "\<Inter>range(f)\<in>T" using fin_inter_open_open \<open>range(f)\<noteq>0\<close> by auto moreover
+    with \<open>range(f)\<noteq>0\<close> have "\<Inter>range(f)\<in>T" using fin_inter_open_open  by auto moreover
     {
       fix S assume "S\<in>range(f)"
       with rr have "S\<in>\<Union>(?QQ``N)" by blast
@@ -579,7 +624,7 @@ proof-
       with \<open>S\<in>B\<close> obtain rr where "\<langle>S,rr\<rangle>\<in>?U" by auto
       then have "x\<in>S" by auto
     }
-    then have "x\<in>\<Inter>range(f)" using \<open>range(f)\<noteq>0\<close> by auto moreover
+    with \<open>range(f)\<noteq>0\<close> have "x\<in>\<Inter>range(f)" by auto moreover
     {
       fix y assume "y\<in>(\<Union>N)\<inter>(\<Inter>range(f))"
       then have reg:"(\<forall>S\<in>range(f). y\<in>S)\<and>(\<exists>t\<in>N. y\<in>t)" by auto
@@ -616,7 +661,7 @@ proof-
   moreover
   {
     assume noEmpty:"B\<noteq>0"
-    let ?U="{\<langle>U,V\<rangle>\<in>T\<times>T. A\<subseteq>U \<and> U\<inter>V=0}"
+    let ?U = "{\<langle>U,V\<rangle>\<in>T\<times>T. A\<subseteq>U \<and> U\<inter>V=0}"
     {
       fix y assume "y\<in>B"
       then have "y\<in>\<Union>T" using assms(3) unfolding IsCompact_def by auto
@@ -634,7 +679,7 @@ proof-
     then obtain n where "n\<in>nat" "N\<approx>n" unfolding Finite_def by auto
     then have "N\<lesssim>n" using eqpoll_imp_lepoll by auto
     from noEmpty \<open>B\<subseteq>\<Union>N\<close> have NnoEmpty:"N\<noteq>0" by auto
-    let ?QQ="{\<langle>n,{fst(B). B\<in>{A\<in>?U. snd(A)=n}}\<rangle>. n\<in>N}"
+    let ?QQ = "{\<langle>n,{fst(B). B\<in>{A\<in>?U. snd(A)=n}}\<rangle>. n\<in>N}"
     have QQPi:"?QQ:N\<rightarrow>{{fst(B). B\<in>{A\<in>?U. snd(A)=n}}. n\<in>N}" unfolding Pi_def function_def domain_def by auto
     {
       fix n assume "n\<in>N"
@@ -649,7 +694,9 @@ proof-
     with \<open>n\<in>nat\<close> \<open>N\<lesssim>n\<close> have "\<exists>f. f\<in>Pi(N,\<lambda>t. ?QQ`t) \<and> (\<forall>t\<in>N. f`t\<in>?QQ`t)" using finite_choice unfolding AxiomCardinalChoiceGen_def
       by auto
     then obtain f where fPI:"f\<in>Pi(N,\<lambda>t. ?QQ`t)" "(\<forall>t\<in>N. f`t\<in>?QQ`t)" by auto
-    from fPI(1) NnoEmpty have "range(f)\<noteq>0" unfolding Pi_def range_def domain_def converse_def by (safe,blast)
+    from NnoEmpty obtain q where q:"q:N" by auto
+    with fPI(1) have "f`q\<in>range(f)" using apply_rangeI by auto
+    then have "range(f)\<noteq>0" by auto
     {
       fix t assume "t\<in>N"
       then have "f`t\<in>?QQ`t" using fPI(2) by auto
@@ -673,7 +720,7 @@ proof-
     moreover from ffun have rr:"range(f)\<subseteq>\<Union>(?QQ``N)" unfolding Pi_def by auto
     then have "range(f)\<subseteq>T" by auto
     ultimately have "range(f)\<in>FinPow(T)" unfolding FinPow_def by auto
-    then have "\<Inter>range(f)\<in>T" using fin_inter_open_open \<open>range(f)\<noteq>0\<close> by auto moreover
+    with \<open>range(f)\<noteq>0\<close> have "\<Inter>range(f)\<in>T" using fin_inter_open_open by auto moreover
     {
       fix S assume "S\<in>range(f)"
       with rr have "S\<in>\<Union>(?QQ``N)" by blast
@@ -684,7 +731,7 @@ proof-
       with \<open>S\<in>B\<close> obtain rr where "\<langle>S,rr\<rangle>\<in>?U" by auto
       then have "A\<subseteq>S" by auto
     }
-    then have "A\<subseteq>\<Inter>range(f)" using \<open>range(f)\<noteq>0\<close> by auto moreover
+    with \<open>range(f)\<noteq>0\<close> have "A\<subseteq>\<Inter>range(f)" by auto moreover
     {
       fix y assume "y\<in>(\<Union>N)\<inter>(\<Inter>range(f))"
       then have reg:"(\<forall>S\<in>range(f). y\<in>S)\<and>(\<exists>t\<in>N. y\<in>t)" by auto
@@ -709,29 +756,34 @@ text\<open>A compact Hausdorff space is normal.\<close>
 
 corollary (in topology0) T2_compact_is_normal:
   assumes "T{is T\<^sub>2}" "(\<Union>T){is compact in}T"
-  shows "T{is normal}" unfolding IsNormal_def
+  shows "T{is normal}"
 proof-
   from assms(2) have car_nat:"(\<Union>T){is compact of cardinal}nat{in}T" using Compact_is_card_nat by auto
   {
     fix A B assume "A{is closed in}T" "B{is closed in}T""A\<inter>B=0"
-    then have com:"((\<Union>T)\<inter>A){is compact of cardinal}nat{in}T" "((\<Union>T)\<inter>B){is compact of cardinal}nat{in}T" using compact_closed[OF car_nat] 
+    then have com:"((\<Union>T)\<inter>A){is compact of cardinal}nat{in}T" "((\<Union>T)\<inter>B){is compact of cardinal}nat{in}T" using compact_closed car_nat
       by auto
     from \<open>A{is closed in}T\<close>\<open>B{is closed in}T\<close> have "(\<Union>T)\<inter>A=A""(\<Union>T)\<inter>B=B" unfolding IsClosed_def by auto
     with com have "A{is compact of cardinal}nat{in}T" "B{is compact of cardinal}nat{in}T" by auto
     then have "A{is compact in}T""B{is compact in}T" using Compact_is_card_nat by auto
     with \<open>A\<inter>B=0\<close> have "\<exists>U\<in>T. \<exists>V\<in>T. A\<subseteq>U \<and> B\<subseteq>V \<and> U\<inter>V=0" using T2_compact_compact assms(1) by auto
   }
-  then show " \<forall>A. A {is closed in} T \<longrightarrow> (\<forall>B. B {is closed in} T \<and> A \<inter> B = 0 \<longrightarrow> (\<exists>U\<in>T. \<exists>V\<in>T. A \<subseteq> U \<and> B \<subseteq> V \<and> U \<inter> V = 0))"
+  then have I:" \<forall>A. A {is closed in} T \<longrightarrow> (\<forall>B. B {is closed in} T \<and> A \<inter> B = 0 \<longrightarrow> (\<exists>U\<in>T. \<exists>V\<in>T. A \<subseteq> U \<and> B \<subseteq> V \<and> U \<inter> V = 0))"
     by auto
+  then show ?thesis unfolding IsNormal_def by auto
 qed
 
 subsection\<open>Hereditability\<close>
 
-text\<open>A topological property is hereditary if whenever a space has it, 
+text\<open>A topological property is hereditary if whenever a space has it,
 every subspace also has it.\<close>
+
+text\<open>A topological property is hereditary if every subspace inherits it.\<close>
 
 definition IsHer ("_{is hereditary}" 90)
   where "P {is hereditary} \<equiv> \<forall>T. T{is a topology} \<and> P(T) \<longrightarrow> (\<forall>A\<in>Pow(\<Union>T). P(T{restricted to}A))"
+
+text\<open>A subspace of a subspace equals the corresponding direct subspace of the original topology.\<close>
 
 lemma subspace_of_subspace:
   assumes "A\<subseteq>B""B\<subseteq>\<Union>T"
@@ -756,7 +808,7 @@ proof-
     with A have "(\<Union>(T{restricted to}A))-C\<in>(T{restricted to}A)""C\<subseteq>\<Union>(T{restricted to}A)" "y\<in>\<Union>(T{restricted to}A)""y\<notin>C" unfolding IsClosed_def
       by auto
     moreover
-    with assms(2) have "\<Union>(T{restricted to}A)=A" unfolding RestrictedTo_def by auto
+    from this assms(2) have "\<Union>(T{restricted to}A)=A" unfolding RestrictedTo_def by auto
     ultimately have "A-C\<in>T{restricted to}A" "y\<in>A""y\<notin>C""C\<in>Pow(A)" by auto
     then obtain S where "S\<in>T" "A\<inter>S=A-C" "y\<in>A""y\<notin>C" unfolding RestrictedTo_def by auto
     then have "y\<in>A-C""A\<inter>S=A-C" by auto
@@ -766,15 +818,15 @@ proof-
     moreover
     from \<open>S\<in>T\<close> have "\<Union>T-(\<Union>T-S)=S" by auto
     moreover
-    with \<open>S\<in>T\<close> have "(\<Union>T-S) {is closed in}T" using IsClosed_def by auto
+    from this \<open>S\<in>T\<close> have "(\<Union>T-S) {is closed in}T" using IsClosed_def by auto
     ultimately have "y\<in>\<Union>T-(\<Union>T-S)" "(\<Union>T-S) {is closed in}T" by auto
     with assms(1) have "\<forall>y\<in>\<Union>T-(\<Union>T-S). \<exists>U\<in>T. \<exists>V\<in>T. (\<Union>T-S)\<subseteq>U\<and>y\<in>V\<and>U\<inter>V=0" unfolding IsRegular_def by auto
     with \<open>y\<in>\<Union>T-(\<Union>T-S)\<close> have "\<exists>U\<in>T. \<exists>V\<in>T. (\<Union>T-S)\<subseteq>U\<and>y\<in>V\<and>U\<inter>V=0" by auto
     then obtain U V where "U\<in>T""V\<in>T" "\<Union>T-S\<subseteq>U""y\<in>V""U\<inter>V=0" by auto
-    then have "A\<inter>U\<in>(T{restricted to}A)""A\<inter>V\<in>(T{restricted to}A)" "C\<subseteq>U""y\<in>V""(A\<inter>U)\<inter>(A\<inter>V)=0"
-      unfolding RestrictedTo_def  using \<open>C\<subseteq>\<Union>T-S\<close> by auto
+    with \<open>C\<subseteq>\<Union>T-S\<close> have "A\<inter>U\<in>(T{restricted to}A)""A\<inter>V\<in>(T{restricted to}A)" "C\<subseteq>U""y\<in>V""(A\<inter>U)\<inter>(A\<inter>V)=0"
+      unfolding RestrictedTo_def by auto
     moreover
-    with \<open>C\<in>Pow(A)\<close>\<open>y\<in>A\<close> have "C\<subseteq>A\<inter>U""y\<in>A\<inter>V" by auto
+    from this \<open>C\<in>Pow(A)\<close> \<open>y\<in>A\<close> have "C\<subseteq>A\<inter>U""y\<in>A\<inter>V" by auto
     ultimately have "\<exists>U\<in>(T{restricted to}A). \<exists>V\<in>(T{restricted to}A). C\<subseteq>U\<and>y\<in>V\<and>U\<inter>V=0" by auto
   }
     then have "\<forall>x\<in>\<Union>(T{restricted to}A)-C. \<exists>U\<in>(T{restricted to}A). \<exists>V\<in>(T{restricted to}A). C\<subseteq>U\<and>x\<in>V\<and>U\<inter>V=0" by auto
@@ -784,8 +836,12 @@ proof-
   then show ?thesis using IsRegular_def by auto
 qed
 
+text\<open>Regularity is a hereditary property.\<close>
+
 corollary here_regular:
   shows "IsRegular {is hereditary}" using regular_here IsHer_def by auto
+
+text\<open>The $T_1$ axiom is inherited by subspaces.\<close>
 
 theorem T1_here:
   assumes "T{is T\<^sub>1}" "A\<in>Pow(\<Union>T)" shows "(T{restricted to}A){is T\<^sub>1}"
@@ -805,16 +861,24 @@ proof-
   then show ?thesis using isT1_def by auto
 qed
 
+text\<open>The $T_1$ property is hereditary.\<close>
+
 corollary here_T1:
   shows "isT1 {is hereditary}" using T1_here IsHer_def by auto
+
+text\<open>The conjunction of two hereditary properties is hereditary.\<close>
 
 lemma here_and:
   assumes "P {is hereditary}" "Q {is hereditary}"
   shows "(\<lambda>T. P(T) \<and> Q(T)) {is hereditary}" using assms unfolding IsHer_def by auto
 
+text\<open>The $T_3$ property is hereditary.\<close>
+
 corollary here_T3:
-  shows "isT3 {is hereditary}" using here_and[OF here_T1 here_regular] 
-  unfolding IsHer_def using T3_def_alt by blast
+  shows "isT3 {is hereditary}" using here_and here_T1 here_regular T3_def_alt
+  unfolding IsHer_def by blast
+
+text\<open>The $T_2$ axiom is inherited by subspaces.\<close>
 
 lemma T2_here:
   assumes "T{is T\<^sub>2}" "A\<in>Pow(\<Union>T)" shows "(T{restricted to}A){is T\<^sub>2}"
@@ -834,8 +898,12 @@ proof-
   then show ?thesis using isT2_def by auto
 qed
 
+text\<open>The $T_2$ property is hereditary.\<close>
+
 corollary here_T2:
   shows "isT2 {is hereditary}" using T2_here IsHer_def by auto
+
+text\<open>The $T_0$ axiom is inherited by subspaces.\<close>
 
 lemma T0_here:
   assumes "T{is T\<^sub>0}" "A\<in>Pow(\<Union>T)" shows "(T{restricted to}A){is T\<^sub>0}"
@@ -855,6 +923,8 @@ proof-
   then show ?thesis using isT0_def by auto
 qed
 
+text\<open>The $T_0$ property is hereditary.\<close>
+
 corollary here_T0:
   shows "isT0 {is hereditary}" using T0_here IsHer_def by auto
 
@@ -871,14 +941,18 @@ spectra.\<close>
 definition Spec ("_ {is in the spectrum of} _" 99)
   where "Spec(K,P) \<equiv> \<forall>T. ((T{is a topology} \<and> \<Union>T\<approx>K) \<longrightarrow> P(T))"
 
+text\<open>Equipollent sets lie in the same spectra.\<close>
+
 lemma equipollent_spect:
   assumes "A\<approx>B" "B {is in the spectrum of} P"
   shows  "A {is in the spectrum of} P"
 proof-
   from assms(2) have "\<forall>T. ((T{is a topology} \<and> \<Union>T\<approx>B) \<longrightarrow> P(T))" using Spec_def by auto
-  then have "\<forall>T. ((T{is a topology} \<and> \<Union>T\<approx>A) \<longrightarrow> P(T))" using eqpoll_trans[OF _ assms(1)] by auto
+  then have "\<forall>T. ((T{is a topology} \<and> \<Union>T\<approx>A) \<longrightarrow> P(T))" using eqpoll_trans assms(1) by auto
   then show ?thesis using Spec_def by auto
 qed
+
+text\<open>A set is in the spectrum of a property if and only if any equipollent set is.\<close>
 
 theorem eqpoll_iff_spec:
   assumes "A\<approx>B"
@@ -895,9 +969,9 @@ qed
 
 text\<open>From the previous statement, we see that the spectrum could be formed only by
 representative of clases of sets. If \emph{AC} holds, this means that the spectrum
-can be taken as a set or class of cardinal numbers.\<close>
+can be taken as a set or class of cardinal numbers.
 
-text\<open>Here is an example of the spectrum. The proof lies in the indiscrite filter \<open>{A}\<close>
+Here is an example of the spectrum. The proof lies in the indiscrite filter \<open>{A}\<close>
 that can be build for any set. In this proof, we see that without choice,
 there is no way to define the sepctrum of a property with cardinals because if a set is not 
 comparable with any ordinal, its cardinal is defined as \<open>0\<close> without the set being
@@ -911,15 +985,13 @@ proof
   {
     assume "A\<noteq>0"
     then obtain x where "x\<in>A" by auto
-    then have "x\<in>\<Union>{A}" by auto
-    moreover
-    then have "{A} {is a filter on}\<Union>{A}" using IsFilter_def by auto
-    moreover
-    then have "({A}\<union>{0}) {is a topology} \<and> \<Union>({A}\<union>{0})=A" using top_of_filter by auto
+    then have III:"x\<in>\<Union>{A}" by auto
+    from this have II:"{A} {is a filter on}\<Union>{A}" using IsFilter_def by auto
+    from this have "({A}\<union>{0}) {is a topology} \<and> \<Union>({A}\<union>{0})=A" using top_of_filter by auto
     then have top:"({A}\<union>{0}) {is a topology}" "\<Union>({A}\<union>{0})\<approx>A" using eqpoll_refl by auto
     then have "({A}\<union>{0}) {is T\<^sub>4}" using reg by auto
-    then have "({A}\<union>{0}) {is T\<^sub>2}" using T3_is_T2 topology0.T4_is_T3 topology0_def top by auto
-    ultimately have "\<Union>{A}={x}" using filter_T2_imp_card1[of "{A}""x"] by auto
+    then have I:"({A}\<union>{0}) {is T\<^sub>2}" using T3_is_T2 topology0.T4_is_T3 topology0_def top by auto
+    from I II III have "\<Union>{A}={x}" by (rule filter_T2_imp_card1)
     then have "A={x}" by auto
     then have "A\<approx>1" using singleton_eqpoll_1 by auto
   }
@@ -942,9 +1014,6 @@ next
       with AS have "T{is a topology}" and empty:"\<Union>T=0" using eqpoll_trans eqpoll_0_is_0 by auto
       then have "T{is T\<^sub>2}" using isT2_def by auto
       then have "T{is T\<^sub>1}" using T2_is_T1 by auto
-      moreover
-      from empty have "T\<subseteq>{0}" by auto
-      with AS(1) have "T={0}" using empty_open by auto
       from empty have rr:"\<forall>A. A{is closed in}T \<longrightarrow> A=0" using IsClosed_def by auto
       have "\<exists>U\<in>T. \<exists>V\<in>T. 0\<subseteq>U\<and>0\<subseteq>V\<and>U\<inter>V=0" using empty_open AS(1) by auto
       with rr have "\<forall>A. A{is closed in}T \<longrightarrow> (\<forall>B. B{is closed in}T \<and> A\<inter>B=0 \<longrightarrow> (\<exists>U\<in>T. \<exists>V\<in>T. A\<subseteq>U\<and>B\<subseteq>V\<and>U\<inter>V=0))"
@@ -955,7 +1024,7 @@ next
     moreover
     {
       assume "A\<approx>1"
-      with AS have "T{is a topology}" and NONempty:"\<Union>T\<approx>1" using eqpoll_trans[of "\<Union>T""A""1"] by auto
+      with AS have "T{is a topology}" and NONempty:"\<Union>T\<approx>1" using eqpoll_trans by auto
       then have "\<Union>T\<lesssim>1" using eqpoll_imp_lepoll by auto
       moreover
       {
@@ -972,10 +1041,10 @@ next
         fix x y
         assume "x{is closed in}T""y{is closed in}T" "x\<inter>y=0"
         then have "x\<subseteq>\<Union>T""y\<subseteq>\<Union>T" using IsClosed_def by auto
-        then have "x=0\<or>y=0" using \<open>x\<inter>y=0\<close> \<open>\<Union>T={R}\<close> by force
+        with \<open>x\<inter>y=0\<close> \<open>\<Union>T={R}\<close> have "x=0\<or>y=0" by force
         {
           assume "x=0"
-          then have "x\<subseteq>0""y\<subseteq>\<Union>T" using \<open>y\<subseteq>\<Union>T\<close> by auto
+          with \<open>y\<subseteq>\<Union>T\<close> have "x\<subseteq>0""y\<subseteq>\<Union>T" by auto
           moreover
           have "0\<in>T""\<Union>T\<in>T" using AS(1) IsATopology_def empty_open by auto
           ultimately have "\<exists>U\<in>T. \<exists>V\<in>T. x\<subseteq>U\<and>y\<subseteq>V\<and>U\<inter>V=0" by auto
@@ -984,7 +1053,7 @@ next
         {
           assume "x\<noteq>0"
           with \<open>x=0\<or>y=0\<close> have "y=0" by auto
-          then have "x\<subseteq>\<Union>T""y\<subseteq>0" using \<open>x\<subseteq>\<Union>T\<close> by auto
+          with \<open>x\<subseteq>\<Union>T\<close> have "x\<subseteq>\<Union>T""y\<subseteq>0" by auto
           moreover
           have "0\<in>T""\<Union>T\<in>T" using AS(1) IsATopology_def empty_open by auto
           ultimately have "\<exists>U\<in>T. \<exists>V\<in>T. x\<subseteq>U\<and>y\<subseteq>V\<and>U\<inter>V=0" by auto
@@ -1003,7 +1072,9 @@ next
       then have "T{is T\<^sub>1}" using isT1_def by auto
       ultimately have "T{is T\<^sub>4}" using isT4_def by auto
     }
-    ultimately have "T{is T\<^sub>4}" using \<open>A\<approx>0\<or>A\<approx>1\<close> by auto
+    moreover
+    note \<open>A\<approx>0\<or>A\<approx>1\<close>
+    ultimately have "T{is T\<^sub>4}" by auto
   }
   then have "\<forall>T. (T{is a topology} \<and> \<Union>T \<approx> A) \<longrightarrow> (T{is T\<^sub>4})" by auto
   then show "A {is in the spectrum of} isT4" using Spec_def by auto
@@ -1032,16 +1103,14 @@ proof
     assume "A\<noteq>0"
     then obtain x where "x\<in>A" by auto
     then have "x\<in>\<Union>{A}" by auto
-    moreover
-    then have "{A} {is a filter on}\<Union>{A}" using IsFilter_def by auto
-    moreover
-    then have "({A}\<union>{0}) {is a topology} \<and> \<Union>({A}\<union>{0})=A" using top_of_filter by auto
+    from this have "{A} {is a filter on}\<Union>{A}" using IsFilter_def by auto
+    from this have "({A}\<union>{0}) {is a topology} \<and> \<Union>({A}\<union>{0})=A" using top_of_filter by auto
     then have "({A}\<union>{0}) {is a topology} \<and> \<Union>({A}\<union>{0})\<approx>A" using eqpoll_refl by auto
     then have "({A}\<union>{0}) {is T\<^sub>0}" using reg by auto
     {
       fix y
       assume "y\<in>A""x\<noteq>y"
-      with \<open>({A}\<union>{0}) {is T\<^sub>0}\<close> obtain U where "U\<in>({A}\<union>{0})" and dis:"(x \<in> U \<and> y \<notin> U) \<or> (y \<in> U \<and> x \<notin> U)" using isT0_def by auto
+      with \<open>({A}\<union>{0}) {is T\<^sub>0}\<close> obtain U where "U\<in>{A}\<union>{0}" and dis:"(x \<in> U \<and> y \<notin> U) \<or> (y \<in> U \<and> x \<notin> U)" using isT0_def by auto
       then have "U=A" by auto
       with dis \<open>y\<in>A\<close> \<open>x\<in>\<Union>{A}\<close> have "False" by auto
     }
@@ -1063,54 +1132,84 @@ next
   }
   then have "\<forall>T. T{is a topology} \<longrightarrow> ((T{is T\<^sub>4})\<longrightarrow>(T{is T\<^sub>0}))" by auto
   then have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT0)"
-    using P_imp_Q_spec_inv[of "\<lambda>T. (T{is T\<^sub>4})""\<lambda>T. T{is T\<^sub>0}"] by auto
-  then show "(A {is in the spectrum of} isT0)" using T4_spectrum \<open>A\<lesssim>1\<close> by auto
+    using P_imp_Q_spec_inv by auto
+  with \<open>A\<lesssim>1\<close> show "(A {is in the spectrum of} isT0)" using T4_spectrum  by auto
 qed
+
+text\<open>The spectrum of $T_1$ consists exactly of sets of cardinality at most $1$.\<close>
 
 theorem T1_spectrum:
   shows "(A {is in the spectrum of} isT1) \<longleftrightarrow> A \<lesssim> 1"
 proof-
-  note T2_is_T1 T3_is_T2 topology0.T4_is_T3
-  then have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT1)"
-    using P_imp_Q_spec_inv[of "isT4""isT1"] topology0_def by auto
+  have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>4} \<longrightarrow> T {is T\<^sub>1}) \<Longrightarrow>
+    A {is in the spectrum of} isT4 \<Longrightarrow>
+    A {is in the spectrum of} isT1" using P_imp_Q_spec_inv by assumption
+  with T2_is_T1 T3_is_T2 topology0.T4_is_T3 have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT1)"
+    using topology0_def by auto
   moreover
-  note T1_is_T0
+  have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>1} \<longrightarrow> T {is T\<^sub>0}) \<Longrightarrow>
+    A {is in the spectrum of} isT1 \<Longrightarrow>
+    A {is in the spectrum of} isT0" using P_imp_Q_spec_inv by assumption
   then have "(A {is in the spectrum of} isT1) \<longrightarrow> (A {is in the spectrum of}isT0)"
-    using P_imp_Q_spec_inv[of "isT1""isT0"] by auto
+    using P_imp_Q_spec_inv T1_is_T0 by auto
   moreover
   note T0_spectrum T4_spectrum
   ultimately show ?thesis by blast
 qed
 
+text\<open>The spectrum of $T_2$ consists exactly of sets of cardinality at most $1$.\<close>
+
 theorem T2_spectrum:
   shows "(A {is in the spectrum of} isT2) \<longleftrightarrow> A \<lesssim> 1"
 proof-
-  note T3_is_T2 topology0.T4_is_T3
-  then have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT2)"
-    using P_imp_Q_spec_inv[of "isT4""isT2"] topology0_def by auto
+  have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>4} \<longrightarrow> T {is T\<^sub>2}) \<Longrightarrow>
+    A {is in the spectrum of} isT4 \<Longrightarrow>
+    A {is in the spectrum of} isT2" using P_imp_Q_spec_inv by assumption
+  with T3_is_T2 topology0.T4_is_T3
+  have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT2)"
+    using topology0_def by auto
   moreover
-  note T2_is_T1
-  then have "(A {is in the spectrum of} isT2) \<longrightarrow> (A {is in the spectrum of}isT1)"
-    using P_imp_Q_spec_inv[of "isT2""isT1"] by auto
+  have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>2} \<longrightarrow> T {is T\<^sub>1}) \<Longrightarrow>
+    A {is in the spectrum of} isT2 \<Longrightarrow>
+    A {is in the spectrum of} isT1" using P_imp_Q_spec_inv by assumption
+  with T2_is_T1
+  have "(A {is in the spectrum of} isT2) \<longrightarrow> (A {is in the spectrum of}isT1)"
+    by auto
   moreover
   note T1_spectrum T4_spectrum
   ultimately show ?thesis by blast
 qed
 
+text\<open>The spectrum of $T_3$ consists exactly of sets of cardinality at most $1$.\<close>
+
 theorem T3_spectrum:
   shows "(A {is in the spectrum of} isT3) \<longleftrightarrow> A \<lesssim> 1"
 proof-
-  note topology0.T4_is_T3
-  then have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT3)"
-    using P_imp_Q_spec_inv[of "isT4""isT3"] topology0_def by auto
-  moreover
-  note T3_is_T2
-  then have "(A {is in the spectrum of} isT3) \<longrightarrow> (A {is in the spectrum of}isT2)"
-    using P_imp_Q_spec_inv[of "isT3""isT2"] topology0_def by auto
+  have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>4} \<longrightarrow> T {is T\<^sub>3}) \<Longrightarrow>
+    A {is in the spectrum of} isT4 \<Longrightarrow>
+    A {is in the spectrum of} isT3" using P_imp_Q_spec_inv by assumption
+  with topology0.T4_is_T3
+  have "(A {is in the spectrum of} isT4) \<longrightarrow> (A {is in the spectrum of} isT3)"
+    using topology0_def by auto
+  moreover 
+  have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>3} \<longrightarrow> T {is T\<^sub>2}) \<Longrightarrow>
+    A {is in the spectrum of} isT3 \<Longrightarrow>
+    A {is in the spectrum of} isT2" using P_imp_Q_spec_inv by assumption
+  with T3_is_T2
+  have "(A {is in the spectrum of} isT3) \<longrightarrow> (A {is in the spectrum of}isT2)"
+    using topology0_def by auto
   moreover
   note T2_spectrum T4_spectrum
   ultimately show ?thesis by blast
 qed
+
+text\<open>The spectrum of compactness is exactly the class of finite sets.\<close>
 
 theorem compact_spectrum:
   shows "(A {is in the spectrum of} (\<lambda>T. (\<Union>T) {is compact in}T)) \<longleftrightarrow> Finite(A)"
@@ -1138,7 +1237,7 @@ proof
   }
   with \<open>N\<subseteq>{{x}. x\<in>A}\<close> have "N={{x}. x\<in>A}" by auto
   with \<open>Finite(N)\<close> have "Finite({{x}. x\<in>A})" by auto
-  let ?B="{\<langle>x,{x}\<rangle>. x\<in>A}"
+  let ?B = "{\<langle>x,{x}\<rangle>. x\<in>A}"
   have "?B:A\<rightarrow>{{x}. x\<in>A}" unfolding Pi_def function_def by auto
   then have "?B:bij(A,{{x}. x\<in>A})" unfolding bij_def inj_def surj_def using apply_equality by auto
   then have "A\<approx>{{x}. x\<in>A}" using eqpoll_def by auto
@@ -1172,7 +1271,9 @@ theorem compactK_spectrum:
 proof
   assume "A {is in the spectrum of} (\<lambda>T. ((\<Union>T){is compact of cardinal} csucc(K){in}T))"
   then have reg:"\<forall>T. T{is a topology}\<and>\<Union>T\<approx>A \<longrightarrow> ((\<Union>T){is compact of cardinal} csucc(K){in}T)" using Spec_def by auto
-  then have "A{is compact of cardinal} csucc(K) {in} Pow(A)" using Pow_is_top[of "A"] by auto
+  from reg have "Pow(A){is a topology}\<and>\<Union>Pow(A)\<approx>A \<longrightarrow> ((\<Union>Pow(A)){is compact of cardinal} csucc(K){in}Pow(A))"
+    by auto
+  then have "A{is compact of cardinal} csucc(K) {in} Pow(A)" using Pow_is_top by auto
   then have "\<forall>M\<in>Pow(Pow(A)). A\<subseteq>\<Union>M \<longrightarrow> (\<exists>N\<in>Pow(M). A\<subseteq>\<Union>N \<and> N\<prec>csucc(K))" unfolding IsCompactOfCard_def by auto
   moreover
   have "{{x}. x\<in>A}\<in>Pow(Pow(A))" by auto
@@ -1191,7 +1292,7 @@ proof
     with \<open>t={x}\<close>\<open>B\<in>N\<close> have "t\<in>N" by auto 
   }
   with \<open>N\<subseteq>{{x}. x\<in>A}\<close> have "N={{x}. x\<in>A}" by auto
-  let ?B="{\<langle>x,{x}\<rangle>. x\<in>A}"
+  let ?B = "{\<langle>x,{x}\<rangle>. x\<in>A}"
   from \<open>N={{x}. x\<in>A}\<close> have "?B:A\<rightarrow> N" unfolding Pi_def function_def by auto
   with \<open>N={{x}. x\<in>A}\<close> have "?B:inj(A,N)" unfolding inj_def using apply_equality by auto
   then have "A\<lesssim>N" using lepoll_def by auto
@@ -1220,7 +1321,7 @@ next
     }
     ultimately
     have base:"{{x}. x\<in>\<Union>T} {is a base for}Pow(\<Union>T)" unfolding IsAbaseFor_def by auto
-    let ?f="{\<langle>i,{i}\<rangle>. i\<in>\<Union>T}"
+    let ?f = "{\<langle>i,{i}\<rangle>. i\<in>\<Union>T}"
     have f:"?f:\<Union>T\<rightarrow> {{x}. x\<in>\<Union>T}" using Pi_def function_def by auto
     moreover
     {
@@ -1248,15 +1349,24 @@ next
     then have "{{x}. x\<in>\<Union>T}\<prec>csucc(K)" using assms(2) Card_less_csucc_eq_le by auto
     with base have "Pow(\<Union>T) {is of second type of cardinal}csucc(K)" unfolding IsSecondOfCard_def by auto
     moreover
-    have "\<Union>Pow(\<Union>T)=\<Union>T" by auto
+    from compact_of_cardinal_Q have "({the axiom of}K{choice holds for subsets}Pow(K)) \<Longrightarrow>
+  (Pow(\<Union>T) {is of second type of cardinal}csucc(K)) \<Longrightarrow>
+  (Pow(\<Union>T) {is a topology}) \<Longrightarrow>
+  (\<Union>(Pow(\<Union>T)){is compact of cardinal}csucc(K) {in}(Pow(\<Union>T)))" by assumption
+    then have "{the axiom of}K{choice holds for subsets}Pow(K) \<Longrightarrow>
+  (Pow(\<Union>T)) {is of second type of cardinal}csucc(K) \<Longrightarrow>
+  (Pow(\<Union>T)) {is a topology} \<Longrightarrow>
+  (\<Union>T){is compact of cardinal}csucc(K) {in}(Pow(\<Union>T))" by auto
     with calculation assms(1) \<open>Pow(\<Union>T){is a topology}\<close> have "(\<Union>T) {is compact of cardinal}csucc(K){in}Pow(\<Union>T)" 
-      using compact_of_cardinal_Q[of "K""Pow(\<Union>T)"] by auto
+      by auto
     moreover
     have "T\<subseteq>Pow(\<Union>T)" by auto
     ultimately have "(\<Union>T) {is compact of cardinal}csucc(K){in}T" using compact_coarser by auto
   }
   then show "A {is in the spectrum of} (\<lambda>T. ((\<Union>T){is compact of cardinal}csucc(K) {in}T))" using Spec_def by auto
 qed
+
+text\<open>If the spectrum of $K$-compactness equals $A \lesssim K$, then the $K$-choice principle holds.\<close>
 
 theorem compactK_spectrum_reverse:
   assumes "\<forall>A. (A {is in the spectrum of} (\<lambda>T. ((\<Union>T){is compact of cardinal} csucc(K){in}T))) \<longleftrightarrow> (A\<lesssim>K)" "InfCard(K)"
@@ -1276,9 +1386,9 @@ qed
 
 text\<open>This last theorem states that if one of the forms of the axiom of choice related to this
 compactness property fails, then the spectrum will be different. Notice that even for Lindelöf
-spaces that will happend.\<close>
+spaces that will happend.
 
-text\<open>The spectrum gives us the posibility to define what an anti-property means.
+The spectrum gives us the posibility to define what an anti-property means.
 A space is anti-\<open>P\<close> if the only subspaces which have the property
 are the ones in the spectrum of \<open>P\<close>. This concept tries to put together
 spaces that are completely opposite to spaces where \<open>P(T)\<close>.\<close>
@@ -1287,8 +1397,10 @@ definition
   antiProperty ("_{is anti-}_" 50)
   where "T{is anti-}P \<equiv> \<forall>A\<in>Pow(\<Union>T). P(T{restricted to}A) \<longrightarrow> (A {is in the spectrum of} P)"
 
-abbreviation
-  "ANTI(P) \<equiv> \<lambda>T. (T{is anti-}P)"
+text\<open>We abbreviate the functional form of the anti-property predicate.\<close>
+
+abbreviation ANTI
+  where "ANTI(P) \<equiv> \<lambda>T. (T{is anti-}P)"
 
 text\<open>A first, very simple, but very useful result is the following: when the properties
 are related and the spectra are equal, then the anti-properties are related in the oposite direction.\<close>
@@ -1353,17 +1465,17 @@ proof-
   {
     assume "\<not>(T{is anti-}ANTI(P))"
     then have "\<exists>A\<in>Pow(\<Union>T). ((T{restricted to}A){is anti-}P)\<and>\<not>(A{is in the spectrum of}ANTI(P))"
-      unfolding antiProperty_def[of _ "ANTI(P)"] by auto
+      unfolding antiProperty_def by auto
     then obtain A where A_def:"A\<in>Pow(\<Union>T)""\<not>(A{is in the spectrum of}ANTI(P))""(T{restricted to}A){is anti-}P"
       by auto
     from \<open>A\<in>Pow(\<Union>T)\<close> have tot:"\<Union>(T{restricted to}A)=A" unfolding RestrictedTo_def by auto
     from A_def have reg:"\<forall>B\<in>Pow(\<Union>(T{restricted to}A)). P((T{restricted to}A){restricted to}B) \<longrightarrow> (B{is in the spectrum of}P)"
       unfolding antiProperty_def by auto
-    have "\<forall>B\<in>Pow(A). (T{restricted to}A){restricted to}B=T{restricted to}B" using subspace_of_subspace \<open>A\<in>Pow(\<Union>T)\<close> by auto
+    from \<open>A\<in>Pow(\<Union>T)\<close> have "\<forall>B\<in>Pow(A). (T{restricted to}A){restricted to}B=T{restricted to}B" using subspace_of_subspace by auto
     then have "\<forall>B\<in>Pow(A). P(T{restricted to}B) \<longrightarrow> (B{is in the spectrum of}P)" using reg tot
       by force
     moreover
-    have "\<forall>B\<in>Pow(A). P(T{restricted to}B)" using assms \<open>A\<in>Pow(\<Union>T)\<close> unfolding IsHer_def using topSpaceAssum by blast
+    from \<open>A\<in>Pow(\<Union>T)\<close> have "\<forall>B\<in>Pow(A). P(T{restricted to}B)" using assms topSpaceAssum unfolding IsHer_def by blast
     ultimately have reg2:"\<forall>B\<in>Pow(A). (B{is in the spectrum of}P)" by auto
     from \<open>\<not>(A{is in the spectrum of}ANTI(P))\<close> have "\<exists>T. T{is a topology} \<and> \<Union>T\<approx>A \<and> \<not>(T{is anti-}P)"
       unfolding Spec_def by auto
@@ -1377,7 +1489,7 @@ proof-
     then have "B\<approx>range(f)" unfolding eqpoll_def by auto
     with B_def(1) have "\<not>(range(f){is in the spectrum of}P)" using eqpoll_iff_spec by auto
     moreover
-    with \<open>f\<in>inj(B,A)\<close> have "range(f)\<subseteq>A" unfolding inj_def Pi_def by auto
+    from this \<open>f\<in>inj(B,A)\<close> have "range(f)\<subseteq>A" unfolding inj_def Pi_def by auto
     with reg2 have "range(f){is in the spectrum of}P" by auto
     ultimately have "False" by auto
   }
@@ -1387,7 +1499,7 @@ qed
 text\<open>The anti-properties are always hereditary\<close>
 
 theorem anti_here:
-  shows "ANTI(P){is hereditary}"
+  shows "(ANTI(P)){is hereditary}"
 proof-
   {
     fix T
@@ -1411,6 +1523,8 @@ proof-
   }
   then show ?thesis using IsHer_def by auto
 qed
+
+text\<open>A space that is anti-$P$ is also anti-anti-anti-$P$.\<close>
 
 corollary (in topology0) anti_imp_anti3:
   assumes "T{is anti-}P"
@@ -1498,7 +1612,9 @@ next
     ultimately have "{x,y}\<lesssim>1" using reg by auto
     moreover
     have "x\<in>{x,y}" by auto
-    ultimately have "{x,y}={x}" using lepoll_1_is_sing[of "{x,y}""x"] by auto
+    moreover
+    have "{x,y} \<lesssim> 1 \<Longrightarrow> x \<in> {x,y} \<Longrightarrow> {x,y} = {x}" using lepoll_1_is_sing by assumption
+    ultimately have "{x,y}={x}" by auto
     moreover
     have "y\<in>{x,y}" by auto
     ultimately have "y\<in>{x}" by auto
@@ -1510,6 +1626,8 @@ next
   from topSpaceAssum have "0\<in>T""\<Union>T\<in>T" using IsATopology_def empty_open by auto
   ultimately show "T={0,\<Union>T}" by auto
 qed
+
+text\<open>The spectrum of the indiscrete topology property is the class of sets of cardinality at most $1$.\<close>
 
 lemma indiscrete_spectrum:
   shows "(A {is in the spectrum of}(\<lambda>T. T={0,\<Union>T})) \<longleftrightarrow> A\<lesssim>1"
@@ -1574,7 +1692,7 @@ next
       ultimately have "T\<subseteq>Pow({R})" by auto
       then have "T\<subseteq>{0,{R}}" by blast
       moreover
-      with \<open>T{is a topology}\<close> have "0\<in>T""\<Union>T\<in>T" using IsATopology_def by auto
+      from this \<open>T{is a topology}\<close> have "0\<in>T""\<Union>T\<in>T" using IsATopology_def by auto
       moreover
       note \<open>\<Union>T={R}\<close>
       ultimately have "T={0,\<Union>T}" by auto
@@ -1583,6 +1701,8 @@ next
   }
   then show "A {is in the spectrum of}(\<lambda>T. T={0,\<Union>T})" using Spec_def by auto
 qed
+
+text\<open>A space is anti-indiscrete if and only if it is $T_0$.\<close>
 
 theorem (in topology0) anti_indiscrete:
   shows "(T{is anti-}(\<lambda>T. T={0,\<Union>T})) \<longleftrightarrow> T{is T\<^sub>0}"
@@ -1636,19 +1756,21 @@ next
       then have "T{restricted to}{x,y}\<subseteq>{0,{x,y}}" unfolding RestrictedTo_def by auto
       moreover
       from \<open>x\<in>\<Union>T\<close>\<open>y\<in>\<Union>T\<close> have emp:"0\<in>T""{x,y}\<inter>0=0" and tot: "{x,y}={x,y}\<inter>\<Union>T" "\<Union>T\<in>T" using topSpaceAssum empty_open IsATopology_def by auto
-      from emp have "0\<in>T{restricted to}{x,y}" unfolding RestrictedTo_def by auto
+      then have "0\<in>T{restricted to}{x,y}" unfolding RestrictedTo_def by auto
       moreover
       from tot have "{x,y}\<in>T{restricted to}{x,y}" unfolding RestrictedTo_def by auto
       ultimately have "T{restricted to}{x,y}={0,{x,y}}" by auto
       with reg \<open>x\<in>\<Union>T\<close>\<open>y\<in>\<Union>T\<close> have "{x,y}\<lesssim>1" by auto
       moreover
       have "x\<in>{x,y}" by auto
-      ultimately have "{x,y}={x}" using lepoll_1_is_sing[of "{x,y}""x"] by auto
+      moreover
+      have "{x,y} \<lesssim> 1 \<Longrightarrow> x \<in> {x,y} \<Longrightarrow> {x,y} = {x}" using lepoll_1_is_sing by assumption
+      ultimately have "{x,y}={x}" by auto
       moreover
       have "y\<in>{x,y}" by auto
       ultimately have "y\<in>{x}" by auto
       then have "y=x" by auto
-      then have "False" using \<open>x\<noteq>y\<close> by auto
+      with \<open>x\<noteq>y\<close> have "False"  by auto
     }
     then have "\<exists>U\<in>T. (x\<notin>U\<or>y\<notin>U)\<and>(x\<in>U\<or>y\<in>U)" by auto
     then have "\<exists>U\<in>T. (x\<in>U\<and>y\<notin>U)\<or>(x\<notin>U\<and>y\<in>U)" by auto
@@ -1657,9 +1779,9 @@ next
   then show "T {is T\<^sub>0}" using isT0_def by auto
 qed
 
-text\<open>The conclusion is that being $T_0$ is just the opposite to being indiscrete.\<close>
+text\<open>The conclusion is that being $T_0$ is just the opposite to being indiscrete.
 
-text\<open>Next, let's compute the anti-$T_i$ for $i=1,\ 2,\ 3$ or $4$. Surprisingly, 
+Next, let's compute the anti-$T_i$ for $i=1,\ 2,\ 3$ or $4$. Surprisingly,
 they are all the same. Meaning, that the total negation of $T_1$ is enough
 to negate all of these axioms.\<close>
 
@@ -1667,7 +1789,7 @@ theorem anti_T1:
   shows "(T{is anti-}isT1) \<longleftrightarrow> (IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}))"
 proof
   assume "T{is anti-}isT1"
-  let ?r="{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}"
+  let ?r = "{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}"
   have "antisym(?r)" unfolding antisym_def by auto
   moreover
   have "trans(?r)" unfolding trans_def by auto
@@ -1684,7 +1806,7 @@ proof
       from \<open>A\<in>T\<close>\<open>B\<in>T\<close> have "{x,y}\<inter>A\<in>T{restricted to}{x,y}""{x,y}\<inter>B\<in>T{restricted to}{x,y}" unfolding
         RestrictedTo_def by auto
       ultimately have open_set:"{x}\<in>T{restricted to}{x,y}""{y}\<in>T{restricted to}{x,y}" by auto
-      have "x\<in>\<Union>T""y\<in>\<Union>T" using \<open>A\<in>T\<close>\<open>B\<in>T\<close>\<open>x\<in>A\<close>\<open>y\<in>B\<close> by auto
+      from \<open>A\<in>T\<close>\<open>B\<in>T\<close>\<open>x\<in>A\<close>\<open>y\<in>B\<close> have "x\<in>\<Union>T""y\<in>\<Union>T" by auto
       then have sub:"{x,y}\<in>Pow(\<Union>T)" by auto
       then have tot:"\<Union>(T{restricted to}{x,y})={x,y}" unfolding RestrictedTo_def by auto
       {
@@ -1692,7 +1814,7 @@ proof
         assume "s\<in>\<Union>(T{restricted to}{x,y})""t\<in>\<Union>(T{restricted to}{x,y})""s\<noteq>t"
         with tot have "s\<in>{x,y}""t\<in>{x,y}""s\<noteq>t" by auto
         then have "(s=x\<and>t=y)\<or>(s=y\<and>t=x)" by auto
-        with open_set have "\<exists>U\<in>(T{restricted to}{x,y}). s\<in>U\<and>t\<notin>U" using \<open>x\<noteq>y\<close> by auto
+        with open_set \<open>x\<noteq>y\<close> have "\<exists>U\<in>(T{restricted to}{x,y}). s\<in>U\<and>t\<notin>U"  by auto
       }
       then have "(T{restricted to}{x,y}){is T\<^sub>1}" unfolding isT1_def by auto
       with sub \<open>T{is anti-}isT1\<close> tot have "{x,y} {is in the spectrum of}isT1" using antiProperty_def
@@ -1700,13 +1822,15 @@ proof
       then have "{x,y}\<lesssim>1" using T1_spectrum by auto
       moreover
       have "x\<in>{x,y}" by auto
-      ultimately have "{x}={x,y}" using lepoll_1_is_sing[of "{x,y}""x"] by auto
+      moreover
+      have "{x,y} \<lesssim> 1 \<Longrightarrow> x \<in> {x,y} \<Longrightarrow> {x,y} = {x}" using lepoll_1_is_sing by assumption
+      ultimately have "{x}={x,y}" by auto
       moreover
       have "y\<in>{x,y}" by auto
       ultimately
       have "y\<in>{x}" by auto
       then have "x=y" by auto
-      then have "False" using \<open>x\<in>A\<close>\<open>y\<notin>A\<close> by auto
+      with \<open>x\<in>A\<close>\<open>y\<notin>A\<close> have "False" by auto
     }
     then have "A\<subseteq>B\<or>B\<subseteq>A" by auto
   }
@@ -1762,15 +1886,22 @@ next
   then show "T{is anti-}isT1" using antiProperty_def by auto
 qed
 
+text\<open>The linearly ordered topology property is hereditary.\<close>
+
 corollary linordtop_here:
   shows "(\<lambda>T. IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V})){is hereditary}"
-  using anti_T1 anti_here[of "isT1"] by auto
+proof-
+  from anti_here have "(\<lambda>T. ANTI(isT1,T)){is hereditary}" by assumption
+  then show ?thesis using anti_T1 by auto
+qed
+
+text\<open>A space is anti-$T_4$ if and only if its open sets are linearly ordered by inclusion.\<close>
 
 theorem (in topology0) anti_T4:
   shows "(T{is anti-}isT4) \<longleftrightarrow> (IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}))"
 proof
   assume "T{is anti-}isT4"
-  let ?r="{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}"
+  let ?r = "{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}"
   have "antisym(?r)" unfolding antisym_def by auto
   moreover
   have "trans(?r)" unfolding trans_def by auto
@@ -1787,7 +1918,7 @@ proof
       from \<open>A\<in>T\<close>\<open>B\<in>T\<close> have "{x,y}\<inter>A\<in>T{restricted to}{x,y}""{x,y}\<inter>B\<in>T{restricted to}{x,y}" unfolding
         RestrictedTo_def by auto
       ultimately have open_set:"{x}\<in>T{restricted to}{x,y}""{y}\<in>T{restricted to}{x,y}" by auto
-      have "x\<in>\<Union>T""y\<in>\<Union>T" using \<open>A\<in>T\<close>\<open>B\<in>T\<close>\<open>x\<in>A\<close>\<open>y\<in>B\<close> by auto
+      from \<open>A\<in>T\<close>\<open>B\<in>T\<close>\<open>x\<in>A\<close>\<open>y\<in>B\<close> have "x\<in>\<Union>T""y\<in>\<Union>T" by auto
       then have sub:"{x,y}\<in>Pow(\<Union>T)" by auto
       then have tot:"\<Union>(T{restricted to}{x,y})={x,y}" unfolding RestrictedTo_def by auto
       {
@@ -1795,7 +1926,7 @@ proof
         assume "s\<in>\<Union>(T{restricted to}{x,y})""t\<in>\<Union>(T{restricted to}{x,y})""s\<noteq>t"
         with tot have "s\<in>{x,y}""t\<in>{x,y}""s\<noteq>t" by auto
         then have "(s=x\<and>t=y)\<or>(s=y\<and>t=x)" by auto
-        with open_set have "\<exists>U\<in>(T{restricted to}{x,y}). s\<in>U\<and>t\<notin>U" using \<open>x\<noteq>y\<close> by auto
+        with open_set \<open>x\<noteq>y\<close> have "\<exists>U\<in>(T{restricted to}{x,y}). s\<in>U\<and>t\<notin>U" by auto
       }
       then have "(T{restricted to}{x,y}){is T\<^sub>1}" unfolding isT1_def by auto
       moreover
@@ -1805,9 +1936,12 @@ proof
         {
           fix t
           assume AS2:"t{is closed in}(T{restricted to}{x,y})""s\<inter>t=0"
-          have "(T{restricted to}{x,y}){is a topology}" using Top_1_L4 by auto
-          with tot have "0\<in>(T{restricted to}{x,y})""{x,y}\<in>(T{restricted to}{x,y})" using empty_open
-            union_open[where \<A>="T{restricted to}{x,y}"] by auto
+          have h:"(T{restricted to}{x,y}){is a topology}" using Top_1_L4 by auto
+          from union_open have "(T{restricted to}{x,y}) {is a topology} \<Longrightarrow>
+              \<forall>A\<in>T{restricted to}{x,y}. A \<in> (T{restricted to}{x,y}) \<Longrightarrow>
+              \<Union>(T{restricted to}{x,y}) \<in> (T{restricted to}{x,y})" by auto
+          with h tot have "0\<in>(T{restricted to}{x,y})""{x,y}\<in>(T{restricted to}{x,y})" using empty_open
+             by auto
           moreover
           note open_set
           moreover
@@ -1838,13 +1972,15 @@ proof
       then have "{x,y}\<lesssim>1" using T4_spectrum by auto
       moreover
       have "x\<in>{x,y}" by auto
-      ultimately have "{x}={x,y}" using lepoll_1_is_sing[of "{x,y}""x"] by auto
+      moreover
+      have "{x,y}\<lesssim>1 \<Longrightarrow> x\<in>{x,y} \<Longrightarrow> {x,y}={x}" using lepoll_1_is_sing by assumption
+      ultimately have "{x}={x,y}" by auto
       moreover
       have "y\<in>{x,y}" by auto
       ultimately
       have "y\<in>{x}" by auto
       then have "x=y" by auto
-      then have "False" using \<open>x\<in>A\<close>\<open>y\<notin>A\<close> by auto
+      with \<open>x\<in>A\<close>\<open>y\<notin>A\<close> have "False" by auto
     }
     then have "A\<subseteq>B\<or>B\<subseteq>A" by auto
   }
@@ -1860,8 +1996,15 @@ next
   moreover
   have " \<forall>A. (A {is in the spectrum of} isT1) \<longrightarrow> (A {is in the spectrum of} isT4)" using T1_spectrum T4_spectrum
     by auto
-  ultimately show "T{is anti-}isT4" using eq_spect_rev_imp_anti[of "isT4""isT1"] by auto
+  moreover have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>4} \<longrightarrow> T {is T\<^sub>1}) \<Longrightarrow>
+    \<forall>A. A {is in the spectrum of} isT1 \<longrightarrow>
+        A {is in the spectrum of} isT4 \<Longrightarrow>
+    ANTI(isT1, T) \<Longrightarrow> ANTI(isT4, T)" using eq_spect_rev_imp_anti by assumption
+  ultimately show "T{is anti-}isT4" by auto
 qed
+
+text\<open>A space is anti-$T_3$ if and only if its open sets are linearly ordered by inclusion.\<close>
 
 theorem (in topology0) anti_T3:
   shows "(T{is anti-}isT3) \<longleftrightarrow> (IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}))"
@@ -1873,7 +2016,12 @@ proof
   moreover
   have " \<forall>A. (A {is in the spectrum of} isT3) \<longrightarrow> (A {is in the spectrum of} isT4)" using T3_spectrum T4_spectrum
     by auto
-  ultimately have "T{is anti-}isT4" using eq_spect_rev_imp_anti[of "isT4""isT3"] by auto
+  moreover have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>4} \<longrightarrow> T {is T\<^sub>3}) \<Longrightarrow>
+    \<forall>A. A {is in the spectrum of} isT3 \<longrightarrow>
+        A {is in the spectrum of} isT4 \<Longrightarrow>
+    ANTI(isT3, T) \<Longrightarrow> ANTI(isT4, T)" using eq_spect_rev_imp_anti by assumption
+  ultimately have "T{is anti-}isT4"  by auto
   then show "IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V})" using anti_T4 by auto
 next
   assume "IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V})"
@@ -1884,8 +2032,15 @@ next
   moreover
   have " \<forall>A. (A {is in the spectrum of} isT1) \<longrightarrow> (A {is in the spectrum of} isT3)" using T1_spectrum T3_spectrum
     by auto
-  ultimately show "T{is anti-}isT3" using eq_spect_rev_imp_anti[of "isT3""isT1"] by auto
+  moreover have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>3} \<longrightarrow> T {is T\<^sub>1}) \<Longrightarrow>
+    \<forall>A. A {is in the spectrum of} isT1 \<longrightarrow>
+        A {is in the spectrum of} isT3 \<Longrightarrow>
+    ANTI(isT1, T) \<Longrightarrow> ANTI(isT3, T)" using eq_spect_rev_imp_anti by assumption
+  ultimately show "T{is anti-}isT3" by auto
 qed
+
+text\<open>A space is anti-$T_2$ if and only if its open sets are linearly ordered by inclusion.\<close>
 
 theorem (in topology0) anti_T2:
   shows "(T{is anti-}isT2) \<longleftrightarrow> (IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}))"
@@ -1897,7 +2052,12 @@ proof
   moreover
   have " \<forall>A. (A {is in the spectrum of} isT2) \<longrightarrow> (A {is in the spectrum of} isT4)" using T2_spectrum T4_spectrum
     by auto
-  ultimately have "T{is anti-}isT4" using eq_spect_rev_imp_anti[of "isT4""isT2"] by auto
+  moreover have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>4} \<longrightarrow> T {is T\<^sub>2}) \<Longrightarrow>
+    \<forall>A. A {is in the spectrum of} isT2 \<longrightarrow>
+        A {is in the spectrum of} isT4 \<Longrightarrow>
+    ANTI(isT2, T) \<Longrightarrow> ANTI(isT4, T)" using eq_spect_rev_imp_anti by assumption
+  ultimately have "T{is anti-}isT4" by auto
   then show "IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V})" using anti_T4 by auto
 next
   assume "IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V})"
@@ -1907,8 +2067,15 @@ next
   moreover
   have " \<forall>A. (A {is in the spectrum of} isT1) \<longrightarrow> (A {is in the spectrum of} isT2)" using T1_spectrum T2_spectrum
     by auto
-  ultimately show "T{is anti-}isT2" using eq_spect_rev_imp_anti[of "isT2""isT1"] by auto
+  moreover have "\<forall>T. T {is a topology} \<longrightarrow>
+        (T{is T\<^sub>2} \<longrightarrow> T {is T\<^sub>1}) \<Longrightarrow>
+    \<forall>A. A {is in the spectrum of} isT1 \<longrightarrow>
+        A {is in the spectrum of} isT2 \<Longrightarrow>
+    ANTI(isT1, T) \<Longrightarrow> ANTI(isT2, T)" using eq_spect_rev_imp_anti by assumption
+  ultimately show "T{is anti-}isT2"  by auto
 qed
+
+text\<open>The spectrum of the linear order property on topologies is the class of sets of cardinality at most $1$.\<close>
 
 lemma linord_spectrum:
   shows "(A{is in the spectrum of}(\<lambda>T. IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}))) \<longleftrightarrow> A\<lesssim>1"
@@ -1932,8 +2099,6 @@ proof
       assume "y\<in>A"
       have "Pow(A) {is a topology}" using Pow_is_top by auto
       moreover
-      have "\<Union>Pow(A)=A" by auto
-      then have "\<Union>Pow(A)\<approx>A" by auto
       note reg
       ultimately have "IsLinOrder(Pow(A),{\<langle>U,V\<rangle>\<in>Pow(\<Union>Pow(A))\<times>Pow(\<Union>Pow(A)). U\<subseteq>V})" by auto
       then have "IsLinOrder(Pow(A),{\<langle>U,V\<rangle>\<in>Pow(A)\<times>Pow(A). U\<subseteq>V})" by auto
@@ -1963,18 +2128,32 @@ next
         with AS(2) have "aa\<in>{0,\<Union>T}""b\<in>{0,\<Union>T}" by auto
         then have "aa=0\<or>aa=\<Union>T""b=0\<or>b=\<Union>T" by auto
         then have "aa\<subseteq>b\<or>b\<subseteq>aa" by auto
-        then have "\<langle>aa, b\<rangle> \<in> Collect(Pow(\<Union>T) \<times> Pow(\<Union>T), split((\<subseteq>))) \<or> \<langle>b, aa\<rangle> \<in> Collect(Pow(\<Union>T) \<times> Pow(\<Union>T), split((\<subseteq>)))"
-        using \<open>aa\<in>T\<close>\<open>b\<in>T\<close> by auto
+        with \<open>aa\<in>T\<close>\<open>b\<in>T\<close> have "\<langle>aa, b\<rangle> \<in> Collect(Pow(\<Union>T) \<times> Pow(\<Union>T), split((\<subseteq>))) \<or> \<langle>b, aa\<rangle> \<in> Collect(Pow(\<Union>T) \<times> Pow(\<Union>T), split((\<subseteq>)))"
+         by auto
       }
       then show ?thesis using IsTotal_def by auto
     qed
     ultimately have "IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V})" unfolding IsLinOrder_def by auto
   }
   then have " \<forall>T. T {is a topology} \<longrightarrow> T = {0, \<Union>T} \<longrightarrow> IsLinOrder(T, {\<langle>U,V\<rangle> \<in> Pow(\<Union>T) \<times> Pow(\<Union>T) . U \<subseteq> V})" by auto
-  then show "A{is in the spectrum of}(\<lambda>T. IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}))"
-    using P_imp_Q_spec_inv[of "\<lambda>T. T={0,\<Union>T}""\<lambda>T. IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V})"]
-    ind by auto
+  moreover
+  from P_imp_Q_spec_inv
+  have "\<forall>T. T {is a topology} \<longrightarrow>
+      T =
+      cons(\<emptyset>, cons(\<Union>T, \<emptyset>)) \<longrightarrow>
+      IsLinOrder
+       (T, {\<langle>U,V\<rangle> \<in> Pow(\<Union>T) \<times>
+   Pow(\<Union>T) .
+            U \<subseteq> V}) \<Longrightarrow>
+  A {is in the spectrum of} \<lambda>T.
+               T = {\<emptyset>,\<Union>T} \<Longrightarrow> A {is in the spectrum of} (\<lambda>T. IsLinOrder(T,{\<langle>U,V\<rangle> \<in> Pow(\<Union>T) \<times> Pow(\<Union>T). U \<subseteq> V}))"
+    by assumption
+  moreover note ind
+  ultimately show "A{is in the spectrum of}(\<lambda>T. IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}))"
+    by auto
 qed
+
+text\<open>A space is anti-linearly-ordered if and only if it is $T_1$.\<close>
 
 theorem (in topology0) anti_linord:
   shows "(T{is anti-}(\<lambda>T. IsLinOrder(T,{\<langle>U,V\<rangle>\<in>Pow(\<Union>T)\<times>Pow(\<Union>T). U\<subseteq>V}))) \<longleftrightarrow> T{is T\<^sub>1}"
@@ -2003,7 +2182,7 @@ proof
     }
     then have "{x}\<notin>T{restricted to}{x,y}" by auto
     moreover
-    have tot:"\<Union>(T{restricted to}{x,y})={x,y}" using \<open>x\<in>\<Union>T\<close>\<open>y\<in>\<Union>T\<close> unfolding RestrictedTo_def by auto
+    from \<open>x\<in>\<Union>T\<close>\<open>y\<in>\<Union>T\<close> have tot:"\<Union>(T{restricted to}{x,y})={x,y}" unfolding RestrictedTo_def by auto
     moreover
     have "T{restricted to}{x,y}\<subseteq>Pow(\<Union>(T{restricted to}{x,y}))" by auto
     ultimately have "T{restricted to}{x,y}\<subseteq>Pow({x,y})-{{x}}" by auto
@@ -2034,13 +2213,15 @@ proof
     then have "{x,y}\<lesssim>1" using linord_spectrum by auto
     moreover
     have "x\<in>{x,y}" by auto
-    ultimately have "{x}={x,y}" using lepoll_1_is_sing[of "{x,y}""x"] by auto
+    moreover
+    have "{x,y}\<lesssim>1 \<Longrightarrow> x\<in>{x,y} \<Longrightarrow> {x,y} = {x}" using lepoll_1_is_sing by assumption
+    ultimately have "{x}={x,y}" by auto
     moreover
     have "y\<in>{x,y}" by auto
     ultimately
     have "y\<in>{x}" by auto
     then have "x=y" by auto
-    then have "False" using \<open>x\<noteq>y\<close> by auto
+    with  \<open>x\<noteq>y\<close> have "False"  by auto
   }
   then show "T {is T\<^sub>1}" by auto
 next
@@ -2054,11 +2235,11 @@ next
       {
         fix y
         assume AS:"y\<in>A""x\<noteq>y"
-        with AS1 have "{x,y}\<in>Pow(\<Union>T)" using \<open>A\<in>Pow(\<Union>T)\<close> by auto
+        with AS1 \<open>A\<in>Pow(\<Union>T)\<close> have "{x,y}\<in>Pow(\<Union>T)"  by auto
         from \<open>x\<in>A\<close>\<open>y\<in>A\<close> have "{x,y}\<in>Pow(A)" by auto
         from \<open>{x,y}\<in>Pow(\<Union>T)\<close> have T11:"(T{restricted to}{x,y}){is T\<^sub>1}" using T1_here T1 by auto
         moreover
-        have tot:"\<Union>(T{restricted to}{x,y})={x,y}" unfolding RestrictedTo_def using \<open>{x,y}\<in>Pow(\<Union>T)\<close> by auto
+        from \<open>{x,y}\<in>Pow(\<Union>T)\<close> have tot:"\<Union>(T{restricted to}{x,y})={x,y}" unfolding RestrictedTo_def  by auto
         moreover
         note AS(2) 
         ultimately obtain U where "x\<in>U""y\<notin>U""U\<in>(T{restricted to}{x,y})" unfolding isT1_def by auto
@@ -2078,14 +2259,14 @@ next
           ultimately have "\<forall>B\<in>Pow(\<Union>(T{restricted to}A)). IsLinOrder((T{restricted to}A){restricted to}B ,{\<langle>U,V\<rangle>\<in>Pow(\<Union>((T{restricted to}A){restricted to}B))\<times>Pow(\<Union>((T{restricted to}A){restricted to}B)). U\<subseteq>V})"
             unfolding IsHer_def by auto
           moreover
-          have tot:"\<Union>(T{restricted to}A)=A" unfolding RestrictedTo_def using \<open>A\<in>Pow(\<Union>T)\<close> by auto
+          from \<open>A\<in>Pow(\<Union>T)\<close> have tot:"\<Union>(T{restricted to}A)=A" unfolding RestrictedTo_def by auto
           ultimately have  "\<forall>B\<in>Pow(A). IsLinOrder((T{restricted to}A){restricted to}B ,{\<langle>U,V\<rangle>\<in>Pow(\<Union>((T{restricted to}A){restricted to}B))\<times>Pow(\<Union>((T{restricted to}A){restricted to}B)). U\<subseteq>V})" by auto
           moreover
-          have "\<forall>B\<in>Pow(A). (T{restricted to}A){restricted to}B=T{restricted to}B" using subspace_of_subspace \<open>A\<in>Pow(\<Union>T)\<close> by auto
+          from  \<open>A\<in>Pow(\<Union>T)\<close> have "\<forall>B\<in>Pow(A). (T{restricted to}A){restricted to}B=T{restricted to}B" using subspace_of_subspace by auto
           ultimately
           have "\<forall>B\<in>Pow(A). IsLinOrder((T{restricted to}B) ,{\<langle>U,V\<rangle>\<in>Pow(\<Union>((T{restricted to}A){restricted to}B))\<times>Pow(\<Union>((T{restricted to}A){restricted to}B)). U\<subseteq>V})" by auto
           moreover
-          have "\<forall>B\<in>Pow(A). \<Union>((T{restricted to}A){restricted to}B)=B" using \<open>A\<in>Pow(\<Union>T)\<close> unfolding RestrictedTo_def by auto
+          from \<open>A\<in>Pow(\<Union>T)\<close> have "\<forall>B\<in>Pow(A). \<Union>((T{restricted to}A){restricted to}B)=B" unfolding RestrictedTo_def by auto
           ultimately have "\<forall>B\<in>Pow(A). IsLinOrder((T{restricted to}B) ,{\<langle>U,V\<rangle>\<in>Pow(B)\<times>Pow(B). U\<subseteq>V})" by auto
           with \<open>{x,y}\<in>Pow(A)\<close> have "IsLinOrder((T{restricted to}{x,y}) ,{\<langle>U,V\<rangle>\<in>Pow({x,y})\<times>Pow({x,y}). U\<subseteq>V})" by auto
         }
@@ -2113,20 +2294,17 @@ next
     by auto
 qed
 
-text\<open>In conclusion, $T_1$ is also an anti-property.\<close>
-
-text\<open>Let's define some anti-properties that we'll use in the future.\<close>
+text\<open>In conclusion, $T_1$ is also an anti-property. Let's define some anti-properties that we'll use in the future.\<close>
 
 definition
   IsAntiComp ("_{is anti-compact}")
   where "T{is anti-compact} \<equiv> T{is anti-}(\<lambda>T. (\<Union>T){is compact in}T)"
 
+text\<open>A space is anti-Lindelöf if the only Lindelöf subspaces lie in the spectrum of the Lindelöf property.\<close>
+
 definition
   IsAntiLin ("_{is anti-lindeloef}")
   where "T{is anti-lindeloef} \<equiv> T{is anti-}(\<lambda>T. ((\<Union>T){is lindeloef in}T))"
-
-text\<open>Anti-compact spaces are also called pseudo-finite spaces in literature
-before the concept of anti-property was defined.\<close>
 
 end
 
