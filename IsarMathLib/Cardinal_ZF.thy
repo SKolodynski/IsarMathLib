@@ -774,8 +774,8 @@ proof -
     assume noEmpty:"X\<noteq>0"
     with assms have "surj(nat,X)\<noteq>0" unfolding IsEnumerable_def by auto
     then obtain f where "f\<in>surj(nat,X)" by auto
-    moreover have "nat\<lesssim>nat" by auto moreover note Ord_nat
-    ultimately have "X\<lesssim>nat" using surj_fun_inv_2 by blast
+    moreover have "nat \<subseteq> nat" by auto moreover note Ord_nat
+    ultimately have "X\<lesssim>nat" using surj_fun_inv by blast
     then have "X{is countable}" using countable_lepoll by auto
   }
   ultimately show ?thesis by auto
