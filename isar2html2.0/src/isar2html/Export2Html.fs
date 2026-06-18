@@ -195,7 +195,7 @@ namespace iml
                 + (match sp.sconclusion with
                    | Shows cl -> (bf " shows ") + (exportSimpleClaims repls cl)
                    | Obtains (vars, cl) ->
-                       (bf " obtains ") + (String.concat " " vars) + (bf " where ") + (exportSimpleClaims repls cl))
+                       (bf " obtains ") + (String.concat " " (List.map (littext repls) vars)) + (bf " where ") + (exportSimpleClaims repls cl))
             | SimpleDef (nm,d) -> ("Definition of " + nm + ":\n" + (isar2latex repls d) )
             | OtherSimpleItem -> " Other formal item " // TODO: check if we ever get here
 

@@ -1105,10 +1105,10 @@ next
   then show "T{is T\<^sub>1}" unfolding isT1_def by auto
 qed
 
-text\<open>Is is natural that separation axioms and connection axioms are anti-properties of each other;
+text\<open>It is natural that separation axioms and connection axioms are anti-properties of each other;
 as the concepts of connectedness and separation are opposite.
 
-To end this section, let's try to charaterize anti-sober spaces.\<close>
+To end this section, let's try to characterize anti-sober spaces.\<close>
 
 lemma sober_spectrum:
   shows "(A{is in the spectrum of}IsSober) \<longleftrightarrow> A\<lesssim>1"
@@ -1217,7 +1217,7 @@ next
   then show "A {is in the spectrum of} IsSober" unfolding Spec_def by auto
 qed
 
-text\<open>An space anti-sober is just a indiscrete space.\<close>
+text\<open>A space anti-sober is just an indiscrete space.\<close>
 
 theorem (in topology0)anti_sober:
   shows "(T{is anti-}IsSober) \<longleftrightarrow> T={0,\<Union>T}"
