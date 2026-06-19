@@ -31,6 +31,10 @@ section \<open>Topology 7\<close>
 theory Topology_ZF_7 imports Topology_ZF_5
 begin
 
+text\<open>This theory develops the theory of connection properties in topological spaces,
+including connected and disconnected spaces, hyperconnected spaces, sober spaces, and
+ultraconnected spaces.\<close>
+
 subsection\<open>Connection Properties\<close>
 
 text\<open>Another type of topological properties are the connection properties.
@@ -42,6 +46,8 @@ and the total set.\<close>
 definition IsConnected ("_{is connected}" 70)
   where "T {is connected} \<equiv> \<forall>U. (U\<in>T \<and> (U {is closed in}T)) \<longrightarrow> U=0\<or>U=\<Union>T"
 
+text\<open>The indiscrete topology on a set is always connected.\<close>
+
 lemma indiscrete_connected:
   shows "{0,X} {is connected}"
   unfolding IsConnected_def IsClosed_def by auto
@@ -50,6 +56,8 @@ text\<open>The anti-property of connectedness is called total-diconnectedness.\<
 
 definition IsTotDis ("_ {is totally-disconnected}" 70)
   where "IsTotDis \<equiv> ANTI(IsConnected)"
+
+text\<open>A set is in the connectedness spectrum iff it has cardinality at most one.\<close>
 
 lemma conn_spectrum:
   shows "(A{is in the spectrum of}IsConnected) \<longleftrightarrow> A\<lesssim>1"
@@ -76,7 +84,7 @@ proof
   moreover
   {
     assume "A=0"
-    then have "A\<lesssim>1" using empty_lepollI[of "1"] by auto
+    then have "A\<lesssim>1" using empty_lepollI by auto
   }
   ultimately show "A\<lesssim>1" by auto
 next
@@ -115,11 +123,11 @@ lemma discrete_tot_dis:
 proof-
   {
     fix A assume "A\<in>Pow(X)" and con:"(Pow(X){restricted to}A){is connected}"
-    have res:"(Pow(X){restricted to}A)=Pow(A)" unfolding RestrictedTo_def using \<open>A\<in>Pow(X)\<close>
+    from  \<open>A\<in>Pow(X)\<close> have res:"(Pow(X){restricted to}A)=Pow(A)" unfolding RestrictedTo_def
       by blast
     {
       assume "A=0"
-      then have "A\<lesssim>1" using empty_lepollI[of "1"] by auto
+      then have "A\<lesssim>1" using empty_lepollI by auto
       then have "A{is in the spectrum of}IsConnected" using conn_spectrum by auto
     }
     moreover
@@ -166,6 +174,8 @@ proof-
   then show ?thesis using IsConnected_def by auto
 qed
 
+text\<open>The indiscrete topology is hyperconnected.\<close>
+
 lemma Indiscrete_HConn:
   shows "{0,X}{is hyperconnected}"
   unfolding IsHConnected_def by auto
@@ -185,13 +195,16 @@ proof-
     from \<open>U\<inter>V=0\<close> have un:"(X-U)\<union>(X-V)=X" by auto
     {
       assume AS:"(X-U)\<prec>nat""(X-V)\<prec>nat"
-      from un have "X\<prec>nat" using less_less_imp_un_less[OF AS InfCard_nat] by auto
+      have "(X-U)\<prec>nat \<Longrightarrow> (X-V)\<prec>nat \<Longrightarrow> (X-U)\<union>(X-V)\<prec>nat" using less_less_imp_un_less InfCard_nat by blast
+      with un have "X\<prec>nat" using AS by auto
       then have "False" using assms by auto
     }
     with eq(1,2) have "U=0\<or>V=0" by auto
   }
   then show "(CoFinite X){is hyperconnected}" using IsHConnected_def by auto
 qed
+
+text\<open>A set is in the hyperconnectedness spectrum iff it has cardinality at most one.\<close>
 
 lemma HConn_spectrum:
   shows "(A{is in the spectrum of}IsHConnected) \<longleftrightarrow> A\<lesssim>1"
@@ -256,9 +269,9 @@ next
 qed
 
 text\<open>In the following results we will show that anti-hyperconnectedness is a separation
-property between $T_1$ and $T_2$. We will show also that both implications are proper.\<close>
+property between $T_1$ and $T_2$. We will show also that both implications are proper.
 
-text\<open>First, the closure of a point in every topological space is always hyperconnected.
+First, the closure of a point in every topological space is always hyperconnected.
 This is the reason why every anti-hyperconnected space must be $T_1$: every singleton
 must be closed.\<close>
 
@@ -322,8 +335,10 @@ proof-
     then have "Closure({x},T)\<lesssim>1" using conn_spectrum by auto
     moreover
     from \<open>x\<in>\<Union>T\<close> have "x\<in>Closure({x},T)" using cl_contains_set by auto
-    ultimately have "Closure({x},T)={x}" using lepoll_1_is_sing[of "Closure({x},T)" "x"] by auto
-    then have "{x}{is closed in}T" using Top_3_L8 \<open>x\<in>\<Union>T\<close> by auto
+    moreover
+    from lepoll_1_is_sing have "Closure({x},T)\<lesssim>1 \<Longrightarrow> x\<in>Closure({x},T) \<Longrightarrow> Closure({x},T) ={x}" by assumption
+    ultimately have "Closure({x},T)={x}" by auto
+    with  \<open>x\<in>\<Union>T\<close> have "{x}{is closed in}T" using Top_3_L8 by auto
     then have "\<Union>T-{x}\<in>T" unfolding IsClosed_def by auto
     moreover
     from \<open>y\<in>\<Union>T\<close>\<open>y\<noteq>x\<close> have "y\<in>\<Union>T-{x}\<and>x\<notin>\<Union>T-{x}" by auto
@@ -350,7 +365,7 @@ proof-
     with assms have "A{is in the spectrum of}IsHConnected" unfolding antiProperty_def by auto
     then have "A\<lesssim>1" using HConn_spectrum by auto
     moreover
-    with \<open>A\<in>Pow(\<Union>T)-{0}\<close> have "A\<noteq>0" by auto
+    from this \<open>A\<in>Pow(\<Union>T)-{0}\<close> have "A\<noteq>0" by auto
     then obtain x where "x\<in>A" by auto
     ultimately have "A={x}" using lepoll_1_is_sing by auto
     with \<open>A{is closed in}T\<close> have "{x}{is closed in}T" by auto
@@ -400,13 +415,13 @@ proof-
     with AS(1) have "x\<in>Closure({y},T)" by auto
     with cly have "Closure({x},T)\<subseteq>Closure({y},T)" using Top_3_L13 by auto
     with ineq1 have eq:"Closure({x},T)=Closure({y},T)" by auto
-    have "Closure({x},T)\<in>Pow(\<Union>T)-{0}" using Top_3_L11(1) \<open>x\<in>\<Union>T\<close> \<open>x\<in>Closure({x},T)\<close> by auto
-    moreover note assms clx
+    from  \<open>x\<in>\<Union>T\<close> \<open>x\<in>Closure({x},T)\<close>  have "Closure({x},T)\<in>Pow(\<Union>T)-{0}" using Top_3_L11(1) by auto
+    moreover note assms clx \<open>x\<in>\<Union>T\<close>
     ultimately have "\<exists>t\<in>\<Union>T.( Closure({x},T) = Closure({t}, T) \<and> (\<forall>y\<in>\<Union>T. Closure({x},T) = Closure({y}, T) \<longrightarrow> y = t))" 
-      unfolding IsSober_def using cl_point_imp_HConn[OF \<open>x\<in>\<Union>T\<close>] by auto
+      unfolding IsSober_def using cl_point_imp_HConn by auto
     then obtain t where t_def:"t\<in>\<Union>T""Closure({x},T) = Closure({t}, T)""\<forall>y\<in>\<Union>T. Closure({x},T) = Closure({y}, T) \<longrightarrow> y = t"
       by blast
-    with eq have "y=t" using \<open>y\<in>\<Union>T\<close> by auto
+    with eq \<open>y\<in>\<Union>T\<close> have "y=t" by auto
     moreover from t_def \<open>x\<in>\<Union>T\<close> have "x=t" by blast
     ultimately have "y=x" by auto
     with \<open>x\<noteq>y\<close> have "False" by auto
@@ -449,9 +464,11 @@ proof-
   then have "\<forall>T. ((T{is a topology}\<and>(T{is hyperconnected})\<and>(T{is T\<^sub>2}))\<longrightarrow> ((\<Union>T){is in the spectrum of}IsHConnected))"
     by auto
   moreover
-  note here_T2
+  note here_T2 moreover
+  from Q_P_imp_Spec have "\<forall>T. T{is a topology} \<and> T{is hyperconnected} \<and> T{is T\<^sub>2} \<longrightarrow> (\<Union>T) {is in the spectrum of}IsHConnected \<Longrightarrow> isT2{is hereditary} \<Longrightarrow> \<forall>T. T{is a topology} \<longrightarrow> T{is T\<^sub>2} \<longrightarrow> ANTI(IsHConnected,T)"
+    by assumption
   ultimately
-  have "\<forall>T.  T{is a topology} \<longrightarrow> ((T{is T\<^sub>2})\<longrightarrow>(T{is anti-}IsHConnected))" using Q_P_imp_Spec[where P=IsHConnected and Q=isT2]
+  have "\<forall>T.  T{is a topology} \<longrightarrow> ((T{is T\<^sub>2})\<longrightarrow>(T{is anti-}IsHConnected))"
     by auto
   then show ?thesis using assms topSpaceAssum by auto
 qed
@@ -485,8 +502,9 @@ proof-
         by auto
       then have "{x,y}\<lesssim>1" using HConn_spectrum by auto
       moreover
-      have "x\<in>{x,y}" by auto
-      ultimately have "{x,y}={x}" using lepoll_1_is_sing[of "{x,y}""x"] by auto
+      have "x\<in>{x,y}" by auto moreover
+      from lepoll_1_is_sing have "{x,y}\<lesssim>1 \<Longrightarrow> x\<in>{x,y} \<Longrightarrow> {x,y} = {x}" by assumption
+      ultimately have "{x,y}={x}" by auto
       moreover
       have "y\<in>{x,y}" by auto
       ultimately have "y\<in>{x}" by auto
@@ -513,7 +531,7 @@ proof-
       by auto
     moreover
     have "\<not>(nat\<prec>nat)" by auto
-    then have "(CoFinite nat){is hyperconnected}" using Cofinite_nat_HConn[of "nat"] by auto
+    then have "(CoFinite nat){is hyperconnected}" using Cofinite_nat_HConn by auto
     ultimately have "nat{is in the spectrum of}IsHConnected" unfolding antiProperty_def by auto
     then have "nat\<lesssim>1" using HConn_spectrum by auto
     moreover
@@ -534,6 +552,8 @@ is just the union of both.\<close>
 lemma join_top_cofinite_excluded_set:
   shows "(joinT {CoFinite nat,ExcludedSet(nat,{0,1})})=(CoFinite nat)\<union> ExcludedSet(nat,{0,1})"
 proof-
+  have Pa:"(CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for}{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}"
+    using Top_subbase(2) by auto
   have coftop:"(CoFinite nat){is a topology}" unfolding Cofinite_def using CoCar_is_topology InfCard_nat by auto
   moreover
   have "ExcludedSet(nat,{0,1}){is a topology}" using excludedset_is_topology by auto
@@ -544,16 +564,19 @@ proof-
   ultimately have "(joinT {CoFinite nat,ExcludedSet(nat,{0,1})}) = (THE T. (CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for} T)"
     using joinT_def by auto
   moreover
-  have "\<Union>(CoFinite nat)\<in>CoFinite nat" using CoCar_is_topology[OF InfCard_nat] unfolding Cofinite_def IsATopology_def
-    by auto
-  with cofuni have n:"nat\<in>CoFinite nat" by auto
-  have Pa:"(CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for}{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}"
-    using Top_subbase(2) by auto
-  have "{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}=(THE T. (CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for} T)"
-    using same_subbase_same_top[where B="(CoFinite nat)\<union>ExcludedSet(nat,{0,1})", OF _ Pa] the_equality[where a="{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}" and P="\<lambda>T. ((CoFinite nat)\<union>ExcludedSet(nat,{0,1})){is a subbase for}T",
-      OF Pa] by auto
+  from same_subbase_same_top have "\<And>T. (CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for}{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})} \<Longrightarrow>
+    (CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for}T \<Longrightarrow>
+     {\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})} = T"
+    by assumption
+  then have "\<And>T. (CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for}T \<Longrightarrow>
+     T={\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}" using sym Pa by auto
+  with Pa have "(THE T. (CoFinite nat)\<union>ExcludedSet(nat,{0,1}) {is a subbase for} T) = {\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}"
+    by (rule the_equality)
   ultimately have equal:"(joinT {CoFinite nat,ExcludedSet(nat,{0,1})}) ={\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}"
     by auto
+  have "\<Union>(CoFinite nat)\<in>CoFinite nat" using CoCar_is_topology InfCard_nat unfolding Cofinite_def IsATopology_def
+    by auto
+  with cofuni have n:"nat\<in>CoFinite nat" by auto
   {
     fix U assume "U\<in>{\<Union>A. A\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})}"
     then obtain AU where "U=\<Union>AU" and base:"AU\<in>Pow({\<Inter>B. B\<in>FinPow((CoFinite nat)\<union>ExcludedSet(nat,{0,1}))})"
@@ -594,7 +617,10 @@ proof-
       with \<open>S=\<Inter>BS\<close> have "BS\<noteq>0" by auto
       moreover
       note coftop 
-      ultimately have "\<Inter>BS\<in>CoFinite nat" using topology0.fin_inter_open_open[OF topology0_CoCardinal[OF InfCard_nat]]
+      moreover
+      from topology0.fin_inter_open_open have "topology0(CoFinite nat) \<Longrightarrow> BS\<noteq>0 \<Longrightarrow> BS\<in>FinPow(CoFinite nat) \<Longrightarrow> \<Inter>BS\<in>CoFinite nat"
+        by assumption
+      ultimately have "\<Inter>BS\<in>CoFinite nat" using topology0_CoCardinal InfCard_nat
         unfolding Cofinite_def by auto
       with \<open>S=\<Inter>BS\<close> have "S\<in>CoFinite nat" by auto
       with \<open>0\<in>S\<or>1\<in>S\<close> have "nat-S\<prec>nat" unfolding Cofinite_def CoCardinal_def by auto
@@ -659,13 +685,13 @@ proof-
     then have sub:"A\<inter>nat=A" by auto
     have "((CoFinite nat)\<union> ExcludedSet(nat,{0,1})){restricted to}A=((CoFinite nat){restricted to}A)\<union> (ExcludedSet(nat,{0,1}){restricted to}A)"
       unfolding RestrictedTo_def by auto
-    also from sub have "\<dots>=(CoFinite A)\<union>ExcludedSet(A,{0,1})" using subspace_excludedset[of"nat""{0,1}""A"] subspace_cocardinal[of "nat""nat""A"] unfolding Cofinite_def
+    also from sub have "\<dots>=(CoFinite A)\<union>ExcludedSet(A,{0,1})" using subspace_excludedset subspace_cocardinal unfolding Cofinite_def
       by auto
     finally have "((CoFinite nat)\<union> ExcludedSet(nat,{0,1})){restricted to}A=(CoFinite A)\<union>ExcludedSet(A,{0,1})" by auto
     with AS(2) have eq:"((CoFinite A)\<union>ExcludedSet(A,{0,1})){is hyperconnected}" by auto
     {
       assume "{0,1}\<inter>A=0"
-      then have "(CoFinite A)\<union>ExcludedSet(A,{0,1})=Pow(A)" using empty_excludedset[of "{0,1}""A"] unfolding Cofinite_def CoCardinal_def
+      then have "(CoFinite A)\<union>ExcludedSet(A,{0,1})=Pow(A)" using empty_excludedset unfolding Cofinite_def CoCardinal_def
         by auto
       with eq have "Pow(A){is hyperconnected}" by auto
       then have "Pow(A){is connected}" using HConn_imp_Conn by auto
@@ -695,16 +721,18 @@ proof-
         assume AS2:"\<not>(A={0}\<or>A={1})"
         {
           assume AS3:"A\<subseteq>{0,1}"
-          with AS AS2 have A_def:"A={0,1}" by blast
+          have I:"\<Union>(CoFinite A)=A" using union_cocardinal unfolding Cofinite_def by auto
+          have II:"(CoFinite A){is a topology}" using CoCar_is_topology InfCard_nat unfolding Cofinite_def by auto
+          
+          from AS AS2 AS3 have A_def:"A={0,1}" by blast
           then have "ExcludedSet(A,{0,1})=ExcludedSet(A,A)" by auto
           moreover have "ExcludedSet(A,A)={0,A}" unfolding ExcludedSet_def by blast
           ultimately have "ExcludedSet(A,{0,1})={0,A}" by auto
           moreover
-          have "0\<in>(CoFinite A)" using empty_open[of "CoFinite A"]
-            CoCar_is_topology[OF InfCard_nat,of "A"] unfolding Cofinite_def by auto
+          have "0\<in>(CoFinite A)" using empty_open
+            CoCar_is_topology InfCard_nat unfolding Cofinite_def by auto
           moreover
-          have "\<Union>(CoFinite A)=A" using union_cocardinal unfolding Cofinite_def by auto
-          then have "A\<in>(CoFinite A)" using CoCar_is_topology[OF InfCard_nat,of "A"] unfolding Cofinite_def
+          from I II have "A\<in>(CoFinite A)" unfolding Cofinite_def
             IsATopology_def by auto
           ultimately have "(CoFinite A)\<union>ExcludedSet(A,{0,1})=(CoFinite A)" by auto
           with eq have"(CoFinite A){is hyperconnected}" by auto
@@ -728,7 +756,7 @@ proof-
           have "1\<prec>nat" using n_lesspoll_nat by auto
           ultimately have "{t}\<prec>nat" using eq_lesspoll_trans by auto
           moreover
-          with \<open>t\<in>A\<close> have "A-(A-{t})={t}" by auto
+          from this \<open>t\<in>A\<close> have "A-(A-{t})={t}" by auto
           ultimately have "A-{t}\<in>(CoFinite A)" unfolding Cofinite_def CoCardinal_def
             by auto
         }
@@ -791,7 +819,7 @@ proof-
           have "Closure(A,T)-UCA=Closure(A,T)\<inter>(\<Union>T-UCA)""Closure(A,T)-VCA=Closure(A,T)\<inter>(\<Union>T-VCA)"
             using Top_3_L11(1) AS(1) by auto
           moreover 
-          with \<open>UCA\<in>T\<close>\<open>VCA\<in>T\<close> have "(\<Union>T-UCA){is closed in}T""(\<Union>T-VCA){is closed in}T""Closure(A,T){is closed in}T"
+          from this \<open>UCA\<in>T\<close>\<open>VCA\<in>T\<close> have "(\<Union>T-UCA){is closed in}T""(\<Union>T-VCA){is closed in}T""Closure(A,T){is closed in}T"
             using Top_3_L9 cl_is_closed AS(1) by auto
           ultimately have "(Closure(A,T)-UCA){is closed in}T""(Closure(A,T)-VCA){is closed in}T"
             using Top_3_L5(1) by auto
@@ -828,7 +856,10 @@ proof-
       with \<open>y\<in>\<Union>T\<close> have "{y} {is closed in}T" using IsClosed_def by auto
       with \<open>y\<in>\<Union>T\<close> have "Closure({y},T)={y}" using Top_3_L8 by auto
       with \<open>Closure(A,T)=Closure({y},T)\<close> have "Closure(A,T)={y}" by auto
-      with AS(1) have "A\<subseteq>{y}" using cl_contains_set[of "A"] by auto
+      moreover
+      have "A\<subseteq>\<Union>T \<Longrightarrow> A\<subseteq> Closure(A,T)" using cl_contains_set by auto
+      moreover note AS(1)
+      ultimately have "A\<subseteq>{y}" by auto
       with \<open>A\<noteq>0\<close> have "A={y}" by auto
       then have "A\<approx>1" using singleton_eqpoll_1 by auto
       then have "A\<lesssim>1" using eqpoll_imp_lepoll by auto
@@ -838,6 +869,8 @@ proof-
   }
   then show ?thesis using antiProperty_def by auto
 qed
+
+text\<open>A space is anti-hyperconnected if and only if it is both $T_1$ and sober.\<close>
 
 theorem (in topology0) anti_HConn_iff_T1_sober:
   shows "(T{is anti-}IsHConnected) \<longleftrightarrow> (T{is sober}\<and>T{is T\<^sub>1})"
@@ -886,6 +919,8 @@ proof-
   then show ?thesis unfolding IsConnected_def by auto
 qed
 
+text\<open>A set is in the ultraconnectedness spectrum iff it has cardinality at most one.\<close>
+
 lemma UConn_spectrum:
   shows "(A{is in the spectrum of}IsUConnected) \<longleftrightarrow> A\<lesssim>1"
 proof
@@ -904,7 +939,6 @@ proof
     have "\<Union>Pow(A)=A" by auto
     then have "\<Union>Pow(A)\<approx>A" by auto
     ultimately have ult:"Pow(A){is ultraconnected}" by auto
-    moreover
     from \<open>A\<noteq>0\<close> obtain b where "b\<in>A" by auto
     then have "{b}{is closed in}Pow(A)" unfolding IsClosed_def by auto
     {
@@ -939,8 +973,13 @@ next
       have "T\<subseteq>Pow(\<Union>T)" by auto
       ultimately have "T\<subseteq>Pow({E})" by auto
       then have "T\<subseteq>{0,{E}}" by blast
-      with \<open>T{is a topology}\<close> have "{0}\<subseteq>T" "T\<subseteq>{0,{E}}" using empty_open by auto
-      then have "T{is ultraconnected}" unfolding IsUConnected_def IsClosed_def by (simp only: eq, safe, force)
+      with \<open>T{is a topology}\<close> have TT:"{0}\<subseteq>T" "T\<subseteq>{0,{E}}" using empty_open by auto
+      from eq have "E\<in>\<Union>T" by auto
+      then obtain U where U:"E\<in>U" "U\<in>T" by auto
+      from TT(2) U have "U={E}" by auto
+      with U(2) TT have "T={0,{E}}" by blast
+      then have "T{is ultraconnected}" unfolding IsUConnected_def IsClosed_def
+        by force
     }
     ultimately have "T{is ultraconnected}" by auto
   }
@@ -997,12 +1036,11 @@ proof
     then have "(TT{is a topology}\<and>TT{is T\<^sub>1}\<and>(TT{is ultraconnected}))\<longrightarrow> ((\<Union>TT){is in the spectrum of}IsUConnected)"
       by auto
   }
-  then have "\<forall>TT. (TT{is a topology}\<and>TT{is T\<^sub>1}\<and>(TT{is ultraconnected}))\<longrightarrow> ((\<Union>TT){is in the spectrum of}IsUConnected)"
+  then have "\<forall>TT. (TT{is a topology}\<and>(TT{is ultraconnected})\<and>TT{is T\<^sub>1})\<longrightarrow> ((\<Union>TT){is in the spectrum of}IsUConnected)"
     by auto
   moreover
   note here_T1
-  ultimately have "\<forall>T. T{is a topology} \<longrightarrow> ((T{is T\<^sub>1})\<longrightarrow>(T{is anti-}IsUConnected))" using Q_P_imp_Spec[where Q=isT1 and P=IsUConnected]
-    by auto
+  ultimately have "\<forall>T. T{is a topology} \<longrightarrow> ((T{is T\<^sub>1})\<longrightarrow>(T{is anti-}IsUConnected))" by (rule Q_P_imp_Spec)
   with topSpaceAssum have "(T{is T\<^sub>1})\<longrightarrow>(T{is anti-}IsUConnected)" by auto
   with \<open>T{is T\<^sub>1}\<close> show "T{is anti-}IsUConnected" by auto
 next
@@ -1017,10 +1055,11 @@ next
         assume "{y}{is closed in}(T{restricted to}{x,y})"
         moreover
         from \<open>x\<noteq>y\<close> have "{x,y}-{y}={x}" by auto
-        ultimately have "{x}\<in>(T{restricted to}{x,y})" unfolding IsClosed_def by (simp only:tot)
+        moreover note tot
+        ultimately have "{x}\<in>(T{restricted to}{x,y})" unfolding IsClosed_def by auto
         then obtain U where "U\<in>T""{x}={x,y}\<inter>U" unfolding RestrictedTo_def by auto
         moreover
-        with \<open>x\<noteq>y\<close> have "y\<notin>{x}" "y\<in>{x,y}" by (blast+)
+        from \<open>x\<noteq>y\<close> have "y\<notin>{x}" "y\<in>{x,y}" by auto
         with \<open>{x}={x,y}\<inter>U\<close> have "y\<notin>U" by auto
         moreover have "x\<in>{x}" by auto
         with \<open>{x}={x,y}\<inter>U\<close> have "x\<in>U" by auto
@@ -1053,22 +1092,23 @@ next
         by auto
       then have "{x,y}\<lesssim>1" using UConn_spectrum by auto
       moreover have "x\<in>{x,y}" by auto
-      ultimately have "{x}={x,y}" using lepoll_1_is_sing[of "{x,y}""x"] by auto
+      moreover from lepoll_1_is_sing have "{x,y}\<lesssim>1 \<Longrightarrow> x\<in>{x,y} \<Longrightarrow> {x,y}={x}" by assumption
+      ultimately have "{x}={x,y}" by auto
       moreover
       have "y\<in>{x,y}" by auto
       ultimately have "y\<in>{x}" by auto
       then have "y=x" by auto
-      then have "False" using \<open>x\<noteq>y\<close> by auto
+      with  \<open>x\<noteq>y\<close> have "False" by auto
     }
     then have "\<exists>U\<in>T. x\<in>U\<and>y\<notin>U" by auto
   }
   then show "T{is T\<^sub>1}" unfolding isT1_def by auto
 qed
 
-text\<open>Is is natural that separation axioms and connection axioms are anti-properties of each other;
-as the concepts of connectedness and separation are opposite.\<close>
+text\<open>It is natural that separation axioms and connection axioms are anti-properties of each other;
+as the concepts of connectedness and separation are opposite.
 
-text\<open>To end this section, let's try to charaterize anti-sober spaces.\<close>
+To end this section, let's try to characterize anti-sober spaces.\<close>
 
 lemma sober_spectrum:
   shows "(A{is in the spectrum of}IsSober) \<longleftrightarrow> A\<lesssim>1"
@@ -1107,11 +1147,14 @@ proof
         topology0_def by auto
       ultimately have "A-Closure({y},{0,A})\<in>{0,A}""Closure({y},{0,A})\<inter>A\<noteq>0" unfolding IsClosed_def
         by auto
-      then have "A-Closure({y},{0,A})=A\<or>A-Closure({y},{0,A})=0"
+      then have D:"A-Closure({y},{0,A})=A\<or>A-Closure({y},{0,A})=0"
         by auto
-      moreover
-      from \<open>y\<in>A\<close>\<open>y\<in>Closure({y},{0,A})\<close> have "y\<in>A""y\<notin>A-Closure({y},{0,A})" by auto
-      ultimately have "A-Closure({y},{0,A})=0" by (cases "A-Closure({y},{0,A})=A", simp, auto)
+      from \<open>y\<in>A\<close>\<open>y\<in>Closure({y},{0,A})\<close> have y:"y\<in>A""y\<notin>A-Closure({y},{0,A})" by auto
+      {
+        assume "A-Closure({y},{0,A})=A"
+        with y have "False" by auto
+      }
+      with D have "A-Closure({y},{0,A})=0" by auto
       moreover
       from \<open>y\<in>A\<close> top have "Closure({y},{0,A})\<subseteq>A" using topology0_def topology0.Top_3_L11(1) by blast
       then have "A-(A-Closure({y},{0,A}))=Closure({y},{0,A})" by auto
@@ -1174,6 +1217,8 @@ next
   then show "A {is in the spectrum of} IsSober" unfolding Spec_def by auto
 qed
 
+text\<open>A space anti-sober is just an indiscrete space.\<close>
+
 theorem (in topology0)anti_sober:
   shows "(T{is anti-}IsSober) \<longleftrightarrow> T={0,\<Union>T}"
 proof
@@ -1201,8 +1246,8 @@ proof
       moreover
       have "{0,A}{is hyperconnected}" using Indiscrete_HConn by auto
       moreover
-      from \<open>A\<in>Pow(\<Union>T)\<close> have "(T{restricted to}A){restricted to}A=T{restricted to}A" using subspace_of_subspace[of "A""A""T"]
-        by auto
+      have "A\<subseteq>\<Union>T \<Longrightarrow> T{restricted to}A = (T{restricted to}A){restricted to}A" using subspace_of_subspace by blast
+      with \<open>A\<in>Pow(\<Union>T)\<close> have "(T{restricted to}A){restricted to}A=T{restricted to}A" by auto
       moreover
       note \<open>A\<noteq>0\<close> \<open>A\<in>Pow(\<Union>T)\<close>
       ultimately have "A\<in>Pow(\<Union>(T{restricted to}A))-{0}""A{is closed in}(T{restricted to}A)""((T{restricted to}A){restricted to}A){is hyperconnected}"
@@ -1213,7 +1258,9 @@ proof
       then obtain x where "x\<in>A""A=Closure({x},{0,A})"and reg:"\<forall>y\<in>A. A=Closure({y},{0,A}) \<longrightarrow> y=x" by auto
       {
         fix y assume "y\<in>A"
-        from \<open>A\<noteq>0\<close> have top:"{0,A}{is a topology}" using indiscrete_ptopology[of "A"] indiscrete_partition[of "A"] Ptopology_is_a_topology(1)[of "{A}""A"]
+        from Ptopology_is_a_topology(1) have "{A}{is a partition of}A \<Longrightarrow> (PTopology A {A}){is a topology}"
+          by assumption
+        with \<open>A\<noteq>0\<close> have top:"{0,A}{is a topology}" using indiscrete_ptopology indiscrete_partition
           by auto
         with \<open>y\<in>A\<close> have "Closure({y},{0,A}){is closed in}{0,A}" using topology0.cl_is_closed
           topology0_def by auto
@@ -1222,11 +1269,14 @@ proof
           topology0_def by auto
         ultimately have "A-Closure({y},{0,A})\<in>{0,A}""Closure({y},{0,A})\<inter>A\<noteq>0" unfolding IsClosed_def
           by auto
-        then have "A-Closure({y},{0,A})=A\<or>A-Closure({y},{0,A})=0"
+        then have D:"A-Closure({y},{0,A})=A\<or>A-Closure({y},{0,A})=0"
           by auto
-        moreover
-        from \<open>y\<in>A\<close>\<open>y\<in>Closure({y},{0,A})\<close> have "y\<in>A""y\<notin>A-Closure({y},{0,A})" by auto
-        ultimately have "A-Closure({y},{0,A})=0" by (cases "A-Closure({y},{0,A})=A", simp, auto)
+        from \<open>y\<in>A\<close>\<open>y\<in>Closure({y},{0,A})\<close> have y:"y\<in>A""y\<notin>A-Closure({y},{0,A})" by auto
+        {
+          assume "A-Closure({y},{0,A})=A"
+          with y have "False" by auto
+        }
+        with D have "A-Closure({y},{0,A})=0" by auto
         moreover
         from \<open>y\<in>A\<close> top have "Closure({y},{0,A})\<subseteq>A" using topology0_def topology0.Top_3_L11(1) by blast
         then have "A-(A-Closure({y},{0,A}))=Closure({y},{0,A})" by auto
@@ -1254,32 +1304,34 @@ next
         by auto
       with \<open>x\<noteq>y\<close>\<open>{y}\<in>T{restricted to}{x,y}\<close>\<open>{x}\<in>T{restricted to}{x,y}\<close> have "(T{restricted to}{x,y}){is T\<^sub>2}"
         unfolding isT2_def by auto
-      then have "(T{restricted to}{x,y}){is sober}" using topology0.T2_imp_anti_HConn[of "T{restricted to}{x,y}"]
-        Top_1_L4 topology0_def topology0.anti_HConn_iff_T1_sober[of "T{restricted to}{x,y}"] by auto
+      then have "(T{restricted to}{x,y}){is sober}" using topology0.T2_imp_anti_HConn
+        Top_1_L4 topology0_def topology0.anti_HConn_iff_T1_sober by auto
     }
     moreover
     {
-      assume "{y}\<notin>T{restricted to}{x,y}"
-      moreover
+      assume as:"{y}\<notin>T{restricted to}{x,y}"
+      from \<open>y\<in>\<Union>T-A\<close> \<open>x\<in>A\<close>\<open>A\<in>T\<close> have tot:"\<Union>(T{restricted to}{x,y})={x,y}" unfolding RestrictedTo_def
+        by auto
+      note as moreover
       from \<open>y\<in>\<Union>T-A\<close> \<open>x\<in>A\<close>\<open>A\<in>T\<close> have "T{restricted to}{x,y}\<subseteq>Pow({x,y})" unfolding RestrictedTo_def by auto
       then have "T{restricted to}{x,y}\<subseteq>{0,{x},{y},{x,y}}" by blast
       moreover
-      note \<open>{x}\<in>T{restricted to}{x,y}\<close> empty_open[OF Top_1_L4[of "{x,y}"]]
+      note \<open>{x}\<in>T{restricted to}{x,y}\<close> empty_open Top_1_L4
       moreover
-      from \<open>y\<in>\<Union>T-A\<close> \<open>x\<in>A\<close>\<open>A\<in>T\<close> have tot:"\<Union>(T{restricted to}{x,y})={x,y}" unfolding RestrictedTo_def
-        by auto
-      from Top_1_L4[of "{x,y}"] have "\<Union>(T{restricted to}{x,y})\<in>T{restricted to}{x,y}" unfolding IsATopology_def
+      from Top_1_L4 have "\<Union>(T{restricted to}{x,y})\<in>T{restricted to}{x,y}" unfolding IsATopology_def
         by auto
       with tot have "{x,y}\<in>T{restricted to}{x,y}" by auto
       ultimately have top_d_def:"T{restricted to}{x,y}={0,{x},{x,y}}" by auto
       {
         fix B assume "B\<in>Pow({x,y})-{0}""B{is closed in}(T{restricted to}{x,y})"
         with top_d_def have "(\<Union>(T{restricted to}{x,y}))-B\<in>{0,{x},{x,y}}" unfolding IsClosed_def by simp
-        moreover have "B\<in>{{x},{y},{x,y}}" using \<open>B\<in>Pow({x,y})-{0}\<close> by blast
+        moreover from \<open>B\<in>Pow({x,y})-{0}\<close> have "B\<in>{{x},{y},{x,y}}" by blast
         moreover note tot 
         ultimately have "{x,y}-B\<in>{0,{x},{x,y}}" by auto
-        have xin:"x\<in>Closure({x},T{restricted to}{x,y})" using topology0.cl_contains_set[of "T{restricted to}{x,y}""{x}"]
-          Top_1_L4[of "{x,y}"] unfolding topology0_def[of "(T {restricted to} {x, y})"] using tot by auto
+        from topology0.cl_contains_set have "{x}\<subseteq>\<Union>(T{restricted to}{x,y}) \<Longrightarrow> {x} \<subseteq> Closure({x},T{restricted to}{x,y})"
+          using Top_1_L4 unfolding topology0_def by auto
+        then have xin:"x\<in>Closure({x},T{restricted to}{x,y})" using
+          tot by auto
         {
           assume "{x}{is closed in}(T{restricted to}{x,y})"
           then have "{x,y}-{x}\<in>(T{restricted to}{x,y})" unfolding IsClosed_def using tot
@@ -1287,21 +1339,25 @@ next
           moreover
           from \<open>x\<noteq>y\<close> have "{x,y}-{x}={y}" by auto
           ultimately have "{y}\<in>(T{restricted to}{x,y})" by auto
-          then have "False" using \<open>{y}\<notin>(T{restricted to}{x,y})\<close> by auto
+          with  \<open>{y}\<notin>(T{restricted to}{x,y})\<close> have "False"  by auto
         }
         then have "\<not>({x}{is closed in}(T{restricted to}{x,y}))" by auto
         moreover
         from tot have "(Closure({x},T{restricted to}{x,y})){is closed in}(T{restricted to}{x,y})"
-          using topology0.cl_is_closed unfolding topology0_def using Top_1_L4[of "{x,y}"]
-          tot by auto
+          using topology0.cl_is_closed Top_1_L4
+          tot unfolding topology0_def by auto
         ultimately have "\<not>(Closure({x},T{restricted to}{x,y})={x})" by auto
-        moreover note xin topology0.Top_3_L11(1)[of "T{restricted to}{x,y}""{x}"] tot
-        ultimately have cl_x:"Closure({x},T{restricted to}{x,y})={x,y}" unfolding topology0_def
-          using Top_1_L4[of "{x,y}"] by auto
-        have "{y}{is closed in}(T{restricted to}{x,y})" unfolding IsClosed_def using tot
-          top_d_def \<open>x\<noteq>y\<close> by auto
-        then have cl_y:"Closure({y},T{restricted to}{x,y})={y}" using topology0.Top_3_L8[of "T{restricted to}{x,y}"]
-          unfolding topology0_def using Top_1_L4[of "{x,y}"] tot by auto
+        moreover note xin tot moreover
+        from topology0.Top_3_L11(1)
+        have "{x} \<subseteq> \<Union>(T{restricted to}{x,y}) \<Longrightarrow> Closure({x},T{restricted to}{x,y})\<subseteq>\<Union>(T{restricted to}{x,y})"
+          using Top_1_L4 unfolding topology0_def by auto
+        ultimately have cl_x:"Closure({x},T{restricted to}{x,y})={x,y}" by auto
+        from \<open>x\<noteq>y\<close> have "{y}{is closed in}(T{restricted to}{x,y})" unfolding IsClosed_def using tot
+          top_d_def by auto moreover
+        from  topology0.Top_3_L8 have "\<And>A. A\<subseteq>\<Union>(T{restricted to}{x,y}) \<Longrightarrow> A{is closed in}(T{restricted to}{x,y}) \<longleftrightarrow> Closure(A,T{restricted to}{x,y}) = A"
+          using Top_1_L4 unfolding topology0_def by auto
+        ultimately have cl_y:"Closure({y},T{restricted to}{x,y})={y}" using
+          tot by auto
         {
           assume "{x,y}-B=0"
           with \<open>B\<in>Pow({x,y})-{0}\<close> have B:"{x,y}=B" by auto
@@ -1370,18 +1426,20 @@ next
       then have "(T{restricted to}{x,y}){is sober}" unfolding IsSober_def using tot by auto
     }
     ultimately have "(T{restricted to}{x,y}){is sober}" by auto
-    with \<open>T{is anti-}IsSober\<close> have "{x,y}{is in the spectrum of}IsSober" unfolding antiProperty_def
-      using \<open>x\<in>A\<close>\<open>A\<in>T\<close>\<open>y\<in>\<Union>T-A\<close> by auto
+    with \<open>T{is anti-}IsSober\<close> \<open>x\<in>A\<close>\<open>A\<in>T\<close>\<open>y\<in>\<Union>T-A\<close> have "{x,y}{is in the spectrum of}IsSober" unfolding antiProperty_def
+      by auto
     then have "{x,y}\<lesssim>1" using sober_spectrum by auto
     moreover
-    have "x\<in>{x,y}" by auto
-    ultimately have "{x,y}={x}" using lepoll_1_is_sing[of "{x,y}""x"] by auto
+    have "x\<in>{x,y}" by auto moreover
+    have "{x,y}\<lesssim>1 \<Longrightarrow> x\<in>{x,y} \<Longrightarrow> {x,y}={x}" using lepoll_1_is_sing by assumption
+    ultimately have "{x,y}={x}" by auto
     moreover have "y\<in>{x,y}" by auto
     ultimately have "y\<in>{x}" by auto
-    then have "False" using \<open>x\<noteq>y\<close> by auto
+    with  \<open>x\<noteq>y\<close> have "False" by auto
   }
-  then have "T\<subseteq>{0,\<Union>T}" by auto
-  with empty_open[OF topSpaceAssum] topSpaceAssum show "T={0,\<Union>T}" unfolding IsATopology_def
+  then have "T\<subseteq>{0,\<Union>T}" by auto moreover
+  have "0\<in>T" using empty_open topSpaceAssum by auto
+  ultimately show "T={0,\<Union>T}" using topSpaceAssum unfolding IsATopology_def
     by auto
 qed
 

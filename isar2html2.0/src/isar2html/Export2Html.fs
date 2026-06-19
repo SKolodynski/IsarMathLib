@@ -191,8 +191,11 @@ namespace iml
                 ( bf sp.sproptype) + " "
                 + (inContext sp.scontext) 
                 + (tlink (tn + ".html#a_" + sp.spropname) sp.spropname) + ": " 
-                + (exportPremisesSimple repls sp.sproprems) 
-                + (bf " shows ") + (exportSimpleClaims repls sp.sclaims)
+                + (exportPremisesSimple repls sp.sproprems)
+                + (match sp.sconclusion with
+                   | Shows cl -> (bf " shows ") + (exportSimpleClaims repls cl)
+                   | Obtains (vars, cl) ->
+                       (bf " obtains ") + (String.concat " " (List.map (littext repls) vars)) + (bf " where ") + (exportSimpleClaims repls cl))
             | SimpleDef (nm,d) -> ("Definition of " + nm + ":\n" + (isar2latex repls d) )
             | OtherSimpleItem -> " Other formal item " // TODO: check if we ever get here
 
@@ -364,10 +367,17 @@ namespace iml
         and exportClaimProof (repls:(string*string) list) (mfii:Map<string,string>) (cp:ClaimProof) =
             (exportClaims repls cp.cpclaims) + (exportProof repls mfii cp.cpproof)
 
+        let exportConclusion (repls:(string*string) list) (c:PropConclusion) : string =
+            match c with
+            | Shows cl -> (bf "   shows ") + (exportClaims repls cl)
+            | Obtains (vars, cl) ->
+                (bf "   obtains ") + (vars |> List.map (isar2latex repls) |> String.concat " ")
+                + (bf " where ") + (exportClaims repls cl)
+
         let exportProposition (repls:(string*string) list) (mfii:Map<string,string>) (p:Proposition) : string =
             ((bf p.proptype) + " " + (inContext p.context) + p.propname + ":\n" |> par)
             + (List.map (exportPremise repls) p.propprems |> String.concat "")
-            + (bf "   shows ") + ( exportClaims repls p.claims )
+            + (exportConclusion repls p.conclusion)
             + (exportProof repls mfii p.propproof)
             |> mkformal ""
 

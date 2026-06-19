@@ -32,13 +32,15 @@ theory Topology_ZF_10
 imports Topology_ZF_7
 begin
 
-text\<open>This file deals with properties of product spaces. We only consider
-product of two spaces, and most of this proofs, can be used to prove
-the results in product of a finite number of spaces.\<close>
+text\<open>This file deals with properties of product spaces. We consider only the product
+of two spaces, but most of these results extend to finite products.\<close>
 
 subsection\<open>Closure and closed sets in product space\<close>
 
-text\<open>The closure of a product, is the product of the closures.\<close>
+text\<open>This section shows that closure and closed sets interact well with the product topology:
+the closure of a product is the product of the closures, and a product of closed sets is closed.\<close>
+
+text\<open>The closure of $A\times B$ in the product topology equals $\overline{A}\times\overline{B}$.\<close>
 
 lemma cl_product:
   assumes "T{is a topology}" "S{is a topology}" "A\<subseteq>\<Union>T" "B\<subseteq>\<Union>S"
@@ -116,7 +118,7 @@ proof
   then show "Closure(A,T)\<times>Closure(B,S)\<subseteq>Closure(A\<times>B,ProductTopology(T,S))" by auto
 qed
 
-text\<open>The product of closed sets, is closed in the product topology.\<close>
+text\<open>The product of closed sets is closed in the product topology.\<close>
 
 corollary closed_product:
   assumes "T{is a topology}" "S{is a topology}" "A{is closed in}T""B{is closed in}S"
@@ -134,6 +136,8 @@ proof-
 qed
 
 subsection\<open>Separation properties in product space\<close>
+
+text\<open>Products preserve the separation axioms $T_0$, $T_1$, $T_2$, and regularity.\<close>
 
 text\<open>The product of $T_0$ spaces is $T_0$.\<close>
 
@@ -312,7 +316,10 @@ qed
 
 subsection\<open>Connection properties in product space\<close>
 
-text\<open>First, we prove that the projection functions are open.\<close>
+text\<open>We prove that the product of two connected spaces is connected.
+The key lemmas show that both coordinate projections map product-open sets to open sets.\<close>
+
+text\<open>An open set in the product topology projects to an open set in $T$.\<close>
 
 lemma projection_open:
   assumes "T{is a topology}""S{is a topology}""B\<in>ProductTopology(T,S)"
@@ -328,6 +335,8 @@ proof-
   then show "{y\<in>\<Union>T. \<exists>x\<in>\<Union>S. \<langle>y,x\<rangle>\<in>B}\<in>T" using topology0.open_neigh_open unfolding topology0_def
     using assms(1) by blast
 qed
+
+text\<open>An open set in the product topology projects to an open set in $S$.\<close>
 
 lemma projection_open2:
   assumes "T{is a topology}""S{is a topology}""B\<in>ProductTopology(T,S)"

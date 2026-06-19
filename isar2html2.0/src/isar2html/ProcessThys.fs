@@ -91,7 +91,7 @@ namespace iml
                                                     scontext=prop.context;
                                                     spropname=prop.propname;
                                                     sproprems=prop.propprems;
-                                                    sclaims=prop.claims;
+                                                    sconclusion=prop.conclusion;
                                                     sdeps=getDepsFromProposition prop
                                                     }
             | _ -> OtherSimpleItem

@@ -37,6 +37,10 @@ text\<open>Every ring homomorphism $f: R \to S$ induces a map $f^*: \mathrm{Spec
   respect to the Zariski topologies on $\mathrm{Spec}(R)$ and $\mathrm{Spec}(S)$, establishing
   $\mathrm{Spec}$ as a contravariant functor from commutative rings to topological spaces.\<close>
 
+subsection\<open>Induced maps on spectra\<close>
+
+text\<open>A surjective ring homomorphism induces a map between the prime spectra that lands in the closed set defined by the kernel.\<close>
+
 lemma (in ring_homo) spectrum_surj:
   defines "g \<equiv> \<lambda>u\<in>target_ring.Spec. f-``u"
   assumes "f\<in>surj(R,S)"
@@ -70,6 +74,8 @@ proof-
   then have "{f-``u. u\<in>target_ring.Spec} \<subseteq> origin_ring.closeBasic(f-``{\<zero>\<^sub>S})" by auto
   ultimately show ?thesis using func1_1_L1B by auto
 qed
+
+text\<open>The induced map on spectra is a bijection onto the V-set of the kernel.\<close>
 
 lemma (in ring_homo) spectrum_surj_bij:
   defines "g \<equiv> \<lambda>u\<in>target_ring.Spec. f-``u"
@@ -143,14 +149,26 @@ proof-
     unfolding bij_def surj_def inj_def by auto
 qed
 
+subsection\<open>Continuity of the induced map\<close>
+
+text\<open>We define the Zariski topologies on origin and target spectra, then show the induced map is continuous and open.\<close>
+
+text\<open>The Zariski topology on the origin ring's spectrum.\<close>
+
 definition (in ring_homo) top_origin ("\<tau>\<^sub>o") where
   "top_origin \<equiv> {origin_ring.openBasic(J) . J \<in> origin_ring.ideals}"
+
+text\<open>The Zariski topology on the target ring's spectrum.\<close>
 
 definition (in ring_homo) top_target ("\<tau>\<^sub>t") where
   "top_target \<equiv> {target_ring.openBasic(J) . J \<in> target_ring.ideals}"
 
+text\<open>Continuity of a map between spectra with respect to the Zariski topologies.\<close>
+
 definition (in ring_homo) spec_cont where
  "spec_cont(h) \<equiv> IsContinuous(\<tau>\<^sub>t, \<tau>\<^sub>o, h)"
+
+text\<open>The induced map on spectra is continuous with respect to the Zariski topologies.\<close>
 
 lemma (in ring_homo) spectrum_surj_cont:
   defines "g \<equiv> \<lambda>u\<in>target_ring.Spec. f-``u"
@@ -276,6 +294,8 @@ proof(safe)
            RepFun(target_ring.ideals, target_ring.openBasic)"
     by auto
 qed
+
+text\<open>The induced map on spectra sends open sets to open sets of the restricted topology.\<close>
 
 lemma (in ring_homo) spectrum_surj_open:
   defines "g \<equiv> \<lambda>u\<in>target_ring.Spec. f-``u"

@@ -727,8 +727,12 @@ text\<open>A set $X$ is countable if there is an injection from $X$ to the natur
 definition IsCountable ("_ {is countable}" [90] 91) where
   "X {is countable} \<equiv> inj(X,nat) \<noteq> \<emptyset>"
 
-text\<open>If a set is countable then it is enumerable. In ZF the opposite implication cannot
-  be proven.\<close>
+text\<open>Countable just means \<open>X \<lesssim> nat\<close>.\<close>
+
+lemma countable_lepoll:
+  shows "X {is countable} \<longleftrightarrow> X\<lesssim>nat" unfolding IsCountable_def lepoll_def by blast
+
+text\<open>If a set is countable then it is enumerable.\<close>
 
 lemma countable_enumerable: 
   assumes "X {is countable}" shows "X {is enumerable}"
@@ -753,6 +757,28 @@ proof -
   } then have "X\<noteq>\<emptyset> \<longrightarrow> X {is enumerable}" unfolding IsEnumerable_def
     by simp
   ultimately show "X {is enumerable}" by auto
+qed
+
+text\<open>An enumerable set is countable.\<close>
+
+lemma enumerable_countable:
+  assumes "X{is enumerable}" shows "X{is countable}"
+proof -
+  {
+    assume zero:"X=0"
+    then have "0:X\<rightarrow>nat" unfolding Pi_def function_def by auto
+    with zero have "0\<in>inj(X,nat)" unfolding inj_def by auto
+    then have "X{is countable}" unfolding IsCountable_def by auto
+  } moreover
+  {
+    assume noEmpty:"X\<noteq>0"
+    with assms have "surj(nat,X)\<noteq>0" unfolding IsEnumerable_def by auto
+    then obtain f where "f\<in>surj(nat,X)" by auto
+    moreover have "nat \<subseteq> nat" by auto moreover note Ord_nat
+    ultimately have "X\<lesssim>nat" using surj_fun_inv by blast
+    then have "X{is countable}" using countable_lepoll by auto
+  }
+  ultimately show ?thesis by auto
 qed
 
 end 
