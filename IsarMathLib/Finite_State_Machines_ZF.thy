@@ -1836,8 +1836,8 @@ of the $\varepsilon$-free transition function.\<close>
 lemma epsilon_free_rel_eq:
   assumes fin:"Finite(\<Sigma>)"
   and fsa:"(S,s\<^sub>0,t,F){is an \<epsilon>-NFSA for alphabet}\<Sigma>"
-  shows "{reduce \<epsilon>-N-relation}(S,t){in alphabet}\<Sigma> =
-         {reduce N-relation}(S,EpsilonFreeTransition(S,t,\<Sigma>)){in alphabet}\<Sigma>"
+  shows "({reduce \<epsilon>-N-relation}(S,t){in alphabet}\<Sigma>) =
+         ({reduce N-relation}(S,EpsilonFreeTransition(S,t,\<Sigma>)){in alphabet}\<Sigma>)"
 proof-
   have tT:"t:S\<times>succ(\<Sigma>)\<rightarrow>Pow(S)"
     using fsa unfolding FullNFSA_def[OF fin] by auto
@@ -1952,8 +1952,8 @@ proof-
   let ?F' = "{q\<in>S. \<epsilon>-cl(S,t,\<Sigma>,{q})\<inter>F\<noteq>0}"
   have nfsa:"(S,s\<^sub>0,?t',?F'){is an NFSA for alphabet}\<Sigma>"
     using EpsilonFree_is_NFSA[OF fin fsa] .
-  have rel_eq:"{reduce \<epsilon>-N-relation}(S,t){in alphabet}\<Sigma> =
-               {reduce N-relation}(S,?t'){in alphabet}\<Sigma>"
+  have rel_eq:"({reduce \<epsilon>-N-relation}(S,t){in alphabet}\<Sigma>) =
+               ({reduce N-relation}(S,?t'){in alphabet}\<Sigma>)"
     using epsilon_free_rel_eq[OF fin fsa] .
   from assms(4) show ?thesis unfolding FullNFSASatisfy_def[OF fin fsa assms(3)]
   proof(elim disjE exE conjE)
@@ -2022,8 +2022,8 @@ proof-
   let ?F' = "{q\<in>S. \<epsilon>-cl(S,t,\<Sigma>,{q})\<inter>F\<noteq>0}"
   have nfsa:"(S,s\<^sub>0,?t',?F'){is an NFSA for alphabet}\<Sigma>"
     using EpsilonFree_is_NFSA[OF fin fsa] .
-  have rel_eq:"{reduce \<epsilon>-N-relation}(S,t){in alphabet}\<Sigma> =
-               {reduce N-relation}(S,?t'){in alphabet}\<Sigma>"
+  have rel_eq:"({reduce \<epsilon>-N-relation}(S,t){in alphabet}\<Sigma>) =
+               ({reduce N-relation}(S,?t'){in alphabet}\<Sigma>)"
     using epsilon_free_rel_eq[OF fin fsa] .
   from assms(4) show ?thesis unfolding NFSASatisfy_def[OF fin nfsa assms(3)]
   proof(elim disjE exE conjE)
@@ -2831,8 +2831,9 @@ proof-
       from vL' obtain m where m:"m\<in>nat" "v':m\<rightarrow>\<Sigma>" unfolding Lists_def by auto
       have "Concat(v',j'):m#+succ(0)\<rightarrow>\<Sigma>" using concat_props(1)[OF m(1) nat_succI[OF nat_0I] m(2) j1'] by auto
       with ceq m(2) have "m#+succ(0) = m" using domain_of_fun[of v' m "\<lambda>_. \<Sigma>"] domain_of_fun[of "Concat(v',j')" "m #+ 1" "\<lambda>_. \<Sigma>"] by auto
-      with m(1) have "succ(m) = m" using add_succ_right by auto
-      then have "m\<in>m" using succ_iff[of m m] by auto
+      with m(1) have "succ(m) = m" using add_succ_right by auto moreover
+      have "m\<in>succ(m)" by auto
+      ultimately have "m\<in>m" using subst[of "succ(m)" m "\<lambda>q. m\<in>q"] by blast
       then show ?thesis using mem_irrefl[of m] by auto
     next
       assume "\<langle>\<langle>Concat(v',j'),s'\<rangle>,\<langle>v',q'\<rangle>\<rangle> \<in> r\<^sub>D^* O r\<^sub>D" 
@@ -2887,10 +2888,14 @@ proof-
       assume id:"\<langle>\<langle>Concat(v',j'),s'\<rangle>,\<langle>v',q'\<rangle>\<rangle>\<in>id(field(r\<^sub>D))"
       then have ceq:"Concat(v',j')=v'" by auto
       from vL' obtain m where m:"m\<in>nat" "v':m\<rightarrow>\<Sigma>" unfolding Lists_def by auto
-      have "Concat(v',j'):m#+succ(succ(k))\<rightarrow>\<Sigma>" using concat_props(1)[OF m(1) _ m(2) jk'] nat_succI kn by auto
-      with ceq m(2) have "m#+succ(succ(k)) = m" using domain_of_fun[of v' m "\<lambda>_. \<Sigma>"] domain_of_fun[of "Concat(v',j')" "m #+ succ(succ(k))" "\<lambda>_. \<Sigma>"] by auto
-      with m(1) have "succ(m) = m" using add_succ_right by auto
-      then have "m\<in>m" using succ_iff[of m m] by auto
+      have A:"Concat(v',j'):m#+succ(succ(k))\<rightarrow>\<Sigma>" using concat_props(1)[OF m(1) _ m(2) jk'] nat_succI kn by auto
+      from ceq have "domain(Concat(v',j')) = domain(v')" by auto
+      with A have "m#+succ(succ(k)) = domain(v')" using domain_of_fun[of "Concat(v',j')" "m #+ succ(succ(k))" "\<lambda>_. \<Sigma>"]
+        by auto
+      with m(2) have "m#+succ(succ(k)) = m" using domain_of_fun[of v' m "\<lambda>_. \<Sigma>"] by blast
+      with m(1) have "succ(m) = m" using add_succ_right by auto moreover
+      have "m\<in>succ(m)" by auto
+      ultimately have "m\<in>m" using subst[of "succ(m)" m "\<lambda>q. m\<in>q"] by blast
       then show ?thesis using mem_irrefl[of m] by auto
     next
       assume "\<langle>\<langle>Concat(v',j'),s'\<rangle>,\<langle>v',q'\<rangle>\<rangle> \<in> r\<^sub>D^* O r\<^sub>D" 
@@ -3111,7 +3116,8 @@ proof-
     from jk(2) u(2) have "Concat(u,j):n#+succ(k)\<rightarrow>\<Sigma>" using concat_props(1)[OF u(1) nat_succI[OF jk(1)]] by auto
     then have "domain(Concat(u,j)) = n#+succ(k)" using func1_1_L1 by auto
     ultimately have "n=n#+succ(k)" by blast
-    then have "n#+0=n#+succ(k)" using add_0_right[OF u(1)] by auto
+    then have "n#+0=n#+succ(k)" using add_0_right[OF u(1)] trans[of "n#+0" n "n#+succ(k)"] 
+      by blast
     then have "0=succ(k)" using add_left_cancel[OF _ _ _ nat_succI[OF jk(1)], of n n 0] by auto
     then have False by auto
   } moreover
