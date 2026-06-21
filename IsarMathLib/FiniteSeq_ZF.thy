@@ -1111,6 +1111,81 @@ proof -
     by blast
 qed
 
+text\<open>Concatenation of lists is a list.\<close>
+
+lemma concat_is_list:
+  assumes "p\<in>Lists(X)" "b\<in>Lists(X)"
+  shows "Concat(p,b)\<in>Lists(X)"
+  using assms concat_props(1) unfolding Lists_def by blast
+
+text\<open>Concatenation of a list with a nonempty list is a nonempty list.\<close>
+
+lemma concat_is_NElist:
+  assumes "p\<in>Lists(X)" "b\<in>NELists(X)"
+  shows "Concat(p,b) \<in> NELists(X)"
+proof -
+  from assms obtain n k where "n\<in>nat" "p:n\<rightarrow>X" "b:succ(k)\<rightarrow>X" "k\<in>nat"
+    unfolding Lists_def NELists_def by auto
+  then have "Concat(p,b):n #+ succ(k)\<rightarrow>X" using concat_props(1) nat_succI 
+    by blast
+  with \<open>n\<in>nat\<close> \<open>k\<in>nat\<close> show ?thesis using add_succ_right 
+    unfolding NELists_def by auto
+qed
+
+text\<open>Concatenation of a list with an empty list is the same list.\<close>
+
+lemma concat_0_left:
+  assumes "p\<in>Lists(X)"
+  shows "Concat(p,\<emptyset>) = p"
+proof -
+  from assms obtain n where "n\<in>nat" "p:n\<rightarrow>X" unfolding Lists_def by auto
+  have "0\<in>nat" and "\<emptyset>:\<emptyset>\<rightarrow>X" unfolding Pi_def function_def by simp_all
+  with \<open>n\<in>nat\<close> \<open>p:n\<rightarrow>X\<close> have "Concat(p,\<emptyset>):n\<rightarrow>X" using concat_props(1) by force
+  from \<open>n\<in>nat\<close> \<open>0\<in>nat\<close> \<open>p:n\<rightarrow>X\<close> \<open>\<emptyset>:\<emptyset>\<rightarrow>X\<close> have "\<forall>i\<in>n. Concat(p,\<emptyset>)`(i) = p`(i)"
+    using concat_props(2) by force
+  with \<open>Concat(p,\<emptyset>):n\<rightarrow>X\<close> \<open>p:n\<rightarrow>X\<close> show ?thesis by (rule func_eq)
+qed
+
+text\<open>If we cancatenate a list and a nonempty list then the last element of the concatenation
+  is the same as the last element of the second list.\<close>
+
+lemma concat_last_NElist:
+  assumes "p\<in>Lists(X)" "b\<in>NELists(X)"
+  shows "Last(Concat(p,b)) = Last(b)"
+proof -
+  from assms obtain n k where "n\<in>nat" "p:n\<rightarrow>X" "k\<in>nat" "b:succ(k)\<rightarrow>X"
+    unfolding Lists_def NELists_def by auto
+  then have "Concat(p,b):n #+ succ(k)\<rightarrow>X" using concat_props(1) by blast 
+  with \<open>n\<in>nat\<close> \<open>k\<in>nat\<close> have "Last(Concat(p,b)) = Concat(p,b)`(n#+k)" 
+    using last_seq_elem by auto
+  also from \<open>n\<in>nat\<close> \<open>p:n\<rightarrow>X\<close> \<open>k\<in>nat\<close> \<open>b:succ(k)\<rightarrow>X\<close> have "... = b`(k)" 
+    using concat_props(4) nat_succI by blast
+  also from \<open>b:succ(k)\<rightarrow>X\<close> have "... = Last(b)" using last_seq_elem
+    by simp
+  finally show ?thesis by simp
+qed
+
+text\<open>If we cancatenate a list and a nonempty list 
+  then the initial segment of the concatenation is the same as the 
+  first list concatenated with the initial segment of the second list.\<close>
+
+lemma concat_init_NElist:
+  assumes "p\<in>Lists(X)" "b\<in>NELists(X)"
+  shows "Init(Concat(p,b)) = Concat(p,Init(b))"
+proof - 
+  from assms obtain n k where I: "n\<in>nat" "k\<in>nat" "p:n\<rightarrow>X"  "b:succ(k)\<rightarrow>X"
+    unfolding Lists_def NELists_def by auto
+  then have 
+    "Concat(p,Init(b)):n#+k\<rightarrow>X" "b`(k)\<in>X" "n#+k\<in>nat"
+    and I: "Append(Concat(p,Init(b)),b`(k)) = Concat(p,b)"
+    using init_props(1) concat_props(1) apply_funtype concat_init_last_elem 
+    by simp_all
+  from \<open>n#+k\<in>nat\<close> \<open>b`(k)\<in>X\<close> \<open>Concat(p,Init(b)):n#+k\<rightarrow>X\<close> 
+  have "Init(Append(Concat(p,Init(b)),b`(k))) = Concat(p,Init(b))"
+    using init_append by auto
+  with I show ?thesis by simp
+qed
+
 subsection\<open>Lists and cartesian products\<close>
 
 text\<open>Lists of length $n$ of elements of some set $X$ can be thought of as a 

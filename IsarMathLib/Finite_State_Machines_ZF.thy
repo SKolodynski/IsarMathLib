@@ -2721,86 +2721,8 @@ proof-
   with h(1,3) show ?thesis by auto
 qed
 
-text\<open>Concatenating a list on the left of a non-empty list yields a non-empty list.\<close>
-
-text\<open>Step 2 (sub-goal of concat\_FSA\_apply\_L1\_step): Concat preserves the non-empty list property
-when the right argument is non-empty.\<close>
-
-lemma concat_is_list:
-  assumes "p\<in>Lists(X)" "b\<in>Lists(X)"
-  shows "Concat(p,b)\<in>Lists(X)"
-proof-
-  from assms(1) obtain n where n:"n\<in>nat" "p:n\<rightarrow>X" unfolding Lists_def by auto
-  from assms(2) obtain k where k:"k\<in>nat" "b:k\<rightarrow>X" unfolding Lists_def by auto
-  from n k have Cab:"Concat(p,b):n#+k\<rightarrow>X" using concat_props(1)[OF n(1) k(1)] by auto
-  from n(1) k(1) have nk:"n#+k\<in>nat" by auto
-  with Cab show ?thesis unfolding Lists_def by auto
-qed
-
-lemma concat_is_NElist:
-  assumes "p\<in>Lists(X)" "b\<in>NELists(X)"
-  shows "Concat(p,b)\<in>NELists(X)"
-proof-
-  from assms(1) obtain n where n:"n\<in>nat" "p:n\<rightarrow>X" unfolding Lists_def by auto
-  from assms(2) obtain k where k:"k\<in>nat" "b:succ(k)\<rightarrow>X" unfolding NELists_def by auto
-  from n k have Cab:"Concat(p,b):n#+succ(k)\<rightarrow>X" using concat_props(1)[OF n(1) nat_succI[OF k(1)]] by auto
-  from n(1) k(1) have eq:"n#+succ(k) = succ(n#+k)" using add_succ_right by auto
-  from n(1) k(1) have nk:"n#+k\<in>nat" by auto
-  with Cab eq have "Concat(p,b):succ(n#+k)\<rightarrow>X" by auto
-  then show ?thesis unfolding NELists_def using nk by auto
-qed
-
-lemma concat_0_left:
-  assumes "p\<in>Lists(X)"
-  shows "Concat(p,0) = p"
-proof-
-  from assms(1) obtain n where n:"n\<in>nat" "p:n\<rightarrow>X" unfolding Lists_def by auto
-  have k:"0\<in>nat" "0:0\<rightarrow>X" unfolding Pi_def function_def by auto
-  from n k have Cab:"Concat(p,0):n\<rightarrow>X" "\<forall>i\<in>n. Concat(p,0)`i = p`i" using concat_props(1,2)[OF n(1) k(1)] by auto
-  then show ?thesis using n(2) fun_extension[of "Concat(p,0)" n "\<lambda>_. X" p "\<lambda>_. X"] by auto
-qed
-
-text\<open>Step 3 (sub-goal of concat\_FSA\_apply\_L1\_step): The last element of a left-extended
-non-empty list is the same as the last element of the original non-empty list.\<close>
-
-lemma concat_last_NElist:
-  assumes "p\<in>Lists(X)" "b\<in>NELists(X)"
-  shows "Last(Concat(p,b)) = Last(b)"
-proof-
-  from assms(1) obtain n where n:"n\<in>nat" "p:n\<rightarrow>X" unfolding Lists_def by auto
-  from assms(2) obtain k where k:"k\<in>nat" "b:succ(k)\<rightarrow>X" unfolding NELists_def by auto
-  from n k have Cab:"Concat(p,b):n#+succ(k)\<rightarrow>X" using concat_props(1)[OF n(1) nat_succI[OF k(1)]] by auto
-  from n(1) k(1) have eq:"n#+succ(k) = succ(n#+k)" using add_succ_right by auto
-  from n(1) k(1) have nk:"n#+k\<in>nat" by auto
-  with Cab eq have Cab':"Concat(p,b):succ(n#+k)\<rightarrow>X" by auto
-  have "Last(Concat(p,b)) = Concat(p,b)`(n#+k)" using last_seq_elem[OF Cab'] by auto
-  also have "\<dots> = b`(k)" using concat_props(4)[OF n(1) nat_succI[OF k(1)] n(2) k(2)] by auto
-  also have "\<dots> = Last(b)" using last_seq_elem[OF k(2)] by auto
-  finally show ?thesis .
-qed
-
-text\<open>Step 4 (sub-goal of concat\_FSA\_apply\_L1\_step): Init distributes over Concat from the right:
-init of the concatenation is the concatenation with the init of the right part.\<close>
-
-lemma concat_init_NElist:
-  assumes "p\<in>Lists(X)" "b\<in>NELists(X)"
-  shows "Init(Concat(p,b)) = Concat(p,Init(b))"
-proof-
-  from assms(1) obtain n where n:"n\<in>nat" "p:n\<rightarrow>X" unfolding Lists_def by auto
-  from assms(2) obtain k where k:"k\<in>nat" "b:succ(k)\<rightarrow>X" unfolding NELists_def by auto
-  have ib:"Init(b):k\<rightarrow>X" using init_props(1)[OF k(1) k(2)] by auto
-  have Cib:"Concat(p,Init(b)):n#+k\<rightarrow>X" using concat_props(1)[OF n(1) k(1) n(2) ib] by auto
-  from k(2) have bk:"b`(k)\<in>X" using apply_funtype by auto
-  from n(1) k(1) have nk:"n#+k\<in>nat" by auto
-  have key:"Append(Concat(p,Init(b)),b`(k)) = Concat(p,b)"
-    using concat_init_last_elem[OF n(1) k(1) n(2) k(2)] by auto
-  have "Init(Append(Concat(p,Init(b)),b`(k))) = Concat(p,Init(b))"
-    using init_append[OF nk Cib bk] by auto
-  with key show ?thesis by auto
-qed
-
 text\<open>Running a word of the form Concat(v,j) to v in a DFSA is
-the same as running j from the same starting state.\<close>
+  the same as running j from the same starting state.\<close>
 
 lemma (in DetFinStateAuto) dfa_run_suffix:
   assumes vL:"v\<in>Lists(\<Sigma>)" and jNE:"j\<in>NELists(\<Sigma>)"
