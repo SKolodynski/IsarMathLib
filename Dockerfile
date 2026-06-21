@@ -8,6 +8,6 @@ USER root
 RUN chown -R isabelle:isabelle /home/isabelle/IsarMathLib
 USER isabelle
 
-CMD ["build", "-D", "/home/isabelle/IsarMathLib"]
+CMD ["build","-o","show_results=false","-D", "/home/isabelle/IsarMathLib"]
 
 
