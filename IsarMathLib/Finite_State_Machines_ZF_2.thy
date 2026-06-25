@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib -
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2023 Daniel de la Concepcion
+    Copyright (C) 2026 Daniel de la Concepcion
 
     This program is free software; Redistribution and use in source and binary forms,
     with or without modification, are permitted provided that the following conditions are met:
@@ -167,7 +167,52 @@ proof
 qed
     
   
+lemma star_minimal:
+  assumes "Finite(\<Sigma>)" "L {is a language with alphabet} \<Sigma>"
+  and "L \<subseteq> M" "M {is a language with alphabet} \<Sigma>" "0\<in>M" "concat(M,M) \<subseteq> M"
+  shows "(L*\<^sup>\<Sigma>) \<subseteq> M"
+proof
+  have lang:"(L*\<^sup>\<Sigma>) {is a language with alphabet}\<Sigma>" using assms L_star_lang by auto
+  fix x assume x:"x\<in>(L*\<^sup>\<Sigma>)"
+  show "x\<in>M"
+  proof (rule rtrancl_induct[where P="\<lambda>x. x\<in>M"])
+    from assms(5) show "0\<in>M" by auto
+    from x have x:"x\<in>Lists(\<Sigma>)" "\<langle>0,x\<rangle>\<in>R_lang(L,\<Sigma>)^*" using star_def assms(1,2) by auto
+    from x(2) show "\<langle>0,x\<rangle>\<in>R_lang(L,\<Sigma>)^*" by auto
+    fix y z assume as:"\<langle>0,y\<rangle>:R_lang(L,\<Sigma>)^*" "\<langle>y,z\<rangle>\<in>R_lang(L,\<Sigma>)" "y\<in>M"
+    from as(2) obtain q where q:"z=Concat(q,y)" "q\<in>L\<union>{0}" "y\<in>Lists(\<Sigma>)" "z\<in>Lists(\<Sigma>)" using R_lang_def assms(1,2) by auto
+    {
+      assume "q=0"
+      then have "Concat(q,y) = Concat(0,y)" by auto
+      then have "Concat(q,y) = y" using concat_empty(2) q(3)
+        unfolding Lists_def by auto
+      with q(1) have "z=y" by auto
+      with as(3) have "z\<in>M" by auto
+    } moreover
+    {
+      assume "q\<noteq>0"
+      with q(2) have "q:L" by auto
+      with assms(3) have "q\<in>M" by auto
+      with as(3) have "Concat(q,y)\<in>concat(M,M)" using concat_def assms(4) by auto
+      with assms(6) have "Concat(q,y)\<in>M" by auto
+      with q(1) have "z\<in>M" by auto
+    }
+    ultimately show "z:M" by auto
+  qed
+qed
 
+corollary star_star_is_star:
+  assumes "Finite(\<Sigma>)" "L {is a language with alphabet} \<Sigma>"
+  shows "(L*\<^sup>\<Sigma>)*\<^sup>\<Sigma> = (L*\<^sup>\<Sigma>)"
+proof
+  from assms have II:"L*\<^sup>\<Sigma> {is a language with alphabet} \<Sigma>" using L_star_lang by auto
+  from assms(1) II show "(L*\<^sup>\<Sigma>) \<subseteq> (L*\<^sup>\<Sigma>)*\<^sup>\<Sigma>" using L_in_L_star by auto
+  have I:"L*\<^sup>\<Sigma> \<subseteq> (L*\<^sup>\<Sigma>)" by auto
+  from assms have III:"0\<in> (L*\<^sup>\<Sigma>)" using empty_star by auto
+  from assms have IV:"concat((L*\<^sup>\<Sigma>),(L*\<^sup>\<Sigma>)) \<subseteq> (L*\<^sup>\<Sigma>)" using concat_star by auto
+  from I II III IV assms(1) show "(L*\<^sup>\<Sigma>)*\<^sup>\<Sigma> \<subseteq> (L*\<^sup>\<Sigma>)" using star_minimal by auto
+qed
+    
   
 
 end
