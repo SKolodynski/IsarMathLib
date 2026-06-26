@@ -681,17 +681,6 @@ text\<open>Concatenating a list on the left of a non-empty list yields a non-emp
 text\<open>Step 2 (sub-goal of concat\_FSA\_apply\_L1\_step): Concat preserves the non-empty list property
 when the right argument is non-empty.\<close>
 
-lemma concat_is_list:
-  assumes "p\<in>Lists(X)" "b\<in>Lists(X)"
-  shows "Concat(p,b)\<in>Lists(X)"
-proof-
-  from assms(1) obtain n where n:"n\<in>nat" "p:n\<rightarrow>X" unfolding Lists_def by auto
-  from assms(2) obtain k where k:"k\<in>nat" "b:k\<rightarrow>X" unfolding Lists_def by auto
-  from n k have Cab:"Concat(p,b):n#+k\<rightarrow>X" using concat_props(1)[OF n(1) k(1)] by auto
-  from n(1) k(1) have nk:"n#+k\<in>nat" by auto
-  with Cab show ?thesis unfolding Lists_def by auto
-qed
-
 lemma concat_is_NElist:
   assumes "p\<in>Lists(X)" "b\<in>NELists(X)"
   shows "Concat(p,b)\<in>NELists(X)"
@@ -703,16 +692,6 @@ proof-
   from n(1) k(1) have nk:"n#+k\<in>nat" by auto
   with Cab eq have "Concat(p,b):succ(n#+k)\<rightarrow>X" by auto
   then show ?thesis unfolding NELists_def using nk by auto
-qed
-
-lemma concat_0_left:
-  assumes "p\<in>Lists(X)"
-  shows "Concat(p,0) = p"
-proof-
-  from assms(1) obtain n where n:"n\<in>nat" "p:n\<rightarrow>X" unfolding Lists_def by auto
-  have k:"0\<in>nat" "0:0\<rightarrow>X" unfolding Pi_def function_def by auto
-  from n k have Cab:"Concat(p,0):n\<rightarrow>X" "\<forall>i\<in>n. Concat(p,0)`i = p`i" using concat_props(1,2)[OF n(1) k(1)] by auto
-  then show ?thesis using n(2) fun_extension[of "Concat(p,0)" n "\<lambda>_. X" p "\<lambda>_. X"] by auto
 qed
 
 text\<open>Step 3 (sub-goal of concat\_FSA\_apply\_L1\_step): The last element of a left-extended
@@ -805,7 +784,7 @@ proof-
       using concat_init_NElist[OF vL' jNE'] by auto
     from yww lastEq initEq initj'0 have yeq:
       "y=\<langle>Concat(v',0),t`\<langle>s',Last(j')\<rangle>\<rangle>" by auto
-    have "Concat(v',0)=v'" using concat_0_left[OF vL'] by auto
+    have "Concat(v',0)=v'" using concat_empty vL' unfolding Lists_def by auto
     with yeq have yeq2:"y=\<langle>v',t`\<langle>s',Last(j')\<rangle>\<rangle>" by auto
     \<comment> \<open>Remaining run from v' forces q'=t(s',Last(j'))\<close>
     from step(2) yeq2 have remrun:"\<langle>\<langle>v',t`\<langle>s',Last(j')\<rangle>\<rangle>,\<langle>v',q'\<rangle>\<rangle>\<in>r\<^sub>D^*" by auto
@@ -905,7 +884,7 @@ proof-
   have "\<exists>j\<in>Lists(\<Sigma>). w = Concat(fst(\<langle>v,q\<rangle>),j)"
   proof(rule rtrancl_induct[OF run, where P="\<lambda>z. \<exists>j\<in>Lists(\<Sigma>). w = Concat(fst(z),j)"])
     have z:"0\<in>Lists(\<Sigma>)" unfolding Lists_def Pi_def function_def using nat_0I by auto
-    with wL have "Concat(fst(\<langle>w,s\<rangle>),0) = w" using concat_0_left by auto
+    from wL have "Concat(fst(\<langle>w,s\<rangle>),0) = w" using concat_empty unfolding Lists_def by auto
     with z show "\<exists>j\<in>Lists(\<Sigma>). w = Concat(fst(\<langle>w,s\<rangle>),j)" using exI[of "\<lambda>j. j\<in>Lists(\<Sigma>) \<and> w= Concat(fst(\<langle>w,s\<rangle>),j)" 0]
       by auto
   next
@@ -936,7 +915,7 @@ proof-
     proof-
       have "{\<langle>0,Last(y1)\<rangle>}\<in>Lists(\<Sigma>)"
         using list_len1_singleton[OF lastY] one_is_nat unfolding Lists_def by auto
-      then show ?thesis using concat_is_list[OF _ j(1)] by auto
+      then show ?thesis using concat_type[OF _ j(1)] by auto
     qed
     from j(2) y1eq assoc have "w = Concat(Init(y1), Concat({\<langle>0,Last(y1)\<rangle>},j))" by auto
     with jL y(4) show "\<exists>j'\<in>Lists(\<Sigma>). w = Concat(fst(z),j')" by auto
@@ -1059,7 +1038,7 @@ proof-
     unfolding DFSASatisfy_def[OF fin A1 jj(1)] by auto
   then obtain K where k_def:"K\<in>Pow(S)" "\<langle>q,0\<rangle>\<in>K" "\<langle>\<langle>Concat(u,j),Q\<rangle>,\<langle>Concat(u,0),K\<rangle>\<rangle>\<in>(({reduce \<epsilon>-N-relation}(S,t){in alphabet}\<Sigma>)^*)"
     using concat_FSA_apply_L1_step[OF fin A1 A2 q(2) j(4,2), of u] j(3) k unfolding S_def t_def s\<^sub>0_def L2_def by auto
-  have u:"Concat(u,0) = u" using k concat_0_left[of u] by auto
+  have u:"Concat(u,0) = u" using k concat_empty unfolding Lists_def by auto
   {
     assume "\<langle>\<langle>Concat(u,j),Q\<rangle>,\<langle>Concat(u,0),K\<rangle>\<rangle>\<in>id(field(?r))"
     then have "Concat(u,j) = u" using u by auto moreover
@@ -1825,7 +1804,7 @@ proof-
               {
                 assume jl0:"jl=0"
                 have ieq:"i=yl_k"
-                  using jl0 i_spl concat_0_left[OF ykL] by simp
+                  using jl0 i_spl concat_empty ykL unfolding Lists_def by auto
                 with ca1 have same:"\<langle>\<langle>yl_k,s01\<rangle>,\<langle>yl_k,f1\<rangle>\<rangle>\<in>?rD1^*" by simp
                 have fld:"\<langle>yl_k,s01\<rangle>\<in>field(?rD1)"
                   using DetFinStateAuto.reduce_field(2)[OF D1] yk_ne s01S1 by auto
@@ -1907,7 +1886,7 @@ proof-
   {
     fix i assume "i:concat(L1,L2)"
     then obtain j u where uj:"u\<in>L2" "j\<in>L1" "i=Concat(u,j)" using concat_def[OF lang1 lang2] by auto
-    from uj have c:"Concat(u,j)\<in>Lists(\<Sigma>)" unfolding L1_def L2_def using concat_is_list by auto
+    from uj have c:"Concat(u,j)\<in>Lists(\<Sigma>)" unfolding L1_def L2_def using concat_type by auto
     {
       assume j0:"j\<noteq>0" moreover
       from uj(1) have uu:"u\<in>Lists(\<Sigma>)" unfolding L2_def by auto moreover
@@ -1977,7 +1956,7 @@ proof-
     } moreover
     {
       assume j0:"j=0"
-      then have iu:"i=u" using concat_0_left uj(3) uj(1) unfolding L2_def by auto
+      then have iu:"i=u" using concat_empty uj(3) uj(1) unfolding L2_def Lists_def by auto
       have "0:0\<rightarrow>\<Sigma>" unfolding Pi_def function_def by auto
       then have l0:"0\<in>Lists(\<Sigma>)" unfolding Lists_def by blast
       {

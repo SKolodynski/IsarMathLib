@@ -151,7 +151,7 @@ lemma concat_star:
 proof
   have lang:"(L*\<^sup>\<Sigma>) {is a language with alphabet}\<Sigma>" using assms L_star_lang by auto
   fix x assume "x\<in>concat(L*\<^sup>\<Sigma>,L*\<^sup>\<Sigma>)"
-  then obtain u v where uv:"u\<in>L*\<^sup>\<Sigma>" "v\<in>L*\<^sup>\<Sigma>" "x=Concat(u,v)" using concat_def lang by auto
+  then obtain u v where uv:"u\<in>(L*\<^sup>\<Sigma>)" "v\<in>(L*\<^sup>\<Sigma>)" "x=Concat(u,v)" using concat_def lang by auto
   from uv(2) have vv:"\<langle>0,v\<rangle>\<in>R_lang(L,\<Sigma>)^*" using star_def assms by auto
   have v:"v\<in>Lists(\<Sigma>)" using uv(2) L_star_lang assms IsALanguage_def by auto
   from uv(1) have uu:"\<langle>0,u\<rangle>\<in>R_lang(L,\<Sigma>)^*" using star_def assms by auto
@@ -203,16 +203,349 @@ qed
 
 corollary star_star_is_star:
   assumes "Finite(\<Sigma>)" "L {is a language with alphabet} \<Sigma>"
-  shows "(L*\<^sup>\<Sigma>)*\<^sup>\<Sigma> = (L*\<^sup>\<Sigma>)"
+  shows "((L*\<^sup>\<Sigma>)*\<^sup>\<Sigma>) = (L*\<^sup>\<Sigma>)"
 proof
-  from assms have II:"L*\<^sup>\<Sigma> {is a language with alphabet} \<Sigma>" using L_star_lang by auto
-  from assms(1) II show "(L*\<^sup>\<Sigma>) \<subseteq> (L*\<^sup>\<Sigma>)*\<^sup>\<Sigma>" using L_in_L_star by auto
-  have I:"L*\<^sup>\<Sigma> \<subseteq> (L*\<^sup>\<Sigma>)" by auto
+  from assms have II:"(L*\<^sup>\<Sigma>) {is a language with alphabet} \<Sigma>" using L_star_lang by auto
+  from assms(1) II show "(L*\<^sup>\<Sigma>) \<subseteq> ((L*\<^sup>\<Sigma>)*\<^sup>\<Sigma>)" using L_in_L_star by auto
+  have I:"(L*\<^sup>\<Sigma>) \<subseteq> (L*\<^sup>\<Sigma>)" by auto
   from assms have III:"0\<in> (L*\<^sup>\<Sigma>)" using empty_star by auto
   from assms have IV:"concat((L*\<^sup>\<Sigma>),(L*\<^sup>\<Sigma>)) \<subseteq> (L*\<^sup>\<Sigma>)" using concat_star by auto
-  from I II III IV assms(1) show "(L*\<^sup>\<Sigma>)*\<^sup>\<Sigma> \<subseteq> (L*\<^sup>\<Sigma>)" using star_minimal by auto
+  from I II III IV assms(1) show "((L*\<^sup>\<Sigma>)*\<^sup>\<Sigma>) \<subseteq> (L*\<^sup>\<Sigma>)" using star_minimal by auto
 qed
-    
-  
+   
+
+definition start_eNFSA_states where
+  "start_eNFSA_states(S) \<equiv> succ(S)"
+
+definition start_eNFSA_trans where
+  "Finite(\<Sigma>) \<Longrightarrow>
+   (S,s0,t,F){is an DFSA for alphabet}\<Sigma> \<Longrightarrow>
+   start_eNFSA_trans(S,s0,t,F,\<Sigma>) \<equiv>
+     {\<langle>\<langle>s,\<sigma>\<rangle>,{t`\<langle>s,\<sigma>\<rangle>}\<rangle>. \<langle>s,\<sigma>\<rangle>\<in>S\<times>\<Sigma>} \<union> {\<langle>\<langle>S,\<Sigma>\<rangle>, F\<union>{s0}\<rangle>} 
+   \<union> {\<langle>\<langle>f,\<Sigma>\<rangle>, {s0}\<rangle>. f\<in>F} \<union> {\<langle>\<langle>f,\<Sigma>\<rangle>, 0\<rangle>. f\<in>S-F} 
+   \<union> {\<langle>\<langle>S,q\<rangle>, 0\<rangle>. q\<in>\<Sigma>}"
+
+lemma start_eNFSA_valid:
+  assumes fin:"Finite(\<Sigma>)"
+  and A:"(S,s0,t,F){is an DFSA for alphabet}\<Sigma>"
+  shows "(start_eNFSA_states(S), S,
+  start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){is an \<epsilon>-NFSA for alphabet}\<Sigma>"
+proof-
+have Sfin:"Finite(S)"
+    and s0S:"s0\<in>S"
+    and FS:"F\<subseteq>S"
+    and t:"t:S\<times>\<Sigma> \<rightarrow> S"
+    using A unfolding DFSA_def[OF fin] by auto
+  let ?SS = "start_eNFSA_states(S)"
+  let ?tc = "start_eNFSA_trans(S,s0,t,F,\<Sigma>)"
+  have finSuccS:"Finite(start_eNFSA_states(S))" using Finite_cons Sfin
+    unfolding succ_def start_eNFSA_states_def by auto
+  have s0SS:"S\<in>?SS" unfolding start_eNFSA_states_def by auto
+  have FSS:"F \<subseteq> ?SS" unfolding start_eNFSA_states_def using FS by auto
+  have tc_type:"?tc : ?SS\<times>succ(\<Sigma>) \<rightarrow> Pow(?SS)"
+  proof-
+    have ran:"?tc \<in> Pow((?SS\<times>succ(\<Sigma>))\<times>Pow(?SS))"
+    proof-
+      {
+        fix m assume mt:"m\<in>?tc"
+        then obtain x y where tt:"\<langle>x,y\<rangle> = m" using t unfolding Pi_def start_eNFSA_trans_def[OF fin A] by auto
+        with mt have xy:"\<langle>x,y\<rangle>\<in>?tc" by auto
+        have xy_dom:"x\<in>?SS\<times>succ(\<Sigma>)"
+          using xy t FSS unfolding start_eNFSA_trans_def[OF fin A]
+                             start_eNFSA_states_def Pi_def 
+          by auto
+        have xy_img:"y\<subseteq>?SS"
+        proof-
+          from xy consider
+            (a) "\<exists>s aa. \<langle>s,aa\<rangle>\<in>S\<times>\<Sigma> \<and> x=\<langle>s,aa\<rangle> \<and> y={t`\<langle>s,aa\<rangle>}" |
+            (b) "\<exists>s. s\<in>F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> y={s0}" |
+            (c) "x=\<langle>S,\<Sigma>\<rangle> \<and> y=F\<union>{s0}" |
+            (d) "\<exists>s. s\<in>S-F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> y=0" |
+            (e) "\<exists>s. s\<in>\<Sigma> \<and> x=\<langle>S,s\<rangle> \<and> y=0"
+            unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show "y\<subseteq>?SS"
+          proof cases
+            case a
+            then obtain s aa where sa:"\<langle>s,aa\<rangle>\<in>S\<times>\<Sigma>" "y={t`\<langle>s,aa\<rangle>}" by auto
+            from sa(1) have "t`\<langle>s,aa\<rangle>\<in>S" using apply_type[OF t] by auto
+            with sa(2) show ?thesis unfolding start_eNFSA_states_def by auto
+          next
+            case b
+            then obtain s where sb:"s\<in>F" "y={s0}" by auto
+            then show ?thesis using s0S unfolding start_eNFSA_states_def by auto
+          next
+            case c
+            then have sa:"y=F\<union>{s0}" by auto
+            then show ?thesis using FS s0S unfolding start_eNFSA_states_def by auto
+          next
+            case d
+            then have sa:"y=0" by auto
+            then show ?thesis by auto
+          next
+            case e
+            then have "y=0" by auto
+            then show ?thesis by auto
+          qed
+        qed
+        from xy_dom xy_img have "\<langle>x,y\<rangle>\<in>(?SS\<times>succ(\<Sigma>))\<times>Pow(?SS)" by auto
+        with tt have "m\<in>(?SS\<times>succ(\<Sigma>))\<times>Pow(?SS)" by auto
+      }
+      then show ?thesis by auto
+    qed
+    moreover have "function(?tc)"
+    proof -
+      {
+        fix x y z
+        assume h1:"\<langle>x,y\<rangle>\<in>?tc" and h2:"\<langle>x,z\<rangle>\<in>?tc"
+        from h1 consider
+            (a1) "\<exists>s aa. \<langle>s,aa\<rangle>\<in>S\<times>\<Sigma> \<and> x=\<langle>s,aa\<rangle> \<and> y={t`\<langle>s,aa\<rangle>}" |
+            (b1) "\<exists>s. s\<in>F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> y={s0}" |
+            (c1) "x=\<langle>S,\<Sigma>\<rangle> \<and> y=F\<union>{s0}" |
+            (d1) "\<exists>s. s\<in>S-F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> y=0" |
+            (e1) "\<exists>s. s\<in>\<Sigma> \<and> x=\<langle>S,s\<rangle> \<and> y=0"
+          unfolding start_eNFSA_trans_def[OF fin A] by auto
+        then have "y=z"
+        proof cases
+          case a1
+          then obtain s aa where sa:"\<langle>s,aa\<rangle>\<in>S\<times>\<Sigma>" "x=\<langle>s,aa\<rangle>" "y={t`\<langle>s,aa\<rangle>}" by auto
+          from h2 consider
+            (a2) "\<exists>s aa. \<langle>s,aa\<rangle>\<in>S\<times>\<Sigma> \<and> x=\<langle>s,aa\<rangle> \<and> z={t`\<langle>s,aa\<rangle>}" |
+            (b2) "\<exists>s. s\<in>F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z={s0}" |
+            (c2) "x=\<langle>S,\<Sigma>\<rangle> \<and> z=F\<union>{s0}" |
+            (d2) "\<exists>s. s\<in>S-F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z=0" |
+            (e2) "\<exists>s. s\<in>\<Sigma> \<and> x=\<langle>S,s\<rangle> \<and> z=0"
+          unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show ?thesis
+          proof cases
+            case a2
+            then obtain p q where pq:"\<langle>p,q\<rangle>\<in>S\<times>\<Sigma>" "x=\<langle>p,q\<rangle>" "z={t`\<langle>p,q\<rangle>}" by auto
+            from pq(2) sa(2) have "p=s" "q=aa" by auto
+            with sa(3) pq(3) show ?thesis by auto
+            next
+            case b2
+            then obtain p where pq:"p\<in>F" "x=\<langle>p,\<Sigma>\<rangle>" "z={s0}" by auto
+            from pq(2) sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case c2
+            then have pq:"x=\<langle>S,\<Sigma>\<rangle>" "z=F\<union>{s0}" by auto
+            from pq(1) sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case d2
+            then obtain p where pq:"p\<in>S-F" "x=\<langle>p,\<Sigma>\<rangle>" "z=0" by auto
+            from pq(1,2) sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+          next
+            case e2
+            then obtain s where "s\<in>\<Sigma>" "x=\<langle>S,s\<rangle>" by auto
+            with sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+          qed
+        next
+          case b1
+          then obtain s where sa:"s\<in>F" "x=\<langle>s,\<Sigma>\<rangle>" "y={s0}" by auto
+          from h2 consider
+            (a2) "\<exists>s aa. \<langle>s,aa\<rangle>\<in>S\<times>\<Sigma> \<and> x=\<langle>s,aa\<rangle> \<and> z={t`\<langle>s,aa\<rangle>}" |
+            (b2) "\<exists>s. s\<in>F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z={s0}" |
+            (c2) "x=\<langle>S,\<Sigma>\<rangle> \<and> z=F\<union>{s0}" |
+            (d2) "\<exists>s. s\<in>S-F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z=0" |
+            (e2) "\<exists>s. s\<in>\<Sigma> \<and> x=\<langle>S,s\<rangle> \<and> z=0"
+          unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show ?thesis
+          proof cases
+            case a2
+            then obtain p q where pq:"\<langle>p,q\<rangle>\<in>S\<times>\<Sigma>" "x=\<langle>p,q\<rangle>" "z={t`\<langle>p,q\<rangle>}" by auto
+            from pq(1,2) sa(2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case b2
+            then obtain p where pq:"p\<in>F" "x=\<langle>p,\<Sigma>\<rangle>" "z={s0}" by auto
+            from pq(2) sa(1,2) have "p=s" by auto
+            with sa(3) pq(3) show ?thesis by auto
+            next
+            case c2
+            then have pq:"x=\<langle>S,\<Sigma>\<rangle>" "z=F\<union>{s0}" by auto
+            from FS sa(1) have "s\<in>S" by auto
+            with pq(1) sa(2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case d2
+            then obtain p where pq:"p\<in>S-F" "x=\<langle>p,\<Sigma>\<rangle>" "z=0" by auto
+            from pq(1,2) sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case e2
+            then obtain p where pq:"p\<in>\<Sigma>" "x=\<langle>S,p\<rangle>" "z=0" by auto
+            from pq(1,2) sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+          qed
+        next
+          case c1
+          then have sa: "x=\<langle>S,\<Sigma>\<rangle>" "y=F\<union>{s0}" by auto
+          from h2 consider
+            (a2) "\<exists>s aa. \<langle>s,aa\<rangle>\<in>S\<times>\<Sigma> \<and> x=\<langle>s,aa\<rangle> \<and> z={t`\<langle>s,aa\<rangle>}" |
+            (b2) "\<exists>s. s\<in>F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z={s0}" |
+            (c2) "x=\<langle>S,\<Sigma>\<rangle> \<and> z=F\<union>{s0}" |
+            (d2) "\<exists>s. s\<in>S-F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z=0" |
+            (e2) "\<exists>s. s\<in>\<Sigma> \<and> x=\<langle>S,s\<rangle> \<and> z=0"
+          unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show ?thesis
+          proof cases
+            case a2
+            then obtain p q where pq:"\<langle>p,q\<rangle>\<in>S\<times>\<Sigma>" "x=\<langle>p,q\<rangle>" "z={t`\<langle>p,q\<rangle>}" by auto
+            from pq(1,2) sa(1) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case b2
+            then obtain p where pq:"p\<in>F" "x=\<langle>p,\<Sigma>\<rangle>" "z={s0}" by auto
+            from pq(1) FS have "p:S" by auto
+            with pq(2) sa(1) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case c2
+            then have pq:"x=\<langle>S,\<Sigma>\<rangle>" "z=F\<union>{s0}" by auto
+            with sa show ?thesis by auto
+            next
+            case d2
+            then obtain p where pq:"p\<in>S-F" "x=\<langle>p,\<Sigma>\<rangle>" "z=0" by auto
+            from pq(1,2) sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case e2
+            then obtain p where pq:"p\<in>\<Sigma>" "x=\<langle>S,p\<rangle>" "z=0" by auto
+            from pq(1,2) sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+          qed
+        next
+          case d1
+          then obtain p where sa: "x=\<langle>p,\<Sigma>\<rangle>" "y=0" "p\<in>S-F" by auto
+          from h2 consider
+            (a2) "\<exists>s aa. \<langle>s,aa\<rangle>\<in>S\<times>\<Sigma> \<and> x=\<langle>s,aa\<rangle> \<and> z={t`\<langle>s,aa\<rangle>}" |
+            (b2) "\<exists>s. s\<in>F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z={s0}" |
+            (c2) "x=\<langle>S,\<Sigma>\<rangle> \<and> z=F\<union>{s0}" |
+            (d2) "\<exists>s. s\<in>S-F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z=0" |
+            (e2) "\<exists>s. s\<in>\<Sigma> \<and> x=\<langle>S,s\<rangle> \<and> z=0"
+          unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show ?thesis
+          proof cases
+            case a2
+            then obtain p q where pq:"\<langle>p,q\<rangle>\<in>S\<times>\<Sigma>" "x=\<langle>p,q\<rangle>" "z={t`\<langle>p,q\<rangle>}" by auto
+            from pq(1,2) sa(1) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case b2
+            then obtain q where pq:"q\<in>F" "x=\<langle>q,\<Sigma>\<rangle>" "z={s0}" by auto
+            from pq(1,2) sa(1,3) have False by auto
+            then show ?thesis by auto
+            next
+            case c2
+            then have pq:"x=\<langle>S,\<Sigma>\<rangle>" "z=F\<union>{s0}" by auto
+            from sa(1) pq(1) have "p=S" by auto
+            with sa(3) have False using mem_irrefl by auto
+            with sa show ?thesis by auto
+            next
+            case d2
+            then obtain q where pq:"q\<in>S-F" "x=\<langle>q,\<Sigma>\<rangle>" "z=0" by auto
+            from sa(2) pq(3) show ?thesis by auto
+            next
+            case e2
+            then obtain p where pq:"p\<in>\<Sigma>" "x=\<langle>S,p\<rangle>" "z=0" by auto
+            from pq(1,2) sa(1,2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+          qed
+        next
+          case e1
+          then obtain p where sa:"p:\<Sigma>" "x=\<langle>S,p\<rangle>" "y=0" by auto
+          from h2 consider
+            (a2) "\<exists>s aa. \<langle>s,aa\<rangle>\<in>S\<times>\<Sigma> \<and> x=\<langle>s,aa\<rangle> \<and> z={t`\<langle>s,aa\<rangle>}" |
+            (b2) "\<exists>s. s\<in>F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z={s0}" |
+            (c2) "x=\<langle>S,\<Sigma>\<rangle> \<and> z=F\<union>{s0}" |
+            (d2) "\<exists>s. s\<in>S-F \<and> x=\<langle>s,\<Sigma>\<rangle> \<and> z=0" |
+            (e2) "\<exists>s. s\<in>\<Sigma> \<and> x=\<langle>S,s\<rangle> \<and> z=0"
+          unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show ?thesis
+          proof cases
+            case a2
+            then obtain p q where pq:"\<langle>p,q\<rangle>\<in>S\<times>\<Sigma>" "x=\<langle>p,q\<rangle>" "z={t`\<langle>p,q\<rangle>}" by auto
+            from pq(1,2) sa(2) have False using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case b2
+            then obtain q where pq:"q\<in>F" "x=\<langle>q,\<Sigma>\<rangle>" "z={s0}" by auto
+            from pq(1,2) sa(1,2) have False  using mem_irrefl by auto
+            then show ?thesis by auto
+            next
+            case c2
+            then have pq:"x=\<langle>S,\<Sigma>\<rangle>" "z=F\<union>{s0}" by auto
+            with sa(1,2) have False using mem_irrefl by auto
+            with sa show ?thesis by auto
+            next
+            case d2
+            then obtain q where pq:"q\<in>S-F" "x=\<langle>q,\<Sigma>\<rangle>" "z=0" by auto
+            from sa(3) pq(3) show ?thesis by auto
+            next
+            case e2
+            then obtain p where pq:"p\<in>\<Sigma>" "x=\<langle>S,p\<rangle>" "z=0" by auto
+            from sa(3) pq(3) show ?thesis by auto
+          qed
+        qed
+      }
+      then show ?thesis unfolding function_def by auto
+    qed
+    moreover have "?SS\<times>succ(\<Sigma>) \<subseteq> domain(?tc)"
+    proof
+      fix x assume hx:"x\<in>?SS\<times>succ(\<Sigma>)"
+      then obtain p aa where pa:"p\<in>?SS" "aa\<in>succ(\<Sigma>)" "x=\<langle>p,aa\<rangle>" by auto
+      from pa(1) have ps:"p:S\<or> p=S"
+        unfolding start_eNFSA_states_def by auto
+      from pa(2) have acase:"aa\<in>\<Sigma> \<or> aa=\<Sigma>" using succ_iff by auto
+      from ps show "x\<in>domain(?tc)"
+      proof (elim disjE conjE)
+        assume hs1:"p\<in>S"
+        from acase show ?thesis
+        proof (elim disjE)
+          assume "aa\<in>\<Sigma>"
+          with hs1 pa(3) have "\<langle>x,{t`\<langle>p,aa\<rangle>}\<rangle>\<in>?tc"
+            unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show ?thesis unfolding domain_def by auto
+        next
+          assume as:"aa=\<Sigma>"
+          {
+            assume "p\<in>F"
+            with pa(3) as have "\<langle>x,{s0}\<rangle>\<in>?tc"
+              unfolding start_eNFSA_trans_def[OF fin A] by auto
+            then have ?thesis unfolding domain_def by auto
+          } moreover
+          {
+            assume "p\<notin>F"
+            with hs1 have "p\<in>S-F" by auto
+            with pa(3) as have "\<langle>x,0\<rangle>\<in>?tc"
+              unfolding start_eNFSA_trans_def[OF fin A] by auto
+            then have ?thesis unfolding domain_def by auto
+          } ultimately
+          show ?thesis by auto
+        qed
+      next
+        assume hs2:"p=S"
+        from acase show ?thesis
+        proof (elim disjE)
+          assume "aa\<in>\<Sigma>"
+          with hs2 pa(3) have "\<langle>x,0\<rangle>\<in>?tc"
+            unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show ?thesis unfolding domain_def by auto
+        next
+          assume "aa=\<Sigma>"
+          with hs2 pa(3) have "\<langle>x,F\<union>{s0}\<rangle>\<in>?tc"
+            unfolding start_eNFSA_trans_def[OF fin A] by auto
+          then show ?thesis unfolding domain_def by auto
+        qed
+      qed
+    qed
+    ultimately show ?thesis unfolding Pi_def by auto
+  qed
+  show ?thesis unfolding FullNFSA_def[OF fin]
+    using tc_type finSuccS FSS s0SS by auto 
+qed
 
 end
