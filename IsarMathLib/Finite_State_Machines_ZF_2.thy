@@ -548,4 +548,109 @@ have Sfin:"Finite(S)"
     using tc_type finSuccS FSS s0SS by auto 
 qed
 
+subsection\<open>Computing epsilon-closure for start_eNFSA\<close>
+
+text\<open>Using the general epsilon-closure lemmas, we compute what epsilon-closure
+looks like for the specific state sets in start_eNFSA.\<close>
+
+lemma epsilon_cl_F_in_cl_S:
+  assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>"
+  shows "\<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S}) = F\<union>{S,s0}"
+proof
+  {
+    fix y assume "y\<in>F\<union>{S,s0}"
+    {
+      assume "y=S"
+      then have "y\<in>\<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})"
+        using
+  from assms(2) have "F\<subseteq>S" using DFSA_def[OF assms(1)] by auto
+  then have "F \<subseteq> start_eNFSA_states(S)" unfolding start_eNFSA_states_def by auto
+  have valid:"(start_eNFSA_states(S), S, start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){is an \<epsilon>-NFSA for alphabet}\<Sigma>"
+    using start_eNFSA_valid[OF assms(1,2)] by auto
+  have S_in_states:"S \<in> start_eNFSA_states(S)" unfolding start_eNFSA_states_def by auto
+  from epsilon_cl_refl_sub[OF assms(1) valid, of "{S}"] S_in_states
+    have "{S} \<subseteq> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})" by auto
+  then show ?thesis
+    sorry
+qed
+
+lemma epsilon_cl_s0_result:
+  assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>" "s0\<notin>F"
+  shows "\<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {s0}) = {s0}"
+proof-
+  from assms(2) have s:"s0\<in>S" using DFSA_def[OF assms(1)] by auto
+  have valid:"(start_eNFSA_states(S), S, start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){is an \<epsilon>-NFSA for alphabet}\<Sigma>"
+    using start_eNFSA_valid[OF assms(1,2)] by auto
+  from s have "{s0} \<subseteq> start_eNFSA_states(S)" unfolding start_eNFSA_states_def  by auto
+  from epsilon_cl_refl_sub[OF assms(1) valid] `{s0} \<subseteq> start_eNFSA_states(S)`
+    have "{s0} \<subseteq> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {s0})" by auto
+  then show ?thesis
+    sorry
+qed
+
+lemma epsilon_cl_from_accepting_state:
+  assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>" "f\<in>F"
+  shows "s0 \<in> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {f})"
+proof-
+  from assms(2,3) have f:"f\<in>S" using DFSA_def[OF assms(1)] by auto
+  from assms(2) have "s0\<in>S" using DFSA_def[OF assms(1)] by auto
+  have valid:"(start_eNFSA_states(S), S, start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){is an \<epsilon>-NFSA for alphabet}\<Sigma>"
+    using start_eNFSA_valid[OF assms(1,2)] by auto
+  from f have "{f} \<subseteq> start_eNFSA_states(S)" unfolding start_eNFSA_states_def by auto
+  then show ?thesis
+    sorry
+qed
+
+lemma epsilon_cl_S_accepts:
+  assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>" "F \<noteq> 0"
+  shows "\<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S}) \<inter> F \<noteq> 0"
+proof-
+  from epsilon_cl_F_in_cl_S[OF assms(1,2)]
+    have "F \<subseteq> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})" by auto
+  with assms(3) show ?thesis by auto
+qed
+
+lemma eNFSA_lang_is_language:
+  assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>"
+  shows "{w \<in> Lists(\<Sigma>). w <-\<epsilon>-N (start_eNFSA_states(S), S,
+  start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){in alphabet}\<Sigma>}
+         {is a language with alphabet}\<Sigma>"
+proof-
+  have "{w \<in> Lists(\<Sigma>). w <-\<epsilon>-N (start_eNFSA_states(S), S,
+  start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){in alphabet}\<Sigma>} \<subseteq> Lists(\<Sigma>)"
+    by (auto simp: Collect_subset)
+  thus "{w \<in> Lists(\<Sigma>). w <-\<epsilon>-N (start_eNFSA_states(S), S,
+  start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){in alphabet}\<Sigma>}
+        {is a language with alphabet}\<Sigma>"
+    using assms(1) IsALanguage_def by simp
+qed
+
+lemma L_subset_eNFSA_lang:
+  assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>"
+  shows "{w \<in> Lists(\<Sigma>). w <-D (S,s0,t,F){in alphabet}\<Sigma>}
+         \<subseteq> {w \<in> Lists(\<Sigma>). w <-\<epsilon>-N (start_eNFSA_states(S), S,
+                                start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){in alphabet}\<Sigma>}"
+proof
+  fix w assume w_in_L:"w \<in> {w \<in> Lists(\<Sigma>). w <-D (S,s0,t,F){in alphabet}\<Sigma>}"
+  then have w_type:"w \<in> Lists(\<Sigma>)" "w <-D (S,s0,t,F){in alphabet}\<Sigma>" by auto
+  from assms(2) have DFSA_props:"Finite(S)" "s0\<in>S" "F\<subseteq>S" "t:S\<times>\<Sigma> \<rightarrow> S"
+    using DFSA_def[OF assms(1)] by auto
+  have valid_eNFSA:"(start_eNFSA_states(S), S, start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){is an \<epsilon>-NFSA for alphabet}\<Sigma>"
+    using start_eNFSA_valid[OF assms(1,2)] by auto
+  show "w \<in> {w \<in> Lists(\<Sigma>). w <-\<epsilon>-N (start_eNFSA_states(S), S,
+    start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){in alphabet}\<Sigma>}"
+  proof
+    show "w \<in> Lists(\<Sigma>)" using w_type(1) by auto
+    show "w <-\<epsilon>-N (start_eNFSA_states(S), S, start_eNFSA_trans(S,s0,t,F,\<Sigma>), F){in alphabet}\<Sigma>"
+    proof-
+      from w_type(2) w_type(1) have "\<exists>q\<in>F. \<langle>\<langle>w,s0\<rangle>,\<langle>0,q\<rangle>\<rangle> \<in> ({reduce D-relation}(S,t){in alphabet}\<Sigma>)^* \<or> (w = 0 \<and> s0\<in>F)"
+        using DFSASatisfy_def[OF assms(1) assms(2) w_type(1)] by auto
+      then show ?thesis
+        unfolding FullNFSASatisfy_def[OF assms(1) valid_eNFSA w_type(1)]
+        sorry
+    qed
+  qed
+qed
+
+
 end

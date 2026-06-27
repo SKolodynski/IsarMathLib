@@ -335,6 +335,46 @@ proof -
   ultimately show "\<exists>U\<in>T. (x\<in>U \<and> U\<subseteq>N)" by (rule witness_exists)
 qed
 
+text\<open>If we start with a topology and use the neighborhood system we defined for it;
+the topology computed from that neighborhood system is the original one.\<close>
+
+theorem nei_nei_top_round_trip:
+  assumes "T{is a topology}"
+  shows "{U\<in>Pow(\<Union>T). \<forall>x\<in>U. U\<in>({neighborhood system of} T)`x} = T"
+proof
+  {
+    fix U assume U:"U\<in>Pow(\<Union>T)" "\<forall>x\<in>U. U\<in>({neighborhood system of} T)`x"
+    {
+      fix x assume "x\<in>U"
+      with U have "x\<in>\<Union>T" "U\<in>({neighborhood system of} T)`x" by auto
+      then have "U\<in> {N \<in> Pow(\<Union>T) . \<exists>U\<in>T. x \<in> U \<and> U \<subseteq> N}" using neigh_val
+        by auto
+      then have "\<exists>V\<in>T. x\<in>V \<and> V \<subseteq>U" by auto
+      then have "x\<in>Interior(U,T)" using topology0.Top_2_L6
+        assms unfolding topology0_def by auto
+    }
+    then have "U \<subseteq> Interior(U,T)" by auto
+    then have "Interior(U,T) = U" using topology0.Top_2_L1
+        assms unfolding topology0_def by blast
+    then have "U\<in>T" using topology0.Top_2_L3 assms unfolding topology0_def by auto
+  }
+  then show "{U\<in>Pow(\<Union>T). \<forall>x\<in>U. U\<in>({neighborhood system of} T)`x} \<subseteq> T" by auto
+  {
+    fix U assume U:"U\<in>T"
+    then have I:"U\<in>Pow(\<Union>T)" by auto
+    {
+      fix x assume x:"x\<in>U"
+      with U I have "U\<in>{N\<in>Pow(\<Union>T). \<exists>V\<in>T. x\<in>V \<and> V\<subseteq>N}" by auto
+      moreover from x U have "x\<in>\<Union>T" by auto
+      then have "({neighborhood system of} T)`x = {N \<in> Pow(\<Union>T) . \<exists>U\<in>T. x \<in> U \<and> U \<subseteq> N}" using neigh_val
+        by auto
+      ultimately have "U\<in>({neighborhood system of} T)`x" by auto
+    }
+    then have "\<forall>x\<in>U. U\<in>({neighborhood system of} T)`x" by auto
+  }
+  then show "T \<subseteq>{U\<in>Pow(\<Union>T). \<forall>x\<in>U. U\<in>({neighborhood system of} T)`x}" by auto
+qed 
+
 text\<open>In the the next theorem we show that if we start from 
   a neighborhood system, create a topology from it, then create it's natural neighborhood system,
   we get back the original neighborhood system.\<close>
@@ -347,8 +387,7 @@ proof -
   let ?M = "{neighborhood system of} T"
   from assms have "T {is a topology}" and "\<Union>T = X" using topology_from_neighs 
     by auto
-  then have "?M {is a neighborhood system on} X" using neigh_from_topology 
-    by blast
+  then have "?M {is a neighborhood system on} X" using neigh_from_topology by blast 
   with assms(1) have "?M:X\<rightarrow>Pow(Pow(X))" and "\<M>:X\<rightarrow>Pow(Pow(X))"
     unfolding IsNeighSystem_def by auto
   moreover
@@ -373,6 +412,84 @@ proof -
   } hence "\<forall>x\<in>X. ?M`(x) = \<M>`(x)" by simp
   ultimately show ?thesis by (rule func_eq)
 qed
+
+text\<open>The interior of a set is given by the points for which the set is a neighborhood.\<close>
+
+lemma interior_neigh_system:
+  assumes "\<M> {is a neighborhood system on} X" and "U\<subseteq>X"
+  defines Tdef: "T \<equiv> {U\<in>Pow(X). \<forall>x\<in>U. U \<in> \<M>`(x)}"
+  shows "Interior(U,T) = {x\<in>X. U\<in>\<M>`x}"
+proof
+  {
+    fix x assume as:"x\<in>Interior(U,T)"
+    then obtain V where V:"V\<in>T" "x\<in>V" "V\<subseteq>U" unfolding Interior_def by auto
+    from V(1) have V_1:"V\<in>Pow(X)" "\<forall>x\<in>V. V\<in>\<M>`x" unfolding Tdef by auto
+    from V_1(2) V(2) have VM:"V\<in>\<M>`x" by auto
+    from assms(1) have top:"T{is a topology}" and tot:"\<Union>T=X" using topology_from_neighs
+      unfolding Tdef by auto
+    from assms(1) have neighs:"{neighborhood system of}T=\<M>" using nei_top_nei_round_trip
+      unfolding Tdef by auto
+    from V(1,2) have xT:"x\<in>\<Union>T" by auto
+    from top xT neighs have "\<M>`x {is a filter on}X" using neighs_is_filter tot by auto
+    from this VM have "Supersets(X,{V}) \<subseteq> \<M>`x" using filter_superset_closed by auto
+    with assms(2) V(3) have "U\<in>\<M>`x" unfolding Supersets_def by auto
+    with xT tot have "x\<in>{x\<in>X. U\<in>\<M>`x}" by auto
+  }
+  then show "Interior(U,T) \<subseteq> {x\<in>X. U\<in>\<M>`x}" by auto
+  {
+    fix x assume "x\<in>{x\<in>X. U\<in>\<M>`x}"
+    then have x:"x\<in>X" "U\<in>\<M>`x" by auto
+    from assms(1) have "x\<in>X \<Longrightarrow> U\<in>\<M>`x \<Longrightarrow> \<exists>V\<in>T. x\<in>V \<and> V\<subseteq>U" using open_nei_in_nei(2) unfolding Tdef by auto
+    with x obtain V where "V\<in>T" "x\<in>V" "V\<subseteq>U" by auto
+    then have "x\<in>Interior(U,T)" unfolding Interior_def by auto
+  }
+  then show "{x\<in>X. U\<in>\<M>`x}\<subseteq>Interior(U,T)" by auto
+qed
+
+text\<open>In conclusion, a set is a neighborhood of a point it that point is in its interior for the defined topology.
+
+First we prove it from a neighborhood point of view\<close>
+
+corollary neigh_point_iff_in_interior_1:
+  assumes "\<M> {is a neighborhood system on} X" and "U\<subseteq>X" and "x\<in>X"
+  defines Tdef: "T \<equiv> {U\<in>Pow(X). \<forall>x\<in>U. U \<in> \<M>`(x)}"
+  shows "U\<in>\<M>`x \<longleftrightarrow> x\<in>Interior(U,T)"
+proof
+  from assms(1,2) have int_def:"Interior(U,T) = {x\<in>X. U\<in>\<M>`x}" using interior_neigh_system 
+    unfolding Tdef by auto
+  {
+    assume "U\<in>\<M>`x"
+    with assms(3) int_def show "x\<in>Interior(U,T)" by auto
+  }
+  {
+    assume "x\<in>Interior(U,T)"
+    then show "U\<in>\<M>`x" using int_def by auto
+  }
+qed
+
+text\<open>Now from the point of view of a topology\<close>
+
+corollary neigh_point_iff_in_interior_2:
+  assumes "T {is a topology}" and "U\<subseteq>\<Union>T" and "x\<in>\<Union>T"
+  shows "U\<in>({neighborhood system of} T)`x \<longleftrightarrow> x\<in>Interior(U,T)"
+proof
+  {
+    assume "U\<in>({neighborhood system of} T)`x"
+    with assms(3) have "U: {N \<in> Pow(\<Union>T) . \<exists>U\<in>T. x \<in> U \<and> U \<subseteq> N}" using neigh_val
+      by auto
+    then have "\<exists>V\<in>T. x\<in>V \<and> V\<subseteq>U" by auto
+    then show "x\<in>Interior(U,T)" unfolding Interior_def by auto
+  }
+  {
+    assume "x\<in>Interior(U,T)"
+    then obtain V where V:"x\<in>V" "V\<in>T" "V\<subseteq>U" unfolding Interior_def by auto
+    then have "\<exists>V\<in>T. x \<in> V \<and> V \<subseteq> U" by auto
+    then have "U: {N \<in> Pow(\<Union>T) . \<exists>U\<in>T. x \<in> U \<and> U \<subseteq> N}"
+      using assms(2) by auto
+    then show "U\<in>({neighborhood system of} T)`x" using neigh_val assms(3) by auto
+  }
+qed
+
 
 subsection\<open>Set neighborhoods\<close>
 

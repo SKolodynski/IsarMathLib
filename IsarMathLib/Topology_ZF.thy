@@ -473,11 +473,13 @@ qed
 text\<open>Boundary of a set is closed.\<close>
 
 lemma (in topology0) boundary_closed: 
-  assumes A1: "A \<subseteq> \<Union>T" shows "\<partial>A {is closed in} T"
+  assumes A1: "A \<subseteq> \<Union>T" shows "\<partial>A {is closed in} T" "\<partial>A \<subseteq> \<Union>T"
 proof -
   from A1 have "\<Union>T - A \<subseteq> \<Union>T" by fast
   with A1 show "\<partial>A {is closed in} T"
     using cl_is_closed Top_3_L5 Boundary_def by auto
+  with A1 show "\<partial>A \<subseteq> \<Union>T"
+    using IsClosed_def by auto
 qed
 
 text\<open>A set is closed iff it is equal to its closure.\<close>
@@ -551,6 +553,25 @@ proof -
     "cl(A) \<inter> (\<Union>T - int(A)) = cl(A) - int(A)" 
     using Top_3_L11 by blast
   ultimately show "\<partial>A = cl(A) - int(A)" by simp
+qed
+
+text\<open>A set is closed iff it contains its boundary.\<close>
+
+corollary (in topology0) Top_3_L8b: assumes A1: "A \<subseteq> \<Union>T"
+  shows "A {is closed in} T \<longleftrightarrow> \<partial>A \<subseteq> A"
+proof
+  assume "A {is closed in} T"
+  with A1 have "cl(A) = A"
+    using Closure_def ClosedCovers_def by auto
+  then show "\<partial>A \<subseteq> A" using Top_3_L12 A1 by auto
+next assume "\<partial>A \<subseteq> A"
+  then have "cl(A)-int(A) \<subseteq> A" using Top_3_L12 A1 by auto moreover
+  have "int(A) \<subseteq> A" using Top_2_L1 by auto
+  ultimately have "(cl(A)-int(A))\<union>int(A) \<subseteq>A" by auto
+  then have "cl(A) \<subseteq> A" by auto
+  then have "cl(A) = A" using cl_contains_set A1 by auto
+  with A1 show "A {is closed in} T" using Top_3_L8
+    by simp
 qed
 
 text\<open>If a set $A$ is contained in a closed set $B$, then the closure of $A$ 

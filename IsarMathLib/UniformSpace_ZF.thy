@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. *)
 
 section \<open>Uniform spaces\<close>
 
-theory UniformSpace_ZF imports Topology_ZF_2 Topology_ZF_4a func_ZF_1
+theory UniformSpace_ZF imports Topology_ZF_6 Topology_ZF_4a func_ZF_1
 begin
 
 text\<open> This theory defines uniform spaces and proves their basic properties. \<close>
@@ -416,6 +416,31 @@ proof -
     using neigh_unif_same by simp
   with assms(2,3) show ?thesis
     using ZF_fun_from_tot_val1 by auto
+qed
+
+text\<open>As an example, we can simplify the interior of the uniform topology\<close>
+
+corollary uniform_interior:
+  assumes "\<Phi>{is a uniformity on}X" "U\<subseteq>X" "x\<in>X"
+  defines "\<M> \<equiv> {neighborhood system of} UniformTopology(\<Phi>,X)"
+  shows "x\<in>Interior(U,UniformTopology(\<Phi>,X)) \<longleftrightarrow> (\<exists>V\<in>\<Phi>. U=V``{x})"
+proof-
+  from assms(1) have tot:"\<Union>UniformTopology(\<Phi>,X) =X"
+    and top:"UniformTopology(\<Phi>,X){is a topology}" using uniform_top_is_top by auto
+  from tot assms(2,3) have U:"U\<subseteq>\<Union>UniformTopology(\<Phi>,X)" and x:"x\<in>\<Union>UniformTopology(\<Phi>,X)" by auto
+  from top U x have A:"U \<in>\<M> ` x \<longleftrightarrow>
+    x \<in> Interior(U, UniformTopology(\<Phi>,X))" using neigh_point_iff_in_interior_2
+    unfolding \<M>_def by auto
+  have "\<M>`x = {\<langle>x,{V``{x}.V\<in>\<Phi>}\<rangle>. x\<in>X}`x" unfolding \<M>_def using neigh_unif_same[OF assms(1)]
+    by auto
+  moreover have "{\<langle>x,{V``{x}.V\<in>\<Phi>}\<rangle>. x\<in>X}:X\<rightarrow>{{V``{x}.V\<in>\<Phi>}. x\<in>X}"
+    unfolding Pi_def function_def by auto
+  with assms(3) have "{\<langle>x,{V``{x}.V\<in>\<Phi>}\<rangle>. x\<in>X}`x = {V``{x}. V\<in>\<Phi>}" using
+    apply_equality by auto
+  ultimately have "\<M>`x = {V``{x}. V\<in>\<Phi>}" by auto
+  then have "U\<in>\<M>`x \<longleftrightarrow> U\<in>{V``{x}. V\<in>\<Phi>}" by auto
+  then have "U\<in>\<M>`x \<longleftrightarrow> (\<exists>V\<in>\<Phi>. U=V``{x})" by auto
+  with A show ?thesis by auto
 qed
 
 text\<open>The set neighborhoods of a singleton $\{ x\}$ where $x\in X$ consist
