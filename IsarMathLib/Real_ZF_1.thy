@@ -641,7 +641,7 @@ text\<open>$a\leq b$ implies that $0 \leq b -a$.\<close>
 
 lemma (in real1) Real_ZF_1_2_L16: assumes "a\<lsq>b"
   shows "\<zero> \<lsq> b\<rs>a"
-  using assms Real_ZF_1_2_L10 group3.OrderedGroup_ZF_1_L12A
+  using assms Real_ZF_1_2_L10 group3.OrderedGroup_ZF_1_L9D
   by simp
 
 text\<open>A sum of nonnegative elements is nonnegative.\<close>

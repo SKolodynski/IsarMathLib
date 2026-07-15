@@ -566,7 +566,7 @@ proof -
     using Order_ZF_4_L3 Infimum_def by simp
 qed
 
-text\<open>Infimum is greater or equal than any upper bound. \<close>
+text\<open>Infimum is greater or equal than any lower bound. \<close>
 
 lemma inf_geq_lo_bnd: assumes "antisym(r)" "HasAnInfimum(r,A)" "\<forall>a\<in>A. \<langle>u,a\<rangle> \<in> r"
   shows "\<langle>u,Infimum(r,A)\<rangle> \<in> r"
@@ -601,10 +601,8 @@ text\<open>The dual theorem to \<open>Order_ZF_5_L5\<close>: if $z$ is an lower 
   greater or equal than any other lower bound, then $z$ is the infimum of $A$.\<close>
 
 lemma inf_glb: 
-  assumes "antisym(r)" "A\<noteq>0" "\<forall>x\<in>A. \<langle>z,x\<rangle> \<in> r" "\<forall>y. (\<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r) \<longrightarrow> \<langle>y,z\<rangle> \<in> r"
-  shows 
-  "HasAmaximum(r,\<Inter>a\<in>A. r-``{a})"
-  "z = Infimum(r,A)"
+  assumes "antisym(r)" "A\<noteq>\<emptyset>" "\<forall>x\<in>A. \<langle>z,x\<rangle> \<in> r" "\<forall>y. (\<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r) \<longrightarrow> \<langle>y,z\<rangle> \<in> r"
+  shows "HasAmaximum(r,\<Inter>a\<in>A. r-``{a})" and "z = Infimum(r,A)"
 proof -
   let ?B = "\<Inter>a\<in>A. r-``{a}"
   from assms(2,3,4) have I: "z \<in> ?B"   "\<forall>y\<in>?B. \<langle>y,z\<rangle> \<in> r"
@@ -1022,12 +1020,34 @@ text\<open>We define a strict version of a relation by removing the $y=x$ line
 definition
   "StrictVersion(r) \<equiv> r - {\<langle>x,x\<rangle>. x \<in> domain(r)}"
 
-text\<open>A reformulation of the definition of a strict version of an order.
-\<close>
+text\<open>A reformulation of the definition of a strict version of an order.\<close>
 
 lemma def_of_strict_ver: shows 
   "\<langle>x,y\<rangle> \<in> StrictVersion(r) \<longleftrightarrow> \<langle>x,y\<rangle> \<in> r \<and> x\<noteq>y"
   using StrictVersion_def domain_def by auto
+
+text\<open>if $x\leq y$ then $x < y$ or $x=y$. This direction follows straight from the definition
+  of $x < y$. \<close>
+
+lemma rel_strict_eq1: assumes "\<langle>x,y\<rangle> \<in> r"
+  shows "\<langle>x,y\<rangle> \<in> StrictVersion(r) \<or> x=y" 
+  using assms def_of_strict_ver by simp
+
+text\<open>The implication opposite to the one shown in \<open>rel_strict_eq1\<close> needs assumptions that
+  the relation is reflexive on $X$ and $x\in X$.\<close>
+
+lemma rel_strict_eq2: 
+  assumes "refl(X,r)" "x\<in>X" "\<langle>x,y\<rangle> \<in> StrictVersion(r) \<or> x=y"
+  shows "\<langle>x,y\<rangle> \<in> r"
+  using assms def_of_strict_ver unfolding refl_def by auto
+
+text\<open>Combining \<open>rel_strict_eq1\<close> and \<open>rel_strict_eq2\<close> we get that 
+  if a relation is reflexive on $X$ and $x\in X$ then $x\leq y$ is equivalent to 
+  $x < y \vee x=y$. \<close>
+
+lemma rel_strict_eq: assumes "refl(X,r)" "x\<in>X"
+  shows "\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>x,y\<rangle> \<in> StrictVersion(r) \<or> x=y"
+  using assms rel_strict_eq1 rel_strict_eq2 by auto
 
 text\<open>The next lemma is about the strict version of an antisymmetric
   relation.\<close>
@@ -1087,9 +1107,108 @@ corollary strict_lin_trich: assumes A1: "IsLinOrder(X,r)" and
   shows "Exactly_1_of_3_holds(\<langle>a,b\<rangle> \<in> s, a=b,\<langle>b,a\<rangle> \<in> s)"
   using assms IsLinOrder_def strict_ans_tot_trich by auto
 
+text\<open>For a total relation $x\leq y$ or $y < x$.\<close>
+
+lemma total_strict_or_eq: assumes "r {is total on} X" "x\<in>X" "y\<in>X"
+  shows "\<langle>x,y\<rangle> \<in> r \<or> \<langle>y,x\<rangle> \<in> StrictVersion(r)"
+proof -
+  { assume "\<langle>x,y\<rangle> \<notin> r"
+    with assms have "\<langle>y,x\<rangle> \<in> StrictVersion(r)"
+      using rel_strict_eq1 total_is_refl unfolding IsTotal_def refl_def 
+      by blast
+  } thus ?thesis by auto
+qed
+
+text\<open>For a relation that is antisymmetric and total on $X$ if a set $A\subseteq X$ has an infimum 
+  then for any $m\in X$ greater than the infimum there exist an element of a $A$ smaller than $m$.\<close>
+
+lemma inf_ge_el_exists: 
+  assumes "r {is total on} X" "antisym(r)" "HasAnInfimum(r,A)" "A\<subseteq>X" "m\<in>X" and
+    "\<langle>Infimum(r,A),m\<rangle> \<in> StrictVersion(r)"
+  shows "\<exists>x\<in>A. \<langle>x,m\<rangle> \<in> StrictVersion(r)"
+proof -
+  { assume "\<not>(\<exists>x\<in>A. \<langle>x,m\<rangle> \<in> StrictVersion(r))"
+    with assms(1,2,3,4,5) have "\<langle>m,Infimum(r,A)\<rangle> \<in> r" 
+      using total_strict_or_eq inf_geq_lo_bnd by blast
+    with assms(2,6) have False using def_of_strict_ver
+      unfolding antisym_def by auto
+  } thus ?thesis by auto
+qed
+
+text\<open>The dual of \<open>inf_ge_el_exists\<close>: 
+  For a relation that is antisymmetric and total on $X$ if a set $A\subseteq X$ has a supremum 
+  then for any $m\in X$ smaller than the supremum there exist an element of a $A$ greater than $m$.\<close>
+
+lemma sup_ls_el_exists:   
+  assumes "r {is total on} X" "antisym(r)" "HasAsupremum(r,A)" "A\<subseteq>X" "m\<in>X" and
+    "\<langle>m,Supremum(r,A)\<rangle> \<in> StrictVersion(r)"
+  shows "\<exists>x\<in>A. \<langle>m,x\<rangle> \<in> StrictVersion(r)"
+proof -
+  { assume "\<not>(\<exists>x\<in>A. \<langle>m,x\<rangle> \<in> StrictVersion(r))"
+    with assms(1,2,3,4,5) have "\<langle>Supremum(r,A),m\<rangle> \<in> r"
+      using total_strict_or_eq sup_leq_up_bnd by blast
+        with assms(2,6) have False using def_of_strict_ver
+      unfolding antisym_def by auto
+  } thus ?thesis by auto
+qed
+
+text\<open>Suppose that a relation on $X$ is antisymmetric and total on $X$ if an element $z\in X$
+  is a lower bound of a set $A\subseteq X$ and for any $y$ if $z < y$ then
+  there exist an element $x\in A$ such that $x < y$, then $A$ has an infimum and $z$ is
+  that infimum.\<close>
+
+lemma lower_bnd_ge_ex_middle: 
+  assumes "r {is total on} X" "r\<subseteq>X\<times>X" "A\<subseteq>X" "antisym(r)" "A\<noteq>\<emptyset>"  "\<forall>x\<in>A. \<langle>z,x\<rangle> \<in> r" and
+    "\<forall>y. (\<langle>z,y\<rangle> \<in> StrictVersion(r) \<longrightarrow> (\<exists>x\<in>A. \<langle>x,y\<rangle> \<in> StrictVersion(r)))"
+  shows "HasAnInfimum(r,A)" and "z = Infimum(r,A)"
+proof -
+  { fix y
+    from assms(5) obtain x\<^sub>0 where "x\<^sub>0\<in>A" by auto
+    assume "\<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r"
+    with assms(2,6) \<open>x\<^sub>0\<in>A\<close> have "y\<in>X" and "z\<in>X" by auto 
+    { assume "\<not>(\<langle>y,z\<rangle> \<in> r)"
+      with assms(1,7) \<open>y\<in>X\<close> \<open>z\<in>X\<close> obtain x where "x\<in>A" and "\<langle>x,y\<rangle> \<in> StrictVersion(r)" 
+        using total_strict_or_eq by blast
+      with assms(4) \<open>\<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r\<close> have False 
+        using def_of_strict_ver unfolding antisym_def by auto
+    } hence "\<langle>y,z\<rangle> \<in> r" by auto
+  } hence I: "\<forall>y. (\<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r) \<longrightarrow> \<langle>y,z\<rangle> \<in> r" by simp
+  with assms(4,5,6) have "HasAmaximum(r,\<Inter>x\<in>A. r-``{x})" 
+    by (rule inf_glb)
+  then show "HasAnInfimum(r,A)" unfolding HasAnInfimum_def by simp
+  from assms(4,5,6) I show "z = Infimum(r,A)" by (rule inf_glb)
+qed
+
+text\<open>The dual to \<open>lower_bnd_ge_ex_middle\<close>: 
+  Suppose that a relation on $X$ is antisymmetric and total on $X$ if an element $z\in X$
+  is an upper bound of a set $A\subseteq X$ and for any $y$ if $y < z$ then
+  there exist an element $x\in A$ such that $y<x$, then $A$ has a supremum and $z$ is
+  that supremum.\<close>
+
+lemma upper_bnd_ls_ex_middle: 
+  assumes "r {is total on} X" "r\<subseteq>X\<times>X" "A\<subseteq>X" "antisym(r)" "A\<noteq>\<emptyset>"  "\<forall>x\<in>A. \<langle>x,z\<rangle> \<in> r" and
+    "\<forall>y. (\<langle>y,z\<rangle> \<in> StrictVersion(r) \<longrightarrow> (\<exists>x\<in>A. \<langle>y,x\<rangle> \<in> StrictVersion(r)))"
+  shows "HasAsupremum(r,A)" and "z = Supremum(r,A)"
+proof -
+  { fix y
+    from assms(5) obtain x\<^sub>0 where "x\<^sub>0\<in>A" by auto
+    assume "\<forall>x\<in>A. \<langle>x,y\<rangle> \<in> r"
+    with assms(2,6) \<open>x\<^sub>0\<in>A\<close> have "y\<in>X" and "z\<in>X" by auto 
+    { assume "\<not>(\<langle>z,y\<rangle> \<in> r)"
+      with assms(1,7) \<open>y\<in>X\<close> \<open>z\<in>X\<close> obtain x where "x\<in>A" and "\<langle>y,x\<rangle> \<in> StrictVersion(r)" 
+        using total_strict_or_eq by blast
+      with assms(4) \<open>\<forall>x\<in>A. \<langle>x,y\<rangle> \<in> r\<close> have False 
+        using def_of_strict_ver unfolding antisym_def by auto
+    } hence "\<langle>z,y\<rangle> \<in> r" by auto
+  } hence I: "\<forall>y. (\<forall>x\<in>A. \<langle>x,y\<rangle> \<in> r) \<longrightarrow> \<langle>z,y\<rangle> \<in> r" by simp
+  with assms(4,5,6) have "HasAminimum(r,\<Inter>x\<in>A. r``{x})" 
+    by (rule Order_ZF_5_L5)
+  then show "HasAsupremum(r,A)" unfolding HasAsupremum_def by simp
+  from assms(4,5,6) I show "z = Supremum(r,A)" by (rule Order_ZF_5_L5)
+qed
+
 text\<open>For an antisymmetric relation if a pair is in relation then
-  the reversed pair is not in the strict version of the relation. 
-\<close>
+  the reversed pair is not in the strict version of the relation. \<close>
 
 lemma geq_impl_not_less: 
   assumes A1: "antisym(r)" and A2: "\<langle>a,b\<rangle> \<in> r"

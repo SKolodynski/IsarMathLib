@@ -55,7 +55,7 @@ text\<open> A triple $(G,A,r)$ is an ordered loop if $(G,A)$ is a loop and $r$ i
 definition
   "IsAnOrdLoop(L,A,r) \<equiv> 
   IsAloop(L,A) \<and> r\<subseteq>L\<times>L \<and> IsPartOrder(L,r) \<and> (\<forall>x\<in>L. \<forall>y\<in>L. \<forall>z\<in>L. 
-  ((\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle> x,z\<rangle>,A`\<langle>y,z\<rangle>\<rangle> \<in> r) \<and> (\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle>z,x\<rangle>,A`\<langle>z,y\<rangle>\<rangle> \<in> r )))"
+  ((\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle>x,z\<rangle>,A`\<langle>y,z\<rangle>\<rangle> \<in> r) \<and> (\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>A`\<langle>z,x\<rangle>,A`\<langle>z,y\<rangle>\<rangle> \<in> r )))"
 
 text\<open>We define the set of nonnegative elements  in the obvious way as $L^+ =\{x\in L: 0 \leq x\}$.\<close>
 
@@ -571,5 +571,56 @@ proof -
   } with assms(1) show "L\<^sub>+ {is Archimedean}"
     unfolding IsArchimedean_def by simp
 qed
+
+subsection\<open>Lifting the ordered loop operation to subsets\<close>
+
+text\<open>The \<open>func_ZF\<close> theory defines the notion of a binary operation lifted to the subsets
+  of its domain. Using the notation as in the \<open>loop1\<close> context the lifted operation
+  takes two sets $A,B \subseteq L$ and returns the set $\{x+y: x\in A, y\in B\}$.\<close>
+
+text\<open>The lifted operation is a binary operation on the powerset of $L$. 
+  This is just a special case of \<open>lift_subsets_binop\<close> lemma from \<open>func_ZF\<close> theory. \<close>
+
+lemma (in loop1) lifted_op_pow: 
+  shows "(A {lifted to subsets of} L): Pow(L)\<times>Pow(L)\<rightarrow>Pow(L)"
+  using qgroupassum lift_subsets_binop unfolding IsAquasigroup_def by simp
+
+text\<open>Suppose we have two subsets $B,C\subseteq G$ of the ordered group $G$ 
+  and both of these subsets have infima. Then $(\inf B)\cdot (\inf C)$
+  is a lower bound of $B\cdot C = \{x\cdot y: x\in B,y\in C\}$.
+  Unfortunately  Isabelle/ZF does not allow the $\{x+y: x\in B, y\in C\}$ syntax, we have
+  to write $\{x+y: \langle x,y\rangle\in B\times C\}$ instead. \<close>
+
+lemma (in loop1) sum_inf_lower_bound:
+  assumes "HasAnInfimum(r,B)" "HasAnInfimum(r,C)" "g\<in>{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C}"
+  shows  "Infimum(r,B)\<ra>Infimum(r,C) \<lsq> g"
+  using ordLoopAssum assms inf_is_lb add_ineq 
+  unfolding IsAnOrdLoop_def IsPartOrder_def by auto
+
+text\<open>Suppose we have two subsets $A,B\subseteq G$ of the ordered group $G$, 
+  both of these subsets have infima and also the set $A\cdot B = \{x\cdot y: x\in A,y\in B\}$
+  has an infimum. Then $(\inf (A))\cdot (\inf B)\leq \inf (A\cdot B)$.
+  It seems that to show equality one needs the order relation to be linear and the operation to be 
+  commutative, so this is done in the context of ordered groups. Please let me know if one can
+  show the equality between $(\inf A) + (\inf B)$ and $\inf A+B$ in a more general context.\<close>
+
+lemma (in loop1) sum_inf_ineq: 
+  assumes "HasAnInfimum(r,B)" "HasAnInfimum(r,C)" "HasAnInfimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})"
+  shows "Infimum(r,B)\<ra>Infimum(r,C) \<lsq> Infimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})"
+proof -
+  let ?D = "{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C}"
+  from assms(1,2) have "\<forall>g\<in>?D. Infimum(r,B)\<ra>Infimum(r,C) \<lsq> g"
+    using sum_inf_lower_bound by blast
+  with ordLoopAssum assms(3) show ?thesis using inf_geq_lo_bnd
+    unfolding IsAnOrdLoop_def IsPartOrder_def by simp
+qed
+
+text\<open>An ordered loop may satisfy the following condition: for every $b_1 > 0$ there is a $b_2 > 0$
+  such that $b_2 + b_2 \leq b_1 $. This condition is needed as an assumption in a couple of places.
+  I don't think there is a standard name for this property (please let me know if there is one), 
+  we will use the name \<open>IsHalfable\<close> here.\<close>
+
+definition
+  "IsHalfable(L,A,r) \<equiv> \<forall>b\<^sub>1\<in>PositiveSet(L,A,r). \<exists>b\<^sub>2\<in>PositiveSet(L,A,r). \<langle>A`\<langle>b\<^sub>2,b\<^sub>2\<rangle>,b\<^sub>1\<rangle> \<in> r"
 
 end

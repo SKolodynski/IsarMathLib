@@ -757,16 +757,14 @@ text\<open>One integer is less or equal another iff the difference is nonpositiv
 lemma (in int0) Int_ZF_1_3_L10:
   assumes "a\<in>\<int>"  "b\<in>\<int>"
   shows "a\<lsq>b \<longleftrightarrow> a\<rs>b \<lsq> \<zero>"
-  using assms Int_ZF_2_T1 group3.OrderedGroup_ZF_1_L9
-  by simp
+  using assms Int_ZF_2_T1 group3.OrderedGroup_ZF_1_L9 by simp
 
 text\<open>Some conclusions from the fact that one integer
   is less or equal than another.\<close>
 
 lemma (in int0) Int_ZF_1_3_L10A: assumes "a\<lsq>b"
   shows "\<zero> \<lsq> b\<rs>a"
-  using assms Int_ZF_2_T1 group3.OrderedGroup_ZF_1_L12A
-  by simp
+  using assms Int_ZF_2_T1 group3.OrderedGroup_ZF_1_L9D by simp
 
 text\<open>We can simplify out a positive element on both sides of an 
   inequality.\<close>

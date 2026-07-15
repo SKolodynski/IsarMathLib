@@ -608,6 +608,7 @@ lemma (in group0) group0_4_L8A:
   shows 
   "a\<cdot>b\<inverse>\<cdot>(c\<cdot>d\<inverse>) = a\<cdot>c\<cdot>(b\<inverse>\<cdot>d\<inverse>)"
   "a\<cdot>b\<inverse>\<cdot>(c\<cdot>d\<inverse>) = a\<cdot>c\<cdot>b\<inverse>\<cdot>d\<inverse>"
+  "a\<cdot>b\<cdot>(c\<cdot>d) = b\<cdot>d\<cdot>(a\<cdot>c)"
 proof -
   from A2 have 
     T: "a\<in>G"  "b\<inverse> \<in> G"  "c\<in>G"  "d\<inverse> \<in> G"
@@ -617,6 +618,9 @@ proof -
   with A2 T show  "a\<cdot>b\<inverse>\<cdot>(c\<cdot>d\<inverse>) = a\<cdot>c\<cdot>b\<inverse>\<cdot>d\<inverse>"
     using group_op_closed group_oper_assoc
     by simp
+  from assms show "a\<cdot>b\<cdot>(c\<cdot>d) = b\<cdot>d\<cdot>(a\<cdot>c)"
+    using group0_4_L8(3) group_op_closed 
+    unfolding IsCommutative_def by simp
 qed
 
 text\<open>Some rearrangements with an equation.\<close>

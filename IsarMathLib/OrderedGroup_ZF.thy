@@ -639,16 +639,18 @@ text\<open>We can put an element on the other side of an inequality
   changing its sign, version with the inverse.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L5JA:
-  assumes A1: "a\<in>G"  "b\<in>G" and A2: "c \<lsq> a\<inverse>\<cdot>b"
+  assumes "a\<in>G" "b\<in>G" and "c \<lsq> a\<inverse>\<cdot>b"
   shows "a\<cdot>c\<lsq> b"
-proof -
-  from ordGroupAssum A1 A2 have "a\<cdot>c \<lsq> a\<cdot>(a\<inverse>\<cdot>b)"
-    using IsAnOrdGroup_def by simp
-  with A1 show "a\<cdot>c\<lsq> b" 
-    using OrderedGroup_ZF_1_L1 group0.inv_cancel_two
-    by simp
-qed
-    
+  using ordGroupAssum assms OrderedGroup_ZF_1_L1 group0.inv_cancel_two(4)
+  unfolding IsAnOrdGroup_def by force
+
+text\<open>We can put an element on the other side of an inequality by cancelling inverse.\<close>
+
+lemma (in group3) ineq_side_inv:  
+  assumes "b\<in>G" "c\<in>G" and "a\<lsq>b\<cdot>c\<inverse>"
+  shows "a\<cdot>c\<lsq> b"
+  using ordGroupAssum assms OrderedGroup_ZF_1_L1 group0.inv_cancel_two(1)
+  unfolding IsAnOrdGroup_def by force
 
 text\<open>A special case of \<open>OrderedGroup_ZF_1_L5J\<close> where $c=1$.\<close>
 
@@ -919,8 +921,8 @@ proof -
     by auto
 qed
 
-text\<open>If an element is greater or equal than another then the difference is 
-  nonnegative.\<close>
+text\<open>If $a$ is not greater than $b$, then $1$ is not greater than
+  $b\cdot a^{-1}$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L9D: assumes A1: "a\<lsq>b"
   shows "\<one> \<lsq> b\<cdot>a\<inverse>"
@@ -957,6 +959,14 @@ proof -
     by simp
 qed
 
+text\<open>A strict version of \<open>OrderedGroup_ZF_1_L9D\<close>: 
+  if $a$ is (strictly) smaller than $b$, then $1$ is smaller than
+  $b\cdot a^{-1}$.\<close>
+
+lemma (in group3) ls_diff_pos: assumes "a\<ls>b" 
+  shows "\<one> \<ls> b\<cdot>a\<inverse>" and "b\<cdot>a\<inverse> \<in> G\<^sub>+" 
+  using assms OrderedGroup_ZF_1_L9E by simp_all
+
 text\<open>If the difference is nonnegative, then $a\leq b$.\<close>
 
 lemma (in group3) OrderedGroup_ZF_1_L9F: 
@@ -970,7 +980,6 @@ proof -
     using OrderedGroup_ZF_1_L1 group0.group0_2_L2
     by simp
 qed
-
 
 text\<open>If we increase the middle term in a product, the whole product 
   increases.\<close>
@@ -1008,22 +1017,6 @@ proof -
     using  OrderedGroup_ZF_1_L5B by simp
   then show "\<one> \<lsq> a\<cdot>b" 
     using OrderedGroup_ZF_1_L1 group0.group0_2_L2 
-    by simp
-qed
-
-text\<open>If $a$ is not greater than $b$, then $1$ is not greater than
-  $b\cdot a^{-1}$.\<close>
-
-lemma (in group3) OrderedGroup_ZF_1_L12A:
-  assumes A1: "a\<lsq>b" shows "\<one> \<lsq> b\<cdot>a\<inverse>"
-proof -
-  from A1 have T: "\<one> \<in> G"  "a\<in>G"  "b\<in>G" 
-    using OrderedGroup_ZF_1_L4 OrderedGroup_ZF_1_L1 group0.group0_2_L2
-    by auto
-  with A1 have "\<one>\<cdot>a \<lsq> b" 
-    using OrderedGroup_ZF_1_L1 group0.group0_2_L2
-    by simp
-  with T show "\<one> \<lsq> b\<cdot>a\<inverse>" using OrderedGroup_ZF_1_L9A
     by simp
 qed
   
@@ -1088,6 +1081,13 @@ proof -
   ultimately show "a\<cdot>c \<ls> b\<cdot>d"
     by (rule OrderedGroup_ZF_1_L4A)
 qed
+
+text\<open>We can multiply the sides of two strict inequalities.\<close>
+
+lemma (in group3) strict_ineq_sides:
+  assumes A1: "a\<ls>b" and A2: "c\<ls>d"
+  shows "a\<cdot>c \<ls> b\<cdot>d"
+  using assms OrderedGroup_ZF_1_L12D by simp
 
 text\<open>If two elements of the group are smaller than the neutral element then
   their product is also smaller.\<close>
@@ -1793,5 +1793,123 @@ lemma (in group3) OrderedGroup_ZF_2_L6:
     Order_ZF_2_L6 Order_ZF_2_L2A 
     IsAnOrdGroup_def IsPartOrder_def func1_1_L15A
   by auto
+
+text\<open>Lemmas proven in \<open>loop1\<close> locale are valid in the \<open>group3\<close> locale.\<close>
+
+lemma (in group3) loop1_valid_in_group3: shows "loop1(G,P,r)"
+proof
+  have "IsAloop(G,P)" using OrderedGroup_ZF_1_L1 group0.group_is_loop(2)
+    by simp
+  moreover from ordGroupAssum have "r\<subseteq>G\<times>G" and "IsPartOrder(G,r)" 
+    unfolding IsAnOrdGroup_def by simp_all
+  moreover
+  { fix x y z 
+    assume "x\<in>G" "y\<in>G" "z\<in>G"
+    have I: "\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>P`\<langle>x,z\<rangle>,P`\<langle>y,z\<rangle>\<rangle> \<in> r"
+    proof -
+      from \<open>z\<in>G\<close> have "x\<lsq>y  \<longrightarrow> x\<cdot>z\<lsq>y\<cdot>z"
+        using ord_transl_inv(1) by simp
+      moreover from \<open>x\<in>G\<close> \<open>y\<in>G\<close> \<open>z\<in>G\<close> have 
+        "x\<cdot>z\<lsq>y\<cdot>z \<longrightarrow> x\<lsq>y"
+        using ineq_cancel_right by simp
+      ultimately show ?thesis by auto
+    qed
+    have "\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>P`\<langle>z,x\<rangle>,P`\<langle>z,y\<rangle>\<rangle> \<in> r"
+    proof -
+      from \<open>z\<in>G\<close> have "x\<lsq>y \<longrightarrow> z\<cdot>x\<lsq>z\<cdot>y"
+        using ord_transl_inv(2) by simp
+      moreover from \<open>x\<in>G\<close> \<open>y\<in>G\<close> \<open>z\<in>G\<close> have 
+        "z\<cdot>x\<lsq>z\<cdot>y \<longrightarrow> x\<lsq>y"
+        using OrderedGroup_ZF_1_L5AE by simp
+      ultimately show ?thesis by auto
+    qed
+    with I have "((\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>P`\<langle>x,z\<rangle>,P`\<langle>y,z\<rangle>\<rangle> \<in> r) \<and> 
+      (\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>P`\<langle>z,x\<rangle>,P`\<langle>z,y\<rangle>\<rangle> \<in> r ))" by simp
+  } hence "\<forall>x\<in>G. \<forall>y\<in>G. \<forall>z\<in>G.
+      ((\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>P`\<langle>x,z\<rangle>,P`\<langle>y,z\<rangle>\<rangle> \<in> r) \<and> (\<langle>x,y\<rangle> \<in> r \<longleftrightarrow> \<langle>P`\<langle>z,x\<rangle>,P`\<langle>z,y\<rangle>\<rangle> \<in> r))"
+    by auto
+  ultimately show "IsAnOrdLoop(G,P,r)" unfolding IsAnOrdLoop_def by blast
+qed
+
+text\<open>If a set has an infimum with respect to the ordered group relation 
+  then this infimum is a member of the group.\<close>
+
+lemma (in group3) inf_ex_in_group: assumes  "HasAnInfimum(r,A)"
+  shows "Infimum(r,A) \<in> G"
+  using ordGroupAssum assms set_inf_not_empty inf_is_lb OrderedGroup_ZF_1_L4
+  unfolding IsAnOrdGroup_def IsPartOrder_def by blast
+
+text\<open>The dual of \<open>inf_ex_in_group\<close>: if a set has an supremum with respect to the ordered group 
+  relation then this supremum is a member of the group.\<close>
+
+lemma (in group3) sup_ex_in_group: assumes  "HasAsupremum(r,A)"
+  shows "Supremum(r,A) \<in> G"
+  using ordGroupAssum assms set_sup_not_empty sup_is_ub OrderedGroup_ZF_1_L4
+  unfolding IsAnOrdGroup_def IsPartOrder_def by blast
+
+text\<open>In a linearly ordered abelian group where the positive set (positive cone) is halfable 
+  the infimum of the product (in the sense group operation lifted to subsets) of two group
+  subsets that have infima is equal to the product of the infima of the the two sets.
+  I think an ordered group that satisfies the assumptions must be isomorphic to a 
+  subgroup of reals containing rational numbers, so we could as well prove it in the context 
+  of real numbers. I decided to put this lemma here for the assumptions usage to be more explicit.\<close>
+
+lemma (in group3) inf_subsets_lifted_op: 
+  assumes "r {is total on} G" "IsHalfable(G,P,r)" "P {is commutative on} G" and
+    "HasAnInfimum(r,A)" "HasAnInfimum(r,B)" "A\<subseteq>G" "B\<subseteq>G" 
+  shows
+    "HasAnInfimum(r,{x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
+    "Infimum(r,A)\<cdot>Infimum(r,B) = Infimum(r,{x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
+proof -
+  from ordGroupAssum have "r\<subseteq>G\<times>G" and "antisym(r)" 
+    unfolding IsAnOrdGroup_def IsPartOrder_def by simp_all
+  let ?C = "{x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B}"
+  let ?i\<^sub>A = "Infimum(r,A)"
+  let ?i\<^sub>B = "Infimum(r,B)"
+  from assms(4,5) have "?i\<^sub>A \<in> G" and "?i\<^sub>B \<in> G" using inf_ex_in_group 
+    by simp_all
+  from assms(6,7) have "?C\<subseteq>G" using OrderedGroup_ZF_1_L1 group0.group_op_closed
+    by force
+  from assms(4,5) have "A\<noteq>\<emptyset>" and "B\<noteq>\<emptyset>" using set_inf_not_empty by simp_all
+  hence "?C\<noteq>\<emptyset>" by auto
+  let ?z = "?i\<^sub>A\<cdot>?i\<^sub>B"
+  from assms(4,5) have  I: "\<forall>g\<in>?C. \<langle>?z,g\<rangle> \<in> r"
+    using loop1_valid_in_group3 loop1.sum_inf_lower_bound by force
+  { fix y assume "\<langle>?z,y\<rangle> \<in>  StrictVersion(r)"
+    then have "?z\<in>G" "y\<in>G" and "y\<cdot>?z\<inverse> \<in> G\<^sub>+"
+      using def_of_strict_ver less_are_members ls_diff_pos by simp_all
+    from assms(2) \<open>y\<cdot>?z\<inverse> \<in> G\<^sub>+\<close> obtain \<epsilon> where "\<epsilon>\<in>G\<^sub>+" and "\<epsilon>\<cdot>\<epsilon> \<lsq> y\<cdot>?z\<inverse>"
+      unfolding IsHalfable_def by auto
+    from \<open>y\<in>G\<close> \<open>?z\<in>G\<close> \<open>\<epsilon>\<cdot>\<epsilon>\<lsq>y\<cdot>?z\<inverse>\<close> \<open>\<epsilon>\<in>G\<^sub>+\<close> have 
+      "\<epsilon>\<in>G" "\<epsilon>\<cdot>\<epsilon>\<in>G" and "\<epsilon>\<cdot>\<epsilon>\<cdot>?z\<lsq>y" 
+      using OrderedGroup_ZF_1_L1 group0.group_op_closed
+        ineq_side_inv pos_set_in_gr by auto
+    from \<open>?i\<^sub>A \<in> G\<close> \<open>?i\<^sub>B \<in> G\<close> \<open>\<epsilon>\<in>G\<^sub>+\<close> have "?i\<^sub>A\<cdot>\<epsilon> \<in> G" "?i\<^sub>B\<cdot>\<epsilon> \<in> G" and 
+      II: "\<langle>?i\<^sub>A,?i\<^sub>A\<cdot>\<epsilon>\<rangle> \<in> StrictVersion(r)" and III: "\<langle>?i\<^sub>B,?i\<^sub>B\<cdot>\<epsilon>\<rangle> \<in> StrictVersion(r)"
+      using OrderedGroup_ZF_1_L22 less_are_members(2) def_of_strict_ver 
+      by simp_all
+    from assms(1,4,6) \<open>antisym(r)\<close> \<open>?i\<^sub>A\<cdot>\<epsilon> \<in> G\<close> II obtain x\<^sub>A 
+      where "x\<^sub>A\<in>A" and "\<langle>x\<^sub>A,?i\<^sub>A\<cdot>\<epsilon>\<rangle> \<in> StrictVersion(r)"
+      using inf_ge_el_exists by blast
+    then have "x\<^sub>A\<ls>?i\<^sub>A\<cdot>\<epsilon>" using def_of_strict_ver by simp
+    from assms(1,5,7) \<open>antisym(r)\<close> \<open>?i\<^sub>B\<cdot>\<epsilon> \<in> G\<close> III obtain x\<^sub>B
+      where "x\<^sub>B\<in>B" and "\<langle>x\<^sub>B,?i\<^sub>B\<cdot>\<epsilon>\<rangle> \<in> StrictVersion(r)" 
+      using inf_ge_el_exists by blast
+    then have "x\<^sub>B\<ls>?i\<^sub>B\<cdot>\<epsilon>" using def_of_strict_ver by simp
+    from \<open>x\<^sub>A\<ls>?i\<^sub>A\<cdot>\<epsilon>\<close> \<open>x\<^sub>B\<ls>?i\<^sub>B\<cdot>\<epsilon>\<close> have "x\<^sub>A\<cdot>x\<^sub>B \<ls> (?i\<^sub>A\<cdot>\<epsilon>)\<cdot>(?i\<^sub>B\<cdot>\<epsilon>)"
+      using strict_ineq_sides by simp
+    with assms(3) \<open>?i\<^sub>A \<in> G\<close> \<open>?i\<^sub>B \<in> G\<close> \<open>\<epsilon>\<in>G\<close> have "x\<^sub>A\<cdot>x\<^sub>B \<ls> \<epsilon>\<cdot>\<epsilon>\<cdot>?z"
+      using OrderedGroup_ZF_1_L1 group0.group0_4_L8A by simp
+    with \<open>\<epsilon>\<cdot>\<epsilon>\<cdot>?z\<lsq>y\<close> have "x\<^sub>A\<cdot>x\<^sub>B \<ls> y" using OrderedGroup_ZF_1_L4A
+      by blast
+    with \<open>x\<^sub>A\<in>A\<close> \<open>x\<^sub>B\<in>B\<close> have "\<exists>x\<in>?C. \<langle>x,y\<rangle> \<in> StrictVersion(r)" 
+      using def_of_strict_ver by auto
+  } hence IV: "\<forall>y. (\<langle>?z,y\<rangle>\<in>StrictVersion(r)\<longrightarrow>(\<exists>x\<in>?C. \<langle>x,y\<rangle> \<in> StrictVersion(r)))"
+    by simp 
+  with assms(1) \<open>r\<subseteq>G\<times>G\<close> \<open>?C\<subseteq>G\<close> \<open>antisym(r)\<close> \<open>?C\<noteq>\<emptyset>\<close> I show "HasAnInfimum(r,?C)"
+    by (rule lower_bnd_ge_ex_middle)
+  from assms(1) \<open>r\<subseteq>G\<times>G\<close> \<open>?C\<subseteq>G\<close> \<open>antisym(r)\<close> \<open>?C\<noteq>\<emptyset>\<close> I IV show "?i\<^sub>A\<cdot>?i\<^sub>B = Infimum(r,?C)"
+    by (rule lower_bnd_ge_ex_middle)
+qed
 
 end
