@@ -197,6 +197,7 @@ namespace iml
                  ("\\<eight>", " 8 ")
                  ("\\<nine>", " 9 ")
                  ("\\<zero>", " 0 ")
+                 ("\\<onehalf>", " \\frac{1}{2} ")
                  ("\\<twosuperior>","^2 ")
                  ("\\<union>", "\\cup ")
                  ("\\<Union>", "\\bigcup ")
