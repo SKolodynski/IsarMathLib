@@ -727,7 +727,7 @@ proof -
   } thus "\<not>IsBoundedAbove(A,r)" by auto
 qed
 
-text\<open>The set of elements in a set $A$ that are nongreater than 
+text\<open>The set of elements in a set $A$ that are not greater than 
   a given element is bounded above.\<close>
 
 lemma Order_ZF_3_L15: shows "IsBoundedAbove({x\<in>A. \<langle>x,a\<rangle> \<in> r},r)"

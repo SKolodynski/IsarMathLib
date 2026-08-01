@@ -84,6 +84,10 @@ locale ring1 = ring0 +
   fixes positiveset ("R\<^sub>+")
   defines positiveset_def [simp]: "R\<^sub>+ \<equiv> PositiveSet(R,A,r)"
 
+  fixes nonnegativeset ("R\<^sup>+")
+  defines nonnegativeset_def [simp]: "R\<^sup>+ \<equiv> Nonnegative(R,A,r)"
+
+
 text\<open>The next lemma assures us that we are talking about ordered rings 
   in the \<open>ring1\<close> context.\<close>
 
@@ -116,7 +120,7 @@ lemma (in  ring1) ord_ring_less_members: assumes "a\<ls>b"
 text\<open>Ordered ring is an ordered group, hence we can use theorems
   proven in the \<open>group3\<close> context.\<close>
 
-lemma (in  ring1) OrdRing_ZF_1_L4: shows 
+lemma (in ring1) OrdRing_ZF_1_L4: shows 
   "IsAnOrdGroup(R,A,r)"
   "r {is total on} R"
   "A {is commutative on} R"
@@ -142,6 +146,12 @@ proof -
     using IsAring_def Order_ZF_1_L2 IsAnOrdGroup_def group3_def IsLinOrder_def
     by auto
 qed
+
+text\<open>We can use theorems proven in the \<open>group3\<close> context (locale) in the \<open>ring1\<close> context.\<close>
+
+sublocale ring1 < group3 R A r "\<zero>" ringa ringminus lesseq sless nonnegativeset positiveset
+  "\<lambda> B. GroupInv(R,A)``(B)" abs "\<lambda> f. OddExtension(R,A,r,f)" rlistsum
+  using OrdRing_ZF_1_L4(4) by auto
 
 text\<open>We can express that $x$ is positive by stating that $0 < x$ or by writing that $x$ is an
   element $R_+$.\<close>

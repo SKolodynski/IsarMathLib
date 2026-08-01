@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics written for Isabelle/Isar.
 
-    Copyright (C) 2020,2021 Slawomir Kolodynski
+    Copyright (C) 2020-2026 Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -156,17 +156,9 @@ text\<open> We can use theorems proven in the  \<open>field1\<close> locale in t
   extension of \<open>ring0\<close> locale, this makes available also the theorems proven in 
   the \<open>ring1\<close> and \<open>ring0\<close> locales. \<close>
 
-sublocale reals < field1 Reals Add Mul realadd realminus realsub realmul 
-  zero one two realsq listsum nat_mult listprod pow ROrd 
+sublocale reals < field1 Reals Add Mul realadd realminus realsub realmul zero one two 
+  realsq listsum nat_mult listprod pow ROrd lesseq sless abs positiveset nonnegative
   using field1_is_valid by auto
-
-text\<open> The \<open>group3\<close> locale from the \<open>OrderedGroup_ZF\<close> theory defines context for theorems about 
-  ordered groups. We can use theorems proven in there in the \<open>reals\<close> locale as real numbers 
-  with addition form an ordered group. \<close>
-
-sublocale reals < group3 Reals Add ROrd zero realadd realminus lesseq sless 
-  nonnegative positiveset setinv abs oddext listsum
-  unfolding group3_def using OrdRing_ZF_1_L4 by auto
 
 text\<open>Since real numbers with addition form a group we can use the theorems proven in the  \<open>group0\<close> 
   locale defined in the \<open>Group_ZF\<close> theory in the \<open>reals\<close> locale. \<close>
@@ -251,7 +243,7 @@ lemma (in reals) pmetric_space_valid: shows "pmetric_space(\<real>,Add, ROrd,dis
   using reals_loop dist_is_metric(8) 
   by blast 
 
-text\<open> The assumptions of the  \<open>metric_space\<close> locale hold in the \<open>reals\<close> locale. \<close>
+text\<open> The assumptions of the \<open>metric_space\<close> locale hold in the \<open>reals\<close> locale. \<close>
 
 lemma (in reals) metric_space_valid: shows "metric_space(\<real>,Add, ROrd,dist,\<real>)"
 proof -
@@ -308,5 +300,69 @@ theorem (in reals) reals_is_top:
   using rord_down_directs metric_space_valid pmetric_space_valid pmetric_space.pmetric_is_top 
     pmetric_space.metric_top_carrier metric_space.metric_space_T2
   unfolding RealTopology_def by simp_all
+
+text\<open>The definition of the model of real numbers requires that every nonempty set that is bounded
+  above has a supremum. In the next theorem we show that every nonempty sets that is bounded below
+  has an infimum.\<close>
+
+lemma (in reals) bounded_below_has_inf:
+  assumes "A\<noteq>\<emptyset>" "IsBoundedBelow(A,ROrd)" shows "HasAnInfimum(ROrd,A)"
+  using R_are_reals assms complete_bounded_below_inf
+  unfolding IsAmodelOfReals_def IsAnOrdField_def IsAnOrdRing_def IsLinOrder_def
+  by auto
+
+text\<open>Every nonempty bounded above subset of reals has a supremum. This follows straight from
+  the definition of (a model of) real numbers, included here as dual to \<open>bounded_below_has_inf\<close>.\<close>
+
+lemma (in reals) bounded_above_has_sup: assumes "A\<noteq>\<emptyset>" "IsBoundedAbove(A,ROrd)" 
+  shows "HasAsupremum(ROrd,A)"
+  using R_are_reals assms unfolding IsAmodelOfReals_def IsComplete_def HasAsupremum_def
+  by simp
+
+text\<open>Each nonempty set of nonnegative reals is bounded below. This is really an ordered loop
+  property, we rewrite it here in the \<open>reals\<close> context for easy reference.\<close>
+
+lemma (in reals) nonneg_reals_bound_below: assumes "A\<subseteq>\<real>\<^sup>+"
+  shows "IsBoundedBelow(A,ROrd)"
+  using assms loop1_valid_in_group3 loop1.nonnegative_bounded_below 
+  by simp
+
+text\<open>Each nonempty set of nonnegative numbers is bounded below, hence has an infimum.\<close>
+
+lemma (in reals) nonnegative_have_inf: assumes "A\<noteq>\<emptyset>" "A\<subseteq>\<real>\<^sup>+"
+  shows "HasAnInfimum(ROrd,A)" 
+  using assms nonneg_reals_bound_below bounded_below_has_inf by simp
+
+text\<open>For sets that are bounded below we have $\inf(A+B) = (\inf A) + (\inf B)$.\<close>
+
+theorem (in reals) inf_sum_sum_inf: 
+  assumes "A\<noteq>\<emptyset>" "IsBoundedBelow(A,ROrd)" "B\<noteq>\<emptyset>" "IsBoundedBelow(B,ROrd)"
+  shows "HasAnInfimum(ROrd,{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
+    "inf(A) \<ra> inf(B) = inf({x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
+  using assms bounded_below_has_inf inf_plus_distrib by simp_all
+
+text\<open>In particular $\inf(A+B) = (\inf A) + (\inf B)$ holds for subsets of nonnegative reals.\<close>
+
+corollary (in reals) nonneg_inf_sum_inf: 
+  assumes "A\<noteq>\<emptyset>" "A\<subseteq>\<real>\<^sup>+" "B\<noteq>\<emptyset>" "B\<subseteq>\<real>\<^sup>+"
+  shows "HasAnInfimum(ROrd,{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
+    "inf(A) \<ra> inf(B) = inf({x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
+  using assms nonneg_reals_bound_below inf_sum_sum_inf by simp_all
+
+text\<open>In the context of real numbers having an infimum is the same as being nonempty and bounded 
+  below.\<close>
+
+lemma (in reals) has_inf_is_nempty_bb: 
+  shows "HasAnInfimum(ROrd,A) \<longleftrightarrow> A\<noteq>\<emptyset> \<and> IsBoundedBelow(A,ROrd)"
+  using linord set_inf_not_empty has_inf_bounded_below bounded_below_has_inf
+  unfolding IsLinOrder_def by auto
+
+text\<open>In the context of real numbers having a supremum is the same as being nonempty and bounded 
+  above.\<close>
+
+lemma (in reals) has_sup_is_nempty_ba:
+  shows "HasAsupremum(ROrd,A) \<longleftrightarrow> A\<noteq>\<emptyset> \<and> IsBoundedAbove(A,ROrd)"
+  using linord set_sup_not_empty has_sup_bounded_above bounded_above_has_sup
+  unfolding IsLinOrder_def by auto
 
 end

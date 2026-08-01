@@ -451,6 +451,37 @@ proof -
   with \<open>\<two>\<inverse>\<in>R\<close>  show "\<two>\<inverse>\<ra>\<two>\<inverse> = \<one>" using Ring_ZF_1_L3(9) by simp
 qed
 
+text\<open>In the \<open>OrderedLoop_ZF\<close> theory we define a property \<open>IsHalfable\<close> of an ordered loop
+  that states that for every positive element $b_1$ of the loop there is another (positive)
+  one $b_2$ such that $b_2+b_2 \leq b_1$. In the next lemma we show that ordered fields
+  with addition satisfy this property.\<close>
+
+lemma (in field1) ord_field_halfable: shows "IsHalfable(R,A,r)"
+proof -
+  { fix x assume "x\<in>R\<^sub>+"
+    let ?y = "(\<two>\<inverse>)\<cdot>x"
+    from \<open>x\<in>R\<^sub>+\<close> have "x\<in>R" and "?y\<in>R\<^sub>+"
+      using element_pos pos_mul_closed ord_ring_less_members one_half_pos(2)
+      by simp_all
+    from \<open>x\<in>R\<close> have "(\<two>\<inverse>\<ra>\<two>\<inverse>)\<cdot>x = x" using half_half_one(2) Ring_ZF_1_L3(6) by simp
+    with \<open>x\<in>R\<close> have "?y\<ra>?y \<lsq> x"
+      using ord_ring_less_members ring_oper_distr(2) one_half_pos(2) ring_ord_refl
+      by auto
+    with \<open>?y\<in>R\<^sub>+\<close> have "\<exists>y\<in>R\<^sub>+. y \<ra> y \<lsq> x" by auto
+  } then show ?thesis unfolding IsHalfable_def by simp
+qed
+
+text\<open>If two subsets $B,C$ of an ordered field have infima then the set 
+  $B+C = \{x+y: x\in B, y\in C\}$ also has an infimum and 
+  $\inf (B+C) = (\inf B) + (\inf C)$.\<close>
+
+lemma (in field1) inf_plus_distrib: 
+  assumes "HasAnInfimum(r,B)" "HasAnInfimum(r,C)"
+  shows "HasAnInfimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})" and
+  "Infimum(r,B)\<ra>Infimum(r,C) = Infimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})"
+  using ringAssum linord assms ord_field_halfable inf_subsets_lifted_op
+  unfolding IsAring_def IsLinOrder_def by simp_all
+
 subsection\<open>Definition of real numbers\<close>
 
 text\<open>The only purpose of this section is to define what does it mean

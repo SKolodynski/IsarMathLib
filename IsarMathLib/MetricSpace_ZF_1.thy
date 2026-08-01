@@ -154,26 +154,14 @@ subsection\<open>Real valued (pseudo)metric spaces as uniform spaces\<close>
 text\<open>The ordered loop valued pseudometric spaces are uniform spaces. In this
   section we specialize major propositions from that context to the real valued pseudometric. \<close>
 
-text\<open>In the \<open>MetricSpace_ZF\<close> theory we define a property \<open>IsHalfable\<close> of an ordered loop
+text\<open>In the \<open>OrderedLoop_ZF\<close> theory we define a property \<open>IsHalfable\<close> of an ordered loop
   that states that for every positive element $b_1$ of the loop there is another (positive)
   one $b_2$ such that $b_2+b_2 \leq b_1$. This property is needed for the ordered loop valued
   pseudometric space to be a uniform space. In the next lemma we show that real numbers satisfy
-  this property. \<close>
+  inherit this property from ordered fields.\<close>
 
 lemma (in reals) pos_reals_halfable: shows "IsHalfable(\<real>,Add,ROrd)"
-proof -
-  { fix x assume "x\<in>\<real>\<^sub>+"
-    let ?y = "(\<two>\<inverse>)\<cdot>x"
-    from \<open>x\<in>\<real>\<^sub>+\<close> have "x\<in>\<real>" and "?y\<in>\<real>\<^sub>+"
-      using element_pos pos_mul_closed ord_ring_less_members one_half_pos(2)
-      by simp_all
-    from \<open>x\<in>\<real>\<close> have "(\<two>\<inverse>\<ra>\<two>\<inverse>)\<cdot>x = x" using half_half_one(2) Ring_ZF_1_L3(6) by simp
-    with \<open>x\<in>\<real>\<close> have "?y\<ra>?y \<lsq> x"
-      using ord_ring_less_members ring_oper_distr(2) one_half_pos(2) ring_ord_refl
-      by auto
-    with \<open>?y\<in>\<real>\<^sub>+\<close> have "\<exists>y\<in>\<real>\<^sub>+. y \<ra> y \<lsq> x" by auto
-  } then show ?thesis unfolding IsHalfable_def by simp
-qed
+  using ord_field_halfable by simp
 
 text\<open>In the \<open>rpmetric_space\<close> we will write \<open>UniformGauge(X,\<real>,Add,ROrd,\<d>)\<close> i.e.
   $\{\mathcal{d}^{-1}([0,b]: b \in \mathbb{R}_+ \}$ as $\mathfrak{U}$. \<close>

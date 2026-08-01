@@ -60,7 +60,7 @@ definition
 text\<open>We define the set of nonnegative elements  in the obvious way as $L^+ =\{x\in L: 0 \leq x\}$.\<close>
 
 definition
-  "Nonnegative(L,A,r) \<equiv> {x\<in>L. \<langle> TheNeutralElement(L,A),x\<rangle> \<in> r}"
+  "Nonnegative(L,A,r) \<equiv> {x\<in>L. \<langle>TheNeutralElement(L,A),x\<rangle> \<in> r}"
 
 text\<open>The \<open>PositiveSet(L,A,r)\<close> is a set similar to  \<open>Nonnegative(L,A,r)\<close>, but without the 
   neutral element. What we call the positive set here is sometimes called "the positive cone"
@@ -470,6 +470,17 @@ lemma (in loop1) down_directs_directed: assumes "r {down-directs} L\<^sub>+"
   shows "IsDownDirectedSet(L\<^sub>+,r)"
   using ordLoopAssum assms positive_subset down_directs_subset
   unfolding IsAnOrdLoop_def by auto
+
+text\<open>Each nonempty set of nonnegative loop elements is bounded below.\<close>
+
+lemma (in loop1) nonnegative_bounded_below: assumes  "B\<subseteq>L\<^sup>+"
+  shows "IsBoundedBelow(B,r)"
+proof -
+  { fix x assume "x\<in>B" 
+    with assms have "x\<in>Nonnegative(L,A,r)" by auto
+  } then show "IsBoundedBelow(B,r)" unfolding Nonnegative_def IsBoundedBelow_def 
+    by auto
+qed
 
 subsection\<open>Completness vs Archimedean property\<close>
 

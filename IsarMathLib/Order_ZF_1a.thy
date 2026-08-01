@@ -1,7 +1,7 @@
 (*   This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2005-2020  Slawomir Kolodynski
+    Copyright (C) 2005-2026  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -60,7 +60,7 @@ text\<open>If a set has a supremum then it cannot be empty. We are probably usin
   $\bigcap  \emptyset = \emptyset $, which makes me a bit anxious 
   as this I think is just a convention. \<close>
 
-lemma set_sup_not_empty: assumes "HasAsupremum(r,A)" shows "A\<noteq>0"
+lemma set_sup_not_empty: assumes "HasAsupremum(r,A)" shows "A\<noteq>\<emptyset>"
 proof -
   from assms have "HasAminimum(r,\<Inter>a\<in>A. r``{a})" unfolding HasAsupremum_def
     by simp 
@@ -71,7 +71,7 @@ qed
 
 text\<open>If a set has an infimum then it cannot be empty.  \<close>
 
-lemma set_inf_not_empty: assumes "HasAnInfimum(r,A)" shows "A\<noteq>0"
+lemma set_inf_not_empty: assumes "HasAnInfimum(r,A)" shows "A\<noteq>\<emptyset>"
 proof -
   from assms have "HasAmaximum(r,\<Inter>a\<in>A. r-``{a})" unfolding HasAnInfimum_def
     by simp 
@@ -613,7 +613,7 @@ proof -
     using Order_ZF_4_L14 Infimum_def by simp
 qed
 
-text\<open> Supremum and infimum of a singleton is the element. \<close>
+text\<open>Supremum and infimum of a singleton is the element.\<close>
 
 lemma sup_inf_singl: assumes "antisym(r)" "refl(X,r)" "z\<in>X"
   shows 
@@ -676,6 +676,36 @@ text\<open>Infimum of a set, if exists, is a lower bound for that set.\<close>
 lemma inf_is_lb: assumes "antisym(r)" "HasAnInfimum(r,A)" "x\<in>A"
   shows "\<langle>Infimum(r,A),x\<rangle> \<in> r"
   using assms Order_ZF_4_L3 unfolding HasAnInfimum_def Infimum_def by auto
+
+text\<open>If $r$ is an antisymmetric then every set that
+  has an infimum is bounded below.\<close>
+
+lemma has_inf_bounded_below: 
+  assumes "antisym(r)" and "HasAnInfimum(r,A)"
+  shows "IsBoundedBelow(A,r)"
+  using assms inf_is_lb unfolding IsBoundedBelow_def by auto
+
+text\<open>If $r$ is an antisymmetric then every set that
+  has a supremum is bounded above.\<close>
+
+lemma has_sup_bounded_above: 
+  assumes "antisym(r)" and "HasAsupremum(r,A)"
+  shows "IsBoundedAbove(A,r)"
+  using assms sup_is_ub unfolding IsBoundedAbove_def by auto
+
+text\<open>Larger sets have smaller infima.\<close>
+
+lemma inf_incl_mono: 
+  assumes "antisym(r)" "HasAnInfimum(r,A)" "HasAnInfimum(r,B)" "A\<subseteq>B"
+  shows "\<langle>Infimum(r,B),Infimum(r,A)\<rangle> \<in> r"
+  using assms inf_is_lb inf_geq_lo_bnd by blast
+
+text\<open>Larger sets have larger suprema (dual to \<open>inf_incl_mono\<close>.\<close>
+
+lemma sup_incl_mono: 
+  assumes "antisym(r)" "HasAsupremum(r,A)" "HasAsupremum(r,B)" "A\<subseteq>B"
+  shows "\<langle>Supremum(r,A),Supremum(r,B)\<rangle> \<in> r"
+  using assms sup_is_ub sup_leq_up_bnd by blast
 
 text\<open>If a set has a supremum and that supremum is a member of the set, then
   it has a maximum and the maximum is that supremum.\<close>
@@ -816,7 +846,7 @@ qed
 
 text\<open>Similar to \<open>Order_ZF_5_L7\<close> with less explicit boundedness condition:
   if the relation on $X$ is antisymmetric and complete then the supremum
-  of a nonempty bounded set $A$ is an element of $X$ and is an upper bound of $A$.\<close>
+  of a nonempty bounded above set $A$ is an element of $X$ and is an upper bound of $A$.\<close>
 
 lemma compl_bounded_sup_props: 
   assumes "r \<subseteq> X\<times>X" "antisym(r)" "r {is complete}" and 
@@ -878,6 +908,31 @@ proof -
   with assms(2,3) \<open>?B\<noteq>\<emptyset>\<close> show "HasAsupremum(r,A)" and
     "Supremum(r,A) = Minimum(r,?B)" "Supremum(r,A) = ?z"
     using lower_upper_bounds_alt(3,5) by simp_all
+qed
+
+text\<open>A relation is complete if every nonempty set that is bounded above has a supremum.
+  Ihe next theorem shows that if the relation is antisymmetric and complete then every
+  nonempty set that is bounded below has an infimum.\<close>
+
+theorem complete_bounded_below_inf:
+  assumes "r\<subseteq>X\<times>X" "antisym(r)" "r {is complete}" "A\<noteq>\<emptyset>" "IsBoundedBelow(A,r)"
+  shows "HasAnInfimum(r,A)" and
+    "Infimum(r,A) = Maximum(r,{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r})"
+    "Infimum(r,A) = Supremum(r,{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r})" 
+proof -
+  let ?B = "{y\<in>X. \<forall>x\<in>A. \<langle>y,x\<rangle> \<in> r}"
+  let ?z = "Supremum(r,?B)"
+  from assms(5) obtain b where "\<forall>x\<in>A. \<langle>b,x\<rangle> \<in> r"
+    unfolding IsBoundedBelow_def by auto
+  from assms(4) obtain x\<^sub>0 where "x\<^sub>0\<in>A" by auto
+  with assms(1) \<open>\<forall>x\<in>A. \<langle>b,x\<rangle> \<in> r\<close> have "?B\<noteq>\<emptyset>" and "A\<subseteq>X"
+    by auto
+  from \<open>x\<^sub>0\<in>A\<close> have "IsBoundedAbove(?B,r)" 
+    unfolding IsBoundedAbove_def by auto
+  with assms(1,2,3,4) \<open>?B\<noteq>\<emptyset>\<close> show "HasAnInfimum(r,A)" and
+     "Infimum(r,A) = Maximum(r,?B)" "Infimum(r,A) = ?z"
+    using sup_in_space(1) sup_leq_up_bnd sup_is_max lower_upper_bounds_alt(4,6)
+    unfolding IsComplete_def HasAsupremum_def by simp_all
 qed
 
 text\<open> Infimum of the set of infima of a collection of sets is infimum of the union. \<close>

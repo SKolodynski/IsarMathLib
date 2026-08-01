@@ -1834,7 +1834,7 @@ qed
 text\<open>If a set has an infimum with respect to the ordered group relation 
   then this infimum is a member of the group.\<close>
 
-lemma (in group3) inf_ex_in_group: assumes  "HasAnInfimum(r,A)"
+lemma (in group3) inf_ex_in_group: assumes "HasAnInfimum(r,A)"
   shows "Infimum(r,A) \<in> G"
   using ordGroupAssum assms set_inf_not_empty inf_is_lb OrderedGroup_ZF_1_L4
   unfolding IsAnOrdGroup_def IsPartOrder_def by blast
@@ -1847,6 +1847,18 @@ lemma (in group3) sup_ex_in_group: assumes  "HasAsupremum(r,A)"
   using ordGroupAssum assms set_sup_not_empty sup_is_ub OrderedGroup_ZF_1_L4
   unfolding IsAnOrdGroup_def IsPartOrder_def by blast
 
+text\<open>If a set has a supremum in an ordered group then that set is a subset of the group.\<close>
+
+lemma (in group3) sup_ex_subset: assumes "HasAsupremum(r,A)" shows "A\<subseteq>G"
+  using ordGroupAssum assms set_sup_not_empty sup_is_ub OrderedGroup_ZF_1_L4
+  unfolding IsAnOrdGroup_def IsPartOrder_def by blast
+
+text\<open>If a set has an infimum in an ordered group then that set is a subset of the group.\<close>
+
+lemma (in group3) inf_ex_subset: assumes "HasAnInfimum(r,A)" shows "A\<subseteq>G"
+  using ordGroupAssum assms set_inf_not_empty inf_is_lb OrderedGroup_ZF_1_L4
+  unfolding IsAnOrdGroup_def IsPartOrder_def by blast
+
 text\<open>In a linearly ordered abelian group where the positive set (positive cone) is halfable 
   the infimum of the product (in the sense group operation lifted to subsets) of two group
   subsets that have infima is equal to the product of the infima of the the two sets.
@@ -1856,7 +1868,7 @@ text\<open>In a linearly ordered abelian group where the positive set (positive 
 
 lemma (in group3) inf_subsets_lifted_op: 
   assumes "r {is total on} G" "IsHalfable(G,P,r)" "P {is commutative on} G" and
-    "HasAnInfimum(r,A)" "HasAnInfimum(r,B)" "A\<subseteq>G" "B\<subseteq>G" 
+    "HasAnInfimum(r,A)" "HasAnInfimum(r,B)"  
   shows
     "HasAnInfimum(r,{x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
     "Infimum(r,A)\<cdot>Infimum(r,B) = Infimum(r,{x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
@@ -1865,10 +1877,11 @@ proof -
     unfolding IsAnOrdGroup_def IsPartOrder_def by simp_all
   let ?C = "{x\<cdot>y. \<langle>x,y\<rangle> \<in> A\<times>B}"
   let ?i\<^sub>A = "Infimum(r,A)"
-  let ?i\<^sub>B = "Infimum(r,B)"
+  let ?i\<^sub>B = "Infimum(r,B)" 
   from assms(4,5) have "?i\<^sub>A \<in> G" and "?i\<^sub>B \<in> G" using inf_ex_in_group 
     by simp_all
-  from assms(6,7) have "?C\<subseteq>G" using OrderedGroup_ZF_1_L1 group0.group_op_closed
+  from assms(4,5) have "A\<subseteq>G" and "B\<subseteq>G" using inf_ex_subset by simp_all
+  then have "?C\<subseteq>G" using OrderedGroup_ZF_1_L1 group0.group_op_closed
     by force
   from assms(4,5) have "A\<noteq>\<emptyset>" and "B\<noteq>\<emptyset>" using set_inf_not_empty by simp_all
   hence "?C\<noteq>\<emptyset>" by auto
@@ -1888,11 +1901,11 @@ proof -
       II: "\<langle>?i\<^sub>A,?i\<^sub>A\<cdot>\<epsilon>\<rangle> \<in> StrictVersion(r)" and III: "\<langle>?i\<^sub>B,?i\<^sub>B\<cdot>\<epsilon>\<rangle> \<in> StrictVersion(r)"
       using OrderedGroup_ZF_1_L22 less_are_members(2) def_of_strict_ver 
       by simp_all
-    from assms(1,4,6) \<open>antisym(r)\<close> \<open>?i\<^sub>A\<cdot>\<epsilon> \<in> G\<close> II obtain x\<^sub>A 
+    from assms(1,4) \<open>A\<subseteq>G\<close> \<open>antisym(r)\<close> \<open>?i\<^sub>A\<cdot>\<epsilon> \<in> G\<close> II obtain x\<^sub>A 
       where "x\<^sub>A\<in>A" and "\<langle>x\<^sub>A,?i\<^sub>A\<cdot>\<epsilon>\<rangle> \<in> StrictVersion(r)"
       using inf_ge_el_exists by blast
     then have "x\<^sub>A\<ls>?i\<^sub>A\<cdot>\<epsilon>" using def_of_strict_ver by simp
-    from assms(1,5,7) \<open>antisym(r)\<close> \<open>?i\<^sub>B\<cdot>\<epsilon> \<in> G\<close> III obtain x\<^sub>B
+    from assms(1,5) \<open>B\<subseteq>G\<close> \<open>antisym(r)\<close> \<open>?i\<^sub>B\<cdot>\<epsilon> \<in> G\<close> III obtain x\<^sub>B
       where "x\<^sub>B\<in>B" and "\<langle>x\<^sub>B,?i\<^sub>B\<cdot>\<epsilon>\<rangle> \<in> StrictVersion(r)" 
       using inf_ge_el_exists by blast
     then have "x\<^sub>B\<ls>?i\<^sub>B\<cdot>\<epsilon>" using def_of_strict_ver by simp
