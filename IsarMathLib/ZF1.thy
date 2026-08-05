@@ -128,7 +128,7 @@ text\<open>If two meta-functions are the same on a cartesian product,
   the set definition varies over \<open>p\<in>X\<times>Y\<close> rather than 
   \<open>\<langle> x,y\<rangle>\<in>X\<times>Y\<close>.\<close>
 
-lemma ZF1_1_L4A: assumes A1: "\<forall>x\<in>X.\<forall>y\<in>Y. a(\<langle> x,y\<rangle>) = b(x,y)"
+lemma ZF1_1_L4A: assumes A1: "\<forall>x\<in>X.\<forall>y\<in>Y. a(\<langle>x,y\<rangle>) = b(x,y)"
   shows "{a(p). p \<in> X\<times>Y} = {b(x,y). \<langle>x,y\<rangle> \<in> X\<times>Y}"
 proof
   { fix z assume "z \<in> {a(p). p\<in>X\<times>Y}"
@@ -143,6 +143,17 @@ next
     from A1 D1 have "?p\<in>X\<times>Y" "z = a(?p)" by auto
     then have "z \<in> {a(p). p \<in> X\<times>Y}" by auto
   } then show "{b(x,y). \<langle>x,y\<rangle> \<in> X\<times>Y} \<subseteq> {a(p). p \<in> X\<times>Y}" by blast
+qed
+
+text\<open>Yet another form of $\{b(x,y): \langle x,y\rangle\in X\times Y\}$
+  this time as a union.\<close>
+
+lemma cart_prod_union: shows 
+  "{b(x,y). \<langle>x,y\<rangle> \<in> X\<times>Y} = \<Union>{{b(x,y). x\<in>X} . y\<in>Y}"
+  "{b(x,y). \<langle>x,y\<rangle> \<in> X\<times>Y} = \<Union>{{b(x,y). y\<in>Y} . x\<in>X}"
+proof -
+  show "{b(x,y). \<langle>x,y\<rangle> \<in> X\<times>Y} = \<Union>{{b(x,y). x\<in>X} . y\<in>Y}" by force
+  show "{b(x,y). \<langle>x,y\<rangle> \<in> X\<times>Y} = \<Union>{{b(x,y). y\<in>Y} . x\<in>X}" by force
 qed
 
 text\<open>A lemma about inclusion in cartesian products. Included here to remember

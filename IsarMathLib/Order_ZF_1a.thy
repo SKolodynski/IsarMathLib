@@ -677,6 +677,19 @@ lemma inf_is_lb: assumes "antisym(r)" "HasAnInfimum(r,A)" "x\<in>A"
   shows "\<langle>Infimum(r,A),x\<rangle> \<in> r"
   using assms Order_ZF_4_L3 unfolding HasAnInfimum_def Infimum_def by auto
 
+text\<open>For an antisymmetric relation defined on $X$ if a set has an infimum, 
+  then it is a subset of $X$.\<close>
+
+lemma has_inf_subset: 
+  assumes "r\<subseteq>X\<times>X" "antisym(r)" "HasAnInfimum(r,A)"
+  shows "A\<subseteq>X"  using assms inf_is_lb by auto
+
+text\<open>For an antisymmetric relation defined on $X$ a set has a supremum is a subset of $X$.\<close>
+
+lemma has_sup_subset: 
+  assumes "r\<subseteq>X\<times>X" "antisym(r)" "HasAsupremum(r,A)"
+  shows "A\<subseteq>X" using assms sup_is_ub by auto
+
 text\<open>If $r$ is an antisymmetric then every set that
   has an infimum is bounded below.\<close>
 
@@ -974,13 +987,13 @@ proof -
   from assms(2) \<open>\<Union>\<T> \<noteq> 0\<close> I J show "?i = Infimum(r,\<Union>\<T>)" by (rule inf_glb)
 qed
 
-text\<open> Supremum of the set of suprema of a collection of sets is supremum of the union. \<close>
+text\<open>Supremum of the set of suprema of a collection of sets is supremum of the union.\<close>
 
 lemma sup_sup:
   assumes 
     "r \<subseteq> X\<times>X" "antisym(r)" "trans(r)" 
     "\<forall>T\<in>\<T>. HasAsupremum(r,T)"
-    "HasAsupremum(r,{Supremum(r,T).T\<in>\<T>})"
+    "HasAsupremum(r,{Supremum(r,T). T\<in>\<T>})"
   shows 
     "HasAsupremum(r,\<Union>\<T>)" and "Supremum(r,{Supremum(r,T).T\<in>\<T>}) = Supremum(r,\<Union>\<T>)"
 proof -

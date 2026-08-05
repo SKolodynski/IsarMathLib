@@ -70,6 +70,14 @@ definition
   "PositiveSet(L,A,r) \<equiv> 
   {x\<in>L. \<langle> TheNeutralElement(L,A),x\<rangle> \<in> r \<and> TheNeutralElement(L,A)\<noteq> x}"
 
+text\<open>An ordered loop may satisfy the following condition: for every $b_1 > 0$ there is a $b_2 > 0$
+  such that $b_2 + b_2 \leq b_1 $. This condition is needed as an assumption in a couple of places.
+  I don't think there is a standard name for this property (please let me know if there is one), 
+  we will use the name \<open>IsHalfable\<close> here.\<close>
+
+definition
+  "IsHalfable(L,A,r) \<equiv> \<forall>b\<^sub>1\<in>PositiveSet(L,A,r). \<exists>b\<^sub>2\<in>PositiveSet(L,A,r). \<langle>A`\<langle>b\<^sub>2,b\<^sub>2\<rangle>,b\<^sub>1\<rangle> \<in> r"
+
 text\<open> We will use the additive notation for ordered loops.\<close>
 
 locale loop1 =
@@ -261,7 +269,14 @@ text\<open>We can move an element to the other side of an inequality with three
 
 lemma (in loop1) ineq_move_side_right: assumes "x\<in>L" "y\<in>L" "x\<ra>y\<lsq>z"
   shows "x\<lsq>z\<rs>y"
-  using assms ineq_subtr_from_sides lrdiv_ident(1) by force
+  using assms ineq_subtr_from_sides(1) lrdiv_ident(1) by force
+
+text\<open>We can move an element to the other side of an inequality with three
+  loop elements - left side variant.\<close>
+
+lemma (in loop1) ineq_move_side_left: assumes "x\<in>L" "y\<in>L" "x\<ra>y\<lsq>z"
+  shows "y \<lsq> \<rm>x\<ad>z"
+  using assms ineq_subtr_from_sides(2) lrdiv_ident(2) by force
 
 text\<open>The definition of the nonnegative set in the notation used in the \<open>loop1\<close> locale: \<close>
 
@@ -583,11 +598,23 @@ proof -
     unfolding IsArchimedean_def by simp
 qed
 
-subsection\<open>Lifting the ordered loop operation to subsets\<close>
+subsection\<open>Suprema and infima of sets in ordered loop\<close>
 
-text\<open>The \<open>func_ZF\<close> theory defines the notion of a binary operation lifted to the subsets
-  of its domain. Using the notation as in the \<open>loop1\<close> context the lifted operation
-  takes two sets $A,B \subseteq L$ and returns the set $\{x+y: x\in A, y\in B\}$.\<close>
+text\<open>The goal of this section is to show that if two sets have suprema (or infima) then
+  the set $\{x+y: x\in A, y\in B\}$ also has a supremum (or infimum) equal
+  to $\sup (A) + \sup (B)$ ($\inf (A) + \inf(B))$.\<close>
+
+text\<open>A set that has a supremum with respect to loop order relation is a subset of the loop.\<close>
+
+lemma (in loop1) loop_has_sup_subset: assumes "HasAsupremum(r,B)" shows "B\<subseteq>L"
+  using ordLoopAssum assms has_sup_subset 
+  unfolding IsAnOrdLoop_def IsPartOrder_def by blast
+
+text\<open>A set that has an infimum with respect to loop order relation is a subset of the loop.\<close>
+
+lemma (in loop1) loop_has_inf_subset: assumes "HasAnInfimum(r,B)" shows "B\<subseteq>L"
+  using ordLoopAssum assms has_inf_subset 
+  unfolding IsAnOrdLoop_def IsPartOrder_def by blast
 
 text\<open>The lifted operation is a binary operation on the powerset of $L$. 
   This is just a special case of \<open>lift_subsets_binop\<close> lemma from \<open>func_ZF\<close> theory. \<close>
@@ -626,12 +653,126 @@ proof -
     unfolding IsAnOrdLoop_def IsPartOrder_def by simp
 qed
 
-text\<open>An ordered loop may satisfy the following condition: for every $b_1 > 0$ there is a $b_2 > 0$
-  such that $b_2 + b_2 \leq b_1 $. This condition is needed as an assumption in a couple of places.
-  I don't think there is a standard name for this property (please let me know if there is one), 
-  we will use the name \<open>IsHalfable\<close> here.\<close>
+text\<open>Shifting a set that has a supremum by a loop element shifts its supremum the same way.\<close>
 
-definition
-  "IsHalfable(L,A,r) \<equiv> \<forall>b\<^sub>1\<in>PositiveSet(L,A,r). \<exists>b\<^sub>2\<in>PositiveSet(L,A,r). \<langle>A`\<langle>b\<^sub>2,b\<^sub>2\<rangle>,b\<^sub>1\<rangle> \<in> r"
+lemma (in loop1) sup_shift: assumes "HasAsupremum(r,B)" "x\<in>L"
+  shows 
+    "HasAsupremum(r,{x\<ra>y. y\<in>B})" 
+    "x \<ra> Supremum(r,B) = Supremum(r,{x\<ra>y. y\<in>B})"
+    "HasAsupremum(r,{y\<ra>x. y\<in>B})"
+    "Supremum(r,B) \<ra> x = Supremum(r,{y\<ra>x. y\<in>B})"
+proof -
+  let ?s = "Supremum(r,B)"
+  let ?C = "{x\<ra>y. y\<in>B}"
+  let ?D = "{y\<ra>x. y\<in>B}"
+  from ordLoopAssum assms(1) have 
+    "antisym(r)" "r\<subseteq>L\<times>L" "B\<noteq>\<emptyset>" "?C\<noteq>\<emptyset>" "?D\<noteq>\<emptyset>" "?s\<in>L" "B\<subseteq>L" 
+    using set_sup_not_empty sup_in_space loop_has_sup_subset
+    unfolding IsAnOrdLoop_def IsPartOrder_def HasAsupremum_def
+    by simp_all
+  from assms \<open>antisym(r)\<close> have I: "\<forall>z\<in>?C. \<langle>z,x\<ra>?s\<rangle> \<in> r"
+    using sup_is_ub ord_trans_inv(2) by simp
+  { fix b assume A: "\<forall>z\<in>?C. z\<lsq>b"
+    with \<open>?C \<noteq> \<emptyset>\<close> have "b\<in>L" using lsq_members(2) by blast
+    from A \<open>B\<subseteq>L\<close> \<open>x\<in>L\<close> have "\<forall>y\<in>B. y \<lsq> \<rm>x\<ad>b"
+      using ineq_move_side_left by auto
+    with assms(1) \<open>antisym(r)\<close> \<open>x\<in>L\<close> have "x\<ra>?s \<lsq> x\<ra>(\<rm>x\<ad>b)"
+      using sup_leq_up_bnd ord_trans_inv(2) by simp
+    with \<open>x\<in>L\<close> \<open>b\<in>L\<close> have "x\<ra>?s \<lsq> b"
+      using lrdiv_props(6) by simp
+  } hence II: "\<forall>b. (\<forall>z\<in>?C. \<langle>z,b\<rangle> \<in> r) \<longrightarrow> \<langle>x\<ra>?s,b\<rangle> \<in> r" by simp
+  with \<open>antisym(r)\<close> \<open>?C\<noteq>\<emptyset>\<close> I show "HasAsupremum(r,?C)"
+    using Order_ZF_5_L5(1) unfolding HasAsupremum_def by blast
+  from \<open>antisym(r)\<close> \<open>?C\<noteq>\<emptyset>\<close> I II show "x \<ra> ?s = Supremum(r,?C)"
+    using Order_ZF_5_L5(2) by blast
+  from assms \<open>antisym(r)\<close> have III: "\<forall>z\<in>?D. \<langle>z,?s\<ra>x\<rangle> \<in> r"
+    using sup_is_ub ord_trans_inv(1) by simp
+  { fix b assume A: "\<forall>z\<in>?D. z\<lsq>b"
+    with \<open>?D \<noteq> \<emptyset>\<close> have "b\<in>L" using lsq_members(2) by blast
+    from A \<open>B\<subseteq>L\<close> \<open>x\<in>L\<close> have "\<forall>y\<in>B. y \<lsq> b\<rs>x"
+      using ineq_move_side_right by auto
+    with assms(1) \<open>antisym(r)\<close> \<open>x\<in>L\<close> have "?s\<ra>x \<lsq> (b\<rs>x)\<ra>x"
+      using sup_leq_up_bnd ord_trans_inv(1) by simp
+    with \<open>x\<in>L\<close> \<open>b\<in>L\<close> have "?s\<ra>x \<lsq> b"
+      using lrdiv_props(3) by simp
+  } hence IV: "\<forall>b. (\<forall>z\<in>?D. \<langle>z,b\<rangle> \<in> r) \<longrightarrow> \<langle>?s\<ra>x,b\<rangle> \<in> r" by simp
+  with \<open>antisym(r)\<close> \<open>?D\<noteq>\<emptyset>\<close> III show "HasAsupremum(r,?D)"
+    using Order_ZF_5_L5(1) unfolding HasAsupremum_def by blast
+  from \<open>antisym(r)\<close> \<open>?D\<noteq>\<emptyset>\<close> III IV show "?s\<ra>x = Supremum(r,?D)"
+    using Order_ZF_5_L5(2) by blast
+qed
+
+text\<open>Suppose sets $B,C\subseteq L$ have suprema and consider the sets
+  $S_B = \{\sup (x+C): x\in B\}$ and $S_C = \{\sup (B+y): y\in C\}$ 
+  where $x+C =\{ x+y:y\in C\}$ and $B+y = \{x+y:x\in B\}$.
+  Then $S_B$ and $S_C$ have suprema equal to $\sup (B) + \sup (C)$.\<close>
+
+lemma (in loop1) sup_sup_exists: 
+  assumes "HasAsupremum(r,B)" and "HasAsupremum(r,C)"
+  shows 
+    "HasAsupremum(r,{Supremum(r,{x\<ra>y. y\<in>C}). x\<in>B})"
+    "Supremum(r,{Supremum(r,{x\<ra>y. y\<in>C}). x\<in>B}) = 
+      Supremum(r,B)\<ra>Supremum(r,C)"
+    "HasAsupremum(r,{Supremum(r,{x\<ra>y. x\<in>B}). y\<in>C})"
+    "Supremum(r,{Supremum(r,{x\<ra>y. x\<in>B}). y\<in>C}) = 
+      Supremum(r,B)\<ra>Supremum(r,C)"
+proof -
+  let ?s\<^sub>B = "Supremum(r,B)"
+  let ?s\<^sub>C = "Supremum(r,C)"
+  from ordLoopAssum assms have "?s\<^sub>B \<in> L" and "?s\<^sub>C \<in> L"
+    unfolding IsAnOrdLoop_def IsPartOrder_def HasAsupremum_def
+    using sup_in_space by simp_all
+  { fix x assume "x\<in>B"
+    with assms(1) have "x\<in>L" using loop_has_sup_subset by auto
+    with assms(2) have "Supremum(r,{x\<ra>y. y\<in>C}) = x\<ra>?s\<^sub>C"
+      using sup_shift(2) by simp
+  } hence "{Supremum(r,{x\<ra>y. y\<in>C}). x\<in>B} = {x\<ra>?s\<^sub>C. x\<in>B}"
+    by simp
+  with assms(1) \<open>?s\<^sub>C \<in> L\<close> show 
+    "HasAsupremum(r,{Supremum(r,{x\<ra>y. y\<in>C}). x\<in>B})" and
+    "Supremum(r,{Supremum(r,{x\<ra>y. y\<in>C}). x\<in>B}) = ?s\<^sub>B\<ra>?s\<^sub>C"
+    using sup_shift(3,4) by simp_all
+  { fix y assume "y\<in>C"
+    with assms(2) have "y\<in>L" using loop_has_sup_subset by auto
+    with assms(1) have "Supremum(r,{x\<ra>y. x\<in>B}) = ?s\<^sub>B\<ra>y"
+      using sup_shift(4) by simp 
+  } hence "{Supremum(r,{x\<ra>y. x\<in>B}). y\<in>C} = {?s\<^sub>B\<ra>y. y\<in>C}"
+    by simp
+  with assms(2) \<open>?s\<^sub>B \<in> L\<close> show
+    "HasAsupremum(r,{Supremum(r,{x\<ra>y. x\<in>B}). y\<in>C})" and
+    "Supremum(r,{Supremum(r,{x\<ra>y. x\<in>B}). y\<in>C}) = ?s\<^sub>B\<ra>?s\<^sub>C"
+    using sup_shift(1,2) by simp_all
+qed
+
+text\<open>If sets $A,B\subseteq L$ have suprema then the sum of sets 
+  (i.e. $\{x+y:x\in B,y\in C\}$) also has a supremum equal 
+  to the sum of the suprema of $B$ and $C$.\<close>
+
+theorem (in loop1) ordloop_sup_sum_sum_sup:
+  assumes "HasAsupremum(r,B)" and "HasAsupremum(r,C)"
+  shows "HasAsupremum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})" and
+    "Supremum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C}) = Supremum(r,B)\<ra>Supremum(r,C)"
+proof -
+  let ?\<T> = "{{x\<ra>y. x\<in>B}. y\<in>C}"
+  from assms have I: "{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C} = \<Union>?\<T>" and "B\<subseteq>L" "C\<subseteq>L"
+    using cart_prod_union(1) loop_has_sup_subset 
+      by simp_all
+  from ordLoopAssum have "r \<subseteq> L\<times>L" "antisym(r)" "trans(r)"
+    unfolding IsAnOrdLoop_def IsPartOrder_def by simp_all
+  moreover from assms(1) \<open>C\<subseteq>L\<close> have "\<forall>T\<in>?\<T>. HasAsupremum(r,T)"
+    using sup_shift(3) by auto
+  moreover
+  have II: "{Supremum(r,T). T\<in>?\<T>} = {Supremum(r,{x\<ra>y. x\<in>B}). y\<in>C}"
+    by auto
+  with assms have "HasAsupremum(r,{Supremum(r,T). T\<in>?\<T>})"
+    using sup_sup_exists(3) by simp
+  ultimately have "HasAsupremum(r,\<Union>?\<T>)" and
+    "Supremum(r,{Supremum(r,T).T\<in>?\<T>}) = Supremum(r,\<Union>?\<T>)"
+    using sup_sup by simp_all
+  with assms I II \<open>HasAsupremum(r,\<Union>?\<T>)\<close> show 
+    "HasAsupremum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})" and
+    "Supremum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C}) = Supremum(r,B)\<ra>Supremum(r,C)"
+    using sup_sup_exists(4) by simp_all
+qed
 
 end
