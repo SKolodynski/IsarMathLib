@@ -271,11 +271,23 @@ lemma (in loop1) ineq_move_side_right: assumes "x\<in>L" "y\<in>L" "x\<ra>y\<lsq
   shows "x\<lsq>z\<rs>y"
   using assms ineq_subtr_from_sides(1) lrdiv_ident(1) by force
 
+text\<open>We can move $y$ to the other side of an inequality $z\leq x+y$.\<close>
+
+lemma (in loop1) ineq_move_side_right1: assumes "x\<in>L" "y\<in>L" "z\<lsq>x\<ra>y"
+  shows "z\<rs>y\<lsq>x"
+  using assms ineq_subtr_from_sides(1) lrdiv_ident(1) by force
+
 text\<open>We can move an element to the other side of an inequality with three
   loop elements - left side variant.\<close>
 
 lemma (in loop1) ineq_move_side_left: assumes "x\<in>L" "y\<in>L" "x\<ra>y\<lsq>z"
   shows "y \<lsq> \<rm>x\<ad>z"
+  using assms ineq_subtr_from_sides(2) lrdiv_ident(2) by force
+
+text\<open>We can move $x$ to the other side of an inequality $z\leq x+y$.\<close>
+
+lemma (in loop1) ineq_move_side_left1: assumes "x\<in>L" "y\<in>L" "z\<lsq>x\<ra>y"
+  shows "(\<rm>x\<ad>z) \<lsq> y"
   using assms ineq_subtr_from_sides(2) lrdiv_ident(2) by force
 
 text\<open>The definition of the nonnegative set in the notation used in the \<open>loop1\<close> locale: \<close>
@@ -601,8 +613,8 @@ qed
 subsection\<open>Suprema and infima of sets in ordered loop\<close>
 
 text\<open>The goal of this section is to show that if two sets have suprema (or infima) then
-  the set $\{x+y: x\in A, y\in B\}$ also has a supremum (or infimum) equal
-  to $\sup (A) + \sup (B)$ ($\inf (A) + \inf(B))$.\<close>
+  the  Minkowski's sum of $A,B$ (i.e. the set $\{x+y: x\in A, y\in B\}$ also has a supremum 
+  (or infimum) equal to $\sup (A) + \sup (B)$ (or $\inf (A) + \inf(B))$.)\<close>
 
 text\<open>A set that has a supremum with respect to loop order relation is a subset of the loop.\<close>
 
@@ -702,6 +714,55 @@ proof -
     using Order_ZF_5_L5(2) by blast
 qed
 
+text\<open>Shifting a set that has an infimum by a loop element shifts its infimum the same way.\<close>
+
+lemma (in loop1) inf_shift: assumes "HasAnInfimum(r,B)" "x\<in>L"
+  shows 
+    "HasAnInfimum(r,{x\<ra>y. y\<in>B})" 
+    "x \<ra> Infimum(r,B) = Infimum(r,{x\<ra>y. y\<in>B})"
+    "HasAnInfimum(r,{y\<ra>x. y\<in>B})"
+    "Infimum(r,B) \<ra> x = Infimum(r,{y\<ra>x. y\<in>B})"
+proof -
+  let ?m = "Infimum(r,B)"
+  let ?C = "{x\<ra>y. y\<in>B}"
+  let ?D = "{y\<ra>x. y\<in>B}"
+  from ordLoopAssum assms(1) have 
+    "antisym(r)" "r\<subseteq>L\<times>L" "B\<noteq>\<emptyset>" "?C\<noteq>\<emptyset>" "?D\<noteq>\<emptyset>" "?m\<in>L" "B\<subseteq>L" 
+    using set_inf_not_empty inf_in_space loop_has_inf_subset
+    unfolding IsAnOrdLoop_def IsPartOrder_def HasAnInfimum_def
+    by simp_all
+  from assms \<open>antisym(r)\<close> have I: "\<forall>z\<in>?C. \<langle>x\<ra>?m,z\<rangle> \<in> r"
+    using inf_is_lb ord_trans_inv(2) by simp
+  { fix b assume A: "\<forall>z\<in>?C. b\<lsq>z"
+    with \<open>?C \<noteq> \<emptyset>\<close> have "b\<in>L" using lsq_members(1) by blast
+    from A \<open>B\<subseteq>L\<close> \<open>x\<in>L\<close> have "\<forall>y\<in>B. (\<rm>x\<ad>b)\<lsq>y "
+      using ineq_move_side_left1 by auto
+    with assms(1) \<open>antisym(r)\<close> \<open>x\<in>L\<close> have "x\<ra>(\<rm>x\<ad>b) \<lsq> x\<ra>?m"
+      using inf_geq_lo_bnd ord_trans_inv(2) by simp
+    with \<open>x\<in>L\<close> \<open>b\<in>L\<close> have "b \<lsq> x\<ra>?m"
+      using lrdiv_props(6) by simp
+  } hence II: "\<forall>b. (\<forall>z\<in>?C. \<langle>b,z\<rangle> \<in> r) \<longrightarrow> \<langle>b,x\<ra>?m\<rangle> \<in> r" by simp
+  with \<open>antisym(r)\<close> \<open>?C\<noteq>\<emptyset>\<close> I show "HasAnInfimum(r,?C)"
+    using inf_glb(1) unfolding HasAnInfimum_def by blast
+  from \<open>antisym(r)\<close> \<open>?C\<noteq>\<emptyset>\<close> I II show "x \<ra> Infimum(r,B) = Infimum(r,?C)"
+    using inf_glb(2) by blast
+  from assms \<open>antisym(r)\<close> have III: "\<forall>z\<in>?D. \<langle>?m\<ra>x,z\<rangle> \<in> r"
+    using inf_is_lb ord_trans_inv(1) by simp
+  { fix b assume A: "\<forall>z\<in>?D. b\<lsq>z"
+    with \<open>?D \<noteq> \<emptyset>\<close> have "b\<in>L" using lsq_members(1) by blast
+    from A \<open>B\<subseteq>L\<close> \<open>x\<in>L\<close> have "\<forall>y\<in>B. b\<rs>x \<lsq> y"
+      using ineq_move_side_right1 by auto
+    with assms(1) \<open>antisym(r)\<close> \<open>x\<in>L\<close> have "(b\<rs>x)\<ra>x \<lsq> ?m\<ra>x"
+      using inf_geq_lo_bnd ord_trans_inv(1) by simp
+    with \<open>x\<in>L\<close> \<open>b\<in>L\<close> have "b \<lsq> ?m\<ra>x"
+      using lrdiv_props(3) by simp
+  } hence IV: "\<forall>b. (\<forall>z\<in>?D. \<langle>b,z\<rangle> \<in> r) \<longrightarrow> \<langle>b,?m\<ra>x\<rangle> \<in> r" by simp
+  with \<open>antisym(r)\<close> \<open>?D\<noteq>\<emptyset>\<close> III show "HasAnInfimum(r,{y\<ra>x. y\<in>B})"
+    using inf_glb(1) unfolding HasAnInfimum_def by blast
+  from \<open>antisym(r)\<close> \<open>?D\<noteq>\<emptyset>\<close> III IV show "?m\<ra>x = Infimum(r,?D)"
+    using inf_glb(2) by blast
+qed
+
 text\<open>Suppose sets $B,C\subseteq L$ have suprema and consider the sets
   $S_B = \{\sup (x+C): x\in B\}$ and $S_C = \{\sup (B+y): y\in C\}$ 
   where $x+C =\{ x+y:y\in C\}$ and $B+y = \{x+y:x\in B\}$.
@@ -744,6 +805,48 @@ proof -
     using sup_shift(1,2) by simp_all
 qed
 
+text\<open>Suppose sets $B,C\subseteq L$ have infima and consider the sets
+  $i_B = \{\inf (x+C): x\in B\}$ and $i_C = \{\inf (B+y): y\in C\}$ 
+  where $x+C =\{ x+y:y\in C\}$ and $B+y = \{x+y:x\in B\}$.
+  Then $i_B$ and $i_C$ have infima equal to $\inf (B) + \inf (C)$.\<close>
+
+lemma (in loop1) inf_inf_exists: 
+  assumes "HasAnInfimum(r,B)" and "HasAnInfimum(r,C)"
+  shows 
+    "HasAnInfimum(r,{Infimum(r,{x\<ra>y. y\<in>C}). x\<in>B})"
+    "Infimum(r,{Infimum(r,{x\<ra>y. y\<in>C}). x\<in>B}) = 
+      Infimum(r,B)\<ra>Infimum(r,C)"
+    "HasAnInfimum(r,{Infimum(r,{x\<ra>y. x\<in>B}). y\<in>C})"
+    "Infimum(r,{Infimum(r,{x\<ra>y. x\<in>B}). y\<in>C}) = 
+      Infimum(r,B)\<ra>Infimum(r,C)"
+proof -
+  let ?i\<^sub>B = "Infimum(r,B)"
+  let ?i\<^sub>C = "Infimum(r,C)"
+  from ordLoopAssum assms have "?i\<^sub>B \<in> L" and "?i\<^sub>C \<in> L"
+    unfolding IsAnOrdLoop_def IsPartOrder_def HasAnInfimum_def
+    using inf_in_space by simp_all
+ { fix x assume "x\<in>B"
+    with assms(1) have "x\<in>L" using loop_has_inf_subset by auto
+    with assms(2) have "Infimum(r,{x\<ra>y. y\<in>C}) = x\<ra>?i\<^sub>C"
+      using inf_shift(2) by simp
+  } hence "{Infimum(r,{x\<ra>y. y\<in>C}). x\<in>B} = {x\<ra>?i\<^sub>C. x\<in>B}"
+    by simp
+  with assms(1) \<open>?i\<^sub>C \<in> L\<close> show 
+    "HasAnInfimum(r,{Infimum(r,{x\<ra>y. y\<in>C}). x\<in>B})" and
+    "Infimum(r,{Infimum(r,{x\<ra>y. y\<in>C}). x\<in>B}) = ?i\<^sub>B\<ra>?i\<^sub>C"
+    using inf_shift(3,4) by simp_all
+    { fix y assume "y\<in>C"
+      with assms(2) have "y\<in>L" using loop_has_inf_subset by auto
+      with assms(1) have "Infimum(r,{x\<ra>y. x\<in>B}) = ?i\<^sub>B\<ra>y"
+      using inf_shift(4) by simp 
+  } hence "{Infimum(r,{x\<ra>y. x\<in>B}). y\<in>C} = {?i\<^sub>B\<ra>y. y\<in>C}"
+    by simp
+  with assms(2) \<open>?i\<^sub>B \<in> L\<close> show
+    "HasAnInfimum(r,{Infimum(r,{x\<ra>y. x\<in>B}). y\<in>C})" and
+    "Infimum(r,{Infimum(r,{x\<ra>y. x\<in>B}). y\<in>C}) = ?i\<^sub>B\<ra>?i\<^sub>C"
+    using inf_shift(1,2) by simp_all
+qed
+
 text\<open>If sets $A,B\subseteq L$ have suprema then the sum of sets 
   (i.e. $\{x+y:x\in B,y\in C\}$) also has a supremum equal 
   to the sum of the suprema of $B$ and $C$.\<close>
@@ -773,6 +876,37 @@ proof -
     "HasAsupremum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})" and
     "Supremum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C}) = Supremum(r,B)\<ra>Supremum(r,C)"
     using sup_sup_exists(4) by simp_all
+qed
+
+text\<open>If sets $B,C\subseteq L$ have infima then the Minkowski's sum of sets $B,C$
+  (i.e. $\{x+y:x\in B,y\in C\}$) also has an infimum equal to the sum of 
+  the infima of $B$ and $C$.\<close>
+
+theorem (in loop1) ordloop_inf_sum_sum_inf:
+  assumes "HasAnInfimum(r,B)" and "HasAnInfimum(r,C)"
+  shows "HasAnInfimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})" and
+    "Infimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C}) = Infimum(r,B)\<ra>Infimum(r,C)"
+proof -
+  let ?\<T> = "{{x\<ra>y. x\<in>B}. y\<in>C}"
+  from assms have I: "{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C} = \<Union>?\<T>" and "B\<subseteq>L" "C\<subseteq>L"
+    using cart_prod_union(1) loop_has_inf_subset 
+      by simp_all
+  from ordLoopAssum have "r \<subseteq> L\<times>L" "antisym(r)" "trans(r)"
+    unfolding IsAnOrdLoop_def IsPartOrder_def by simp_all
+  moreover from assms(1) \<open>C\<subseteq>L\<close> have "\<forall>T\<in>?\<T>. HasAnInfimum(r,T)"
+    using inf_shift(3) by auto
+  moreover
+  have II: "{Infimum(r,T). T\<in>?\<T>} = {Infimum(r,{x\<ra>y. x\<in>B}). y\<in>C}"
+    by auto
+  with assms have "HasAnInfimum(r,{Infimum(r,T). T\<in>?\<T>})"
+    using inf_inf_exists(3) by simp
+  ultimately have "HasAnInfimum(r,\<Union>?\<T>)" and
+    "Infimum(r,{Infimum(r,T).T\<in>?\<T>}) = Infimum(r,\<Union>?\<T>)"
+    using inf_inf by simp_all
+  with assms I II \<open>HasAnInfimum(r,\<Union>?\<T>)\<close> show 
+    "HasAnInfimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})" and
+    "Infimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C}) = Infimum(r,B)\<ra>Infimum(r,C)"
+    using inf_inf_exists(4) by simp_all
 qed
 
 end
