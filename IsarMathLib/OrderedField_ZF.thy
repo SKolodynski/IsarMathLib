@@ -471,17 +471,6 @@ proof -
   } then show ?thesis unfolding IsHalfable_def by simp
 qed
 
-text\<open>If two subsets $B,C$ of an ordered field have infima then the set 
-  $B+C = \{x+y: x\in B, y\in C\}$ also has an infimum and 
-  $\inf (B+C) = (\inf B) + (\inf C)$.\<close>
-
-lemma (in field1) inf_plus_distrib: 
-  assumes "HasAnInfimum(r,B)" "HasAnInfimum(r,C)"
-  shows "HasAnInfimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})" and
-  "Infimum(r,B)\<ra>Infimum(r,C) = Infimum(r,{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C})"
-  using ringAssum linord assms ord_field_halfable inf_subsets_lifted_op
-  unfolding IsAring_def IsLinOrder_def by simp_all
-
 subsection\<open>Definition of real numbers\<close>
 
 text\<open>The only purpose of this section is to define what does it mean

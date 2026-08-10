@@ -616,17 +616,31 @@ text\<open>The goal of this section is to show that if two sets have suprema (or
   the  Minkowski's sum of $A,B$ (i.e. the set $\{x+y: x\in A, y\in B\}$ also has a supremum 
   (or infimum) equal to $\sup (A) + \sup (B)$ (or $\inf (A) + \inf(B))$.)\<close>
 
-text\<open>A set that has a supremum with respect to loop order relation is a subset of the loop.\<close>
+text\<open>A set that has a supremum with respect to loop order relation is a subset of the loop
+  and the supremum is a member of the loop.\<close>
 
-lemma (in loop1) loop_has_sup_subset: assumes "HasAsupremum(r,B)" shows "B\<subseteq>L"
-  using ordLoopAssum assms has_sup_subset 
-  unfolding IsAnOrdLoop_def IsPartOrder_def by blast
+lemma (in loop1) loop_has_sup_subset: assumes "HasAsupremum(r,B)" 
+  shows "B\<subseteq>L" and "Supremum(r,B) \<in> L"
+proof -
+  from ordLoopAssum assms show "B\<subseteq>L" using has_sup_subset 
+    unfolding IsAnOrdLoop_def IsPartOrder_def by blast
+  from ordLoopAssum assms show "Supremum(r,B) \<in> L"
+    using set_sup_not_empty sup_is_ub lsq_members
+    unfolding IsAnOrdLoop_def IsPartOrder_def by blast
+qed
 
-text\<open>A set that has an infimum with respect to loop order relation is a subset of the loop.\<close>
+text\<open>A set that has an infimum with respect to loop order relation is a subset of the loop
+  and the infimum is a member of the loop.\<close>
 
-lemma (in loop1) loop_has_inf_subset: assumes "HasAnInfimum(r,B)" shows "B\<subseteq>L"
-  using ordLoopAssum assms has_inf_subset 
-  unfolding IsAnOrdLoop_def IsPartOrder_def by blast
+lemma (in loop1) loop_has_inf_subset: assumes "HasAnInfimum(r,B)" 
+  shows "B\<subseteq>L" and "Infimum(r,B) \<in> L" 
+proof -
+  from ordLoopAssum assms show "B\<subseteq>L" using has_inf_subset 
+    unfolding IsAnOrdLoop_def IsPartOrder_def by blast
+  from ordLoopAssum assms show "Infimum(r,B) \<in> L"
+    using set_inf_not_empty inf_is_lb lsq_members
+    unfolding IsAnOrdLoop_def IsPartOrder_def by blast
+qed
 
 text\<open>The lifted operation is a binary operation on the powerset of $L$. 
   This is just a special case of \<open>lift_subsets_binop\<close> lemma from \<open>func_ZF\<close> theory. \<close>
@@ -679,7 +693,7 @@ proof -
   let ?D = "{y\<ra>x. y\<in>B}"
   from ordLoopAssum assms(1) have 
     "antisym(r)" "r\<subseteq>L\<times>L" "B\<noteq>\<emptyset>" "?C\<noteq>\<emptyset>" "?D\<noteq>\<emptyset>" "?s\<in>L" "B\<subseteq>L" 
-    using set_sup_not_empty sup_in_space loop_has_sup_subset
+    using set_sup_not_empty sup_in_space loop_has_sup_subset(1)
     unfolding IsAnOrdLoop_def IsPartOrder_def HasAsupremum_def
     by simp_all
   from assms \<open>antisym(r)\<close> have I: "\<forall>z\<in>?C. \<langle>z,x\<ra>?s\<rangle> \<in> r"
@@ -728,7 +742,7 @@ proof -
   let ?D = "{y\<ra>x. y\<in>B}"
   from ordLoopAssum assms(1) have 
     "antisym(r)" "r\<subseteq>L\<times>L" "B\<noteq>\<emptyset>" "?C\<noteq>\<emptyset>" "?D\<noteq>\<emptyset>" "?m\<in>L" "B\<subseteq>L" 
-    using set_inf_not_empty inf_in_space loop_has_inf_subset
+    using set_inf_not_empty inf_in_space loop_has_inf_subset(1)
     unfolding IsAnOrdLoop_def IsPartOrder_def HasAnInfimum_def
     by simp_all
   from assms \<open>antisym(r)\<close> have I: "\<forall>z\<in>?C. \<langle>x\<ra>?m,z\<rangle> \<in> r"
@@ -784,7 +798,7 @@ proof -
     unfolding IsAnOrdLoop_def IsPartOrder_def HasAsupremum_def
     using sup_in_space by simp_all
   { fix x assume "x\<in>B"
-    with assms(1) have "x\<in>L" using loop_has_sup_subset by auto
+    with assms(1) have "x\<in>L" using loop_has_sup_subset(1) by auto
     with assms(2) have "Supremum(r,{x\<ra>y. y\<in>C}) = x\<ra>?s\<^sub>C"
       using sup_shift(2) by simp
   } hence "{Supremum(r,{x\<ra>y. y\<in>C}). x\<in>B} = {x\<ra>?s\<^sub>C. x\<in>B}"
@@ -794,7 +808,7 @@ proof -
     "Supremum(r,{Supremum(r,{x\<ra>y. y\<in>C}). x\<in>B}) = ?s\<^sub>B\<ra>?s\<^sub>C"
     using sup_shift(3,4) by simp_all
   { fix y assume "y\<in>C"
-    with assms(2) have "y\<in>L" using loop_has_sup_subset by auto
+    with assms(2) have "y\<in>L" using loop_has_sup_subset(1) by auto
     with assms(1) have "Supremum(r,{x\<ra>y. x\<in>B}) = ?s\<^sub>B\<ra>y"
       using sup_shift(4) by simp 
   } hence "{Supremum(r,{x\<ra>y. x\<in>B}). y\<in>C} = {?s\<^sub>B\<ra>y. y\<in>C}"
@@ -826,7 +840,7 @@ proof -
     unfolding IsAnOrdLoop_def IsPartOrder_def HasAnInfimum_def
     using inf_in_space by simp_all
  { fix x assume "x\<in>B"
-    with assms(1) have "x\<in>L" using loop_has_inf_subset by auto
+    with assms(1) have "x\<in>L" using loop_has_inf_subset(1) by auto
     with assms(2) have "Infimum(r,{x\<ra>y. y\<in>C}) = x\<ra>?i\<^sub>C"
       using inf_shift(2) by simp
   } hence "{Infimum(r,{x\<ra>y. y\<in>C}). x\<in>B} = {x\<ra>?i\<^sub>C. x\<in>B}"
@@ -836,7 +850,7 @@ proof -
     "Infimum(r,{Infimum(r,{x\<ra>y. y\<in>C}). x\<in>B}) = ?i\<^sub>B\<ra>?i\<^sub>C"
     using inf_shift(3,4) by simp_all
     { fix y assume "y\<in>C"
-      with assms(2) have "y\<in>L" using loop_has_inf_subset by auto
+      with assms(2) have "y\<in>L" using loop_has_inf_subset(1) by auto
       with assms(1) have "Infimum(r,{x\<ra>y. x\<in>B}) = ?i\<^sub>B\<ra>y"
       using inf_shift(4) by simp 
   } hence "{Infimum(r,{x\<ra>y. x\<in>B}). y\<in>C} = {?i\<^sub>B\<ra>y. y\<in>C}"
@@ -858,7 +872,7 @@ theorem (in loop1) ordloop_sup_sum_sum_sup:
 proof -
   let ?\<T> = "{{x\<ra>y. x\<in>B}. y\<in>C}"
   from assms have I: "{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C} = \<Union>?\<T>" and "B\<subseteq>L" "C\<subseteq>L"
-    using cart_prod_union(1) loop_has_sup_subset 
+    using cart_prod_union(1) loop_has_sup_subset(1) 
       by simp_all
   from ordLoopAssum have "r \<subseteq> L\<times>L" "antisym(r)" "trans(r)"
     unfolding IsAnOrdLoop_def IsPartOrder_def by simp_all
@@ -889,7 +903,7 @@ theorem (in loop1) ordloop_inf_sum_sum_inf:
 proof -
   let ?\<T> = "{{x\<ra>y. x\<in>B}. y\<in>C}"
   from assms have I: "{x\<ra>y. \<langle>x,y\<rangle> \<in> B\<times>C} = \<Union>?\<T>" and "B\<subseteq>L" "C\<subseteq>L"
-    using cart_prod_union(1) loop_has_inf_subset 
+    using cart_prod_union(1) loop_has_inf_subset(1)
       by simp_all
   from ordLoopAssum have "r \<subseteq> L\<times>L" "antisym(r)" "trans(r)"
     unfolding IsAnOrdLoop_def IsPartOrder_def by simp_all

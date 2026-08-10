@@ -333,13 +333,25 @@ lemma (in reals) nonnegative_have_inf: assumes "A\<noteq>\<emptyset>" "A\<subset
   shows "HasAnInfimum(ROrd,A)" 
   using assms nonneg_reals_bound_below bounded_below_has_inf by simp
 
-text\<open>For sets that are bounded below we have $\inf(A+B) = (\inf A) + (\inf B)$.\<close>
+text\<open>For sets that are bounded below we have $\inf(A+B) = (\inf A) + (\inf B)$
+  This is an ordered loop property, we bring it here via ordered groups.\<close>
 
 theorem (in reals) inf_sum_sum_inf: 
   assumes "A\<noteq>\<emptyset>" "IsBoundedBelow(A,ROrd)" "B\<noteq>\<emptyset>" "IsBoundedBelow(B,ROrd)"
   shows "HasAnInfimum(ROrd,{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
     "inf(A) \<ra> inf(B) = inf({x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
-  using assms bounded_below_has_inf inf_plus_distrib by simp_all
+  using assms bounded_below_has_inf 
+    loop1_valid_in_group3 loop1.ordloop_inf_sum_sum_inf by simp_all
+
+text\<open>For sets that are bounded above we have $\sup(A+B) = (\sup A) + (\inf B)$
+  This is an ordered loop property, we bring it here via ordered groups.\<close>
+
+theorem (in reals) sup_sum_sum_sup: 
+  assumes "A\<noteq>\<emptyset>" "IsBoundedAbove(A,ROrd)" "B\<noteq>\<emptyset>" "IsBoundedAbove(B,ROrd)"
+  shows "HasAsupremum(ROrd,{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
+    "sup(A) \<ra> sup(B) = sup({x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
+  using assms bounded_above_has_sup 
+    loop1_valid_in_group3 loop1.ordloop_sup_sum_sum_sup by simp_all
 
 text\<open>In particular $\inf(A+B) = (\inf A) + (\inf B)$ holds for subsets of nonnegative reals.\<close>
 
