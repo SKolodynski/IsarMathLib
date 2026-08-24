@@ -1,7 +1,7 @@
 (*    This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2021 Slawomir Kolodynski
+    Copyright (C) 2021-2026 Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -489,6 +489,25 @@ proof -
     using neut_props_loop(2) by simp_all
 qed
 
+text\<open>The set of nonnegative elements is closed under the loop operation.\<close>
+
+lemma (in loop1) nonneg_closed: shows "L\<^sup>+ {is closed under} A"
+proof -
+  { fix x y assume "x\<in>L\<^sup>+" "y\<in>L\<^sup>+"
+    then have "x\<ra>y \<in> L\<^sup>+" 
+      using nonneg_definition add_ineq neut_props_loop by force
+  } then show "L\<^sup>+ {is closed under} A" unfolding IsOpClosed_def
+    by simp
+qed
+
+text\<open>The sum of a list of nonnegative elements of a loop is nonnegative.\<close>
+
+lemma (in loop1) sum_nonneg_nonneg: 
+  assumes "n\<in>nat" "s:n\<rightarrow>L\<^sup>+" shows "(\<Sum>s) \<in> L\<^sup>+"
+  using ordLoopAssum assms nonneg_subset loop_zero_nonneg 
+    nonneg_closed fold_in_op_closed
+  unfolding IsAnOrdLoop_def IsAloop_def IsAquasigroup_def by auto
+
 text\<open>In an ordered loop if the order relation down-directs the set of positive elements $L_+$
   then $L_+$ is a down-directed set (see \<open>Order_ZF\<close> for definitions of those related but different
   notions).\<close>
@@ -507,6 +526,20 @@ proof -
     with assms have "x\<in>Nonnegative(L,A,r)" by auto
   } then show "IsBoundedBelow(B,r)" unfolding Nonnegative_def IsBoundedBelow_def 
     by auto
+qed
+
+text\<open>If a set of nonnegative group grpup elements has an infimum, then that infimum
+  is nonnegative.\<close>
+
+lemma (in loop1) inf_nonneg_nonneg: 
+  assumes "B\<subseteq>L\<^sup>+" and "HasAnInfimum(r,B)"
+  shows "Infimum(r,B) \<in> L\<^sup>+"
+proof -
+  from assms(1) have "\<forall>x\<in>B. \<zero>\<lsq>x" using nonneg_definition 
+    by auto
+  with ordLoopAssum assms show "Infimum(r,B) \<in> L\<^sup>+" 
+    using inf_geq_lo_bnd nonneg_definition
+    unfolding IsAnOrdLoop_def IsPartOrder_def by simp
 qed
 
 subsection\<open>Completness vs Archimedean property\<close>

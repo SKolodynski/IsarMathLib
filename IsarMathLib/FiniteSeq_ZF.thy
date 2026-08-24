@@ -1001,7 +1001,39 @@ proof -
     by simp
 qed
 
-text\<open>An induction theorem for lists.\<close>
+text\<open>An induction theorem for lists. Recall that an empty list
+  is a function whose domain is the empty set, hence it's just the empty set.\<close>
+
+lemma list_induct0: 
+  assumes "P(\<emptyset>)" "d \<in> Lists(X)" and "\<forall>b\<in>Lists(X). P(b)\<longrightarrow>(\<forall>x\<in>X. P(Append(b,x)))"
+  shows "P(d)"
+proof -
+  { fix n 
+    assume "n\<in>nat"
+    moreover from assms(1) have "\<forall>b\<in>\<emptyset>\<rightarrow>X. P(b)" by simp 
+    moreover have "\<forall>k\<in>nat. ((\<forall>b\<in>k\<rightarrow>X. P(b)) \<longrightarrow> (\<forall>c\<in>succ(k)\<rightarrow>X. P(c)))"
+    proof -
+      { fix k assume "k \<in> nat" assume "\<forall>b\<in>k\<rightarrow>X. P(b)"
+        have "\<forall>c\<in>succ(k)\<rightarrow>X. P(c)"
+        proof
+          fix c assume "c: succ(k)\<rightarrow>X"
+          let ?b = "Init(c)"
+          let ?x = "c`(k)"
+          from assms(3) \<open>k\<in>nat\<close> \<open>c: succ(k)\<rightarrow>X\<close> \<open>\<forall>b\<in>k\<rightarrow>X. P(b)\<close>
+          have "\<forall>x\<in>X. P(Append(?b,x))" using init_props unfolding Lists_def 
+            by auto
+          with \<open>c: succ(k)\<rightarrow>X\<close> have "P(Append(?b,?x))" using apply_funtype 
+            by simp 
+          with \<open>k \<in> nat\<close> \<open>c: succ(k)\<rightarrow>X\<close> show "P(c)"
+            using init_props by simp 
+        qed
+      } thus ?thesis by simp 
+    qed
+    ultimately have "\<forall>b\<in>n\<rightarrow>X. P(b)" by (rule ind_on_nat)
+  } with assms(2) show ?thesis using Lists_def by auto 
+qed 
+
+text\<open>An induction theorem for non-empty lists.\<close>
 
 lemma list_induct: assumes A1: "\<forall>b\<in>1\<rightarrow>X. P(b)" and 
   A2: "\<forall>b\<in>NELists(X). P(b) \<longrightarrow> (\<forall>x\<in>X. P(Append(b,x)))" and
@@ -1333,6 +1365,36 @@ lemma chain_props: assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)"
   shows "c \<in> (n #+ 1)\<rightarrow>X" "c`(0) = x" "c`(n) = y" "x\<in>X" "y\<in>X"
   using assms succ_add_one(6) nat_less_add_one(2) apply_funtype
   unfolding Chains_def by auto
+
+text\<open>If $x,y$ are elements of $X$, then the set of two pairs 
+  $\{ \langle 0,x\rangle \langle 1,y\rangle\}$ is a chain in $X$ of length 1 that
+  connects $x$ and $y$, hence the set of chains with nonzero length connecting
+  $x$ and $y$ is non empty.\<close>
+
+lemma chains_nempty: assumes "x\<in>X" and "y\<in>X" 
+  shows 
+    "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>} \<in> Chains(X,1,x,y)"
+    "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}`(0) = x"
+    "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}`(1) = y"
+    "(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))\<noteq>\<emptyset>"
+proof -
+  let ?c = "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}"
+  have  
+    I: "{\<langle>0,x\<rangle>}\<union>{\<langle>1,y\<rangle>} = ?c" "{0}\<union>{1} = {0,1}" "X\<union>X = X" "{0,1} = 1 #+ 1"
+    and "1\<in>nat" "1\<noteq>0" "{0,1} = 1 #+ 1"
+    by auto  
+  from assms have "{\<langle>0,x\<rangle>}:{0}\<rightarrow>X" "{\<langle>1,y\<rangle>}:{1}\<rightarrow>X" "{0}\<inter>{1} = \<emptyset>"
+    using pair_func_singleton by auto
+  then have "({\<langle>0,x\<rangle>}\<union>{\<langle>1,y\<rangle>}): {0}\<union>{1} \<rightarrow> X\<union>X" by (rule fun_disjoint_Un)
+  with I have "?c: (1 #+ 1)\<rightarrow>X" by simp
+  have "({\<langle>0,x\<rangle>}\<union>{\<langle>1,y\<rangle>})`(0) = {\<langle>0,x\<rangle>}`(0)" and
+    "({\<langle>0,x\<rangle>}\<union>{\<langle>1,y\<rangle>})`(1) = {\<langle>1,y\<rangle>}`(1)"
+    using fun_disjoint_apply1 fun_disjoint_apply2 by simp_all
+  with \<open>{\<langle>0,x\<rangle>}\<union>{\<langle>1,y\<rangle>} = {\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}\<close> \<open>?c: (1 #+ 1)\<rightarrow>X\<close> \<open>1\<in>nat\<close> \<open>1\<noteq>0\<close>
+  show "?c`(0) = x" and "?c`(1) = y" "?c \<in> Chains(X,1,x,y)" and
+    "(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))\<noteq>\<emptyset>"
+    using pair_val unfolding Chains_def by auto  
+qed
 
 text\<open>One operation that we can do on a chain $x=c_0,c_1,...,c_n=y$ is converting it
   to a list of pairs $\langle c_i, c_{i+1}\rangle, 0 \leq i < n$. 

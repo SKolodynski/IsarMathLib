@@ -113,6 +113,7 @@ namespace iml
                  ("\\<hookleftarrow>", "\\hookleftarrow ")
                  ("\\<int>", "\\mathbb{Z} ")
                  ("\\<real>", "\\mathbb{R} ")
+                 ("\\<nat>", "\\mathbb{N} ")
                  ("\\<inter>", "\\cap ")
                  ("\\<Inter>", "\\bigcap ")
                  ("\\<lambda>", "\\lambda ")

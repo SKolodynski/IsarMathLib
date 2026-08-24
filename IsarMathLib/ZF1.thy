@@ -654,7 +654,11 @@ text\<open>If $z$ is a pair, then the cartesian product of the singletons of its
 lemma pair_prod: assumes "z = \<langle>x,y\<rangle>" shows "{x}\<times>{y} = {z}"
   using assms by blast
 
+text\<open>If sets $A,B$ are nonempty then the set $\{b(x,y). \langle x,y\rangle \in A\times B\}$
+  is also nonempty.\<close>
 
+lemma cart_prod_nempty: assumes "A\<noteq>\<emptyset>" "B\<noteq>\<emptyset>" shows "{b(x,y). \<langle>x,y\<rangle> \<in> A\<times>B} \<noteq> \<emptyset>"
+  using assms by auto
 
 end
 

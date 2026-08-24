@@ -1794,7 +1794,7 @@ lemma (in group3) OrderedGroup_ZF_2_L6:
     IsAnOrdGroup_def IsPartOrder_def func1_1_L15A
   by auto
 
-text\<open>Assumptions of the  \<open>group3\<close> locale hold in the \<open>loop1\<close> locale.\<close>
+text\<open>Assumptions of the  \<open>loop1\<close> locale hold in the \<open>group3\<close> locale.\<close>
 
 lemma (in group3) loop1_valid_in_group3: shows "loop1(G,P,r)"
 proof

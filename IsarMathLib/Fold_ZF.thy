@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2007-2023  Slawomir Kolodynski
+    Copyright (C) 2007-2026  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -370,6 +370,34 @@ proof -
   with assms show ?thesis
     using last_tail_last fold_seq_detach_first unfolding Fold_def
     by simp
+qed
+
+text\<open>If a set $A\subseteq X$ is closed under a binary operation on $X$ then the result of folding 
+  a list valued in $A$ starting from an element of $A$ is a member of $A$.\<close>
+
+lemma fold_in_op_closed: 
+  assumes "n\<in>nat" "f:X\<times>X\<rightarrow>X"  "s:n\<rightarrow>A" "A\<subseteq>X" "x\<in>A" and 
+    "A {is closed under} f"
+  shows "Fold(f,x,s) \<in> A"
+proof -
+  from assms(4,5) have "x\<in>X" and "X\<noteq>\<emptyset>" by auto
+  with assms(2,3,5) have "Fold(f,x,\<emptyset>)\<in>A" using fold_empty
+    by simp
+  from assms(1,3) have "s\<in>Lists(A)" unfolding Lists_def
+    by auto
+  { fix b assume "b\<in>Lists(A)" and "Fold(f,x,b) \<in> A"
+    from \<open>b\<in>Lists(A)\<close> obtain k where "k\<in>nat" and "b:k\<rightarrow>A"
+      unfolding Lists_def by auto
+    from assms(4) \<open>b:k\<rightarrow>A\<close> have "b:k\<rightarrow>X" using func1_1_L1B by simp
+    { fix y assume "y\<in>A"
+      with assms(2,4,5,6) \<open>x\<in>X\<close> \<open>k\<in>nat\<close> \<open>b:k\<rightarrow>X\<close> \<open>Fold(f,x,b)\<in>A\<close> 
+      have "Fold(f,x,Append(b,y)) \<in> A"
+      using fold_append(2) unfolding IsOpClosed_def by auto
+    } hence "\<forall>y\<in>A. Fold(f,x,Append(b,y))\<in>A" by simp
+  } hence "\<forall>b\<in>Lists(A). (Fold(f,x,b) \<in> A) \<longrightarrow> (\<forall>y\<in>A. Fold(f,x,Append(b,y))\<in>A)"
+    by simp
+  with \<open>Fold(f,x,\<emptyset>)\<in>A\<close> \<open>s\<in>Lists(A)\<close> show "Fold(f,x,s) \<in> A"
+    by (rule list_induct0)
 qed
 
 end

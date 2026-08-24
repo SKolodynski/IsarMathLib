@@ -160,12 +160,6 @@ sublocale reals < field1 Reals Add Mul realadd realminus realsub realmul zero on
   realsq listsum nat_mult listprod pow ROrd lesseq sless abs positiveset nonnegative
   using field1_is_valid by auto
 
-text\<open>Since real numbers with addition form a group we can use the theorems proven in the  \<open>group0\<close> 
-  locale defined in the \<open>Group_ZF\<close> theory in the \<open>reals\<close> locale. \<close>
-
-sublocale reals < group0 Reals Add zero realadd realminus listsum nat_mult
-  unfolding group3_def using OrderedGroup_ZF_1_L1 by auto
-
 text\<open>Let's recall basic properties of the real line. \<close>
 
 lemma (in reals) basic_props: shows  "ROrd {is total on} \<real>" and "Add {is commutative on} \<real>"
@@ -243,7 +237,7 @@ lemma (in reals) pmetric_space_valid: shows "pmetric_space(\<real>,Add, ROrd,dis
   using reals_loop dist_is_metric(8) 
   by blast 
 
-text\<open> The assumptions of the \<open>metric_space\<close> locale hold in the \<open>reals\<close> locale. \<close>
+text\<open>The assumptions of the \<open>metric_space\<close> locale hold in the \<open>reals\<close> locale.\<close>
 
 lemma (in reals) metric_space_valid: shows "metric_space(\<real>,Add, ROrd,dist,\<real>)"
 proof -
@@ -327,18 +321,23 @@ lemma (in reals) nonneg_reals_bound_below: assumes "A\<subseteq>\<real>\<^sup>+"
   using assms loop1_valid_in_group3 loop1.nonnegative_bounded_below 
   by simp
 
-text\<open>Each nonempty set of nonnegative numbers is bounded below, hence has an infimum.\<close>
+text\<open>Each nonempty set of nonnegative numbers has an infimum which is nonnegative.\<close>
 
-lemma (in reals) nonnegative_have_inf: assumes "A\<noteq>\<emptyset>" "A\<subseteq>\<real>\<^sup>+"
-  shows "HasAnInfimum(ROrd,A)" 
-  using assms nonneg_reals_bound_below bounded_below_has_inf by simp
+lemma (in reals) nneg_has_nneg_inf: assumes "A\<noteq>\<emptyset>" "A\<subseteq>\<real>\<^sup>+"
+  shows "A {has an infimum}" and "inf(A) \<in> \<real>\<^sup>+"
+proof -
+  from assms show "A {has an infimum}" 
+    using nonneg_reals_bound_below bounded_below_has_inf by simp
+  with assms(2) show "inf(A) \<in> \<real>\<^sup>+"
+    using loop1_valid_in_group3 loop1.inf_nonneg_nonneg by simp
+qed
 
 text\<open>For sets that are bounded below we have $\inf(A+B) = (\inf A) + (\inf B)$
   This is an ordered loop property, we bring it here via ordered groups.\<close>
 
 theorem (in reals) inf_sum_sum_inf: 
   assumes "A\<noteq>\<emptyset>" "IsBoundedBelow(A,ROrd)" "B\<noteq>\<emptyset>" "IsBoundedBelow(B,ROrd)"
-  shows "HasAnInfimum(ROrd,{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
+  shows "{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B} {has an infimum}" and
     "inf(A) \<ra> inf(B) = inf({x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
   using assms bounded_below_has_inf 
     loop1_valid_in_group3 loop1.ordloop_inf_sum_sum_inf by simp_all
@@ -348,7 +347,7 @@ text\<open>For sets that are bounded above we have $\sup(A+B) = (\sup A) + (\inf
 
 theorem (in reals) sup_sum_sum_sup: 
   assumes "A\<noteq>\<emptyset>" "IsBoundedAbove(A,ROrd)" "B\<noteq>\<emptyset>" "IsBoundedAbove(B,ROrd)"
-  shows "HasAsupremum(ROrd,{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
+  shows "{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B} {has a supremum}" and
     "sup(A) \<ra> sup(B) = sup({x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
   using assms bounded_above_has_sup 
     loop1_valid_in_group3 loop1.ordloop_sup_sum_sum_sup by simp_all
@@ -357,7 +356,7 @@ text\<open>In particular $\inf(A+B) = (\inf A) + (\inf B)$ holds for subsets of 
 
 corollary (in reals) nonneg_inf_sum_inf: 
   assumes "A\<noteq>\<emptyset>" "A\<subseteq>\<real>\<^sup>+" "B\<noteq>\<emptyset>" "B\<subseteq>\<real>\<^sup>+"
-  shows "HasAnInfimum(ROrd,{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})" and
+  shows "{x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B} {has an infimum}" and
     "inf(A) \<ra> inf(B) = inf({x\<ra>y. \<langle>x,y\<rangle> \<in> A\<times>B})"
   using assms nonneg_reals_bound_below inf_sum_sum_inf by simp_all
 
@@ -365,7 +364,7 @@ text\<open>In the context of real numbers having an infimum is the same as being
   below.\<close>
 
 lemma (in reals) has_inf_is_nempty_bb: 
-  shows "HasAnInfimum(ROrd,A) \<longleftrightarrow> A\<noteq>\<emptyset> \<and> IsBoundedBelow(A,ROrd)"
+  shows "A {has an infimum} \<longleftrightarrow> A\<noteq>\<emptyset> \<and> IsBoundedBelow(A,ROrd)"
   using linord set_inf_not_empty has_inf_bounded_below bounded_below_has_inf
   unfolding IsLinOrder_def by auto
 
@@ -373,7 +372,7 @@ text\<open>In the context of real numbers having a supremum is the same as being
   above.\<close>
 
 lemma (in reals) has_sup_is_nempty_ba:
-  shows "HasAsupremum(ROrd,A) \<longleftrightarrow> A\<noteq>\<emptyset> \<and> IsBoundedAbove(A,ROrd)"
+  shows "A {has a supremum} \<longleftrightarrow> A\<noteq>\<emptyset> \<and> IsBoundedAbove(A,ROrd)"
   using linord set_sup_not_empty has_sup_bounded_above bounded_above_has_sup
   unfolding IsLinOrder_def by auto
 

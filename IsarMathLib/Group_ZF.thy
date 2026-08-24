@@ -124,13 +124,11 @@ lemma (in group0) group0_2_L2:
   shows "\<one>\<in>G \<and> (\<forall>g\<in>G.(\<one>\<cdot>g = g \<and> g\<cdot>\<one> = g))"
   using group0_2_L1 monoid.unit_is_neutral by simp
 
-
-text\<open>A technical lemma that $1$ is in the set.\<close>
+text\<open>A technical lemma that $1$ is an element of the group.\<close>
 
 lemma (in group0) group0_2_L2_1: 
   shows "\<one>\<in>G"
   using group0_2_L2 by simp
-
 
 text\<open>A technical lemma that $1$ is left unital.\<close>
 
@@ -138,7 +136,6 @@ lemma (in group0) group0_2_L2_2:
   assumes "g\<in>G"
   shows "\<one>\<cdot>g = g"
   using group0_2_L2 assms by simp
-
 
 text\<open>A technical lemma that $1$ is right unital.\<close>
 

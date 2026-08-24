@@ -2,7 +2,7 @@
     This file is a part of IsarMathLib - 
     a library of formalized mathematics for Isabelle/Isar.
 
-    Copyright (C) 2025  Slawomir Kolodynski
+    Copyright (C) 2025, 2026  Slawomir Kolodynski
 
     This program is free software; Redistribution and use in source and binary forms, 
     with or without modification, are permitted provided that the following conditions are met:
@@ -37,8 +37,8 @@ begin
 text\<open>In the \<open>MetricSpace_ZF\<close> we show how a single (ordered loop valued) pseudometric
   defines a uniformity. In this theory we extend this to the situation where we have
   an arbitrary collection of pseudometrics, all defined on the same set $X$ and valued
-  in an ordered loop $L$. Since real numbers form an ordered loop all results proven in
-  this theory are true for the standard real-valued pseudometrics. \<close>
+  in an ordered loop $L$. Since real numbers with addition form an ordered loop all 
+  results proven in this theory are true for the standard real-valued pseudometrics.\<close>
 
 subsection\<open>Uniformity defined by a collection of pseudometrics\<close>
 
@@ -919,4 +919,5 @@ theorem div3_seq_base:
   using assms div3_seq_base_1st_cond div3_seq_base_2_3_4_conds
     div3_seq_base_5_and_6th_cond
   unfolding IsUniformityBaseOn_def by simp
+
 end

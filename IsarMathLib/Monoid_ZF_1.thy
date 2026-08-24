@@ -393,11 +393,11 @@ subsection\<open>Chains weighted in a monoid\<close>
 text\<open>In the \<open>FiniteSeq_ZF\<close> theory we define the notions of \<open>chains\<close>, which are essentially 
   lists of points of some set $X$ and their \<open>chain links\<close>, which are lists of 
   elements of $X\times X$.
-  Here we consider what happens when the chain intervals are composed with a function valued 
-  in a monoid.\<close>
+  Here we consider what happens when the the lists of chain links are composed with a 
+  function valued in a monoid.\<close>
 
 text\<open>For a chain $c$ and a weight function $w:X\times X\rightarrow G$ we define
-  the chain weight as the sum of its intervals composed with $w$.\<close>
+  the chain weight as the sum its list of links composed with $w$.\<close>
 
 definition (in monoid1) ChainWeight where
   "ChainWeight(w,c) \<equiv> \<Sum> (w O ChainLinks(c))"
