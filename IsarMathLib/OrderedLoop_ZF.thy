@@ -542,6 +542,23 @@ proof -
     unfolding IsAnOrdLoop_def IsPartOrder_def by simp
 qed
 
+text\<open>If $0$ is an element of a subset of nonnegative elements, then that
+  subset has a minimum and infimum, both equal to $0$.\<close>
+
+lemma (in loop1) zero_subset_nneg: assumes "B\<subseteq>L\<^sup>+" "\<zero>\<in>B"
+  shows 
+    "HasAminimum(r,B)" "Minimum(r,B) = \<zero>" and
+    "HasAnInfimum(r,B)" "Infimum(r,B) = \<zero>"
+proof -
+  from assms(1) have "\<forall>x\<in>B. \<zero>\<lsq>x"
+    using nonneg_definition by auto
+  with ordLoopAssum assms show
+    "HasAminimum(r,B)" "Minimum(r,B) = \<zero>" and
+    "HasAnInfimum(r,B)" "Infimum(r,B) = \<zero>"
+    using Order_ZF_4_L15 min_is_inf 
+    unfolding IsAnOrdLoop_def IsPartOrder_def by simp_all
+qed
+
 subsection\<open>Completness vs Archimedean property\<close>
 
 text\<open>For ordered fields the completeness of the order implies the Archimedean property:

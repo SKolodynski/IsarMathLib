@@ -1376,7 +1376,7 @@ lemma chains_nempty: assumes "x\<in>X" and "y\<in>X"
     "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>} \<in> Chains(X,1,x,y)"
     "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}`(0) = x"
     "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}`(1) = y"
-    "(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))\<noteq>\<emptyset>"
+    "(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y)) \<noteq> \<emptyset>"
 proof -
   let ?c = "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}"
   have  
@@ -1419,6 +1419,25 @@ lemma chain_links_val: assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)" "k\<in>n"
   using assms chain_links_fun(1) ZF_fun_from_tot_val1 
   unfolding ChainLinks_def by simp
 
+text\<open>Some properties of the simplest possible chain with only one link connecting
+  $x,y\in X$: it's a list with one element and its only value is the pair $\langle x,y\rangle$.\<close>
+
+lemma one_link_props: assumes "x\<in>X" and "y\<in>X"
+  shows "ChainLinks({\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}): {0}\<rightarrow>X\<times>X" and 
+    "ChainLinks({\<langle>0,x\<rangle>,\<langle>1,y\<rangle>})`(0) = \<langle>x,y\<rangle>"
+proof -
+  let ?c = "{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}"
+  have "1={0}" and "1\<in>nat" by auto
+  hence "{0}\<in>nat" and "0\<in>{0}" by auto
+  from assms have "?c \<in> Chains(X,1,x,y)" using chains_nempty(1) 
+    by simp
+  with \<open>1={0}\<close> show "ChainLinks(?c): {0}\<rightarrow>X\<times>X" 
+    using chain_links_fun(2) by force
+  from assms \<open>{0}\<in>nat\<close> \<open>1={0}\<close> \<open>?c \<in> Chains(X,1,x,y)\<close> show 
+    "ChainLinks(?c)`(0) = \<langle>x,y\<rangle>" 
+    using chain_links_val chains_nempty(2,3) by simp
+qed
+  
 text\<open>If $c$ is a chain in $X$ connecting $x$ and $y$ of a non-zero length $n$ 
   then the first component of the first element of the derived chain links
   is $x$ and the second component of the last element of the derived chain links is equal 

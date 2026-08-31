@@ -247,7 +247,7 @@ proof -
     by simp
 qed
 
-text\<open>The sum of a singleton list is its only element,\<close>
+text\<open>The sum of a singleton list is its only element.\<close>
 
 lemma (in monoid1) seq_sum_singleton: assumes "q(0) \<in> G"
   shows "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>1}) = q(0)"
@@ -257,6 +257,18 @@ proof -
     "(\<Sum>{\<langle>k,q(k)\<rangle>. k\<in>0 #+ 1}) = q(0) \<oplus> (\<Sum>{\<langle>k,q(k #+ 1)\<rangle>. k\<in>0})"
     by (rule seq_sum_pull_one_elem)
   with assms show ?thesis using sum_empty unit_is_neutral by simp
+qed
+
+text\<open>The sum of a singleton list is its only element, a form where the singleton 
+  is given explicitly as a list with one element:\<close>
+
+lemma (in monoid1) seq_sum_singleton1: assumes "s:{0}\<rightarrow>G"
+  shows "(\<Sum>s) = s`(0)"
+proof -
+  from assms have "1={0}" and "(\<Sum>{\<langle>i,s`(0)\<rangle>. i\<in>1}) = s`(0)"
+    using apply_funtype seq_sum_singleton by auto
+  with assms show "(\<Sum>s) = s`(0)"
+    using fun_is_set_of_pairs by force
 qed
 
 text\<open>If the monoid operation is commutative, then the sum of a nonempty sequence
@@ -465,6 +477,19 @@ proof -
   with assms show ?thesis 
     using chain_weight_type chain_concat_weight unit_is_neutral 
     by simp
+qed
+
+text\<open>The weight of a chain with one link connecting $x,y\in X$ is the value of the 
+  weight function at $\langle x, y\rangle$.\<close>
+
+lemma (in monoid1) weight_one_link: assumes "x\<in>X" "y\<in>X" "w:X\<times>X\<rightarrow>G"
+  shows "ChainWeight(w,{\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}) = w`\<langle>x,y\<rangle>"
+proof - 
+  from assms(1,2) have "ChainLinks({\<langle>0,x\<rangle>,\<langle>1,y\<rangle>}):{0}\<rightarrow>X\<times>X" 
+    using one_link_props(1) by simp
+  with assms show ?thesis
+    using comp_fun seq_sum_singleton1 comp_fun_apply one_link_props(2)
+    unfolding ChainWeight_def by simp
 qed
 
 end

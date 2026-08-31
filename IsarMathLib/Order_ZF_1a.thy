@@ -265,7 +265,7 @@ lemma Order_ZF_4_L13:
   using assms Order_ZF_4_L3 by simp
 
 text\<open>If an element belongs to a set and is greater or equal
-  than all elements of that set, then it is the maximum of that set.\<close>
+  than all elements of that set, then the set has a maximum equal to that element.\<close>
 
 lemma Order_ZF_4_L14: 
   assumes A1: "antisym(r)" and A2: "M \<in> A" and 
@@ -284,14 +284,14 @@ proof -
 qed
 
 text\<open>If $r$ is antisymmeric, an element belongs to a set and is less or equal
-  than all elements of that set, then it is the minimum of that set.\<close>
+  than all elements of that set, then the set has a minimum equal to that element.\<close>
 
 lemma Order_ZF_4_L15: 
   assumes A1: "antisym(r)" and A2: "m\<in>A" and 
   A3: "\<forall>a\<in>A. \<langle>m,a\<rangle> \<in> r"
-  shows "Minimum(r,A) = m"
+  shows "HasAminimum(r,A)" and "Minimum(r,A) = m"
 proof -
-  from A2 A3 have I: "HasAminimum(r,A)" using HasAminimum_def
+  from A2 A3 show I: "HasAminimum(r,A)" using HasAminimum_def
     by auto
   with A1 have "\<exists>!m. m\<in>A \<and> (\<forall>x\<in>A. \<langle>m,x\<rangle> \<in> r)"
     using Order_ZF_4_L2 by simp
@@ -464,8 +464,8 @@ proof -
     by auto
 qed
 
-text\<open>If a set does not have a maximum, then for any its element we can
-  find one that is (strictly) greater.\<close>
+text\<open>For a total and antisymmetric relation if a set does not have a maximum, 
+  then for any its element we can find one that is (strictly) greater.\<close>
 
 lemma Order_ZF_4_L16: 
   assumes A1: "antisym(r)" and A2: "r {is total on} X" and 
@@ -649,7 +649,7 @@ proof -
     by (rule Order_ZF_5_L5)
 qed
 
-text\<open>Another version of \<open>Order_ZF_5_L6\<close> that: if a set has a maximum then it has a supremum and 
+text\<open>Another version of \<open>Order_ZF_5_L6\<close>: if a set has a maximum then it has a supremum and 
   the maximum is the supremum. \<close>
 
 lemma max_is_sup: assumes "antisym(r)" "HasAmaximum(r,A)"
@@ -747,7 +747,7 @@ proof -
 qed
 
 text\<open>If a set has a infimum and that infimum is a member of the set, then
-  it has a mimimum and the mminimum is that infimum.\<close>
+  it has a mimimum and the minimum is that infimum.\<close>
 
 lemma inf_is_min: 
   assumes "antisym(r)" "HasAnInfimum(r,A)" "Infimum(r,A) \<in> A"

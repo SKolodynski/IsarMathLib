@@ -87,6 +87,13 @@ proof -
     unfolding RChainWeight_def by simp
 qed
 
+text\<open>If the weight function is nonnegative then the set of weights of all nontrivial chains 
+  in $X$ connecting $x$ and $y$ is contained in nonnegative reals.\<close>
+
+corollary (in reals) chain_weights_nonneg: assumes "w:X\<times>X\<rightarrow>\<real>\<^sup>+"
+  shows "{RChainWeight(w,c). c\<in>(\<Union>n\<in>\<nat>\<^sub>1. Chains(X,n,x,y))} \<subseteq> \<real>\<^sup>+"
+  using assms chain_weight_nonneg by auto
+
 text\<open>The \<open>chain_concat_weight1\<close> lemma from the \<open>monoid1\<close> context 
   rewritten using notation used in the \<open>reals\<close> context.\<close>
 
@@ -147,6 +154,26 @@ proof -
     using nneg_has_nneg_inf(1) inf_incl_mono by simp
   with \<open>?W\<^sub>1\<noteq>\<emptyset>\<close> \<open>?W\<^sub>1\<subseteq>\<real>\<^sup>+\<close> \<open>?W\<^sub>2\<noteq>\<emptyset>\<close> \<open>?W\<^sub>2\<subseteq>\<real>\<^sup>+\<close> show ?thesis
     using nonneg_inf_sum_inf(2) unfolding ChainDist_def by simp
+qed
+
+text\<open>If the weight function vanishes on the diagonal then the chain distance
+  from $x\in X$ to $x$ is zero.\<close>
+
+lemma (in reals) chain_dist_self_zero: 
+  assumes "x\<in>X" "w:X\<times>X\<rightarrow>\<real>\<^sup>+" "w`\<langle>x,x\<rangle> = \<zero>"
+  shows "ChainDist(X,w,x,x) = \<zero>"
+proof -
+  let ?c = "{\<langle>0,x\<rangle>,\<langle>1,x\<rangle>}"
+  from assms(1) have I: "?c \<in> (\<Union>n\<in>\<nat>\<^sub>1. Chains(X,n,x,x))"
+    using chains_nempty(1) by auto  
+  from assms have "RChainWeight(w,?c) = \<zero>"
+    using OrderedGroup_ZF_1_L4E func1_1_L1B 
+      add_group.monoid1_valid_in_group monoid1.weight_one_link
+    unfolding RChainWeight_def by simp
+  with I have "\<zero>\<in>{RChainWeight(w,c). c\<in>(\<Union>n\<in>\<nat>\<^sub>1. Chains(X,n,x,x))}" by blast
+  with assms(2) show "ChainDist(X,w,x,x) = \<zero>"
+    using chain_weights_nonneg loop1_valid_in_group3 loop1.zero_subset_nneg(4)
+    unfolding ChainDist_def by simp
 qed
   
 subsection\<open>Metrization lemma\<close>
