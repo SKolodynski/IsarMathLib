@@ -126,7 +126,7 @@ text\<open>If two meta-functions are the same on a cartesian product,
   then the subsets defined by them are the same. 
   This is similar to \<open>ZF1_1_L4\<close>, except that
   the set definition varies over \<open>p\<in>X\<times>Y\<close> rather than 
-  \<open>\<langle> x,y\<rangle>\<in>X\<times>Y\<close>.\<close>
+  \<open>\<langle>x,y\<rangle>\<in>X\<times>Y\<close>.\<close>
 
 lemma ZF1_1_L4A: assumes A1: "\<forall>x\<in>X.\<forall>y\<in>Y. a(\<langle>x,y\<rangle>) = b(x,y)"
   shows "{a(p). p \<in> X\<times>Y} = {b(x,y). \<langle>x,y\<rangle> \<in> X\<times>Y}"

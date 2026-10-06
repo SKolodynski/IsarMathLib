@@ -104,6 +104,11 @@ text\<open>If lists are modeled as finite sequences (i.e. functions on natural
 definition
   "Last(a) \<equiv> a`(pred(domain(a)))"
 
+text\<open>\<open>Reverse\<close> flips a list to count from the last element to the first.\<close>
+
+definition
+  "Reverse(a) = {\<langle>k,a`(pred(domain(a)) #- k)\<rangle>. k\<in>domain(a)}"
+
 text\<open>A formula for tail of a finite list.\<close>
 
 lemma tail_as_set: assumes "n \<in> nat" and "a: n #+ 1 \<rightarrow> X"
@@ -433,6 +438,55 @@ proof -
     } thus "\<forall>k\<in>succ(n). a`(k) = ?b`(k)" by simp
   qed
   with assms(2) show ?thesis by (rule func_eq)
+qed
+
+text\<open>Reverse of a list is a list of the same length.\<close>
+
+lemma rev_list: assumes "n\<in>nat" "a:n\<rightarrow>X"
+  shows "Reverse(a): n \<rightarrow> X"
+  using assms flip_nat_nat(2) apply_funtype ZF_fun_from_total func1_1_L1
+  unfolding Reverse_def by simp
+
+text\<open>The value of the reverse of a list at $k\in n$ is the value of the list at 
+   $n-1-k$.\<close>
+
+lemma rev_list_val: assumes "a:n\<rightarrow>X" "k\<in>n"
+  shows "Reverse(a)`(k) = a`(pred(n) #- k)" 
+  using assms func1_1_L1 ZF_fun_from_tot_val1
+  unfolding Reverse_def by simp
+
+text\<open>Reverse of reverse of a list is the same list.\<close>
+
+lemma rev_involution: assumes "n\<in>nat" "a:n\<rightarrow>X"
+  shows "Reverse(Reverse(a)) = a"
+proof -
+  let ?b = "Reverse(a)"
+  from assms(1,2) have "?b:n\<rightarrow>X" and "Reverse(?b):n\<rightarrow>X" 
+    using rev_list by simp_all
+  from assms \<open>?b:n\<rightarrow>X\<close> have "\<forall>k\<in>n. Reverse(?b)`(k) = a`(k)"
+    using flip_nat_nat(2,4) rev_list_val by simp
+  with assms(2) \<open>Reverse(?b):n\<rightarrow>X\<close> show ?thesis
+    using func_eq by blast
+qed
+
+text\<open>Reverse commutes with composition.\<close>
+
+lemma rev_comp_commutes: 
+  assumes "n\<in>nat" "a:n\<rightarrow>X" "w:X\<rightarrow>Y"
+  shows "w O Reverse(a) = Reverse(w O a)"
+proof -
+  from assms(1,2) have "Reverse(a): n \<rightarrow> X"
+    using rev_list by simp
+  with assms(3) have "w O Reverse(a) : n\<rightarrow>Y"
+    using comp_fun by simp
+  from assms have "w O a: n\<rightarrow>Y" and "Reverse(w O a) : n\<rightarrow>Y"
+    using comp_fun rev_list by simp_all
+  from assms(1,2) \<open>Reverse(a): n \<rightarrow> X\<close> \<open>w O a: n\<rightarrow>Y\<close> 
+  have "\<forall>k\<in>n. (w O Reverse(a))`(k) = Reverse(w O a)`(k)"
+    using comp_fun_apply rev_list_val flip_nat_nat(2)
+    by simp
+  with \<open>w O Reverse(a) : n\<rightarrow>Y\<close> \<open>Reverse(w O a) : n\<rightarrow>Y\<close> show ?thesis
+    using func_eq by blast
 qed
 
 text\<open>Properties of \<open>Append\<close>. It is a bit surprising that
@@ -1127,6 +1181,57 @@ proof -
     by (rule ZF_fun_from_tot_val1)
   with assms(2) \<open>k\<in>nat\<close> show ?thesis
     using func1_1_L1 unfolding Prepend_def by simp
+qed
+
+text\<open>Reverse of the result of append is the same as prepend of revers.\<close>
+
+lemma append_reverse: assumes "n\<in>nat" "a:n\<rightarrow>X" "x\<in>X"
+  shows "Reverse(Append(a,x)) = Prepend(Reverse(a),x)"
+proof -
+  from assms have 
+    "Reverse(a):n\<rightarrow>X" "Prepend(Reverse(a),x):(n #+ 1)\<rightarrow>X" and 
+    "Append(a,x):(n #+ 1)\<rightarrow>X" "Reverse(Append(a,x)):(n #+ 1)\<rightarrow>X"
+    using append_props(1) succ_add_one(1) rev_list prepend_props(1)
+      by simp_all
+  { fix k assume "k\<in>(n #+ 1)"
+    with assms(1) \<open>Append(a,x):(n #+ 1)\<rightarrow>X\<close> have "k\<in>nat" and 
+      I: "Reverse(Append(a,x))`(k) = Append(a,x)`(n #- k)"
+      using elem_nat_is_nat(2) rev_list_val by auto 
+    have "k=0 \<or> k\<noteq>0" by auto
+    moreover
+    { assume "k=0"
+      with assms \<open>Append(a,x):(n #+ 1)\<rightarrow>X\<close> \<open>Reverse(a):n\<rightarrow>X\<close> have
+        "Reverse(Append(a,x))`(k)=x" and "Prepend(Reverse(a),x)`(k)=x"
+        using succ_add_one(1) empty_in_every_succ rev_list_val 
+          pred_succ_eq append_props(3) prepend_props(2) by simp_all
+      hence "Reverse(Append(a,x))`(k) = Prepend(Reverse(a),x)`(k)"
+        by simp
+    }
+    moreover
+    { assume "k\<noteq>0"
+      with assms \<open>k\<in>(n #+ 1)\<close> have "(n #- k) \<in> n" and 
+        II: "Append(a,x)`(n #- k) = a`(n #- k)"
+        using subtract_non_zero append_props(2) by simp_all
+      from \<open>k\<noteq>0\<close> \<open>k\<in>nat\<close> obtain m where "m\<in>nat" and "k = m #+ 1"
+        using nat_not0_succ by auto
+      with assms(1) \<open>k\<in>(n #+ 1)\<close> have "m\<in>n" and "m = pred(k)" 
+        using succ_mem by simp_all
+      with assms \<open>Reverse(a):n\<rightarrow>X\<close> have 
+        "Prepend(Reverse(a),x)`(m #+ 1) = a`(pred(n) #- pred(k))"
+        using prepend_val rev_list_val by simp
+      with assms(1) \<open>(n #- k) \<in> n\<close> \<open>k\<in>nat\<close> \<open>k\<noteq>0\<close> have
+        "Prepend(Reverse(a),x)`(m #+ 1) = a`(n #- k)"
+        using non_zero_pred_diff by force
+      with I II \<open>k = m #+ 1\<close> have
+        "Reverse(Append(a,x))`(k) = Prepend(Reverse(a),x)`(k)"
+        by simp
+    }
+    ultimately have "Reverse(Append(a,x))`(k) = Prepend(Reverse(a),x)`(k)"
+      by auto
+  } hence "\<forall>k\<in>(n #+ 1). Reverse(Append(a,x))`(k) = Prepend(Reverse(a),x)`(k)"
+    by simp
+  with \<open>Reverse(Append(a,x)):(n #+ 1)\<rightarrow>X\<close> \<open>Prepend(Reverse(a),x):(n #+ 1)\<rightarrow>X\<close>
+  show ?thesis by (rule func_eq)
 qed
 
 text\<open>The tail of a list prepended by an element is equal to the list.\<close>

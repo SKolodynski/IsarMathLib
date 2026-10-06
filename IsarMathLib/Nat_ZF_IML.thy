@@ -45,7 +45,7 @@ text\<open>The  ZF set theory constructs natural numbers from the empty set
   the relation "less than" becomes "$\in$".
 \<close>
 
-subsection\<open>Induction\<close>
+subsection\<open>Induction and other basic properties of natural numbers\<close>
 
 text\<open>The induction lemmas in the standard Isabelle's Nat.thy file like 
   for example \<open>nat_induct\<close> require the induction step to 
@@ -150,6 +150,22 @@ lemma empty_in_non_empty: assumes "n\<in>nat" "n\<noteq>0"
   shows "0\<in>n"
   using assms Nat_ZF_1_L3 empty_in_every_succ by auto
 
+text\<open>For a non-zero natural number the successor of the predecessor is that number.\<close>
+
+lemma non_zero_succ_pred: assumes "n\<in>nat" "n\<noteq>0"
+  shows "succ(pred(n)) = n"
+  using assms Nat_ZF_1_L3 pred_succ_eq by force
+
+text\<open>The difference of non-zero natural numbers is the same as the difference of their predecessors.\<close>
+
+lemma non_zero_pred_diff: assumes "n\<in>nat" "n\<noteq>0" "k\<in>nat" "k\<noteq>0"
+  shows "pred(n) #- pred(k) = n #- k" 
+proof -
+  have "pred(n) #- pred(k) = succ(pred(n)) #- succ(pred(k))"
+    using diff_succ_succ by simp
+  with assms show ?thesis using non_zero_succ_pred by simp
+qed
+
 text\<open>If one natural number is less than another then their successors
   are in the same relation.\<close>
 
@@ -225,6 +241,7 @@ proof -
     unfolding lt_def by auto
 qed
 
+
 text\<open>If two natural numbers are different then one of them is less than the other.\<close>
 
 lemma nat_mem_total: assumes "i \<in> nat"  "j \<in> nat" "i\<noteq>j"
@@ -265,16 +282,52 @@ text\<open>A natural number is a subset of the set natural numbers. Weird, but t
 lemma nat_subset_nat: assumes "n\<in>nat" shows "n\<subseteq>nat"
   using assms succ_explained succnat_subset_nat by auto
 
+text\<open>For natural numbers membership and inequality are the same
+  and $k \leq n$ is the same as $k \in \textrm{succ}(n)$. 
+  The proof relies on lemmas in the standard Isabelle's \<open>Nat\<close> and \<open>Ordinal\<close> theories. \<close>
+
+lemma nat_mem_lt: assumes "n\<in>nat" 
+  shows "k<n \<longleftrightarrow> k\<in>n" and "k\<le>n \<longleftrightarrow> k \<in> succ(n)"
+  using assms nat_into_Ord Ord_mem_iff_lt by auto
+
+text\<open>A natural number is is zero or is greater than zero.\<close>
+
+lemma nat_zero_or_pos: assumes "n\<in>nat" shows "n=0 \<or> 0 < n"
+  using assms nat_incl_mem_eq nat_mem_lt(1) by blast
+
+text\<open>If $n,k$ are natural numbers then and $n-k < n$ then $0 < k$.\<close>
+
+corollary subtract_pos: assumes "n\<in>nat" "k\<in>nat" "n #- k < n" shows "0 < k"
+  using assms nat_zero_or_pos by force
+
 text\<open>Element $k$ of a natural number $n$ is a natural number that is smaller than $n$.\<close>
 
-lemma elem_nat_is_nat: assumes A1: "n \<in> nat"  and A2: "k\<in>n"
+lemma elem_nat_is_nat: assumes "n \<in> nat" and "k\<in>n"
   shows "k < n"  "k \<in> nat"  "k \<le> n"  "\<langle>k,n\<rangle> \<in> Le"
 proof -
-  from A1 A2 show "k < n" using nat_into_Ord lt_def by simp
-  with A1 show "k \<in> nat" using lt_nat_in_nat by simp
+  from assms(1,2) show "k < n" using nat_into_Ord lt_def by simp
+  with assms(1) show "k \<in> nat" using lt_nat_in_nat by simp
   from \<open>k < n\<close> show "k \<le> n" using leI by simp
-  with A1 \<open>k \<in> nat\<close> show "\<langle>k,n\<rangle> \<in> Le" using Le_def
+  with assms(1) \<open>k \<in> nat\<close> show "\<langle>k,n\<rangle> \<in> Le" using Le_def
     by simp
+qed
+
+text\<open>If a natural number is nonzero then it is greater than zero.\<close>
+
+lemma non_zero_gt_zero: assumes "n\<in>nat" "n\<noteq>0" shows "0 < n"
+  using assms Nat_ZF_1_L3 empty_in_every_succ nat_mem_lt(1)
+  by auto
+
+text\<open>For a natural number $n$ if $k \in n+1$ (i.e. $k < n+1$ and k non-zero we have $n-k < n$.\<close>
+
+lemma subtract_non_zero: assumes "n\<in>nat" "k \<in> (n #+ 1)" "k\<noteq>0"
+  shows "(n #- k) \<in> n"
+proof -
+  from assms(1,2) have "k \<le> n" using succ_add_one(1) nat_mem_lt(2)
+    by simp
+  with assms have "n #- k < n" 
+    using elem_nat_is_nat(2) non_zero_gt_zero div_termination by blast
+  with assms(1) show "n #- k \<in> n" using nat_mem_lt(1) by simp
 qed
 
 text\<open>A version of \<open>succ_ineq\<close> without a quantifier, with additional assertion
@@ -285,13 +338,6 @@ lemma succ_ineq1:  assumes "n \<in> nat" "i\<in>n"
   using assms succ_ineq succ_add_one(1,7) elem_nat_is_nat(2) 
   by auto
 
-text\<open>For natural numbers membership and inequality are the same
-  and $k \leq n$ is the same as $k \in \textrm{succ}(n)$. 
-  The proof relies on lemmas in the standard Isabelle's \<open>Nat\<close> and \<open>Ordinal\<close> theories. \<close>
-
-lemma nat_mem_lt: assumes "n\<in>nat" 
-  shows "k<n \<longleftrightarrow> k\<in>n" and "k\<le>n \<longleftrightarrow> k \<in> succ(n)"
-  using assms nat_into_Ord Ord_mem_iff_lt by auto
 
 text\<open>If $n$ is a natural number and $k < n$ then $k+1\leq n$.\<close>
 
@@ -303,7 +349,6 @@ proof -
   with assms(1) show "k #+ 1 \<le> n" using nat_mem_lt(2) by auto
 qed
   
-
 text\<open>If $n$ is a natural number and $k\leq n$, then k is a natural number.\<close>
 
 lemma leq_nat_is_nat: assumes "n\<in>nat" "k\<le>n" shows "k\<in>nat"
@@ -462,12 +507,45 @@ qed
 text\<open>For non-zero natural numbers $\textrm{pred}(n) = n-1$.\<close>
 
 lemma pred_minus_one: assumes "n\<in>nat" "n\<noteq>0" 
-  shows "n #- 1 = pred(n)" and "n #- 1 \<in> n"
+  shows "n #- 1 = pred(n)" "n #- 1 \<in> n" "pred(n) < n"
 proof -
   from assms obtain k where "n=succ(k)" 
     using Nat_ZF_1_L3 by blast
   with assms show "n #- 1 = pred(n)" and "n #- 1 \<in> n"
     using pred_succ_eq eq_succ_imp_eq_m1 pred_succ_mem by simp_all
+  with assms(1) show "pred(n) < n" using nat_mem_lt(1) by simp
+qed
+
+text\<open>For natural numbers $x\lsq y$ the difference between $y$ and the difference 
+  between $y$ and $x) is $x$.\<close>
+
+lemma nat_diff_diff: assumes "m\<le>n" "n\<in>nat" shows "n #- (n #- m) = m"
+proof -
+  from assms have "n #- (n #- m) = (m #+ (n #- m)) #- (n #- m)" 
+    using add_diff_inverse by simp
+  with assms show "n #- (n #- m) = m" using leq_nat_is_nat diff_add_inverse2 
+    by simp
+qed
+ 
+text\<open>For a natural number $n$ if $k\in n$ and we subtract $k$ from the predecessor of $n$ 
+  the result is also a member of $n$ i.e. it is less than $n$. Also $k$ is less or equal
+  than the predecessor of $n$ and $k \mapsto \textrm{pred}(n) - k$ is an involution.\<close>
+
+lemma flip_nat_nat: assumes "n\<in>nat" and "k\<in>n"
+  shows "pred(n) #- k < n" "pred(n) #- k \<in> n" "k\<le>pred(n)" and
+    "pred(n) #- (pred(n) #- k) = k"
+proof -
+  from assms(1) have "pred(n) #- k \<le> pred(n)" using diff_le_self by simp
+  with assms show "pred(n) #- k < n"
+    using pred_minus_one(3) lt_trans1 by auto 
+  with assms(1) show "pred(n) #- k \<in> n" using nat_mem_lt
+    by simp
+  from assms obtain m where "m\<in>nat" and "n=succ(m)"
+    using Nat_ZF_1_L3 by auto
+  with assms show "k\<le>pred(n)" 
+    using elem_nat_is_nat(1) leq_mem_succ pred_succ_eq by simp
+  with assms(1) show "pred(n) #- (pred(n) #- k) = k"
+    using nat_diff_diff by simp
 qed
 
 text\<open>For natural numbers if $k\in n$ then $k+1 \subseteq n$.\<close>
@@ -522,7 +600,6 @@ proof -
   } thus "\<forall>k\<in>n #+ 1. P(k)" by simp
   with assms(1) show "P(n)" by simp
 qed
-
 
 subsection\<open>Simplification rules for addition and subtraction of natural numbers\<close>
 

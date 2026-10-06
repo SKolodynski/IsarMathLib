@@ -1828,6 +1828,65 @@ next
   } then show  "Y \<subseteq> (\<Union>x\<in>X. {f`(x)})" by auto
 qed
 
+text\<open>The standard Isabelle/ZF library has a notion of \<open>converse\<close> that takes a set of
+  pairs and flips each one around. Here we introduce a similar concept as a function 
+  on $X\times X$ that takes a pair $\langle x,y\rangle\in X\times X$ and maps it to
+  the pair $\langle y,x\rangle$. As a standard ZF function it is then easier to compose
+  with other functions. Recall that for a pair $p = \langle x,y\rangle$ the expression 
+  \<open>fst(p)\<close> selects $x$ and \<open>snd(p)\<close> selects $y$.\<close>
+
+definition
+  "Converse(X) \<equiv> {\<langle>p,\<langle>snd(p),fst(p)\<rangle>\<rangle>. p\<in>X\<times>X}" 
+
+text\<open>A different form of the converse function that might be more readable.\<close>
+
+lemma converse_def_alt: shows "Converse(X) = {\<langle>\<langle>x,y\<rangle>,\<langle>y,x\<rangle>\<rangle>. \<langle>x,y\<rangle>\<in>X\<times>X}"
+proof -
+  let ?g = "{\<langle>\<langle>x,y\<rangle>,\<langle>y,x\<rangle>\<rangle>. \<langle>x,y\<rangle>\<in>X\<times>X}"
+  { fix x y assume "x\<in>X" "y\<in>X"
+    then have "\<langle>\<langle>x,y\<rangle>,\<langle>snd(\<langle>x,y\<rangle>),fst(\<langle>x,y\<rangle>)\<rangle>\<rangle> = \<langle>\<langle>x,y\<rangle>,\<langle>y,x\<rangle>\<rangle>"
+      by simp
+  } hence "\<forall>x\<in>X.\<forall>y\<in>X. \<langle>\<langle>x,y\<rangle>,\<langle>snd(\<langle>x,y\<rangle>),fst(\<langle>x,y\<rangle>)\<rangle>\<rangle> = \<langle>\<langle>x,y\<rangle>,\<langle>y,x\<rangle>\<rangle>"
+    by simp
+  then have I: "{\<langle>p,\<langle>snd(p),fst(p)\<rangle>\<rangle>. p\<in>X\<times>X} = ?g" by (rule ZF1_1_L4A)
+  then show ?thesis unfolding Converse_def by simp
+qed
+
+text\<open>Reverse on $X$ is a function that maps $X\times X$ into itself.\<close>
+
+lemma converse_fun: shows "Converse(X): X\<times>X\<rightarrow>X\<times>X"
+  using ZF_fun_from_total unfolding Converse_def by simp
+
+text\<open>The value or reverse on a pair $\langle x,y\rangle\in X\times X$ 
+  is the pair $\langle y,x\rangle $.\<close>
+
+lemma converse_val: assumes "x\<in>X" "y\<in>X" 
+  shows "Converse(X)`\<langle>x,y\<rangle> = \<langle>y,x\<rangle>"
+  using assms ZF_fun_from_tot_val1 unfolding Converse_def by simp
+
+text\<open>Relation of our \<open>Reverse\<close> to the standard Isabelle/ZF's \<open>reverse\<close>:
+  the standard reverse of a relation $r\subseteq X\times X$ is the image
+  of $r$ by our reverse function.\<close>
+
+lemma converse_image: assumes "r\<subseteq>X\<times>X" 
+  shows "converse(r) = Converse(X)``(r)"
+proof
+  from assms have I: "Converse(X)``(r) = {Converse(X)`(p). p\<in>r}"
+    using converse_fun func_imagedef by blast
+  { fix q assume "q\<in>converse(r)"
+    let ?p = "\<langle>snd(q),fst(q)\<rangle>"
+    from assms \<open>q\<in>converse(r)\<close> have "?p\<in>r" and "q = Converse(X)`(?p)"
+      using converse_val by auto
+    with I have "q\<in>Converse(X)``(r)" by auto
+  } thus "converse(r) \<subseteq> Converse(X)``(r)" by auto
+  { fix q assume "q \<in> Converse(X)``(r)"
+    with I obtain p where "p\<in>r" and "q = Converse(X)`(p)"
+      by auto
+    with assms have "q\<in>converse(r)" using ZF_fun_from_tot_val1 
+      unfolding Converse_def by auto
+  } thus "Converse(X)``(r) \<subseteq> converse(r)" by auto
+qed
+
 subsection\<open>Functions of two variables\<close>
 
 text\<open>In this section we consider functions whose domain is a cartesian product

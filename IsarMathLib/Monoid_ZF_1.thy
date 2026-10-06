@@ -91,7 +91,7 @@ qed
 text\<open>The reason we start from $0$ in the definition of the summation sign in the \<open>monoid1\<close> locale
   is that we want to be able to sum the empty list. Such sum of the empty list is $0$. \<close>
 
-lemma (in monoid1) sum_empty: assumes "s:0\<rightarrow>G" shows "(\<Sum>s) = \<zero>"
+lemma (in monoid1) sum_empty: assumes "s:\<emptyset>\<rightarrow>G" shows "(\<Sum>s) = \<zero>"
   using assms zero_monoid_oper fold_empty group0_1_L3A by simp
 
 text\<open>For nonempty lists our $\Sigma$ is the same as \<open>Fold1\<close>. \<close>
@@ -191,6 +191,28 @@ proof -
   also from assms(2) II have "... = (\<Sum>s) \<oplus> x"
     using fun_is_set_of_pairs by simp
   finally show "(\<Sum>?q) = (\<Sum>s) \<oplus> x" by simp
+qed
+
+text\<open>If we prepend an element to a list then its sum is equal to the prepended element plus 
+  the sum of the original list.\<close>
+
+lemma (in monoid1) seq_sum_prepend:
+  assumes "n\<in>nat" "s:n\<rightarrow>G" "x\<in>G"
+  shows "(\<Sum>Prepend(s,x)) = x\<oplus>(\<Sum>s)"
+proof -
+  let ?q = "Prepend(s,x)"
+  from assms have I: "?q:(n #+ 1) \<rightarrow> G" and "?q`(0) = x"
+    using prepend_props by simp_all
+  from assms \<open>?q:(n #+ 1) \<rightarrow> G\<close> have 
+    II: "\<forall>k\<in>n #+ 1. ?q`(k)\<in>G" and III: "\<forall>k\<in>n. ?q`(k #+ 1) = s`(k)"
+    using apply_funtype prepend_val by simp_all
+  from \<open>?q:n #+ 1 \<rightarrow> G\<close> have "(\<Sum>?q) = (\<Sum>{\<langle>k,?q`(k)\<rangle>. k\<in>n #+ 1})"
+    using fun_is_set_of_pairs by force
+  also from assms(1) II have "... = ?q`(0)\<oplus>(\<Sum>{\<langle>k,?q`(k #+ 1)\<rangle>. k\<in>n})"
+    using seq_sum_pull_one_elem(1) by simp
+  also from assms(2) \<open>?q`(0) = x\<close> III have "... = x\<oplus>(\<Sum>s)"
+    using fun_is_set_of_pairs by simp
+  finally show "(\<Sum>Prepend(s,x)) = x\<oplus>(\<Sum>s)" by simp
 qed
 
 text\<open>The sum of a nonempty list is the sum of its init plus the last element. \<close>
@@ -324,6 +346,36 @@ proof -
       using sum_comm_distrib0 by simp
   }
   ultimately show ?thesis by blast
+qed
+
+text\<open>In a commutative monoid sum of a list is the same as the sum of the reverse of that list.\<close>
+
+lemma (in monoid1) comm_sum_rev_eq: 
+  assumes "f {is commutative on} G" "s\<in>Lists(G)"
+  shows "(\<Sum>s) = \<Sum>Reverse(s)"
+proof -
+  have "(\<Sum>\<emptyset>) = \<Sum>Reverse(\<emptyset>)" unfolding Reverse_def by simp
+  { fix b assume "b\<in>Lists(G)" "(\<Sum>b) = \<Sum>Reverse(b)"
+    from \<open>b\<in>Lists(G)\<close> obtain n where "n\<in>nat" and "b:n\<rightarrow>G"
+      unfolding Lists_def by auto
+    { fix x assume "x\<in>G"
+      with assms(1) \<open>n\<in>nat\<close> \<open>b:n\<rightarrow>G\<close> have 
+        I: "(\<Sum>b)\<oplus>x = x\<oplus>(\<Sum>b)" "(\<Sum>Append(b,x)) = (\<Sum>b)\<oplus>x" and 
+        "Reverse(b):n\<rightarrow>G" "Reverse(Append(b,x)) = Prepend(Reverse(b),x)"
+        using sum_in_mono1 seq_sum_append rev_list append_reverse
+        unfolding IsCommutative_def by simp_all
+      with \<open>x\<in>G\<close> \<open>n\<in>nat\<close> have 
+        "(\<Sum>Reverse(Append(b,x))) = x\<oplus>(\<Sum>Reverse(b))" 
+        using seq_sum_prepend by simp
+      with \<open>(\<Sum>b) = \<Sum>Reverse(b)\<close> I
+      have "(\<Sum>Append(b,x)) = \<Sum>Reverse(Append(b,x))" by simp
+    } hence "\<forall>x\<in>G. (\<Sum>Append(b,x)) = \<Sum>Reverse(Append(b,x))"
+      by simp
+  } hence "\<forall>b\<in>Lists(G). ((\<Sum>b) = \<Sum>Reverse(b)) \<longrightarrow> 
+    (\<forall>x\<in>G. (\<Sum>Append(b,x)) = \<Sum>Reverse(Append(b,x)))"
+    by simp 
+  with \<open>(\<Sum>\<emptyset>) = \<Sum>Reverse(\<emptyset>)\<close> assms(2) show "(\<Sum>s) = \<Sum>Reverse(s)"
+    by (rule list_induct0)
 qed
 
 subsection\<open>Multiplying monoid elements by natural numbers\<close>
