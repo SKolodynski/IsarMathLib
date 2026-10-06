@@ -516,8 +516,8 @@ proof -
   with assms(1) show "pred(n) < n" using nat_mem_lt(1) by simp
 qed
 
-text\<open>For natural numbers $x\lsq y$ the difference between $y$ and the difference 
-  between $y$ and $x) is $x$.\<close>
+text\<open>For natural numbers $x\le y$ the difference between $y$ and the difference 
+  between $y$ and $x$) is $x$.\<close>
 
 lemma nat_diff_diff: assumes "m\<le>n" "n\<in>nat" shows "n #- (n #- m) = m"
 proof -
