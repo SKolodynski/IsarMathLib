@@ -621,11 +621,11 @@ lemma epsilon_trans_fun_S:
   shows "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>S,\<Sigma>\<rangle> = {s0}"
 proof-
   from assms have "(start_eNFSA_states(S),S,start_eNFSA_trans
-               (S, s0, t, F, Σ),F\<union>{S}){is an ε-NFSA for alphabet}Σ" using start_eNFSA_valid
+               (S, s0, t, F, \<Sigma>),F\<union>{S}){is an \<epsilon>-NFSA for alphabet}\<Sigma>" using start_eNFSA_valid
     by auto
-  then have f:"start_eNFSA_trans(S, s0, t, F, Σ):succ(S)\<times>succ(\<Sigma>)\<rightarrow>Pow(succ(S))"
+  then have f:"start_eNFSA_trans(S, s0, t, F, \<Sigma>):succ(S)\<times>succ(\<Sigma>)\<rightarrow>Pow(succ(S))"
     using FullNFSA_def[OF assms(1)] unfolding start_eNFSA_states_def by auto
-  have "\<langle>\<langle>S,\<Sigma>\<rangle>,{s0}\<rangle>\<in>start_eNFSA_trans(S, s0, t, F, Σ)"
+  have "\<langle>\<langle>S,\<Sigma>\<rangle>,{s0}\<rangle>\<in>start_eNFSA_trans(S, s0, t, F, \<Sigma>)"
     using start_eNFSA_trans_def[OF assms] by auto
   with f show ?thesis using apply_equality by auto
 qed
@@ -638,11 +638,11 @@ lemma epsilon_trans_fun_F:
   shows "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>u,\<Sigma>\<rangle> = {s0}"
 proof-
   from assms have "(start_eNFSA_states(S),S,start_eNFSA_trans
-               (S, s0, t, F, Σ),F\<union>{S}){is an ε-NFSA for alphabet}Σ" using start_eNFSA_valid
+               (S, s0, t, F, \<Sigma>),F\<union>{S}){is an \<epsilon>-NFSA for alphabet}\<Sigma>" using start_eNFSA_valid
     by auto
-  then have f:"start_eNFSA_trans(S, s0, t, F, Σ):succ(S)\<times>succ(\<Sigma>)\<rightarrow>Pow(succ(S))"
+  then have f:"start_eNFSA_trans(S, s0, t, F, \<Sigma>):succ(S)\<times>succ(\<Sigma>)\<rightarrow>Pow(succ(S))"
     using FullNFSA_def[OF assms(1)] unfolding start_eNFSA_states_def by auto
-  have "\<langle>\<langle>u,\<Sigma>\<rangle>,{s0}\<rangle>\<in>start_eNFSA_trans(S, s0, t, F, Σ)"
+  have "\<langle>\<langle>u,\<Sigma>\<rangle>,{s0}\<rangle>\<in>start_eNFSA_trans(S, s0, t, F, \<Sigma>)"
     using start_eNFSA_trans_def[OF assms(1,2)] assms(3) by auto
   with f show ?thesis using apply_equality by auto
 qed
@@ -655,11 +655,11 @@ lemma epsilon_trans_fun_s:
   shows "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>u,\<Sigma>\<rangle> = 0"
 proof-
   from assms have "(start_eNFSA_states(S),S,start_eNFSA_trans
-               (S, s0, t, F, Σ),F\<union>{S}){is an ε-NFSA for alphabet}Σ" using start_eNFSA_valid
+               (S, s0, t, F, \<Sigma>),F\<union>{S}){is an \<epsilon>-NFSA for alphabet}\<Sigma>" using start_eNFSA_valid
     by auto
-  then have f:"start_eNFSA_trans(S, s0, t, F, Σ):succ(S)\<times>succ(\<Sigma>)\<rightarrow>Pow(succ(S))"
+  then have f:"start_eNFSA_trans(S, s0, t, F, \<Sigma>):succ(S)\<times>succ(\<Sigma>)\<rightarrow>Pow(succ(S))"
     using FullNFSA_def[OF assms(1)] unfolding start_eNFSA_states_def by auto
-  have "\<langle>\<langle>u,\<Sigma>\<rangle>,0\<rangle>\<in>start_eNFSA_trans(S, s0, t, F, Σ)"
+  have "\<langle>\<langle>u,\<Sigma>\<rangle>,0\<rangle>\<in>start_eNFSA_trans(S, s0, t, F, \<Sigma>)"
     using start_eNFSA_trans_def[OF assms(1,2)] assms(3) by auto
   with f show ?thesis using apply_equality by auto
 qed
@@ -671,10 +671,10 @@ lemma epsilon_cl_F_in_cl_S:
   assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>"
   shows "\<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S}) = {S,s0}"
 proof
-  let ?r = "{⟨Q,{s∈succ(S). ∃q∈Q. s ∈ start_eNFSA_trans(S,s0,t,F,\<Sigma>)`⟨q,Σ⟩}⟩. Q∈Pow(succ(S))}"
+  let ?r = "{\<langle>Q,{s\<in>succ(S). \<exists>q\<in>Q. s \<in> start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>q,\<Sigma>\<rangle>}\<rangle>. Q\<in>Pow(succ(S))}"
   {
     fix y assume y:"y\<in>{S,s0}"
-    let ?B="{s∈succ(S). ∃m∈{S}. s∈start_eNFSA_trans(S, s0, t, F, Σ)`⟨m,Σ⟩}"
+    let ?B="{s\<in>succ(S). \<exists>m\<in>{S}. s\<in>start_eNFSA_trans(S, s0, t, F, \<Sigma>)`\<langle>m,\<Sigma>\<rangle>}"
     {
       assume "y=S"
       then have "y\<in>\<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})"
@@ -690,45 +690,45 @@ proof
       have "?B = succ(S)\<inter>({s0})"
         using epsilon_trans_fun_S[OF assms] by auto
       ultimately have y:"y\<in>?B" by auto
-      have "⟨{S},{s∈succ(S). ∃m∈{S}. s∈start_eNFSA_trans(S, s0, t, F, Σ)`⟨m,Σ⟩}⟩∈?r"  by auto
-      then have "⟨{S},{s∈succ(S). ∃m∈{S}. s∈start_eNFSA_trans(S, s0, t, F, Σ)`⟨m,Σ⟩}⟩∈?r^*" 
+      have "\<langle>{S},{s\<in>succ(S). \<exists>m\<in>{S}. s\<in>start_eNFSA_trans(S, s0, t, F, \<Sigma>)`\<langle>m,\<Sigma>\<rangle>}\<rangle>\<in>?r"  by auto
+      then have "\<langle>{S},{s\<in>succ(S). \<exists>m\<in>{S}. s\<in>start_eNFSA_trans(S, s0, t, F, \<Sigma>)`\<langle>m,\<Sigma>\<rangle>}\<rangle>\<in>?r^*" 
         using r_into_rtrancl by auto
       moreover have "{S} \<subseteq> succ(S)" by auto
-      ultimately have "{s∈succ(S). ∃m∈{S}. s∈start_eNFSA_trans(S, s0, t, F, Σ)`⟨m,Σ⟩} ⊆ ε-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), Σ, {S})"
+      ultimately have "{s\<in>succ(S). \<exists>m\<in>{S}. s\<in>start_eNFSA_trans(S, s0, t, F, \<Sigma>)`\<langle>m,\<Sigma>\<rangle>} \<subseteq> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})"
         using EpsilonClosure_def[OF assms(1) start_eNFSA_valid[OF assms], of "{S}"]
         unfolding start_eNFSA_states_def by force
-      with y have "y\<in> ε-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), Σ, {S})"
+      with y have "y\<in> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})"
         by auto
     } ultimately
-    have "y\<in> ε-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), Σ, {S})"
+    have "y\<in> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})"
       by auto
   }
-  then show "{S,s0} \<subseteq> ε-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), Σ, {S})"
+  then show "{S,s0} \<subseteq> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})"
     by auto
   {
-    fix y assume "y\<in>ε-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), Σ, {S})"
-    then obtain P where P:"P∈Pow(succ(S))" "y∈P" "⟨{S},P⟩∈({⟨Q,{s∈succ(S). ∃q∈Q. 
-      s ∈ start_eNFSA_trans(S, s0, t, F, Σ)`⟨q,Σ⟩}⟩. Q∈Pow(succ(S))}^*)"
+    fix y assume "y\<in>\<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {S})"
+    then obtain P where P:"P\<in>Pow(succ(S))" "y\<in>P" "\<langle>{S},P\<rangle>\<in>({\<langle>Q,{s\<in>succ(S). \<exists>q\<in>Q. 
+      s \<in> start_eNFSA_trans(S, s0, t, F, \<Sigma>)`\<langle>q,\<Sigma>\<rangle>}\<rangle>. Q\<in>Pow(succ(S))}^*)"
       using EpsilonClosure_def[OF assms(1) start_eNFSA_valid[OF assms], of "{S}"]
       unfolding start_eNFSA_states_def by auto
-    let ?r = "{⟨Q,{s∈succ(S). ∃q∈Q. s ∈ start_eNFSA_trans(S, s0, t, F, Σ)`⟨q,Σ⟩}⟩. Q∈Pow(succ(S))}"
+    let ?r = "{\<langle>Q,{s\<in>succ(S). \<exists>q\<in>Q. s \<in> start_eNFSA_trans(S, s0, t, F, \<Sigma>)`\<langle>q,\<Sigma>\<rangle>}\<rangle>. Q\<in>Pow(succ(S))}"
     {
-      assume "⟨{S},P⟩∈id(field(?r))"
+      assume "\<langle>{S},P\<rangle>\<in>id(field(?r))"
       then have "P={S}" by auto
       with P(2) have "y:{S}" by auto
       then have "y = S" by auto
       then have "y\<in>{S,s0}" by auto
     } moreover
     {
-      assume "⟨{S},P⟩∉id(field(?r))"
-      moreover from P(3) have "⟨{S},P⟩∈id(field(?r))∪(?r O ?r^*)" using rtrancl_unfold by auto
-      ultimately have "⟨{S},P⟩∈(?r O ?r^*)" by auto
-      then obtain Q where q:"⟨{S},Q⟩∈?r^*" "⟨Q,P⟩∈?r" using compE by auto
-      from q(2) have p:"P={s∈succ(S). ∃u∈Q. s∈start_eNFSA_trans(S,s0,t,F,\<Sigma>)`⟨u,Σ⟩}" "Q∈Pow(succ(S))" by auto
-      from P(2) p(1) obtain u where u:"u∈Q" "y∈start_eNFSA_trans(S,s0,t,F,\<Sigma>)`⟨u,Σ⟩" by auto
+      assume "\<langle>{S},P\<rangle>\<notin>id(field(?r))"
+      moreover from P(3) have "\<langle>{S},P\<rangle>\<in>id(field(?r))\<union>(?r O ?r^*)" using rtrancl_unfold by auto
+      ultimately have "\<langle>{S},P\<rangle>\<in>(?r O ?r^*)" by auto
+      then obtain Q where q:"\<langle>{S},Q\<rangle>\<in>?r^*" "\<langle>Q,P\<rangle>\<in>?r" using compE by auto
+      from q(2) have p:"P={s\<in>succ(S). \<exists>u\<in>Q. s\<in>start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>u,\<Sigma>\<rangle>}" "Q\<in>Pow(succ(S))" by auto
+      from P(2) p(1) obtain u where u:"u\<in>Q" "y\<in>start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>u,\<Sigma>\<rangle>" by auto
       {
         assume "u=S"
-        then have "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`⟨u,Σ⟩ = {s0}"
+        then have "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>u,\<Sigma>\<rangle> = {s0}"
           using epsilon_trans_fun_S[OF assms] by auto
         with u(2) have "y\<in>{s0}" by auto
         then have "y\<in>{S,s0}" by auto
@@ -739,14 +739,14 @@ proof
         with u(1) p(2) have uS:"u\<in>S" by auto
         {
           assume "u\<in>F"
-          then have "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`⟨u,Σ⟩ = {s0}"
+          then have "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>u,\<Sigma>\<rangle> = {s0}"
             using epsilon_trans_fun_F[OF assms] by auto
           with u(2) have "y=s0" by auto
           then have "y\<in> {S,s0}" by auto
         } moreover
         {
           assume "u\<notin>F"
-          then have "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`⟨u,Σ⟩ = 0"
+          then have "start_eNFSA_trans(S,s0,t,F,\<Sigma>)`\<langle>u,\<Sigma>\<rangle> = 0"
             using epsilon_trans_fun_s[OF assms] uS by auto
           with u(2) have "False" by auto
           then have "y\<in> {S,s0}" by auto
@@ -757,7 +757,7 @@ proof
     }
     ultimately have "y\<in> {S,s0}" by auto
   }
-  then show " ε-cl(start_eNFSA_states(S), start_eNFSA_trans(S, s0, t, F, Σ), Σ, {S}) ⊆
+  then show " \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S, s0, t, F, \<Sigma>), \<Sigma>, {S}) \<subseteq>
    {S,s0}" by auto
 qed
 
@@ -775,34 +775,34 @@ proof
   show "{q} \<subseteq> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {q})" by auto
   {
     fix y assume y:"y\<in> \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {q})"
-    from A y obtain P where P:"P∈Pow(succ(S))" "y∈P" "⟨{q},P⟩∈({⟨Q,{s∈succ(S). ∃q∈Q.
-      s ∈ start_eNFSA_trans(S, s0, t, F, Σ)`⟨q,Σ⟩}⟩. Q∈Pow(succ(S))}^*)"
+    from A y obtain P where P:"P\<in>Pow(succ(S))" "y\<in>P" "\<langle>{q},P\<rangle>\<in>({\<langle>Q,{s\<in>succ(S). \<exists>q\<in>Q.
+      s \<in> start_eNFSA_trans(S, s0, t, F, \<Sigma>)`\<langle>q,\<Sigma>\<rangle>}\<rangle>. Q\<in>Pow(succ(S))}^*)"
       using EpsilonClosure_def[OF assms(1) start_eNFSA_valid[OF assms(1,2)], of "{q}"]
       unfolding start_eNFSA_states_def by auto
-    let ?r = "{⟨Q,{s∈succ(S). ∃q∈Q. s ∈ start_eNFSA_trans(S, s0, t, F, Σ)`⟨q,Σ⟩}⟩. Q∈Pow(succ(S))}"
+    let ?r = "{\<langle>Q,{s\<in>succ(S). \<exists>q\<in>Q. s \<in> start_eNFSA_trans(S, s0, t, F, \<Sigma>)`\<langle>q,\<Sigma>\<rangle>}\<rangle>. Q\<in>Pow(succ(S))}"
     {
-      assume "⟨{q},P⟩∈id(field(?r))"
+      assume "\<langle>{q},P\<rangle>\<in>id(field(?r))"
       then have "P={q}" by auto
       with P(2) have "y:{q}" by auto
       then have "y = q" by auto
       then have "y\<in>{q}" by auto
     } moreover
     {
-      assume "⟨{q},P⟩∉id(field(?r))"
-      moreover from P(3) have "⟨{q},P⟩∈id(field(?r))∪(?r O ?r^*)" using rtrancl_unfold by auto
-      ultimately have "⟨{q},P⟩∈(?r O ?r^*)" by auto
-      then obtain Q where q:"⟨{q},Q⟩∈?r^*" "⟨Q,P⟩∈?r" using compE by auto
+      assume "\<langle>{q},P\<rangle>\<notin>id(field(?r))"
+      moreover from P(3) have "\<langle>{q},P\<rangle>\<in>id(field(?r))\<union>(?r O ?r^*)" using rtrancl_unfold by auto
+      ultimately have "\<langle>{q},P\<rangle>\<in>(?r O ?r^*)" by auto
+      then obtain Q where q:"\<langle>{q},Q\<rangle>\<in>?r^*" "\<langle>Q,P\<rangle>\<in>?r" using compE by auto
       {
         fix x z assume as:"\<langle>{q},x\<rangle>\<in>?r^*"
           "\<langle>x,z\<rangle>\<in>?r" "x\<subseteq>{q}"
         {
           assume "x\<noteq>0"
           with as(3) have xq:"x={q}" by auto
-          from as(2) have "z={s ∈ succ(S) .
-          ∃q∈x. s ∈ start_eNFSA_trans(S, s0, t, F, Σ) ` ⟨q, Σ⟩}" by auto
-          with xq have "z={s ∈ succ(S) .
-          ∃q∈{q}. s ∈ start_eNFSA_trans(S, s0, t, F, Σ) ` ⟨q, Σ⟩}" by auto
-          then have "z=succ(S)\<inter>(start_eNFSA_trans(S, s0, t, F, Σ) ` ⟨q, Σ⟩)" by auto
+          from as(2) have "z={s \<in> succ(S) .
+          \<exists>q\<in>x. s \<in> start_eNFSA_trans(S, s0, t, F, \<Sigma>) ` \<langle>q, \<Sigma>\<rangle>}" by auto
+          with xq have "z={s \<in> succ(S) .
+          \<exists>q\<in>{q}. s \<in> start_eNFSA_trans(S, s0, t, F, \<Sigma>) ` \<langle>q, \<Sigma>\<rangle>}" by auto
+          then have "z=succ(S)\<inter>(start_eNFSA_trans(S, s0, t, F, \<Sigma>) ` \<langle>q, \<Sigma>\<rangle>)" by auto
           then have "z=succ(S)\<inter>0" using epsilon_trans_fun_s[OF assms] by auto
           then have "z\<subseteq>{q}" by auto
         } moreover
@@ -854,9 +854,9 @@ lemma empty_in_eNFSA_lang:
 proof
   show ol:"0\<in>Lists(\<Sigma>)" unfolding Lists_def Pi_def function_def by auto
   have "s0\<in>S" using assms(2) DFSA_def[OF assms(1)] by auto
-  then have "ε-cl(start_eNFSA_states(S),start_eNFSA_trans(S,s0,t,F,\<Sigma>),Σ,{S}) = {S,s0}"
+  then have "\<epsilon>-cl(start_eNFSA_states(S),start_eNFSA_trans(S,s0,t,F,\<Sigma>),\<Sigma>,{S}) = {S,s0}"
     using epsilon_cl_F_in_cl_S assms by auto
-  then show "∅ <-ε-N (start_eNFSA_states(S),S,start_eNFSA_trans(S, s0, t, F, Σ),F ∪ {S}){in alphabet}Σ"
+  then show "0 <-\<epsilon>-N (start_eNFSA_states(S),S,start_eNFSA_trans(S, s0, t, F, \<Sigma>),F \<union> {S}){in alphabet}\<Sigma>"
     using FullNFSASatisfy_def[OF assms(1)] start_eNFSA_valid[OF assms] ol by auto
 qed
 
@@ -1028,8 +1028,8 @@ proof-
   let ?B = "{s\<in>?SS. \<exists>q\<in>E. s\<in>?tc`\<langle>q,\<Sigma>\<rangle>}"
   have EP:"E\<in>Pow(?SS)" using E by auto
   have B:"?B\<in>Pow(?SS)" by auto
-  have "s0∈ start_eNFSA_states(S)" using s0S unfolding start_eNFSA_states_def by auto moreover
-  have "s0\<in>start_eNFSA_trans(S, s0, t, F, Σ) `⟨e, Σ⟩" using tce by auto
+  have "s0\<in> start_eNFSA_states(S)" using s0S unfolding start_eNFSA_states_def by auto moreover
+  have "s0\<in>start_eNFSA_trans(S, s0, t, F, \<Sigma>) `\<langle>e, \<Sigma>\<rangle>" using tce by auto
   ultimately have s0B:"s0\<in>?B" using e(1) by auto
   from EP have "\<langle>E,?B\<rangle>\<in>?r" by auto
   then have "\<langle>E,?B\<rangle>\<in>?r^*" using r_into_rtrancl by auto
