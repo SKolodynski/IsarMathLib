@@ -257,7 +257,7 @@ proof
 qed
    
 
-subsection\<open>The automaton start_eNFSA\<close>
+subsection\<open>The automaton start-eNFSA\<close>
 
 text\<open>Given a DFSA $(S,s_0,t,F)$ we build an $\epsilon$-NFSA that adds a new initial state
   (the set $S$ itself, as $succ(S) = S\cup\{S\}$) and $\epsilon$-transitions that restart the
@@ -609,7 +609,7 @@ have Sfin:"Finite(S)"
     using tc_type finSuccS FSS s0SS by auto 
 qed
 
-subsection\<open>Computing epsilon-closure for start_eNFSA\<close>
+subsection\<open>Computing epsilon-closure for start-eNFSA\<close>
 
 text\<open>In this section we compute the $\epsilon$-transitions of start-eNFSA and the
   $\epsilon$-closures of the sets of states we need.\<close>
@@ -821,7 +821,7 @@ proof
   then show " \<epsilon>-cl(start_eNFSA_states(S), start_eNFSA_trans(S,s0,t,F,\<Sigma>), \<Sigma>, {q})\<subseteq>{q}" by auto
 qed
 
-subsection\<open>start_eNFSA recognizes the Kleene star\<close>
+subsection\<open>start-eNFSA recognizes the Kleene star\<close>
 
 text\<open>We show that the language accepted by start-eNFSA contains $L$ and the empty word,
   which are the first ingredients needed to apply minimality of the Kleene star.\<close>
