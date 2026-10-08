@@ -241,19 +241,20 @@ proof -
     by simp
 qed
 
-text\<open>Concat defines a list\<close>
+text\<open>Concat defines a list.\<close>
 
 lemma concat_type:
   assumes "a\<in>Lists(X)" "b\<in>Lists(X)"
   shows "Concat(a,b)\<in>Lists(X)"
 proof-
-  from assms obtain na nb where n:"a:na\<rightarrow>X" "b:nb\<rightarrow>X" "na\<in>nat" "nb\<in>nat" unfolding Lists_def by auto
-  then have "Concat(a,b):na#+nb \<rightarrow> X" using concat_props(1) by auto
-  moreover from n(3,4) have "na#+nb\<in>nat" by auto
+  from assms obtain n\<^sub>a n\<^sub>b where n:"a:n\<^sub>a\<rightarrow>X" "b:n\<^sub>b\<rightarrow>X" "n\<^sub>a\<in>nat" "n\<^sub>b\<in>nat" 
+    unfolding Lists_def by auto
+  then have "Concat(a,b):(n\<^sub>a #+ n\<^sub>b) \<rightarrow> X" using concat_props(1) by auto
+  moreover from n(3,4) have "(n\<^sub>a #+ n\<^sub>b)\<in>nat" by auto
   ultimately show ?thesis unfolding Lists_def by auto
 qed
 
-text\<open>Properties of concatenating three lists.\<close>
+text\<open>Properties of concatenating three lists:\<close>
 
 lemma concat_concat_list: 
   assumes A1: "n \<in> nat"  "k \<in> nat"  "m \<in> nat" and
@@ -295,7 +296,7 @@ proof -
 qed
 
 text\<open>Properties of concatenating a list with a concatenation
-  of two other lists.\<close>
+  of two other lists:\<close>
 
 lemma concat_list_concat: 
   assumes A1: "n \<in> nat"  "k \<in> nat"  "m \<in> nat" and
@@ -383,11 +384,11 @@ qed
 text\<open>Concatenation is associative on lists.\<close>
 
 theorem concat_assoc_lists: 
-  assumes "a:Lists(X)"   "b:Lists(X)"   "c:Lists(X)"
+  assumes "a\<in>Lists(X)"   "b\<in>Lists(X)"   "c\<in>Lists(X)"
   shows "Concat(Concat(a,b),c) =  Concat(a, Concat(b,c))"
   using concat_assoc assms unfolding Lists_def by auto
     
-text\<open>Properties of \<open>Tail\<close>.\<close>
+text\<open>Properties of \<open>Tail\<close>\<close>
 
 theorem tail_props: 
   assumes A1: "n \<in> nat" and A2: "a: succ(n) \<rightarrow> X"
