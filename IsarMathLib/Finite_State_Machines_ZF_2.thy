@@ -264,12 +264,12 @@ text\<open>Given a DFSA $(S,s_0,t,F)$ we build an $\epsilon$-NFSA that adds a ne
   computation from $s_0$. The goal is to show that it recognizes the Kleene star of the
   language of the DFSA.\<close>
 
-text\<open>The state set of start_eNFSA consists of the states of the DFSA and one new state, $S$.\<close>
+text\<open>The state set of start-eNFSA consists of the states of the DFSA and one new state, $S$.\<close>
 
 definition start_eNFSA_states where
   "start_eNFSA_states(S) \<equiv> succ(S)"
 
-text\<open>The transition function of start_eNFSA keeps the transitions of the DFSA, adds
+text\<open>The transition function of start-eNFSA keeps the transitions of the DFSA, adds
   $\epsilon$-transitions (reading the extra symbol $\Sigma$) from the new state $S$ and from
   each accepting state to $s_0$, and makes all other $\epsilon$-transitions empty.\<close>
 
@@ -283,7 +283,7 @@ definition start_eNFSA_trans where
 \<union> {\<langle>\<langle>f,\<Sigma>\<rangle>, 0\<rangle>. f\<in>S-F} 
    \<union> {\<langle>\<langle>S,q\<rangle>, 0\<rangle>. q\<in>\<Sigma>}"
 
-text\<open>If $(S,s_0,t,F)$ is a DFSA then start_eNFSA, with accepting states $F\cup\{S\}$,
+text\<open>If $(S,s_0,t,F)$ is a DFSA then start-eNFSA, with accepting states $F\cup\{S\}$,
   is an $\epsilon$-NFSA.\<close>
 
 lemma start_eNFSA_valid:
@@ -611,7 +611,7 @@ qed
 
 subsection\<open>Computing epsilon-closure for start_eNFSA\<close>
 
-text\<open>In this section we compute the $\epsilon$-transitions of start_eNFSA and the
+text\<open>In this section we compute the $\epsilon$-transitions of start-eNFSA and the
   $\epsilon$-closures of the sets of states we need.\<close>
 
 text\<open>The $\epsilon$-transition from the new state $S$ leads to $\{s_0\}$.\<close>
@@ -665,7 +665,7 @@ proof-
 qed
 
 text\<open>Using the general epsilon-closure lemmas, we compute what epsilon-closure
-looks like for the specific state sets in start_eNFSA.\<close>
+looks like for the specific state sets in start-eNFSA.\<close>
 
 lemma epsilon_cl_F_in_cl_S:
   assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>"
@@ -823,10 +823,10 @@ qed
 
 subsection\<open>start_eNFSA recognizes the Kleene star\<close>
 
-text\<open>We show that the language accepted by start_eNFSA contains $L$ and the empty word,
+text\<open>We show that the language accepted by start-eNFSA contains $L$ and the empty word,
   which are the first ingredients needed to apply minimality of the Kleene star.\<close>
 
-text\<open>The set of words accepted by start_eNFSA is a language over $\Sigma$,
+text\<open>The set of words accepted by start-eNFSA is a language over $\Sigma$,
   as it is a subset of the set of all words over $\Sigma$.\<close>
 
 lemma eNFSA_lang_is_language:
@@ -844,7 +844,7 @@ proof-
     using assms(1) IsALanguage_def by simp
 qed
 
-text\<open>The empty word is accepted by start_eNFSA, because the $\epsilon$-closure of the
+text\<open>The empty word is accepted by start-eNFSA, because the $\epsilon$-closure of the
   initial state $S$ contains $S$, which is an accepting state.\<close>
 
 lemma empty_in_eNFSA_lang:
@@ -861,7 +861,7 @@ proof
 qed
 
 
-text\<open>On a symbol of the alphabet, the transition function of start_eNFSA from a state of the DFSA
+text\<open>On a symbol of the alphabet, the transition function of start-eNFSA from a state of the DFSA
   agrees with the transition function of the DFSA.\<close>
 
 lemma start_eNFSA_trans_symbol:
@@ -894,7 +894,7 @@ proof-
   with f show ?thesis using apply_equality by auto
 qed
 
-text\<open>On a symbol of the alphabet, start_eNFSA moves every state only to states of the DFSA.\<close>
+text\<open>On a symbol of the alphabet, start-eNFSA moves every state only to states of the DFSA.\<close>
 
 lemma start_eNFSA_trans_symbol_sub:
   assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>" "u\<in>succ(S)" "\<sigma>\<in>\<Sigma>"
@@ -915,7 +915,7 @@ proof-
   qed
 qed
 
-text\<open>The $\epsilon$-closure of a set of states of start_eNFSA is a set of states of start_eNFSA.\<close>
+text\<open>The $\epsilon$-closure of a set of states of start-eNFSA is a set of states of start-eNFSA.\<close>
 
 lemma start_eNFSA_cl_subset:
   assumes "Finite(\<Sigma>)" "(S,s0,t,F){is an DFSA for alphabet}\<Sigma>" "E\<subseteq>start_eNFSA_states(S)"
@@ -926,7 +926,7 @@ proof-
   show ?thesis using EpsilonClosure_def[OF assms(1) valid assms(3)] by auto
 qed
 
-text\<open>If $U$ is a set of states of the DFSA, then the $\epsilon$-closure of $U$ in start_eNFSA
+text\<open>If $U$ is a set of states of the DFSA, then the $\epsilon$-closure of $U$ in start-eNFSA
   consists of the elements of $U$ and possibly of $s_0$, which is added only when $U$
   contains an accepting state of the DFSA.\<close>
 
@@ -999,7 +999,7 @@ proof-
   qed
 qed
 
-text\<open>If the $\epsilon$-closure computed in start_eNFSA from the set $E$ is going to be iterated, we need
+text\<open>If the $\epsilon$-closure computed in start-eNFSA from the set $E$ is going to be iterated, we need
   to know that $s_0$ is in the closure whenever $E$ contains an accepting state or the new state $S$.\<close>
 
 lemma start_eNFSA_s0_in_cl:
@@ -1077,9 +1077,9 @@ proof-
 qed
 
 text\<open>Every execution of the DFSA on a nonempty word, starting at $s_0$, is simulated by
-  an execution of start_eNFSA that starts at any set $P_0$ of states whose $\epsilon$-closure contains
+  an execution of start-eNFSA that starts at any set $P_0$ of states whose $\epsilon$-closure contains
   $s_0$: if the DFSA reaches the state $q$ then $q$ belongs to the $\epsilon$-closure of the set of
-  states reached by start_eNFSA.\<close>
+  states reached by start-eNFSA.\<close>
 
 lemma start_eNFSA_simulates_DFSA_from:
   assumes fin:"Finite(\<Sigma>)" and A:"(S,s0,t,F){is an DFSA for alphabet}\<Sigma>"
@@ -1148,7 +1148,7 @@ proof-
   then show ?thesis by auto
 qed
 
-text\<open>In particular, an execution of the DFSA on a nonempty word is simulated by start_eNFSA
+text\<open>In particular, an execution of the DFSA on a nonempty word is simulated by start-eNFSA
   started at the new state $S$.\<close>
 
 lemma start_eNFSA_simulates_DFSA:
@@ -1166,9 +1166,9 @@ proof-
 qed
 
 
-text\<open>Every word accepted by the original DFSA is accepted by start_eNFSA: the empty word
+text\<open>Every word accepted by the original DFSA is accepted by start-eNFSA: the empty word
   is accepted because the $\epsilon$-closure of the initial state $S$ contains $S$, and for a
-  nonempty word the DFSA execution is simulated by start_eNFSA, after the initial
+  nonempty word the DFSA execution is simulated by start-eNFSA, after the initial
   $\epsilon$-move to $s_0$.\<close>
 
 lemma L_subset_eNFSA_lang:
@@ -1231,8 +1231,8 @@ proof-
   with cc show ?thesis using star_def assms(1,2) by auto
 qed
 
-text\<open>If $x$ is a word accepted by the DFSA and $v$ is a word accepted by start_eNFSA,
-  then the concatenation $x\cdot v$ is accepted by start_eNFSA. The automaton reads $v$ first,
+text\<open>If $x$ is a word accepted by the DFSA and $v$ is a word accepted by start-eNFSA,
+  then the concatenation $x\cdot v$ is accepted by start-eNFSA. The automaton reads $v$ first,
   then restarts at $s_0$ thanks to the $\epsilon$-transition from an accepting state, and then reads $x$.\<close>
 
 lemma concat_L_eNFSA_lang:
@@ -1302,7 +1302,7 @@ proof-
 qed
 
 text\<open>The Kleene star of the language of the DFSA is contained in the language
-  accepted by start_eNFSA. We follow the construction of $L^*$: the empty word is accepted and
+  accepted by start-eNFSA. We follow the construction of $L^*$: the empty word is accepted and
   prepending a word of $L$ to an accepted word gives an accepted word.\<close>
 
 lemma star_subset_eNFSA_lang:
@@ -1340,8 +1340,8 @@ proof
   qed
 qed
 
-text\<open>To show the converse inclusion we follow an execution of start_eNFSA on a word $w$. The predicate
-  \<open>start_eNFSA_wit\<close> says that, after reading a suffix of $w$ and leaving $r$ unread, the state $x$ was reached
+text\<open>To show the converse inclusion we follow an execution of start-eNFSA on a word $w$. The predicate
+  start-eNFSA-wit says that, after reading a suffix of $w$ and leaving $r$ unread, the state $x$ was reached
   as follows: $w=rr\cdot c$ where $c\in L^*$ is the part of the word that was read before the last restart
   at $s_0$, and the DFSA run on $rr$ from $s_0$ has reached the state $x$ with $r$ unread.\<close>
 
@@ -1350,16 +1350,16 @@ definition start_eNFSA_wit where
    \<exists>rr\<in>Lists(\<Sigma>). \<exists>c\<in>({u\<in>Lists(\<Sigma>). u <-D (S,s0,t,F){in alphabet}\<Sigma>}*\<^sup>\<Sigma>).
      w=Concat(rr,c) \<and> ((rr=r \<and> x=s0) \<or> \<langle>\<langle>rr,s0\<rangle>,\<langle>r,x\<rangle>\<rangle>\<in>({reduce D-relation}(S,t){in alphabet}\<Sigma>)^*)"
 
-text\<open>The invariant of an execution of start_eNFSA: every state in the $\epsilon$-closure of the current
+text\<open>The invariant of an execution of start-eNFSA: every state in the $\epsilon$-closure of the current
   set of states $Q$ is either the new state $S$ (before anything was read) or a state of the DFSA
-  reached in the way described by \<open>start_eNFSA_wit\<close>.\<close>
+  reached in the way described by start-eNFSA-wit.\<close>
 
 definition start_eNFSA_inv where
   "start_eNFSA_inv(S,s0,t,F,\<Sigma>,w,r,Q) \<equiv> Q\<in>Pow(start_eNFSA_states(S)) \<and>
    (\<forall>x\<in>\<epsilon>-cl(start_eNFSA_states(S),start_eNFSA_trans(S,s0,t,F,\<Sigma>),\<Sigma>,Q).
      (x=S \<and> r=w) \<or> (x\<in>S \<and> start_eNFSA_wit(S,s0,t,F,\<Sigma>,w,r,x)))"
 
-text\<open>Introduction rule for \<open>start_eNFSA_wit\<close>.\<close>
+text\<open>Introduction rule for start-eNFSA-wit.\<close>
 
 lemma start_eNFSA_wit_intro:
   assumes "rr\<in>Lists(\<Sigma>)" "c\<in>({u\<in>Lists(\<Sigma>). u <-D (S,s0,t,F){in alphabet}\<Sigma>}*\<^sup>\<Sigma>)" "w=Concat(rr,c)"
@@ -1367,7 +1367,7 @@ lemma start_eNFSA_wit_intro:
   shows "start_eNFSA_wit(S,s0,t,F,\<Sigma>,w,r,x)"
   unfolding start_eNFSA_wit_def using assms by blast
 
-text\<open>Every word accepted by start_eNFSA belongs to the Kleene star of the language of the DFSA.\<close>
+text\<open>Every word accepted by start-eNFSA belongs to the Kleene star of the language of the DFSA.\<close>
 
 lemma eNFSA_lang_subset_star:
   assumes fin:"Finite(\<Sigma>)" and A:"(S,s0,t,F){is an DFSA for alphabet}\<Sigma>"
@@ -1581,7 +1581,7 @@ proof
   qed
 qed
 
-text\<open>The main result: the language accepted by start_eNFSA is the Kleene star of the language
+text\<open>The main result: the language accepted by start-eNFSA is the Kleene star of the language
   accepted by the DFSA.\<close>
 
 theorem start_eNFSA_lang_eq_star:
