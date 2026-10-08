@@ -21,6 +21,8 @@ session "IsarMathLib" = "ZF" +
     EquivClass1
     FiniteSeq_ZF
     Finite_State_Machines_ZF
+    Finite_State_Machines_ZF_1
+    Finite_State_Machines_ZF_2
     InductiveSeq_ZF
     Enumeration_ZF
     Fold_ZF
