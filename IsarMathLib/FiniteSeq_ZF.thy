@@ -236,6 +236,18 @@ proof -
     by simp
 qed
 
+text\<open>Concat defines a list\<close>
+
+lemma concat_type:
+  assumes "a\<in>Lists(X)" "b\<in>Lists(X)"
+  shows "Concat(a,b)\<in>Lists(X)"
+proof-
+  from assms obtain na nb where n:"a:na\<rightarrow>X" "b:nb\<rightarrow>X" "na\<in>nat" "nb\<in>nat" unfolding Lists_def by auto
+  then have "Concat(a,b):na#+nb \<rightarrow> X" using concat_props(1) by auto
+  moreover from n(3,4) have "na#+nb\<in>nat" by auto
+  ultimately show ?thesis unfolding Lists_def by auto
+qed
+
 text\<open>Properties of concatenating three lists.\<close>
 
 lemma concat_concat_list: 
@@ -362,6 +374,13 @@ proof -
   qed
   ultimately show "?d = ?e" by (rule func_eq)
 qed
+
+text\<open>Concatenation is associative on lists.\<close>
+
+theorem concat_assoc_lists: 
+  assumes "a:Lists(X)"   "b:Lists(X)"   "c:Lists(X)"
+  shows "Concat(Concat(a,b),c) =  Concat(a, Concat(b,c))"
+  using concat_assoc assms unfolding Lists_def by auto
     
 text\<open>Properties of \<open>Tail\<close>.\<close>
 
