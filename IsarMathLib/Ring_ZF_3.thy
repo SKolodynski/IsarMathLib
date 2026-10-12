@@ -447,26 +447,32 @@ text\<open>A criterion for the ideals of the target ring to be extended: every e
 lemma (in ring_homo) ideals_extended_criterion:
   assumes "\<forall>x\<in>S. \<exists>r\<in>R. \<exists>c\<in>S. \<exists>b\<in>S. f`r = V`\<langle>x,c\<rangle> \<and> x = V`\<langle>f`r,b\<rangle>"
   shows "ideals_extended"
-  unfolding IdealsExtended_def
-proof(intro allI impI)
-  fix J K assume J:"J\<triangleleft>R\<^sub>t" and Kc:"K\<triangleleft>R\<^sub>t \<and> f``(f-``J) \<subseteq> K"
-  have JS:"J \<subseteq> S" using J target_ring.ideal_dest_subset by auto
-  have pre:"f-``J \<subseteq> R" using func1_1_L3 f_is_fun by auto
-  have img:"f``(f-``J) = {f`z. z\<in>f-``J}" using func_imagedef f_is_fun pre by auto
-  show "J \<subseteq> K"
-  proof
-    fix x assume x:"x\<in>J"
-    with JS have xS:"x\<in>S" by auto
-    with assms obtain r c b where rab:"r\<in>R" "c\<in>S" "b\<in>S" "f`r = V`\<langle>x,c\<rangle>"
-      "x = V`\<langle>f`r,b\<rangle>" by auto
-    from J x rab(2) have "V`\<langle>x,c\<rangle> \<in> J" using target_ring.ideal_dest_mult by auto
-    with rab(1,4) have "r\<in>f-``J" using func1_1_L15 f_is_fun by auto
-    with img have "f`r \<in> f``(f-``J)" by auto
-    with Kc have fK:"f`r \<in> K" by auto
-    with Kc rab(3) have "V`\<langle>f`r,b\<rangle> \<in> K" using target_ring.ideal_dest_mult by auto
-    moreover from rab(5) have "V`\<langle>f`r,b\<rangle> = x" by auto
-    ultimately show "x\<in>K" by auto
-  qed
+proof-
+  {
+    fix J K assume J:"J\<triangleleft>R\<^sub>t" and Kc:"K\<triangleleft>R\<^sub>t \<and> f``(f-``J) \<subseteq> K"
+    have JS:"J \<subseteq> S" using J target_ring.ideal_dest_subset by auto
+    have pre:"f-``J \<subseteq> R" using func1_1_L3 f_is_fun by auto
+    have img:"f``(f-``J) = {f`z. z\<in>f-``J}" using func_imagedef f_is_fun pre by auto
+    have "J \<subseteq> K"
+    proof-
+      {
+        fix x assume x:"x\<in>J"
+        with JS have xS:"x\<in>S" by auto
+        with assms obtain r c b where rab:"r\<in>R" "c\<in>S" "b\<in>S" "f`r = V`\<langle>x,c\<rangle>"
+          "x = V`\<langle>f`r,b\<rangle>" by auto
+        from J x rab(2) have "V`\<langle>x,c\<rangle> \<in> J" using target_ring.ideal_dest_mult by auto
+        with rab(1,4) have "r\<in>f-``J" using func1_1_L15 f_is_fun by auto
+        with img have "f`r \<in> f``(f-``J)" by auto
+        with Kc have fK:"f`r \<in> K" by auto
+        with Kc rab(3) have "V`\<langle>f`r,b\<rangle> \<in> K" using target_ring.ideal_dest_mult by auto
+        moreover from rab(5) have "V`\<langle>f`r,b\<rangle> = x" by auto
+        ultimately have "x\<in>K" by auto
+      }
+      then show "J \<subseteq> K" by auto
+    qed
+  }
+  then have "\<forall>J. (J\<triangleleft>R\<^sub>t \<longrightarrow> (\<forall>K. ((K\<triangleleft>R\<^sub>t \<and> f `` (f -`` J) \<subseteq> K) \<longrightarrow> J \<subseteq> K)))" by auto
+  then show ideals_extended unfolding IdealsExtended_def by auto
 qed
 
 subsection\<open>Quotient ring with quotient map\<close>
