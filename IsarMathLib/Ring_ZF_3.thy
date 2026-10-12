@@ -472,7 +472,7 @@ proof-
     qed
   }
   then have "\<forall>J. (J\<triangleleft>R\<^sub>t \<longrightarrow> (\<forall>K. ((K\<triangleleft>R\<^sub>t \<and> f `` (f -`` J) \<subseteq> K) \<longrightarrow> J \<subseteq> K)))" by auto
-  then show ideals_extended unfolding IdealsExtended_def by auto
+  then show "ideals_extended" unfolding IdealsExtended_def by auto
 qed
 
 subsection\<open>Quotient ring with quotient map\<close>
