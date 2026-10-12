@@ -50,6 +50,22 @@ text\<open>A commutative ring is defined as a \<open>ring0\<close> in which mult
 locale commutative_ring = ring0 +
   assumes commutative:"M{is commutative on}R"
 
+text\<open>In a commutative ring products can be freely rearranged. This lemma collects
+  commutativity, associativity and left commutativity of multiplication; used as
+  simp rules they let the simplifier normalize products.\<close>
+
+lemma (in commutative_ring) mult_ac:
+  assumes "x\<in>R" "y\<in>R" "z\<in>R"
+  shows "x\<cdot>y = y\<cdot>x" "x\<cdot>y\<cdot>z = x\<cdot>(y\<cdot>z)" "x\<cdot>(y\<cdot>z) = y\<cdot>(x\<cdot>z)"
+proof -
+  from assms show "x\<cdot>y = y\<cdot>x" "x\<cdot>y\<cdot>z = x\<cdot>(y\<cdot>z)"
+    using commutative Ring_ZF_1_L11(2) unfolding IsCommutative_def by auto
+  from assms have "x\<cdot>(y\<cdot>z) = x\<cdot>y\<cdot>z" using Ring_ZF_1_L11(2) by simp
+  also from assms have "\<dots> = y\<cdot>x\<cdot>z" using commutative unfolding IsCommutative_def by simp
+  also from assms have "\<dots> = y\<cdot>(x\<cdot>z)" using Ring_ZF_1_L11(2) by simp
+  finally show "x\<cdot>(y\<cdot>z) = y\<cdot>(x\<cdot>z)" by simp
+qed
+
 text\<open>For any element $x$ of a commutative ring, the set $\{x \cdot y \mid y \in R\}$
   is an ideal of the ring.\<close>
 
