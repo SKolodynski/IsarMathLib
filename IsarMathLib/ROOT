@@ -54,6 +54,8 @@ session "IsarMathLib" = "ZF" +
     Ring_ZF_3
     Ring_ZF_4
     Ring_ZF_5
+    Ring_ZF_6
+    Ring_ZF_7
     Field_ZF
     Module_ZF
     Module_ZF_1
@@ -80,6 +82,8 @@ session "IsarMathLib" = "ZF" +
     Ring_Zariski_ZF
     Topology_ZF_2
     Ring_Zariski_ZF_1
+    Ring_Zariski_ZF_2
+    Ring_Zariski_ZF_3
     Topology_ZF_3
     Topology_ZF_4
     Topology_ZF_4a

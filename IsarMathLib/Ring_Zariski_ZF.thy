@@ -23,7 +23,6 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES LOSS OF USE, DATA, OR PR
 BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 *)
 
 section \<open>Rings - Zariski Topology\<close>
@@ -369,22 +368,22 @@ qed
 
 text\<open>We define the closed sets as V-sets\<close>
 
-definition (in ring0) closeBasic ("V") where
-"S \<subseteq> R \<Longrightarrow> V(S) = {K\<in>Spec. S\<subseteq>K}"
+definition (in ring0) closeBasic ("V\<^sub>S") where
+"S \<subseteq> R \<Longrightarrow> V\<^sub>S(S) = {K\<in>Spec. S\<subseteq>K}"
 
 text\<open>V-sets and D-sets are complementary\<close>
 
 lemma (in ring0) V_is_closed:
   assumes "J\<in>\<I>"
-  shows "Spec-V(J) = D(J)" and "V(J){is closed in}{D(J). J\<in>\<I>}"
+  shows "Spec-V\<^sub>S(J) = D(J)" and "V\<^sub>S(J){is closed in}{D(J). J\<in>\<I>}"
 proof-
-  from assms have "V(J) \<subseteq> Spec" using closeBasic_def by auto
-  then have I:"\<And>x. x \<in> V(J) \<Longrightarrow> x \<in> \<Union>RepFun(\<I>, D)" using total_spec by auto
-  show "Spec-V(J) = D(J)" using assms
+  from assms have "V\<^sub>S(J) \<subseteq> Spec" using closeBasic_def by auto
+  then have I:"\<And>x. x \<in> V\<^sub>S(J) \<Longrightarrow> x \<in> \<Union>RepFun(\<I>, D)" using total_spec by auto
+  show "Spec-V\<^sub>S(J) = D(J)" using assms
     closeBasic_def openBasic_def by auto
-  with assms have II:"\<Union>RepFun(\<I>, D) - V(J) \<in> RepFun(\<I>, D)"
+  with assms have II:"\<Union>RepFun(\<I>, D) - V\<^sub>S(J) \<in> RepFun(\<I>, D)"
     using total_spec by auto
-  from I II show "V(J){is closed in}{D(J). J\<in>\<I>}" unfolding IsClosed_def by auto
+  from I II show "V\<^sub>S(J){is closed in}{D(J). J\<in>\<I>}" unfolding IsClosed_def by auto
 qed
 
 text\<open>As with D-sets, by De Morgan's Laws we get the same result
@@ -392,34 +391,34 @@ for unions and intersections on V-sets\<close>
 
 lemma (in ring0) V_union:
   assumes "J\<in>\<I>" "K\<in>\<I>"
-  shows "V(J)\<union>V(K) = V(J\<cdot>\<^sub>IK)"
+  shows "V\<^sub>S(J)\<union>V\<^sub>S(K) = V\<^sub>S(J\<cdot>\<^sub>IK)"
 proof-
   {
-    fix t assume "t\<in>V(J)"
+    fix t assume "t\<in>V\<^sub>S(J)"
     then have "t\<in>Spec" "J\<subseteq>t" using closeBasic_def
       assms(1) by auto
     moreover have "J\<cdot>\<^sub>IK \<subseteq> J" using product_in_intersection(1)
       assms by auto
     ultimately have "t\<in>Spec" "J\<cdot>\<^sub>IK \<subseteq>t" by auto
-    then have "t: V(J\<cdot>\<^sub>IK)" using closeBasic_def
+    then have "t: V\<^sub>S(J\<cdot>\<^sub>IK)" using closeBasic_def
       product_in_intersection(2) assms ideal_dest_subset
       by auto
   }
   moreover
   {
-    fix t assume "t\<in>V(K)"
+    fix t assume "t\<in>V\<^sub>S(K)"
     then have "t\<in>Spec" "K\<subseteq>t" using closeBasic_def
       assms(2) by auto
     moreover have "J\<cdot>\<^sub>IK \<subseteq> K" using product_in_intersection(1)
       assms by auto
     ultimately have "t\<in>Spec" "J\<cdot>\<^sub>IK \<subseteq>t" by auto
-    then have "t: V(J\<cdot>\<^sub>IK)" using closeBasic_def
+    then have "t: V\<^sub>S(J\<cdot>\<^sub>IK)" using closeBasic_def
       product_in_intersection(2) assms ideal_dest_subset
       by auto
   }
   moreover
   {
-    fix t assume "t\<in> V(J\<cdot>\<^sub>IK)"
+    fix t assume "t\<in> V\<^sub>S(J\<cdot>\<^sub>IK)"
     then have t:"t\<in>Spec" "J\<cdot>\<^sub>IK\<subseteq>t" using closeBasic_def
       assms product_in_intersection(2)
       ideal_dest_subset by auto
@@ -427,7 +426,7 @@ proof-
       unfolding Spec_def primeIdeal_def by blast
     with assms have "J\<cdot>\<^sub>IK\<subseteq>t \<longrightarrow> J\<subseteq>t \<or> K\<subseteq>t" by auto
     with t have "t\<in>Spec"  "J \<subseteq> t \<or> K \<subseteq> t" by auto
-    then have "t\<in>V(J)\<union>V(K)" using closeBasic_def
+    then have "t\<in>V\<^sub>S(J)\<union>V\<^sub>S(K)" using closeBasic_def
       assms by auto
   }
   ultimately show ?thesis by auto
@@ -437,59 +436,59 @@ text\<open>The intersection of a family of V-sets is the V-set of the sum of the
 
 lemma (in ring0) V_intersect:
   assumes "\<J> \<subseteq> \<I>" "\<J> \<noteq>0"
-  shows "\<Inter>{V(I). I\<in>\<J>} = V(\<oplus>\<^sub>I\<J>)"
+  shows "\<Inter>{V\<^sub>S(I). I\<in>\<J>} = V\<^sub>S(\<oplus>\<^sub>I\<J>)"
 proof-
-  have "Spec - (\<Inter>{V(I). I\<in>\<J>}) = \<Union>{D(I). I\<in>\<J>}"
+  have "Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>}) = \<Union>{D(I). I\<in>\<J>}"
   proof
     {
-      fix t assume "t:Spec - (\<Inter>{V(I). I\<in>\<J>})"
-      then have t:"t:Spec" "t\<notin>\<Inter>{V(I). I\<in>\<J>}" by auto
-      from t(2) obtain K where "(t\<notin>V(K) \<and> K\<in>\<J>) \<or> \<J>=0" by auto
-      with assms(2) have tk:"t\<notin>V(K)" "K\<in>\<J>" by auto
-      with t(1) have "t\<in>Spec-V(K)" "K:\<J>" by auto moreover
-      from tk(2) have "Spec-V(K) = D(K)" using assms(1) V_is_closed(1) by auto
+      fix t assume "t:Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>})"
+      then have t:"t:Spec" "t\<notin>\<Inter>{V\<^sub>S(I). I\<in>\<J>}" by auto
+      from t(2) obtain K where "(t\<notin>V\<^sub>S(K) \<and> K\<in>\<J>) \<or> \<J>=0" by auto
+      with assms(2) have tk:"t\<notin>V\<^sub>S(K)" "K\<in>\<J>" by auto
+      with t(1) have "t\<in>Spec-V\<^sub>S(K)" "K:\<J>" by auto moreover
+      from tk(2) have "Spec-V\<^sub>S(K) = D(K)" using assms(1) V_is_closed(1) by auto
       ultimately have "t:D(K)" "K:\<J>" by auto
       then have "t\<in>\<Union>{D(I). I\<in>\<J>}" by auto
     }
-    then show "Spec - (\<Inter>{V(I). I\<in>\<J>}) \<subseteq> \<Union>{D(I). I\<in>\<J>}" by auto
+    then show "Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>}) \<subseteq> \<Union>{D(I). I\<in>\<J>}" by auto
     {
       fix t assume "t\<in>\<Union>{D(I). I\<in>\<J>}"
       then obtain K where K:"K:\<J>" "t:D(K)" using assms(2)
         by auto
-      from K(1) have "Spec-V(K) = D(K)" using assms(1) V_is_closed(1) by auto     
-      with K(2) have "t:Spec-V(K)" by auto
-      with K(1) have "t\<in>Spec-\<Inter>{V(I). I:\<J>}" by auto
+      from K(1) have "Spec-V\<^sub>S(K) = D(K)" using assms(1) V_is_closed(1) by auto     
+      with K(2) have "t:Spec-V\<^sub>S(K)" by auto
+      with K(1) have "t\<in>Spec-\<Inter>{V\<^sub>S(I). I:\<J>}" by auto
     }
-    then show "\<Union>{D(I). I\<in>\<J>} \<subseteq> Spec - (\<Inter>{V(I). I\<in>\<J>})" by auto
+    then show "\<Union>{D(I). I\<in>\<J>} \<subseteq> Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>})" by auto
   qed
-  then have "Spec - (\<Inter>{V(I). I\<in>\<J>}) = D(\<oplus>\<^sub>I\<J>)" using union_open_basic
+  then have "Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>}) = D(\<oplus>\<^sub>I\<J>)" using union_open_basic
     assms by auto
-  then have "Spec-(Spec - (\<Inter>{V(I). I\<in>\<J>})) = Spec- D(\<oplus>\<^sub>I\<J>)" by auto
+  then have "Spec-(Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>})) = Spec- D(\<oplus>\<^sub>I\<J>)" by auto
   moreover
   have "\<Union>\<J> \<subseteq> R" using assms(1) by auto
   then have "\<langle>\<Union>\<J>\<rangle>\<^sub>I\<in>\<I>" using generated_ideal_is_ideal ideal_dest_subset by auto
   then have JI:"(\<oplus>\<^sub>I\<J>) \<in> \<I>" using assms(1)
     sumArbitraryIdeals_def by auto
-  then have "Spec- V(\<oplus>\<^sub>I\<J>) = D(\<oplus>\<^sub>I\<J>)" using V_is_closed(1)
+  then have "Spec- V\<^sub>S(\<oplus>\<^sub>I\<J>) = D(\<oplus>\<^sub>I\<J>)" using V_is_closed(1)
     by auto
-  then have "Spec-(Spec-V(\<oplus>\<^sub>I\<J>) ) = Spec-D(\<oplus>\<^sub>I\<J>)" by auto
-  ultimately have R:"Spec-(Spec - (\<Inter>{V(I). I\<in>\<J>})) = Spec-(Spec-V(\<oplus>\<^sub>I\<J>) )"
+  then have "Spec-(Spec-V\<^sub>S(\<oplus>\<^sub>I\<J>) ) = Spec-D(\<oplus>\<^sub>I\<J>)" by auto
+  ultimately have R:"Spec-(Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>})) = Spec-(Spec-V\<^sub>S(\<oplus>\<^sub>I\<J>) )"
     by auto
   {
-    fix t assume t:"t\<in>\<Inter>{V(I). I\<in>\<J>}"
-    with assms(2) obtain I where "I:\<J>" "t:V(I)" by auto
+    fix t assume t:"t\<in>\<Inter>{V\<^sub>S(I). I\<in>\<J>}"
+    with assms(2) obtain I where "I:\<J>" "t:V\<^sub>S(I)" by auto
     then have "t\<in>Spec" using closeBasic_def assms(1)
       by auto
-    with t have "t\<in>Spec-(Spec - (\<Inter>{V(I). I\<in>\<J>}))" by auto
-    with R have "t\<in>Spec-(Spec-V(\<oplus>\<^sub>I\<J>) )" by auto
-    then have "t\<in>V(\<oplus>\<^sub>I\<J>)" by auto
+    with t have "t\<in>Spec-(Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>}))" by auto
+    with R have "t\<in>Spec-(Spec-V\<^sub>S(\<oplus>\<^sub>I\<J>) )" by auto
+    then have "t\<in>V\<^sub>S(\<oplus>\<^sub>I\<J>)" by auto
   } moreover
   {
-    fix t assume t:"t\<in>V(\<oplus>\<^sub>I\<J>)"
+    fix t assume t:"t\<in>V\<^sub>S(\<oplus>\<^sub>I\<J>)"
     with JI have "t:Spec" using closeBasic_def by auto
-    with t have "t\<in>Spec-(Spec-V(\<oplus>\<^sub>I\<J>) )" by auto
-    then have "t\<in>Spec-(Spec - (\<Inter>{V(I). I\<in>\<J>}))" using R by auto
-    then have "t\<in>\<Inter>{V(I). I\<in>\<J>}" by auto
+    with t have "t\<in>Spec-(Spec-V\<^sub>S(\<oplus>\<^sub>I\<J>) )" by auto
+    then have "t\<in>Spec-(Spec - (\<Inter>{V\<^sub>S(I). I\<in>\<J>}))" using R by auto
+    then have "t\<in>\<Inter>{V\<^sub>S(I). I\<in>\<J>}" by auto
   }
   ultimately show ?thesis by force
 qed
@@ -499,12 +498,12 @@ of all its points.\<close>
 
 lemma (in ring0) closure_zariski:
   assumes "U \<subseteq> Spec" "U\<noteq>0"
-  shows "cl(U) = V(\<Inter>U)"
+  shows "cl(U) = V\<^sub>S(\<Inter>U)"
 proof
   have "U \<subseteq> \<I>" using assms(1) unfolding Spec_def by auto
   then have ideal:"(\<Inter>U)\<triangleleft>R" using intersection_ideals assms(2) by auto
   {
-    fix t assume t:"t\<in>V(\<Inter>U)"
+    fix t assume t:"t\<in>V\<^sub>S(\<Inter>U)"
     {
       fix q assume q:"q\<in>\<Inter>U"
       with q obtain M where "M:U" "q:M" using assms(2) by blast
@@ -532,7 +531,7 @@ proof
       using total_spec by auto
     have "t\<in>cl(U)" using zariski.inter_neigh_cl RR(2,1) R by blast
   }
-  then show "V(\<Inter>U) \<subseteq> cl(U)"
+  then show "V\<^sub>S(\<Inter>U) \<subseteq> cl(U)"
     by (rule subsetI)
   {
     fix p assume p:"p\<in>U"
@@ -540,13 +539,13 @@ proof
     moreover
     from p assms(1) have "p\<in>Spec" "\<Inter>U\<subseteq>\<Union>Spec" by auto
     then have "p\<in>Spec" "\<Inter>U\<subseteq>R" unfolding Spec_def by auto
-    ultimately have "p\<in>V(\<Inter>U)" using closeBasic_def
+    ultimately have "p\<in>V\<^sub>S(\<Inter>U)" using closeBasic_def
       by auto
   }
-  then have A:"U\<subseteq>V(\<Inter>U)" by auto
-  have B:"V(\<Inter>U){is closed in}{D(J). J\<in>\<I>}"
+  then have A:"U\<subseteq>V\<^sub>S(\<Inter>U)" by auto
+  have B:"V\<^sub>S(\<Inter>U){is closed in}{D(J). J\<in>\<I>}"
     using V_is_closed(2) ideal ideal_dest_subset by auto
-  show "cl(U) \<subseteq> V(\<Inter>U)"
+  show "cl(U) \<subseteq> V\<^sub>S(\<Inter>U)"
     using zariski.Top_3_L13 A B by blast
 qed
 

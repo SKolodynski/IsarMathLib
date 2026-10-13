@@ -137,3 +137,7 @@ Predicates follow the `IsA*` naming convention:
 - `IsAtopology(T,\<tau>)` — T is a topology
 
 The `TheNeutralElement(G,f)` construct uses Isabelle's definite description to extract the unique neutral element.
+
+## Local instructions
+
+If `CLAUDE.local.md` exists in the repository root, read it and follow it as well.
