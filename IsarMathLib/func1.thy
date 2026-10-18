@@ -1864,6 +1864,25 @@ lemma converse_val: assumes "x\<in>X" "y\<in>X"
   shows "Converse(X)`\<langle>x,y\<rangle> = \<langle>y,x\<rangle>"
   using assms ZF_fun_from_tot_val1 unfolding Converse_def by simp
 
+text\<open>Composing with converse on the right has no effect on symmetric functions.\<close>
+
+lemma converse_sym_id: 
+  assumes "w:X\<times>X\<rightarrow>Y" and "\<forall>x\<in>X.\<forall>y\<in>X. w`\<langle>x,y\<rangle> = w`\<langle>y,x\<rangle>"
+  shows "w O Converse(X) = w" 
+proof -
+  from assms(1) have "(w O Converse(X)):X\<times>X\<rightarrow>Y"
+    using converse_fun comp_fun by blast
+  { fix p assume "p\<in>X\<times>X"
+    then obtain x y where "x\<in>X" "y\<in>X" and "p=\<langle>x,y\<rangle>" by auto
+    then have "(w O Converse(X))`(p) = w`(Converse(X)`\<langle>x,y\<rangle>)"
+      using converse_fun comp_fun_apply by blast
+    with assms(2) \<open>x\<in>X\<close> \<open>y\<in>X\<close> \<open>p=\<langle>x,y\<rangle>\<close> have "(w O Converse(X))`(p) = w`(p)"
+      using converse_val by simp
+  } hence "\<forall>p\<in>X\<times>X. (w O Converse(X))`(p) = w`(p)" by simp
+  with assms(1) \<open>(w O Converse(X)):X\<times>X\<rightarrow>Y\<close> show "w O Converse(X) = w"
+    using func_eq by blast
+qed
+
 text\<open>Relation of our \<open>Reverse\<close> to the standard Isabelle/ZF's \<open>reverse\<close>:
   the standard reverse of a relation $r\subseteq X\times X$ is the image
   of $r$ by our reverse function.\<close>

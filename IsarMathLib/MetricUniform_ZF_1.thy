@@ -175,7 +175,17 @@ proof -
     using chain_weights_nonneg loop1_valid_in_group3 loop1.zero_subset_nneg(4)
     unfolding ChainDist_def by simp
 qed
-  
+
+text\<open>If the weight function is symmetric then the chain distance from $x$ to $y$ is the same
+  as from $y$ to $x$.\<close>
+
+lemma (in reals) chain_dist_symm: 
+  assumes "w:X\<times>X\<rightarrow>\<real>\<^sup>+" "\<forall>x\<in>X.\<forall>y\<in>X. w`\<langle>x,y\<rangle> = w`\<langle>y,x\<rangle>"
+  shows "ChainDist(X,w,x,y) = ChainDist(X,w,y,x)" 
+  using assms basic_props(2) OrderedGroup_ZF_1_L4E func1_1_L1B
+      add_group.monoid1_valid_in_group monoid1.weight_set_rev_eq
+  unfolding RChainWeight_def ChainDist_def by simp
+
 subsection\<open>Metrization lemma\<close>
 
 text\<open>The metrization theorem states that a uniform space is pseudometrizable if and only if 

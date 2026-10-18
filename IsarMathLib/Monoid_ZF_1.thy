@@ -544,4 +544,62 @@ proof -
     unfolding ChainWeight_def by simp
 qed
 
+text\<open>If the monoid operation is commutative and the weight function is symmetric
+  the weights of a chain and its reverse are the same.\<close>
+
+lemma (in monoid1) weight_rev_same: 
+  assumes "f {is commutative on} G" "n\<in>nat" "c\<in>Chains(X,n,x,y)" and
+    "w:X\<times>X\<rightarrow>G" "\<forall>x\<in>X.\<forall>y\<in>X. w`\<langle>x,y\<rangle> = w`\<langle>y,x\<rangle>"
+  shows "ChainWeight(w,Reverse(c)) = ChainWeight(w,c)"
+proof -
+  let ?L = "ChainLinks(c)"
+  from assms(2,3) have "?L:n\<rightarrow>X\<times>X" using chain_links_fun(2) by simp
+  with assms(4) have "(w O ?L):n\<rightarrow>G" using comp_fun by simp 
+  with assms(2) have "(w O ?L) \<in> Lists(G)" unfolding Lists_def by auto
+  from assms(2,3) have 
+    "ChainWeight(w,Reverse(c)) = \<Sum> ((w O Converse(X)) O Reverse(?L))"
+    using links_reverse(2) comp_assoc unfolding ChainWeight_def by simp
+  with assms(1,2,4,5) \<open>?L:n\<rightarrow>X\<times>X\<close> \<open>(w O ?L) \<in> Lists(G)\<close> show ?thesis
+    using converse_sym_id rev_comp_commutes comm_sum_rev_eq 
+    unfolding ChainWeight_def by simp
+qed
+
+text\<open>If the monoid operation is commutative and the weight function is symmetric the set of 
+  chain weights of of all nontrivial chains connecting $x\in X$ and $w\in X$ is contained
+  in the analogous set for chains connecting $y$ and $x$.\<close>
+
+lemma (in monoid1) weight_set_rev_incl: 
+  assumes "f {is commutative on} G" "w:X\<times>X\<rightarrow>G" "\<forall>x\<in>X.\<forall>y\<in>X. w`\<langle>x,y\<rangle> = w`\<langle>y,x\<rangle>"
+  shows "{ChainWeight(w,c). c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))} \<subseteq> 
+        {ChainWeight(w,c). c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,y,x))}"
+proof
+  let ?L = "{ChainWeight(w,c). c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))}"
+  let ?R = "{ChainWeight(w,c). c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,y,x))}"
+  fix d assume "d\<in>?L"
+  then obtain c where 
+    "c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))" and "d=ChainWeight(w,c)"
+    by auto
+  from \<open>c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))\<close> obtain n 
+    where "n\<in>nat" "n\<noteq>0" and "c\<in>Chains(X,n,x,y)" by auto
+  let ?c\<^sub>r = "Reverse(c)"
+  from assms \<open>n\<in>nat\<close> \<open>c\<in>Chains(X,n,x,y)\<close> \<open>d=ChainWeight(w,c)\<close>
+  have "?c\<^sub>r \<in> Chains(X,n,y,x)" and "ChainWeight(w,?c\<^sub>r) = d"
+    using links_reverse(1) weight_rev_same by simp_all
+  with \<open>n\<in>nat\<close> \<open>n\<noteq>0\<close>  show "d\<in>?R" by auto
+qed
+
+text\<open>If the monoid operation is commutative and the weight function is symmetric the set of 
+  chain weights of of all nontrivial chains connecting $x\in X$ and $w\in X$ is the same
+  as the analogous set for chains connecting $y$ and $x$.\<close>
+
+corollary (in monoid1) weight_set_rev_eq: 
+  assumes "f {is commutative on} G" "w:X\<times>X\<rightarrow>G" "\<forall>x\<in>X.\<forall>y\<in>X. w`\<langle>x,y\<rangle> = w`\<langle>y,x\<rangle>"
+  shows "{ChainWeight(w,c). c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))} = 
+        {ChainWeight(w,c). c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,y,x))}"
+proof
+  let ?L = "{ChainWeight(w,c). c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,x,y))}"
+  let ?R = "{ChainWeight(w,c). c\<in>(\<Union>n\<in>nat\<setminus>{0}. Chains(X,n,y,x))}"
+  from assms show "?L\<subseteq>?R" and "?R\<subseteq>?L" using weight_set_rev_incl by simp_all
+qed
+
 end

@@ -1711,6 +1711,42 @@ proof -
     "?L\<^sub>3 = Concat(Append(ChainLinks(c\<^sub>1),\<langle>y\<^sub>1,x\<^sub>2\<rangle>),ChainLinks(c\<^sub>2))"
     using chain_props(2,3) by simp_all
 qed
- 
+
+text\<open>Links of a reverse of a chain is reverse of the links of the chain with converse applied 
+  to them.\<close>
+
+lemma links_reverse: assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)"
+  shows "Reverse(c)\<in>Chains(X,n,y,x)" and 
+    "ChainLinks(Reverse(c)) = Converse(X) O Reverse(ChainLinks(c))"
+proof -
+  let ?L = "ChainLinks(Reverse(c))"
+  let ?R = "Converse(X) O Reverse(ChainLinks(c))"
+  from assms have 
+    "c:(n #+ 1)\<rightarrow>X" "c`(0) = x" "c`(n) = y" "Reverse(c):(n #+ 1)\<rightarrow>X"
+    "0\<in>(n #+ 1)" and "n\<in>(n #+ 1)"
+    using chain_props(1,2,3) rev_list succ_add_one(6) nat_less_add_one(2) 
+    by simp_all
+  with assms(1) show I: "Reverse(c)\<in>Chains(X,n,y,x)"
+    using rev_list_val unfolding Chains_def by simp
+  with assms(1) have "?L:n\<rightarrow>X\<times>X" using chain_links_fun(2) by simp
+  moreover
+  from assms have 
+    "ChainLinks(c):n\<rightarrow>X\<times>X" and II: "Reverse(ChainLinks(c)):n\<rightarrow>X\<times>X" 
+    using chain_links_fun(2) rev_list by simp_all
+  then have "?R:n\<rightarrow>X\<times>X" using converse_fun comp_fun by simp
+  moreover
+  { fix k assume "k\<in>n"
+    with assms(1) \<open>ChainLinks(c):n\<rightarrow>X\<times>X\<close> \<open>c:(n #+ 1)\<rightarrow>X\<close> I  
+    have "c`(n #- (k #+ 1)) \<in> X" "c`(n #- k)\<in>X" and
+      "?L`(k) = \<langle>c`(n #- k),c`(n #- (k #+ 1))\<rangle>" and
+      "Reverse(ChainLinks(c))`(k) = ChainLinks(c)`(pred(n) #- k)"
+      using chain_links_val flip_nat_nat1 apply_funtype 
+        succ_ineq1(2,3) rev_list_val by simp_all    
+    with assms II \<open>k\<in>n\<close> have "?L`(k) = ?R`(k)"
+      using comp_fun_apply flip_nat_nat(2) chain_links_val 
+        nat_subtr_simpl0(2,3) converse_val  by simp
+  } hence "\<forall>k\<in>n. ?L`(k) = ?R`(k)" by simp
+  ultimately show "?L=?R" by (rule func_eq)
+qed
 
 end

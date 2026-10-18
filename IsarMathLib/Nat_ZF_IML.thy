@@ -41,8 +41,8 @@ text\<open>The  ZF set theory constructs natural numbers from the empty set
   non-zero natural number we get the identity $n = \{0,1,2,..,n-1\}$.
   It is good to remember that when we see an expression like
   $f: n \rightarrow X$. Also, with this definition 
-  the relation "less or equal than" becomes "$\subseteq$" and 
-  the relation "less than" becomes "$\in$".
+  the relation "less or equal than" is the same as "$\subseteq$" and 
+  the relation "less than" is the same as "$\in$".
 \<close>
 
 subsection\<open>Induction and other basic properties of natural numbers\<close>
@@ -548,6 +548,20 @@ proof -
     using nat_diff_diff by simp
 qed
 
+text\<open>Two other facts about natural numbers $n$ and $k<n$:
+  $n-k < n+1$ and $n-(k+1) < n+1$ (recall that for natural numbers $k<n$ is the same as $k\in n$.\<close>
+
+lemma flip_nat_nat1: assumes "n\<in>nat" and "k\<in>n"
+  shows "n #- k \<in> n #+ 1" and "n #- (k #+ 1) \<in> n #+ 1"
+proof -
+  from assms have "pred(n #+ 1) #- (k #+ 1) \<in> (n #+ 1)"
+    using succ_ineq1(2) flip_nat_nat(2) by blast
+  thus "n #- (k #+ 1) \<in> n #+ 1" by simp
+  from assms have "pred(n #+ 1) #- k \<in> (n #+ 1)"
+    using succ_ineq1(3) flip_nat_nat(2) by blast
+  thus "n #- k \<in> n #+ 1" by simp
+qed
+
 text\<open>For natural numbers if $k\in n$ then $k+1 \subseteq n$.\<close>
 
 lemma mem_add_one_subset: assumes "n \<in> nat" "k\<in>n" shows "k #+ 1 \<subseteq> n"
@@ -611,10 +625,15 @@ text\<open>Adding and subtracting a natural number cancel each other.\<close>
 lemma add_subtract: assumes "m\<in>nat" shows "(m #+ n) #- n = m"
   using assms diff_add_inverse2 by simp
 
-text\<open>A simplification rule for natural numbers: if $k < n$ then $n-(k+1)+1 = n-k$: \<close>
+text\<open>Some simplification rules for natural numbers: if $k < n$ then $n-(k+1)+1 = n-k$,
+  $(n-1)-k = n-(k+1)$, $(n-1)-k+1=n-k$, where in the last two we use \<open>pred(n)\<close> as a synonym
+  of $n-1$:\<close>
 
 lemma nat_subtr_simpl0: assumes "n\<in>nat" "k\<in>n" 
-  shows "n #- (k #+ 1) #+ 1 = n #- k"
+  shows 
+    "n #- (k #+ 1) #+ 1 = n #- k"
+    "pred(n) #- k = n #- (k #+ 1)"
+    "(pred(n) #- k) #+ 1 = n #- k"
 proof -
   from assms obtain m where "m\<in>nat" and "n = m #+ 1"
     using nat_not0_succ by blast
@@ -624,7 +643,11 @@ proof -
     "succ(m) #- k = succ(m #- k)" 
     using diff_succ succ_ineq2(2) by simp
   ultimately have "m  #- k #+ 1 = m #+ 1 #- k" by simp
-  with \<open>n = m #+ 1\<close> show ?thesis using diff_cancel2 by simp
+  with \<open>n = m #+ 1\<close> show "n #- (k #+ 1) #+ 1 = n #- k" 
+    using diff_cancel2 by simp
+  from assms \<open>n = m #+ 1\<close> \<open>m  #- k #+ 1 = m #+ 1 #- k\<close> show 
+    "pred(n) #- k = n #- (k #+ 1)" and "(pred(n) #- k) #+ 1 = n #- k"
+    using diff_succ_succ succ_add_one(1) elem_nat_is_nat(2) by simp_all
 qed
 
 text\<open>A special case of \<open>nat_subtr_simpl0\<close> when $k=0$:
