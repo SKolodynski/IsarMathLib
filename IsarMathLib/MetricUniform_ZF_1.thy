@@ -102,10 +102,18 @@ lemma (in reals) rchain_concat_weight:
     "n\<^sub>1\<in>nat" "n\<^sub>2\<in>nat"  
   shows "RChainWeight(w,Concat(c\<^sub>1,c\<^sub>2)) = RChainWeight(w,c\<^sub>1)\<ra>RChainWeight(w,c\<^sub>2)"
   using assms add_group.monoid1_valid_in_group monoid1.chain_concat_weight1
-    unfolding RChainWeight_def by simp
+  unfolding RChainWeight_def by simp
+
+text\<open>If the weight function is nonnegative then the chain distance is also nonnegative.\<close>
+
+lemma (in reals) chain_dist_nneg: 
+  assumes "x\<in>X" "y\<in>X" and "w:X\<times>X\<rightarrow>\<real>\<^sup>+"
+  shows "ChainDist(X,w,x,y) \<in> \<real>\<^sup>+"
+  using assms chains_nempty(4) chain_weights_nonneg nneg_has_nneg_inf
+  unfolding ChainDist_def by simp
 
 text\<open>If the weight function is nonnegative and zero on the diagonal then the chain distance 
-  obeys the triangle inequalitty\<close>
+  obeys the triangle inequality.\<close>
 
 lemma (in reals) chain_dist_tr_ineq: 
   assumes "x\<in>X" "y\<in>X" "z\<in>X" and "w:X\<times>X\<rightarrow>\<real>\<^sup>+" "\<forall>x\<in>X. w`\<langle>x,x\<rangle> = \<zero>"
@@ -186,6 +194,23 @@ lemma (in reals) chain_dist_symm:
       add_group.monoid1_valid_in_group monoid1.weight_set_rev_eq
   unfolding RChainWeight_def ChainDist_def by simp
 
+text\<open>Given a weight function $w\rightarrow X\times X$ We define the chain weight pseudometric 
+  as a function on $X\times X$ that assigns the chain distance to any pair 
+  $\langle x,y\rangle \in X\times X$.\<close>
+
+definition (in reals) ChainWeightPMetric where 
+  "ChainWeightPMetric(X,w) \<equiv> {\<langle>p,ChainDist(X,w,fst(p),snd(p))\<rangle>. p \<in> X\<times>X}"
+
+text\<open>If $w:X\times X\rightarrow\mathbb{R}^+$ is symmetric and vanishes on the diagonal
+  of $X\times X$ then the chain weight pseudometric is indeed a real-valued pseudometric.\<close>
+
+theorem (in reals) chain_weight_pmetric:
+  assumes "w:X\<times>X\<rightarrow>\<real>\<^sup>+" "\<forall>x\<in>X. w`\<langle>x,x\<rangle> = \<zero>" "\<forall>x\<in>X.\<forall>y\<in>X. w`\<langle>x,y\<rangle> = w`\<langle>y,x\<rangle>"
+  shows "IsApseudoMetric(ChainWeightPMetric(X,w),X,\<real>,Add,ROrd)"
+  using assms ZF_fun_from_total chain_dist_nneg ZF_fun_from_tot_val1 
+    chain_dist_self_zero chain_dist_symm chain_dist_tr_ineq
+  unfolding ChainWeightPMetric_def IsApseudoMetric_def by auto
+
 subsection\<open>Metrization lemma\<close>
 
 text\<open>The metrization theorem states that a uniform space is pseudometrizable if and only if 
@@ -198,7 +223,7 @@ text\<open>The metrization theorem states that a uniform space is pseudometrizab
   then show that the resulting function indeed satisfies the required conditions.
   The drawback of this approach is that we have to come up with names for the intermediate objects
   representing stages of that construction. Naming is hard, so as usual if the reader has an idea
-  for better names please let me know. \<close>
+  for better names please let me know.\<close>
 
 text\<open>We define the \<open>DistWeight(\<U>,p)\<close> expression as equal to (real) $0$ if 
   $p\in\bigcap_{n\in\mathbb{N}} \mathcal{U}_n$ or otherwise equal to $(\frac{1}{2})^n$, where
