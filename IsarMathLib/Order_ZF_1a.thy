@@ -48,12 +48,12 @@ text\<open>In this section we show that maximum and minimum are unique if they
 text\<open>A somewhat technical fact that allows to reduce the number of premises in some
   theorems: the assumption that a set has a maximum implies that it is not empty. \<close>
 
-lemma set_max_not_empty: assumes "HasAmaximum(r,A)" shows "A\<noteq>0"
+lemma set_max_not_empty: assumes "HasAmaximum(r,A)" shows "A\<noteq>\<emptyset>"
   using assms unfolding HasAmaximum_def by auto
 
 text\<open>If a set has a maximum implies that it is not empty. \<close>
 
-lemma set_min_not_empty: assumes "HasAminimum(r,A)" shows "A\<noteq>0"
+lemma set_min_not_empty: assumes "HasAminimum(r,A)" shows "A\<noteq>\<emptyset>"
   using assms unfolding HasAminimum_def by auto
 
 text\<open>If a set has a supremum then it cannot be empty. We are probably using the fact that 
@@ -64,7 +64,7 @@ lemma set_sup_not_empty: assumes "HasAsupremum(r,A)" shows "A\<noteq>\<emptyset>
 proof -
   from assms have "HasAminimum(r,\<Inter>a\<in>A. r``{a})" unfolding HasAsupremum_def
     by simp 
-  then have "(\<Inter>a\<in>A. r``{a}) \<noteq> 0" using set_min_not_empty by simp
+  then have "(\<Inter>a\<in>A. r``{a}) \<noteq> \<emptyset>" using set_min_not_empty by simp
   then obtain x where "x \<in> (\<Inter>y\<in>A. r``{y})" by blast
   thus ?thesis by auto
 qed
@@ -75,7 +75,7 @@ lemma set_inf_not_empty: assumes "HasAnInfimum(r,A)" shows "A\<noteq>\<emptyset>
 proof -
   from assms have "HasAmaximum(r,\<Inter>a\<in>A. r-``{a})" unfolding HasAnInfimum_def
     by simp 
-  then have "(\<Inter>a\<in>A. r-``{a}) \<noteq> 0" using set_max_not_empty by simp
+  then have "(\<Inter>a\<in>A. r-``{a}) \<noteq> \<emptyset>" using set_max_not_empty by simp
   then obtain x where "x \<in> (\<Inter>y\<in>A. r-``{y})" by blast
   thus ?thesis by auto
 qed
@@ -357,8 +357,8 @@ lemma Order_ZF_4_L11:
   assumes A1: "r {is total on} X" and 
   A2: "trans(r)" and 
   A3: "r \<subseteq> X\<times>X" and
-  A4: "\<forall>A. IsBounded(A,r) \<and> A\<noteq>0 \<longrightarrow> HasAminimum(r,A)" and 
-  A5: "B\<noteq>0" and A6: "IsBoundedBelow(B,r)"
+  A4: "\<forall>A. IsBounded(A,r) \<and> A\<noteq>\<emptyset> \<longrightarrow> HasAminimum(r,A)" and 
+  A5: "B\<noteq>\<emptyset>" and A6: "IsBoundedBelow(B,r)"
   shows "HasAminimum(r,B)"
 proof -
   from A5 obtain b where T: "b\<in>B" by auto
@@ -366,7 +366,7 @@ proof -
   from A3 A6 T have T1: "b\<in>X" using Order_ZF_3_L1B by blast
   with A1 T have T2: "b \<in> ?L"
     using total_is_refl refl_def by simp
-  then have "?L \<noteq> 0" by auto
+  then have "?L\<noteq>\<emptyset>" by auto
   moreover have "IsBounded(?L,r)"
   proof -
     have "?L \<subseteq> B" by auto
@@ -379,7 +379,7 @@ proof -
     then show "IsBounded(?L,r)" using IsBounded_def
       by simp
   qed
-  ultimately have "IsBounded(?L,r) \<and> ?L \<noteq> 0" by blast
+  ultimately have "IsBounded(?L,r) \<and> ?L\<noteq>\<emptyset>" by blast
   with A4 have "HasAminimum(r,?L)" by simp
   then obtain m where I: "m\<in>?L" and II: "\<forall>x\<in>?L. \<langle> m,x\<rangle> \<in> r" 
     using HasAminimum_def by auto
@@ -415,8 +415,8 @@ lemma Order_ZF_4_L11A:
   assumes A1: "r {is total on} X" and 
   A2: "trans(r)" and 
   A3: "r \<subseteq> X\<times>X" and
-  A4: "\<forall>A. IsBounded(A,r) \<and> A\<noteq>0 \<longrightarrow> HasAmaximum(r,A)" and 
-  A5: "B\<noteq>0" and A6: "IsBoundedAbove(B,r)"
+  A4: "\<forall>A. IsBounded(A,r) \<and> A\<noteq>\<emptyset> \<longrightarrow> HasAmaximum(r,A)" and 
+  A5: "B\<noteq>\<emptyset>" and A6: "IsBoundedAbove(B,r)"
   shows "HasAmaximum(r,B)"
 proof -
   from A5 obtain b where T: "b\<in>B" by auto
@@ -424,7 +424,7 @@ proof -
   from A3 A6 T have T1: "b\<in>X" using Order_ZF_3_L1A by blast
   with A1 T have T2: "b \<in> ?U"
     using total_is_refl refl_def by simp
-  then have "?U \<noteq> 0" by auto
+  then have "?U\<noteq>\<emptyset>" by auto
   moreover have "IsBounded(?U,r)"
   proof -
     have "?U \<subseteq> B" by auto
@@ -437,7 +437,7 @@ proof -
     then show "IsBounded(?U,r)" using IsBounded_def
       by simp
   qed
-  ultimately have "IsBounded(?U,r) \<and> ?U \<noteq> 0" by blast
+  ultimately have "IsBounded(?U,r) \<and> ?U\<noteq>\<emptyset>" by blast
   with A4 have "HasAmaximum(r,?U)" by simp
   then obtain m where I: "m\<in>?U" and II: "\<forall>x\<in>?U. \<langle>x,m\<rangle> \<in> r"
     using HasAmaximum_def by auto
@@ -512,7 +512,7 @@ text\<open>If the set of upper bounds has a minimum, then the supremum
   intersection over an empty family is defined in Isabelle to be empty.
   This lemma is obsolete and will be removed in the future. Use \<open>sup_leq_up_bnd\<close> instead.\<close>
 
-lemma Order_ZF_5_L3: assumes A1: "antisym(r)" and A2: "A\<noteq>0" and
+lemma Order_ZF_5_L3: assumes A1: "antisym(r)" and A2: "A\<noteq>\<emptyset>" and
   A3: "HasAminimum(r,\<Inter>a\<in>A. r``{a})" and 
   A4: "\<forall>a\<in>A. \<langle>a,u\<rangle> \<in> r"
   shows "\<langle>Supremum(r,A),u\<rangle> \<in> r"
@@ -553,7 +553,7 @@ qed
 text\<open>Infimum is greater or equal than any lower bound. 
   This lemma is obsolete and will be removed. Use \<open>inf_geq_lo_bnd\<close> instead.\<close>
 
-lemma Order_ZF_5_L4: assumes A1: "antisym(r)" and A2: "A\<noteq>0" and
+lemma Order_ZF_5_L4: assumes A1: "antisym(r)" and A2: "A\<noteq>\<emptyset>" and
   A3: "HasAmaximum(r,\<Inter>a\<in>A. r-``{a})" and 
   A4: "\<forall>a\<in>A. \<langle>l,a\<rangle> \<in> r"
   shows "\<langle>l,Infimum(r,A)\<rangle> \<in> r"
@@ -581,7 +581,7 @@ qed
 text\<open>If $z$ is an upper bound for $A$ and is less or equal than
   any other upper bound, then $z$ is the supremum of $A$.\<close>
 
-lemma Order_ZF_5_L5: assumes A1: "antisym(r)" and A2: "A\<noteq>0" and
+lemma Order_ZF_5_L5: assumes A1: "antisym(r)" and A2: "A\<noteq>\<emptyset>" and
   A3: "\<forall>x\<in>A. \<langle>x,z\<rangle> \<in> r" and 
   A4: "\<forall>y. (\<forall>x\<in>A. \<langle>x,y\<rangle> \<in> r) \<longrightarrow> \<langle>z,y\<rangle> \<in> r"
   shows 
@@ -632,7 +632,7 @@ text\<open>If a set has a maximum, then the maximum is the supremum. This lemma 
   \<open>max_is_sup\<close> instead.\<close>
 
 lemma Order_ZF_5_L6: 
-  assumes A1:  "antisym(r)" and A2: "A\<noteq>0" and 
+  assumes A1:  "antisym(r)" and A2: "A\<noteq>\<emptyset>" and 
   A3: "HasAmaximum(r,A)"
   shows 
   "HasAminimum(r,\<Inter>a\<in>A. r``{a})"
@@ -747,7 +747,7 @@ proof -
 qed
 
 text\<open>If a set has a infimum and that infimum is a member of the set, then
-  it has a mimimum and the minimum is that infimum.\<close>
+  it has a minimum and the minimum is that infimum.\<close>
 
 lemma inf_is_min: 
   assumes "antisym(r)" "HasAnInfimum(r,A)" "Infimum(r,A) \<in> A"
@@ -781,7 +781,7 @@ lemma sup_in_space:
   assumes "r \<subseteq> X\<times>X" "antisym(r)" "HasAminimum(r,\<Inter>a\<in>A. r``{a})"
   shows "Supremum(r,A) \<in> X" and "\<forall>x\<in>A. \<langle>x,Supremum(r,A)\<rangle> \<in> r"
 proof -
-  from assms(3) have "A\<noteq>0" using set_sup_not_empty unfolding HasAsupremum_def by simp
+  from assms(3) have "A\<noteq>\<emptyset>" using set_sup_not_empty unfolding HasAsupremum_def by simp
   then obtain a where "a\<in>A" by auto
   with assms(1,2,3) show "Supremum(r,A) \<in> X" unfolding Supremum_def 
     using Order_ZF_4_L4 Order_ZF_5_L1 by blast
@@ -795,7 +795,7 @@ lemma inf_in_space:
   assumes "r \<subseteq> X\<times>X" "antisym(r)" "HasAmaximum(r,\<Inter>a\<in>A. r-``{a})"
   shows "Infimum(r,A) \<in> X" and "\<forall>x\<in>A. \<langle>Infimum(r,A),x\<rangle> \<in> r"
 proof -
-  from assms(3) have "A\<noteq>0" using set_inf_not_empty unfolding HasAnInfimum_def by simp
+  from assms(3) have "A\<noteq>\<emptyset>" using set_inf_not_empty unfolding HasAnInfimum_def by simp
   then obtain a where "a\<in>A" by auto
   with assms(1,2,3) show "Infimum(r,A) \<in> X" unfolding Infimum_def 
     using Order_ZF_4_L3 Order_ZF_5_L1 by blast
@@ -848,7 +848,7 @@ text\<open>Properties of supremum of a bounded set for complete relations.\<clos
 lemma Order_ZF_5_L7: 
   assumes A1: "r \<subseteq> X\<times>X" and A2: "antisym(r)" and 
   A3: "r {is complete}" and
-  A4: "A\<noteq>0" and A5: "\<exists>x\<in>X. \<forall>y\<in>A. \<langle>y,x\<rangle> \<in> r"
+  A4: "A\<noteq>\<emptyset>" and A5: "\<exists>x\<in>X. \<forall>y\<in>A. \<langle>y,x\<rangle> \<in> r"
   shows "Supremum(r,A) \<in> X" and "\<forall>x\<in>A. \<langle>x,Supremum(r,A)\<rangle> \<in> r"
 proof -
   from A3 A4 A5 have "HasAminimum(r,\<Inter>a\<in>A. r``{a})"
@@ -863,7 +863,7 @@ text\<open>Similar to \<open>Order_ZF_5_L7\<close> with less explicit boundednes
 
 lemma compl_bounded_sup_props: 
   assumes "r \<subseteq> X\<times>X" "antisym(r)" "r {is complete}" and 
-    "A\<noteq>0" "IsBoundedAbove(A,r)"
+    "A\<noteq>\<emptyset>" "IsBoundedAbove(A,r)"
   shows "Supremum(r,A) \<in> X" and "\<forall>x\<in>A. \<langle>x,Supremum(r,A)\<rangle> \<in> r"
 proof -
   from assms(1,4,5) have "\<exists>x\<in>X. \<forall>y\<in>A. \<langle>y,x\<rangle> \<in> r"
@@ -960,7 +960,7 @@ lemma inf_inf:
 proof -
   let ?i = "Infimum(r,{Infimum(r,T).T\<in>\<T>})"
   note assms(2)
-  moreover from assms(4,5) have "\<Union>\<T> \<noteq> 0" using set_inf_not_empty by blast
+  moreover from assms(4,5) have "\<Union>\<T> \<noteq> \<emptyset>" using set_inf_not_empty by blast
   moreover
   have "\<forall>T\<in>\<T>.\<forall>t\<in>T. \<langle>?i,t\<rangle> \<in> r"
   proof -
@@ -984,7 +984,7 @@ proof -
   qed 
   ultimately have "HasAmaximum(r,\<Inter>a\<in>\<Union>\<T>. r-``{a})" by (rule inf_glb)
   then show "HasAnInfimum(r,\<Union>\<T>)" unfolding HasAnInfimum_def by simp
-  from assms(2) \<open>\<Union>\<T> \<noteq> 0\<close> I J show "?i = Infimum(r,\<Union>\<T>)" by (rule inf_glb)
+  from assms(2) \<open>\<Union>\<T> \<noteq> \<emptyset>\<close> I J show "?i = Infimum(r,\<Union>\<T>)" by (rule inf_glb)
 qed
 
 text\<open>Supremum of the set of suprema of a collection of sets is supremum of the union.\<close>
@@ -999,7 +999,7 @@ lemma sup_sup:
 proof -
   let ?s = "Supremum(r,{Supremum(r,T).T\<in>\<T>})"
   note assms(2)
-  moreover from assms(4,5) have "\<Union>\<T> \<noteq> 0" using set_sup_not_empty by blast
+  moreover from assms(4,5) have "\<Union>\<T> \<noteq> \<emptyset>" using set_sup_not_empty by blast
   moreover
   have "\<forall>T\<in>\<T>.\<forall>t\<in>T. \<langle>t,?s\<rangle> \<in> r"
   proof -
@@ -1023,7 +1023,7 @@ proof -
   qed 
   ultimately have "HasAminimum(r,\<Inter>a\<in>\<Union>\<T>. r``{a})" by (rule Order_ZF_5_L5)
   then show "HasAsupremum(r,\<Union>\<T>)" unfolding HasAsupremum_def by simp
-  from assms(2) \<open>\<Union>\<T> \<noteq> 0\<close> I J show "?s = Supremum(r,\<Union>\<T>)" by (rule Order_ZF_5_L5)
+  from assms(2) \<open>\<Union>\<T> \<noteq> \<emptyset>\<close> I J show "?s = Supremum(r,\<Union>\<T>)" by (rule Order_ZF_5_L5)
 qed
 
 text\<open>If the relation is a linear order then for any 
@@ -1033,7 +1033,7 @@ text\<open>If the relation is a linear order then for any
 lemma Order_ZF_5_L8:
   assumes A1: "r \<subseteq> X\<times>X"  and A2: "IsLinOrder(X,r)" and 
   A3: "r {is complete}" and
-  A4: "A\<subseteq>X"  "A\<noteq>0" and A5: "\<exists>x\<in>X. \<forall>y\<in>A. \<langle>y,x\<rangle> \<in> r" and
+  A4: "A\<subseteq>X"  "A\<noteq>\<emptyset>" and A5: "\<exists>x\<in>X. \<forall>y\<in>A. \<langle>y,x\<rangle> \<in> r" and
   A6: "\<langle>y,Supremum(r,A)\<rangle> \<in> r"   "y \<noteq> Supremum(r,A)"
   shows "\<exists>z\<in>A. \<langle>y,z\<rangle> \<in> r \<and> y \<noteq> z"
 proof -
@@ -1044,7 +1044,7 @@ proof -
     using IsLinOrder_def by auto
   from A1 A6 have T1: "y\<in>X" by auto
   { assume A7: "\<forall>z \<in> A. \<langle>y,z\<rangle> \<notin> r \<or> y=z"
-    from A4 I have "antisym(r)" and "A\<noteq>0" by auto
+    from A4 I have "antisym(r)" and "A\<noteq>\<emptyset>" by auto
     moreover have "\<forall>x\<in>A. \<langle>x,y\<rangle> \<in> r"  
     proof      
       fix x assume A8: "x\<in>A"
@@ -1056,7 +1056,7 @@ proof -
     moreover have "\<forall>u. (\<forall>x\<in>A. \<langle>x,u\<rangle> \<in> r) \<longrightarrow> \<langle>y,u\<rangle> \<in> r"
     proof-
       { fix u assume A9: "\<forall>x\<in>A. \<langle>x,u\<rangle> \<in> r"
-	from A4 A5 have "IsBoundedAbove(A,r)" and "A\<noteq>0"
+	from A4 A5 have "IsBoundedAbove(A,r)" and "A\<noteq>\<emptyset>"
 	  using IsBoundedAbove_def by auto
 	with  A3 A4 A6 I A9  have 
 	  "\<langle>y,Supremum(r,A)\<rangle> \<in> r \<and> \<langle>Supremum(r,A),u\<rangle> \<in> r"
@@ -1334,7 +1334,7 @@ text\<open>The next lemma provides a condition that is satisfied by
 lemma strict_of_compl: 
   assumes A1: "r \<subseteq> X\<times>X" and A2: "IsLinOrder(X,r)" and 
   A3: "r {is complete}" and 
-  A4: "A\<subseteq>X"  "A\<noteq>0" and A5: "s = StrictVersion(r)" and 
+  A4: "A\<subseteq>X"  "A\<noteq>\<emptyset>" and A5: "s = StrictVersion(r)" and 
   A6: "\<exists>u\<in>X. \<forall>y\<in>A. \<langle>y,u\<rangle> \<in> s"
   shows 
   "\<exists>x\<in>X. ( \<forall>y\<in>A. \<langle>x,y\<rangle> \<notin> s ) \<and> (\<forall>y\<in>X. \<langle>y,x\<rangle> \<in> s \<longrightarrow> (\<exists>z\<in>A. \<langle>y,z\<rangle> \<in> s))"

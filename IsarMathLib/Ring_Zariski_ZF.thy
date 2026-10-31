@@ -183,7 +183,7 @@ text\<open>From the previous results on intersection and union,
 we conclude that the D-sets we computed form a topology\<close>
 
 corollary (in ring0) zariski_top:
-  shows "{D(J). J\<in>\<I>}{is a topology}" 
+  shows "{D(J). J\<in>\<I>} {is a topology}" 
 proof-
   {
     fix M assume "M \<subseteq> {D(J). J\<in>\<I>}"
@@ -352,7 +352,7 @@ text\<open>A closed set is a set of primes containing a given
 ideal\<close>
 
 lemma (in ring0) closeBasic:
-  assumes "U{is closed in}{D(J). J\<in>\<I>}"
+  assumes "U {is closed in} {D(J). J\<in>\<I>}"
   obtains J where "J\<in>\<I>" and "U={K\<in>Spec. J\<subseteq>K}"
 proof-
   assume rule:"\<And>J. J \<in> \<I> \<Longrightarrow> U = {K \<in> Spec . J \<subseteq> K} \<Longrightarrow> thesis"
@@ -375,7 +375,7 @@ text\<open>V-sets and D-sets are complementary\<close>
 
 lemma (in ring0) V_is_closed:
   assumes "J\<in>\<I>"
-  shows "Spec-V\<^sub>S(J) = D(J)" and "V\<^sub>S(J){is closed in}{D(J). J\<in>\<I>}"
+  shows "Spec-V\<^sub>S(J) = D(J)" and "V\<^sub>S(J) {is closed in} {D(J). J\<in>\<I>}"
 proof-
   from assms have "V\<^sub>S(J) \<subseteq> Spec" using closeBasic_def by auto
   then have I:"\<And>x. x \<in> V\<^sub>S(J) \<Longrightarrow> x \<in> \<Union>RepFun(\<I>, D)" using total_spec by auto
@@ -383,7 +383,8 @@ proof-
     closeBasic_def openBasic_def by auto
   with assms have II:"\<Union>RepFun(\<I>, D) - V\<^sub>S(J) \<in> RepFun(\<I>, D)"
     using total_spec by auto
-  from I II show "V\<^sub>S(J){is closed in}{D(J). J\<in>\<I>}" unfolding IsClosed_def by auto
+  from I II show "V\<^sub>S(J) {is closed in} {D(J). J\<in>\<I>}" unfolding IsClosed_def 
+    by auto
 qed
 
 text\<open>As with D-sets, by De Morgan's Laws we get the same result
@@ -556,7 +557,7 @@ text\<open>In this section we study the topological properties of Spec related t
 text\<open>All Spec topologies are $T_0$.\<close>
 
 theorem (in ring0) zariski_t0:
-  shows "{D(I). I\<in>\<I>}{is T\<^sub>0}"
+  shows "{D(I). I\<in>\<I>} {is T\<^sub>0}"
 proof-
   {
     fix x y assume ass:"x:Spec" "y:Spec" "x\<noteq>y"

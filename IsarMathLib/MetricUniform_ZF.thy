@@ -426,7 +426,7 @@ text\<open>The definition of a uniformity requires that for each entourage $U$
   lemma \<open>half_size_symm\<close> shows that we can assume $V$ is symmetric.
   In some propositions in this section we will assume that we are given a function say $h$ 
   that provides those half-size entourages, i.e. maps a uniformity $\Phi$ into itself and 
-  for each entourage $U\in\Phi$ we have $h(U)\circ h(U)\subseteq V$. 
+  for each entourage $U\in\Phi$ we have $h(U)\circ h(U)\subseteq U$. 
 
   The existence of such function follows from the Axiom of Choice, but we don't want to use AC
   in this theory.

@@ -41,7 +41,7 @@ subsection\<open>Defining pseudometrics with weighted chains\<close>
 
 text\<open>This section describes a method of defining real valued pseudometrics through infimum 
   of the set of weights of all chains connecting two points. 
-  The notions of chains and links is defined in the \<open>FiniteSeq_ZF\<close> theory, with some 
+  The notions of chains and links are defined in the \<open>FiniteSeq_ZF\<close> theory, with some 
   properties proven in the \<open>Monoid_ZF_1\<close> theory.\<close>
 
 text\<open>Since we will be using the set of non-zero natural numbers quite a lot, let's
@@ -245,7 +245,7 @@ text\<open>Suppose $\mathcal{U}:\mathbb{N}\rightarrow \mathcal{P}(X\times X)$ is
   of $X\times X$ such that $\mathcal{U}_{n+1}\subseteq \mathcal{U}_n$ 
   for all $n\in\mathbb{N}$.
   Assume further that $p\in\mathcal{U}_n\setminus \mathcal{U}_{n+1}$ for some $n\in\mathbb{N}$.
-  Then \<open>DistWeight(\<U>,p)\<close> is equal to $\left(frac{1}{2}\right)^n$.\<close>
+  Then \<open>DistWeight(\<U>,p)\<close> is equal to $\left(\frac{1}{2}\right)^n$.\<close>
 
 lemma (in reals) dist_weight_val: 
   assumes "\<U>:nat\<rightarrow>Pow(X\<times>X)" "\<forall>i\<in>nat. \<U>`(i #+ 1) \<subseteq> \<U>`(i)" and
