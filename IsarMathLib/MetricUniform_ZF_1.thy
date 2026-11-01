@@ -61,8 +61,8 @@ text\<open>Given a chain of elements of $X$ and a weight function
 lemma (in reals) chain_weight_real: 
   assumes "n\<in>nat" "c\<in>Chains(X,n,x,y)" "w:X\<times>X\<rightarrow>\<real>"
   shows "RChainWeight(w,c) \<in> \<real>"
-  using assms add_group.monoid.chain_weight_type unfolding RChainWeight_def 
-  by simp
+  using assms add_group.monoid.chain_weight_type 
+  unfolding RChainWeight_def by simp
 
 text\<open>Given a weight function $w:X\rightarrow \mathbb{R}^+$ we define 
   the chain distance between two points $x,y\in X$ as the infimum of set of weights of
@@ -95,7 +95,7 @@ corollary (in reals) chain_weights_nonneg: assumes "w:X\<times>X\<rightarrow>\<r
   using assms chain_weight_nonneg by auto
 
 text\<open>The \<open>chain_concat_weight1\<close> lemma from the \<open>monoid1\<close> context 
-  rewritten using notation used in the \<open>reals\<close> context.\<close>
+  rewritten using notation used in the \<open>reals\<close> context:\<close>
 
 lemma (in reals) rchain_concat_weight:
   assumes "w:X\<times>X\<rightarrow>\<real>" "\<forall>x\<in>X. w`\<langle>x,x\<rangle> = \<zero>" "c\<^sub>1\<in>Chains(X,n\<^sub>1,x,y)" "c\<^sub>2\<in>Chains(X,n\<^sub>2,y,z)" and
@@ -178,7 +178,8 @@ proof -
     using OrderedGroup_ZF_1_L4E func1_1_L1B 
       add_group.monoid1_valid_in_group monoid1.weight_one_link
     unfolding RChainWeight_def by simp
-  with I have "\<zero>\<in>{RChainWeight(w,c). c\<in>(\<Union>n\<in>\<nat>\<^sub>1. Chains(X,n,x,x))}" by blast
+  with I have "\<zero>\<in>{RChainWeight(w,c). c\<in>(\<Union>n\<in>\<nat>\<^sub>1. Chains(X,n,x,x))}" 
+    by blast
   with assms(2) show "ChainDist(X,w,x,x) = \<zero>"
     using chain_weights_nonneg loop1_valid_in_group3 loop1.zero_subset_nneg(4)
     unfolding ChainDist_def by simp
@@ -194,7 +195,7 @@ lemma (in reals) chain_dist_symm:
       add_group.monoid1_valid_in_group monoid1.weight_set_rev_eq
   unfolding RChainWeight_def ChainDist_def by simp
 
-text\<open>Given a weight function $w\rightarrow X\times X$ We define the chain weight pseudometric 
+text\<open>Given a weight function $w\rightarrow X\times X$ we define the chain weight pseudometric 
   as a function on $X\times X$ that assigns the chain distance to any pair 
   $\langle x,y\rangle \in X\times X$.\<close>
 
@@ -202,7 +203,8 @@ definition (in reals) ChainWeightPMetric where
   "ChainWeightPMetric(X,w) \<equiv> {\<langle>p,ChainDist(X,w,fst(p),snd(p))\<rangle>. p \<in> X\<times>X}"
 
 text\<open>If $w:X\times X\rightarrow\mathbb{R}^+$ is symmetric and vanishes on the diagonal
-  of $X\times X$ then the chain weight pseudometric is indeed a real-valued pseudometric.\<close>
+  of $X\times X$ then the chain weight pseudometric derived from $w$ 
+  is indeed a real-valued pseudometric.\<close>
 
 theorem (in reals) chain_weight_pmetric:
   assumes "w:X\<times>X\<rightarrow>\<real>\<^sup>+" "\<forall>x\<in>X. w`\<langle>x,x\<rangle> = \<zero>" "\<forall>x\<in>X.\<forall>y\<in>X. w`\<langle>x,y\<rangle> = w`\<langle>y,x\<rangle>"
